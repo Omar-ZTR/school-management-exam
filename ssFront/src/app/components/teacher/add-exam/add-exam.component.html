@@ -1,0 +1,158 @@
+<form>
+  <fieldset>
+    <legend>Add Exam</legend>
+    <!--Text -->
+    <div class="inputs">
+      <div>
+        <label for="text">Name Exam</label>
+        <input type="text" id="exam" />
+      </div>
+      <div class="Row rowDuration">
+        <!-- Number -->
+        <div class="duration">
+          <label for="number">Hour</label>
+          <input type="number" id="number" />
+        </div>
+        <div class="split">:</div>
+        <div class="duration">
+          <label for="number">minute</label>
+          <input type="number" id="number" />
+        </div>
+      </div>
+      <div class="Row radio-group">
+        <input type="radio" id="Quiz" name="selector" /><label for="Quiz"
+          >QUIz</label
+        ><input type="radio" id="Test" name="selector" /><label for="Test"
+          >Test</label
+        ><input type="radio" id="File" name="selector" /><label for="File"
+          >File</label
+        >
+      </div>
+
+      <!-- Email -->
+
+      <!-- Button -->
+      <button>Submit</button>
+    </div>
+  </fieldset>
+</form>
+<!-- uploadFile of exam -->
+<div class="ADD">ADD file</div>
+<fieldset class="fileTestForm box">
+  <div class="custome-file">
+    <span>
+      <i class="fa fa-upload fa-2x" aria-hidden="true"></i>Upload Your Picture
+    </span>
+    <input
+      type="file"
+      accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+      multiple
+      (change)="detectFiles($event)"
+    />
+  </div>
+  <div *ngFor="let url of urls">
+    <ul>
+      <li>
+        <div class="listpreview">
+          <div class="previewimg">
+            <img
+              *ngIf="url.type === 'image'"
+              [src]="url.url"
+              class="rounded mb-3"
+              width="180"
+            />
+            <i
+              *ngIf="url.type !== 'image'"
+              class="fa-solid fa-file-{{ url.type }}"
+            ></i>
+          </div>
+
+          <h1>{{ url.type }}</h1>
+        </div>
+      </li>
+    </ul>
+  </div>
+</fieldset>
+
+<!-- add question  -->
+<div class="ADD">ADD Question</div>
+<fieldset class="quistionForm box">
+  <legend>Question</legend>
+  <!--Text -->
+  <div class="inputs">
+    <div class="Row radio-group">
+      <input type="radio" id="quiz" name="TypeQust" /><label for="quiz"
+        >QUIz</label
+      ><input type="radio" id="theorique" name="TypeQust" /><label
+        for="theorique"
+        >Test</label
+      ><input type="radio" id="uploadfile" name="TypeQust" /><label
+        for="uploadfile"
+        >File</label
+      >
+    </div>
+    <div>
+      <label for="text">Question</label>
+      <textarea id="text"></textarea>
+    </div>
+    <div class="noteDiv">
+      <label for="number">Note :</label>
+      <input type="number" id="number" min="1" max="5" />
+    </div>
+
+    <!-- answerQuiz -->
+
+    <div class="repQuiz">
+      <div class="answer-container">
+        <div class="answer">
+          <label for="text">Answer</label>
+          <textarea id="text"></textarea>
+        </div>
+        <label class="label">
+          <input class="label__checkbox" type="checkbox" />
+          <span class="label__text">
+            <span class="label__check">
+              <i class="fa fa-check icon"></i>
+            </span>
+          </span>
+        </label>
+      </div>
+      <!-- answer2 -->
+      <div class="answer-container">
+        <div class="answer">
+          <label for="text">Answer</label>
+          <textarea id="text"></textarea>
+        </div>
+        <label class="label">
+          <input class="label__checkbox" type="checkbox" />
+          <span class="label__text">
+            <span class="label__check">
+              <i class="fa fa-check icon"></i>
+            </span>
+          </span>
+        </label>
+      </div>
+      <!-- answer3 -->
+      <div class="answer-container">
+        <div class="answer">
+          <label for="text">Answer</label>
+          <textarea id="text"></textarea>
+        </div>
+        <label class="label">
+          <input class="label__checkbox" type="checkbox" />
+          <span class="label__text">
+            <span class="label__check">
+              <i class="fa fa-check icon"></i>
+            </span>
+          </span>
+        </label>
+      </div>
+    </div>
+    <!-- end answerQuiz -->
+
+    <!-- upload Img -->
+
+    <!-- Button -->
+    <button>Submit</button>
+  </div>
+</fieldset>

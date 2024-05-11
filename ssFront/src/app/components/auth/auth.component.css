@@ -1,0 +1,318 @@
+.toplog {
+position: fixed;
+width: 100%;
+  height: 70px;
+  background-color: #ccbff423;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2em 1em;
+ z-index: 999;
+}
+/* .switch{
+  position: absolute;
+  cursor:pointer;
+  font-size: xx-large;
+  color: #f09819;
+  z-index: 10;
+width: 100px;
+margin: 10px ;
+right: 20px;
+background: #1845ad;
+} */
+
+.popFull{
+  position: absolute;
+  background: #08080c20;
+  backdrop-filter: blur(5px);
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  z-index: 9999;
+}
+.popFullClose{
+  display: none;
+}
+/* popupstyle */
+.popBox{
+ 
+  max-width:  500px;
+  
+  background:#ebfafd;
+  border-radius: 6px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+.poptitle{
+  font-size: 20px;
+  font-weight: 600;
+  color: rgb(15, 15, 15);
+  text-align: center;
+  margin: 25px;
+}
+
+.subpoptitle{
+  font-size: 15px;
+  font-weight: 400;
+  color: rgb(15, 15, 15);
+  text-align: center;
+  
+}
+.popForm{
+  padding: 0 30px 30px 30px ;
+}
+
+
+.closepop{
+  float: right;
+  margin: 10px 20px;
+  font-size: 30px;
+ 
+}
+
+.popcheck{
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+  
+}
+ul{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5em;
+  font-size: 1.25rem;
+  
+}
+a{
+  text-decoration: none;
+  color: #272626;
+}
+li {
+  list-style: none;
+
+
+  font-weight: bold;
+  padding: 9px 15px;
+  /* background-color: #f2e8feb1; */
+  color:  #272626;
+  /* box-shadow: inset 0px -20px 0px white; */
+  font-size: 20px;
+  
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  margin: 0 2px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+  .background {
+    width: 100%; /* Adjusted to 100% for responsiveness */
+    max-width: 430px; /* Added max-width for smaller screens */
+    height: 520px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+  }
+  
+  .background .shape {
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    border-radius: 50%;
+  }
+  
+  .shape:first-child {
+    background: linear-gradient(#1845ad, #23a2f6);
+    left: -80px;
+    top: -80px;
+  }
+  
+  .shape:last-child {
+    background: linear-gradient(to right, #ff512f, #f09819);
+    right: -30px;
+    bottom: -80px;
+  }
+
+  .screen__background__shape {
+    transform: rotate(45deg);
+    position: absolute;
+    margin-top: 30px;
+     z-index: -10;
+  }
+  
+  .screen__background__shape1 {
+    height: 520px;
+    width: 520px;
+    background: #262626;	
+    top: -50px;
+    right: 120px;	
+    border-radius: 0 72px 0 0;
+  }
+  
+  .screen__background__shape2 {
+    height: 220px;
+    width: 220px;
+    background: #6C63AC;	
+    top: -172px;
+    right: 0;	
+    border-radius: 32px;
+  }
+  
+  .screen__background__shape3 {
+    height: 540px;
+    width: 190px;
+    background: linear-gradient(270deg, #5D54A4, #6A679E);
+    top: -24px;
+    right: 0;	
+    border-radius: 32px;
+  }
+  
+  .screen__background__shape4 {
+    height: 400px;
+    width: 200px;
+    background: #a2a6a6;	
+    top: 420px;
+    right: 50px;	
+    border-radius: 60px;
+  }
+  
+  form {
+    height: 580px;
+    width: 100%; /* Adjusted to 100% for responsiveness */
+    max-width: 400px; /* Added max-width for smaller screens */
+    background-color: rgba(255, 255, 255, 0.112);
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+    padding: 50px 35px;
+    overflow: hidden;
+    z-index: 2;
+   
+  }
+  
+  form * {
+    font-family: 'Poppins', sans-serif;
+    color: #c3c3c3;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+  }
+  
+  form h3 {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 42px;
+    text-align: center;
+  }
+  
+  label {
+    display: block;
+    margin-top: 30px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  input {
+    display: block;
+    height: 50px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 3px;
+    padding: 0 10px;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 300;
+  }
+  
+  ::placeholder {
+    color: #e5e5e5;
+  }
+  
+  button {
+    margin-top: 30px;
+    width: 100%;
+    background-color: #ffffff;
+    color: #020203 !important;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+  
+  .social {
+    position: absolute;
+    bottom: 20px;
+   
+    display: flex;
+  }
+  .sub_Msg{
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 10px 5px;
+ cursor: pointer;
+    color: #2600ff !important; 
+    text-align: center;
+  }
+  .social div {
+    
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 10px 5px;
+ 
+    color: #2600ff;
+    text-align: center;
+  }
+  
+  .social .fb:hover {
+    background-color: rgb(55, 4, 222);
+  }
+  
+  .social .fb {
+    color: #ebebeb;
+    width: 110px;
+    margin-left: 25px;
+    background: rgb(28, 8, 108);
+  }
+
+  .social i {
+    margin-right: 4px;
+  }
+  
+  /* Media queries for responsiveness */
+  
+  @media only screen and (max-width: 768px) {
+    .background {
+      max-width: 80%; /* Adjusted max-width for smaller screens */
+    }
+  
+    form {
+      max-width: 80%; /* Adjusted max-width for smaller screens */
+    }
+  }
+  
+  @media only screen and (max-width: 480px) {
+    .background {
+      max-width: 90%; /* Adjusted max-width for even smaller screens */
+    }
+  
+    form {
+      max-width: 90%; /* Adjusted max-width for even smaller screens */
+    }
+  }
+  

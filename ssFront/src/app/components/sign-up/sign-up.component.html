@@ -1,0 +1,283 @@
+<div class="progress-wrapper">
+  <div id="progress-bar-container">
+    <ul>
+      <li
+        class="step step01"
+        (click)="setActiveStep(step)"
+        [ngClass]="step.stepName == activeStep.stepName ? 'active' : ''"
+        *ngFor="let step of stepslist"
+      >
+        <div class="step-inner"></div>
+      </li>
+    </ul>
+    <div id="line">
+      <div id="line-progress" [style.width.%]="progwidthvalue"></div>
+    </div>
+    <!-- progress-bar-container -->
+    <div id="progress-content-section">
+      <div
+        class="section-content step1 active"
+        *ngIf="activeStep.stepName == 'Basic details'"
+      >
+        <h2>{{ activeStep.stepName }}</h2>
+        <div class="container-fluid" [formGroup]="signupform">
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label>First Name :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.first__name"
+                placeholder="Enter First Name"
+                class="form-control"
+                formControlName="first__name"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['first__name'].touched && signupform.controls['first__name'].invalid">
+                <span *ngIf="signupform.controls['first__name'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['first__name'].errors?.['pattern']">This field is invalid.</span></div>
+             
+            </div>
+            <div class="form-group col-md-12">
+              <label>Last Name :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.last__name"
+                placeholder="Enter Name"
+                class="form-control"
+                formControlName="last__name"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['last__name'].touched && signupform.controls['last__name'].invalid">
+                <span *ngIf="signupform.controls['last__name'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['last__name'].errors?.['pattern']">This field is invalid.</span></div>
+              
+              <!-- <span
+                *ngIf="signupform.controls['last__name'].errors?.['pattern']"
+              >
+                this required</span
+              > -->
+            </div>
+            <div class="rowRol" >
+             
+              <!-- <label>Role :</label>
+              <select
+                
+              
+                [(ngModel)]="userObj.role" formControlName="role"
+              >
+           
+                <option  value="Student">Student</option>
+                <option value="Teacher">Teacher</option>
+              
+              </select>
+            </div> -->
+           
+            <input type="radio" name="checkbox" class="check" id="radio2"  [(ngModel)]="userObj.role" [value]="'Teacher'" formControlName="checkbox" (click)="radioo()"/>
+            <label class="roleName" for="radio2">
+              <div class="btnradio">
+                <div class="cRadioBtn">
+                  <div class="overlay"></div>
+                  <div class="drops xsDrop"></div>
+                  <div class="drops mdDrop"></div>
+                  <div class="drops lgDrop"></div>
+                </div>
+              </div>
+              <div class="roleName_h2">Teacher</div>
+            </label >
+            <input type="radio" name="checkbox" class="check" id="radio1" [value]="'Student'" [(ngModel)]="userObj.role" formControlName="checkbox" (click)="radioo()" />
+            <label class="roleName" for="radio1">
+              <div class="btnradio"  >
+                <div class="cRadioBtn">
+                  <div class="overlay"></div>
+                  <div class="drops xsDrop"></div>
+                  <div class="drops mdDrop"></div>
+                  <div class="drops lgDrop"></div>
+                </div>
+              </div>
+              <div class="roleName_h2">Student</div>
+            </label >
+
+
+          </div>
+
+          <button class=" btn-primary" (click)="gotoStep2()">
+            Next
+          </button>
+        </div>
+      </div>
+      </div>
+      <div
+        class="section-content step2 active"
+        *ngIf="activeStep.stepName == 'skills'"
+      >
+        <h2>{{ activeStep.stepName }}</h2>
+        <div class="container-fluid" [formGroup]="signupform">
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label>Email :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.user__email"
+                placeholder="Enter Email"
+                class="form-control"
+                formControlName="user__email"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['user__email'].touched && signupform.controls['user__email'].invalid">
+                <span *ngIf="signupform.controls['user__email'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['user__email'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+            <div class="form-group col-md-12">
+              <label>Password :</label>
+              <input
+                type="password"
+                placeholder="Enter Password"
+                class="form-control"
+                formControlName="Password"
+              />
+            </div>
+              <div
+                class="text-danger"
+                *ngIf="signupform.controls['Password'].touched && signupform.controls['Password'].invalid">
+                <span *ngIf="signupform.controls['Password'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['Password'].errors?.['pattern']">This field is invalid.</span></div>
+            <div class="form-group col-md-12">
+              <label>re-Password :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.password"
+                placeholder="Enter re-Password"
+                class="form-control"
+                formControlName="Password"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['Password'].touched && signupform.controls['Password'].invalid">
+                <span *ngIf="signupform.controls['Password'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['Password'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+          </div>
+          
+          <button class=" btn-primary" (click)="gotoStep3()">
+            Next
+          </button>
+          
+        </div>
+      </div>
+      <div
+        class="section-content step3 active"
+        *ngIf="activeStep.stepName == 'experience'"
+      >
+        <h2>{{ activeStep.stepName }}</h2>
+        <div class="errorSelect" *ngIf="userObj.role == ''">
+        <h3>Select Role</h3>
+        </div>
+        <div class="container-fluid" [formGroup]="signupform" *ngIf="userObj.role !== ''">
+          <div class="row" *ngIf="userObj.role == 'Student'">
+            <div class="form-group col-md-12">
+              <label>Diploma :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.diploma"
+                placeholder="Enter diploma"
+                class="form-control"
+                formControlName="diploma"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['diploma'].touched && signupform.controls['diploma'].invalid">
+                <span *ngIf="signupform.controls['diploma'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['diploma'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+            <div class="form-group col-md-12">
+              <label>Location :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.Locations"
+                placeholder="Enter Locations"
+                class="form-control"
+                formControlName="Locations"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['Locations'].touched && signupform.controls['Locations'].invalid">
+                <span *ngIf="signupform.controls['Locations'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['Locations'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+            <div class="form-group col-md-12">
+              <label>date:</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.date__diploma"
+                placeholder="Enter date"
+                class="form-control"
+                formControlName="date__diploma"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['date__diploma'].touched && signupform.controls['date__diploma'].invalid">
+                <span *ngIf="signupform.controls['date__diploma'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['date__diploma'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+          </div>
+          <div class="row" *ngIf="userObj.role == 'Teacher'">
+            <div class="form-group col-md-12">
+              <label>specialty :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.specialty"
+                placeholder="Enter specialty"
+                class="form-control"
+                formControlName="specialty"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['specialty'].touched && signupform.controls['specialty'].invalid">
+                <span *ngIf="signupform.controls['specialty'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['specialty'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+            <div class="form-group col-md-12">
+              <label>experience :</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.experience"
+                placeholder="Enter experience"
+                class="form-control"
+                formControlName="experience"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['experience'].touched && signupform.controls['experience'].invalid">
+                <span *ngIf="signupform.controls['experience'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['experience'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+            <div class="form-group col-md-12">
+              <label>date:</label>
+              <input
+                type="text"
+                [(ngModel)]="userObj.date"
+                placeholder="Enter date"
+                class="form-control"
+                formControlName="date"
+              />
+                <div
+                class="text-danger"
+                *ngIf="signupform.controls['date'].touched && signupform.controls['date'].invalid">
+                <span *ngIf="signupform.controls['date'].errors?.['required']">This field is mandatory.</span>
+                <span *ngIf="signupform.controls['date'].errors?.['pattern']">This field is invalid.</span></div>
+            </div>
+          </div>
+          
+              <button class="btn-primary" (click)="signup()">
+                yes
+              </button>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- progress-wrapper -->
+</div>

@@ -1,0 +1,125 @@
+
+.News {
+    width: 600px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: 200px;
+    padding: 35px ;
+  margin: 50px 0;
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 0px 57px 20px 93px;
+-webkit-border-radius: 0px 57px 20px 93px;
+-moz-border-radius: 0px 57px 20px 93px;
+    background-color: rgba(255, 255, 255, 0.152);
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+  
+    backdrop-filter: blur(15px);
+  }
+  
+  .News-footer {
+    font-size: 0.65em;
+    color: #446;
+  }
+
+.row__card{
+    display: flex; 
+    justify-content:center;
+    column-gap: 50px;
+    margin: 20px 30px;
+    align-items: center;
+    align-content: center;
+}
+.card {
+    max-width: 300px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  
+    max-width: 300px;
+    height: 200px;
+    padding: 35px;
+  
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+  
+    backdrop-filter: blur(15px);
+  }
+  
+  .card-footer {
+    font-size: 0.65em;
+    color: #446;
+  }
+  .card1{
+    background: #f8ba33dc;
+  }
+  .card2{
+    background: #546ff8;
+  }
+  .card3{
+    background: #f63340;
+  }
+
+  /* table */
+.row__table{
+    display: flex;
+    /* flex-direction: column; */
+    /* align-content: center; */
+    justify-content: space-around;
+    /* align-items: center; */
+    margin: 50px 0;
+}
+.Ex__taked{
+    width: 200px;
+}
+ .Ex__done{
+    width: 500px;
+ }
+   table {
+ 
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    /* background: rgb(252, 252, 252); */
+  }
+  th,
+  td {
+    max-width: 500px;
+    min-width: 100px;
+    padding: 15px;
+    /* background-color: rgb(255, 255, 255); */
+    color: #0c0c0c;
+    word-wrap: break-word;
+    text-wrap: pretty;
+  }
+  th {
+    text-align: left;
+  }
+  thead th {
+    background-color: #071864;
+    color: aliceblue;
+  }
+  tbody .rowOftable:hover  {
+    /* position: relative; */
+    background-color: rgba(61, 61, 61, 0.603);
+    /* z-index: 1; */
+  }
+  tbody td {
+    position: relative;
+  }
+  tbody td:hover:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -9999px;
+    bottom: -9999px;
+    background-color: rgba(13, 11, 11, 0.545);
+    z-index:-1;
+  } 

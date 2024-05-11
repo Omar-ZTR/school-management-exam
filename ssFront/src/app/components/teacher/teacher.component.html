@@ -1,0 +1,167 @@
+<!-- -->
+<!-- <mat-drawer-container class="bb">
+    <mat-drawer class="main__sidebar" #drawer mode="side" >
+        <app-sidebar></app-sidebar> 
+        
+    </mat-drawer>
+
+    <mat-drawer-content class="main__content">
+ 
+      <p><button mat-button (click)="drawer.toggle()">drawer.toggle()</button></p>
+      
+    </mat-drawer-content>
+  </mat-drawer-container> -->
+
+<!-- <app-sidebar></app-sidebar> -->
+<div id="cssportal-grid">
+  <div id="div1">
+    <div class="topBar">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="100"
+        height="100"
+        viewBox="10 10 200 200"
+        (click)="isMenuMobile = !isMenuMobile"
+        [ngClass]="{ active: isMenuMobile, '': !isMenuMobile }"
+      >
+        <g stroke-width="5.5" stroke-linecap="round">
+          <path
+            d="M72 82.286h28.75"
+            fill="#009100"
+            fill-rule="evenodd"
+            stroke="#000"
+          />
+          <path
+            d="M100.75 103.714l72.482-.143c.043 39.398-32.284 71.434-72.16 71.434-39.878 0-72.204-32.036-72.204-71.554"
+            fill="none"
+            stroke="#000"
+          />
+          <path
+            d="M72 125.143h28.75"
+            fill="red"
+            fill-rule="evenodd"
+            stroke="#000"
+          />
+          <path
+            d="M100.75 103.714l-71.908-.143c.026-39.638 32.352-71.674 72.23-71.674 39.876 0 72.203 32.036 72.203 71.554"
+            fill="none"
+            stroke="#000"
+          />
+          <path
+            d="M100.75 82.286h28.75"
+            fill="#009100"
+            fill-rule="evenodd"
+            stroke="#000"
+          />
+          <path
+            d="M100.75 125.143h28.75"
+            fill="#009100"
+            fill-rule="evenodd"
+            stroke="#000"
+          />
+        </g>
+      </svg>
+      <ul class="topUL">
+        <li>
+          <a routerLink="/contact"
+            ><i class="fa-solid fa-bell"></i>
+            <span class="notification-count">6</span>
+          </a>
+        </li>
+        <li>
+          <a (click)="toggleSettingsMenu()">
+            <img src="../../../assets/mee.jpeg" alt="me" />
+            <div class="bartitle">Omar zouiter</div>
+          </a>
+          <ul *ngIf="isSettingsMenuOpen">
+            <li>
+              <a routerLink="/edit-profile"
+                ><i class="fas fa-user-edit"></i> Edit Profile</a
+              >
+            </li>
+            <li>
+              <a routerLink="/about"
+                ><i class="fa-solid fa-bell"></i> contact</a
+              >
+            </li>
+            <hr />
+            <li>
+              <a (click)="logout()"
+                ><i class="fas fa-sign-out-alt"></i> Logout</a
+              >
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="div2">
+    <!-- <router-outlet></router-outlet> -->
+    <h1>sssa11sss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ss11ss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+    <h1>ssss</h1>
+  </div>
+  <div id="div3">
+    <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
+      <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
+        <ul>
+          <li>
+            <i class="fas fa-home icon"></i>
+            <div class="title">Dashboard</div>
+          </li>
+          <li routerLink="/exam">
+            <i class="fas fa-underline icon"></i>
+            <div class="title">Exams</div>
+          </li>
+          <li routerLink="/update">
+            <i class="fas fa-user-edit icon"></i>
+            <div class="title">Edit Profile</div>
+          </li>
+          <li>
+            <i class="fas fa-chart-pie icon"></i>
+            <div class="title">Contact</div>
+          </li>
+          <hr />
+          <li>
+            <i class="fas fa-boxes icon"></i>
+            <div class="title">Logout</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

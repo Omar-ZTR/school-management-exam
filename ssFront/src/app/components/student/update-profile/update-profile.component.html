@@ -1,0 +1,80 @@
+<form>
+  <fieldset>
+    <legend>Update Info</legend>
+    <!--Text -->
+
+    <div class="avatar-upload">
+      <div class="avatar-edit">
+        <input type="file" id="imageUpload" accept="image/*" (change)="selectFile($event)" />
+        <label for="imageUpload"></label>
+      </div>
+      <div class="avatar-preview">
+       <img  id="imagePreview" [src]="preview" style="background-image: url(../../../../assets/mee.jpeg)" /></div>
+      
+    </div>
+<!-- 
+
+    <div class="col-8">
+        <label class="btn btn-default p-0">
+          <input type="file" accept="image/*" (change)="selectFile($event)" />
+        </label>
+      </div>
+    
+      <div class="col-4">
+        <button
+          class="btn btn-success btn-sm float-right"
+          [disabled]="!currentFile"
+          (click)="upload()"
+        >
+          Upload
+        </button>
+      </div>
+   
+    
+    <div>
+      <img [src]="preview" class="preview" />
+    </div>
+ -->
+
+
+
+    <div>
+      <label for="text">username</label>
+      <input type="text" id="text" />
+    </div>
+    <!-- Email -->
+    <div>
+      <label for="email">email</label>
+      <input type="email" id="email" />
+    </div>
+    <!-- Password -->
+    <div>
+      <label for="password">password</label>
+      <input type="password" id="password" />
+    </div>
+
+    <!-- Date -->
+    <div>
+      <label for="date">date</label>
+      <input type="date" id="date" />
+    </div>
+    <!-- Url -->
+    <div>
+      <label for="url">url</label>
+      <input type="url" id="url" />
+    </div>
+
+    <!-- Select -->
+    <div>
+      <label for="select">select</label>
+      <select id="select">
+        <option value="opt1">opt1</option>
+        <option value="opt2">opt2</option>
+        <option value="opt3">opt3</option>
+      </select>
+    </div>
+
+    <!-- Button -->
+    <button>Submit</button>
+  </fieldset>
+</form>
