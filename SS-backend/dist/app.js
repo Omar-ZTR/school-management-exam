@@ -33,6 +33,7 @@ const connection_1 = __importDefault(require("./connection"));
 const body_parser_1 = require("body-parser");
 const examRouter_1 = __importDefault(require("./routers/examRouter"));
 const app = (0, express_1.default)();
+const cors = require('cors');
 app.use((0, body_parser_1.json)());
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -43,6 +44,11 @@ app.use(function (req, res, next) {
 });
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
 app.use("/", authRouter_1.default, examRouter_1.default);
+const corsOptions = {
+    origin: 'http://localhost:4200', // Or an array of origins: ['http://localhost:4200', 'http://example.com']
+    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+};
+app.use(cors(corsOptions));
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });

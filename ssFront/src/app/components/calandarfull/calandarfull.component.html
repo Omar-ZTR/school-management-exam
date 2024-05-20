@@ -1,0 +1,195 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <button (click)="previous()">&#9664;</button>
+    <span *ngIf="isMonthView">{{ monthName }}</span>
+    <span *ngIf="!isMonthView"
+      >{{ getWeekDates()[0] | date : "MMM d" }} -
+      {{ getWeekDates()[6] | date : "MMM d, yyyy" }}</span
+    >
+    <button (click)="next()">&#9654;</button>
+    <button (click)="toggleView()">
+      {{ isMonthView ? "Switch to Week View" : "Switch to Month View" }}
+    </button>
+  </div>
+  <div *ngIf="isMonthView" class="calendar-grid">
+    <div class="calendar-day-header" *ngFor="let day of weekDays">
+      {{ day }}
+    </div>
+    <div
+      class="calendar-day"
+      *ngFor="let day of daysInMonth"
+      (click)="openWeekView(day)"
+      [ngClass]="{ 'has-event': hasEvents(day) }"
+    >
+      <div class="day-number">
+        {{ day }}
+      </div>
+
+      <div class="event-container">
+        <!-- Empty event container for adding events later -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!isMonthView" class="week-view">
+    <div class="week-header">
+      <div class="week-day" *ngFor="let date of getWeekDates()">
+        {{ weekDays[date.getDay()] }} {{ date | date : "MMM d" }}
+      </div>
+    </div>
+    <div>
+      <div class="week-grid" *ngFor="let hour of getHoursOfDay()">
+        <div class="hour-label">
+          {{ hour }}
+        </div>
+        <div class="week-day" *ngFor="let date of getWeekDates()">
+          <div
+            class="hour-cell"
+            (click)="
+              !isEvent(date, hour) && openEventForm(date, hour, eventFormModal)
+            "
+          >
+            <div
+              class="has-event"
+              *ngIf="isEvent(date, hour)"
+              [ngStyle]="getEventStyles(date, hour)"
+            >
+              <ng-container 
+                *ngFor="let event of getEventsForDateAndHour(date, hour)"
+              >
+                <div>
+                  <strong>{{ event.title }}</strong
+                  ><br />
+                  <small
+                    >{{ event.start | date : "shortTime" }} -
+                    {{ event.end | date : "shortTime" }}</small
+                  >
+                </div>
+              </ng-container>
+            </div>
+            <!-- Add event content here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Event Form Modal -->
+<ng-template #eventFormModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Add Event</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="eventForm" (ngSubmit)="saveEvent()">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          class="form-control"
+          formControlName="title"
+        />
+        <div
+          *ngIf="
+            eventForm.controls['title'].invalid &&
+            eventForm.controls['title'].touched
+          "
+          class="text-danger"
+        >
+          Title is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="startDate">Date</label>
+        <input
+          id="startDate"
+          type="date"
+          class="form-control"
+          formControlName="startDate"
+        />
+        <div
+          *ngIf="
+            eventForm.controls['startDate'].invalid &&
+            eventForm.controls['startDate'].touched
+          "
+          class="text-danger"
+        >
+          Start date is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="startTime">Start Time</label>
+        <input
+          id="startTime"
+          type="time"
+          class="form-control"
+          formControlName="startTime"
+        />
+        <div
+          *ngIf="
+            eventForm.controls['startTime'].invalid &&
+            eventForm.controls['startTime'].touched
+          "
+          class="text-danger"
+        >
+          Start time is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="endTime">End Time</label>
+        <input
+          id="endTime"
+          type="time"
+          class="form-control"
+          formControlName="endTime"
+        />
+        <div
+          *ngIf="
+            eventForm.controls['endTime'].invalid &&
+            eventForm.controls['endTime'].touched
+          "
+          class="text-danger"
+        >
+          End time is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="salle">Salle</label>
+        <select id="salle" class="form-control" formControlName="salle">
+          <option *ngFor="let salle of salles" [value]="salle.id">
+            {{ salle.name }}
+          </option>
+        </select>
+        <div
+          *ngIf="
+            eventForm.controls['salle'].invalid &&
+            eventForm.controls['salle'].touched
+          "
+          class="text-danger"
+        >
+          Salle is required.
+        </div>
+      </div>
+      <div formGroupName="color">
+        <div class="form-group">
+          <label for="primaryColor">Primary Color</label>
+          <input
+            id="primaryColor"
+            type="color"
+            class="form-control"
+            formControlName="primary"
+          />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Event</button>
+    </form>
+  </div>
+</ng-template>

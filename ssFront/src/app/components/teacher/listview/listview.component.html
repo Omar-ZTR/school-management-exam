@@ -1,0 +1,36 @@
+<section>
+    <div class="container">
+      <div class="listView" *ngFor="let question of data; let k = index">
+        <div class="listView-item"[attr.id]="'quest' + k">
+            <a class="listView-link" [attr.href]="'#quest' + k">
+            <div >
+              <h3>Question: {{k}}</h3>
+            
+            </div>
+
+            <i class="icon fa-solid fa-rght fa-arrow-right"></i>
+            <i class="icon fa-solid fa-down fa-arrow-right fa-rotate-90"></i>
+          </a>
+           
+          <div class="Question">
+             <ul >
+                <li>  <span class="lab"> Type:</span> {{ question.question__type }}</li>
+                <li><span class="lab">Note:</span> {{ question.note }}</li>
+             
+              </ul>
+            <p>
+              {{ question.question__text }}
+           
+            </p>
+            <div *ngFor="let answer of question.reponses">  
+                <span class="lab">rep:</span>
+             <p>{{ answer.reponse__text }} <span>{{answer.reponse__statut}}</span>   </p>
+           </div>
+          </div>
+          <hr />
+        </div>
+      </div>
+      
+    </div>
+  </section>
+  

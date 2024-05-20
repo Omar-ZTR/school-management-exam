@@ -9,21 +9,21 @@ const baseUrl = "http://localhost:3000/files/";
 // Create operation
 
 export const createExam = async (req: Request, res: Response) => {
-  console.log("exam bssdena")
+  console.log("exam 1" , req.body)
   try {
 
-    console.log("exam bdena",req.file)
+    console.log("exam 2",req.body.files)
 
     await uploadFile(req, res); // Handle file upload
-    console.log("exam bdena",req.file)
+    console.log("exam 3",req.body.file)
     const examDatas = { ...req.body}; // Assuming exam data is in req.body
-    console.log("exam bdesssna",examDatas)
-    const examData= JSON.parse(examDatas.exam)
-    console.log("LLLL json",examData)
-    const exam = await Exam.create(examData);
-    console.log("exam fotnaha")
+    console.log("exam 4",examDatas)
+    // const examData= JSON.parse(examDatas.exam)
+    // console.log("LLLL 5",examData)
+    const exam = await Exam.create(examDatas);
+    console.log("exam 6")
     if (req.file !== undefined) {
-      console.log("file defined", req.file)
+      console.log("file 7", req.file)
 
       // If file uploaded, save file information in the support__files attribute
      const support__files = 
@@ -43,16 +43,16 @@ export const createExam = async (req: Request, res: Response) => {
       });
     }
    
-    console.log("file fotnaha")
+    console.log("file 8")
     // Create the questions for the exam
     if (
-      examData.questions &&
-      Array.isArray(examData.questions) &&
-      examData.questions.length > 0
+      examDatas.questions &&
+      Array.isArray(examDatas.questions) &&
+      examDatas.questions.length > 0
     ) {
 
       console.log("if eloula fotnaha")
-      const questionsData = examData.questions;
+      const questionsData = examDatas.questions;
       for (const questionData of questionsData) {
         questionData.exam__id = exam.exam__id;
         const question = await Question.create(questionData);

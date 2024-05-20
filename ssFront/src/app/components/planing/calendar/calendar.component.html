@@ -1,0 +1,14 @@
+@if (courses.length > 0 ) {
+    <p>Looks like you have appointments. Please go ahead and attend them</p>
+    <kendo-scheduler [editable]="true" [kendoSchedulerBinding]="courses">
+      <kendo-scheduler-day-view>
+  
+      </kendo-scheduler-day-view>
+  
+      <kendo-scheduler-week-view>
+      </kendo-scheduler-week-view>
+      <kendo-scheduler-month-view></kendo-scheduler-month-view>
+    </kendo-scheduler>
+  } @else {
+    <p>Hey! Looks like your agenda is free ; Please pick one course.</p>
+  }

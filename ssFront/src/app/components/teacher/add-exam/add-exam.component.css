@@ -1,21 +1,21 @@
 .containerExam {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center;
+  justify-content: center; */
   width: 100%;
-  height: 100%;
-  margin: 30px 0;
+
+  padding: 30px ;
   gap: 10px;
 }
 
 form {
   width: 40%;
   min-width: 30rem;
-  height: auto;
+  
 }
 
 .plus {
-  background: #ebebeb;
+  background: #166008;
   height: 30px;
   position: relative;
   width: 6px;
@@ -23,7 +23,7 @@ form {
 }
 
 .plus:after {
-  background: #ebebeb;
+  background: #166008;
   content: "";
   border-radius: 10px;
   height: 6px;
@@ -34,27 +34,100 @@ form {
 }
 
 .add {
-  background: #06860a;
+  background: #0cb731;
+  border-radius: 999px;
+  box-shadow: #0cb731 0 10px 20px -10px;
+
+  color: #FFFFFF;
+  padding: 8px 18px;
+  cursor: pointer;
+  width: fit-content;
+  font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  margin: 3px;
+  border-radius: 990px;
+
 }
 
-fieldset {
+.containerForm {
   background-color: #fff;
   box-shadow: 0 30px 30px 0 rgba(0, 0, 0, 0.1);
   border: none;
+
   padding: 10px;
 }
+/* .boxpreview::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
 
+.boxpreview::-webkit-scrollbar
+{
+	width: 10px;
+  height: 90px;
+	background-color: #F5F5F5;
+}
+
+.boxpreview::-webkit-scrollbar-thumb
+{
+	background-color: #F90;	
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+} */
+
+.boxpreview::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.boxpreview::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #DFE9EB;
+}
+
+.boxpreview::-webkit-scrollbar-track:hover {
+  background-color: #B8C0C2;
+}
+
+.boxpreview::-webkit-scrollbar-track:active {
+  background-color: #B8C0C2;
+}
+
+.boxpreview::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #F90;	
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+}
+
+.boxpreview::-webkit-scrollbar-thumb:hover {
+  background-color: #FFBC2B;
+}
+
+.boxpreview::-webkit-scrollbar-thumb:active {
+  background-color: #FFBA23;
+}
 legend {
   font-size: 25px;
   font-weight: 500;
-  margin-left: 10px;
+  margin-left: 30px;
+  margin-bottom: 10px ;
   text-transform: uppercase;
   color: #15009a;
 }
@@ -321,7 +394,7 @@ textarea {
   border-radius: 10px;
   filter: drop-shadow(0 5px 10px 0 #ffffff);
   width: 400px;
-  height: 180px;
+  min-height: 180px;
   background-color: #ffffff;
   padding: 20px;
   position: relative;
@@ -330,22 +403,33 @@ textarea {
   transition: 0.6s ease-in;
 }
 
-.card::before {
+.bt {
   content: "";
   position: absolute;
-  z-index: -1;
-  top: -15px;
-  right: -15px;
-  background: #7952b3;
-  height:220px;
-  width: 25px;
+  
+top: 90%;
+  width: 100%;
+  margin-left: -20px;
+  background: #3b02ad;
+ text-align: center;
   border-radius: 32px;
-  transform: scale(1);
-  transform-origin: 50% 50%;
-  transition: transform 0.25s ease-out;
+ 
+}
+.btt {
+  content: "";
+  position: absolute;
+  
+top: 0%;
+  width: 100%;
+  margin-left: -20px;
+  background: #3b02ad;
+ text-align: center;
+  border-radius: 32px;
+ 
 }
 
-.card:hover::before{
+
+/* .card:hover::before{
     transition-delay:0.2s ;
 
   transform: scale(40);
@@ -354,23 +438,130 @@ textarea {
 .card:hover{
     color: #ffffff;
 
+} */
+
+
+
+.cardRep{
+   border-radius: 10px;
+  filter: drop-shadow(0 5px 10px 0 #ffffff);
+  width: 400px;
+  height:220px;
+ 
+  background-color: #2e22d64b;
+  padding: 20px;
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+backdrop-filter: blur(10px);
+  margin: -20px 0 20px -20px;
+   transform: translateY(200% );
+  transition: transform  1s ease-out;
 }
 
-.card p{
-    padding: 10px 0;
+.checkboxx:checked ~ .cardRep{
+	transform: translateY(0%);
+}
+#chk:checked ~ .card{
+	padding: 0px;
 }
 
+
+.checkboxx{
+	display: none;
+}
+.cardinfo{
+  font-size: 20px;
+  color: #00159a;
+  margin: 10px 0;
+  font-family:'popins';
+}
+
+
+.infoQuest{
+  display: flex;
+  justify-content: space-around;
+}
+
+.lab{
+  color: rgb(16, 16, 16);
+  font-size: 20px;
+  font-weight: 500;
+}
 
 
 
 /* displaying */
 
 .repQuiz {
-  display: none;
+  border-left: #1b1b1c solid 2px;
+  position: relative;
+padding-left:15px ;
+  width: fit-content;
+
+}
+hr{
+  margin-bottom: 0;
+}
+.bordercorner{
+  position: relative;
+  margin: 0 10px 20px 10px;
+  padding: 10px;
+  width: fit-content;
+}
+.bordercorner span.border_btm:after {
+  display: block;
+  content: "";
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  border-bottom: 3px solid #3779e3;
+  border-right: 3px solid #3779e3;
+}
+.bordercorner span.border_btm:before {
+  display: block;
+  content: "";
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: -10px;
+  left: -10px;
+  border-bottom: 3px solid #3779e3;
+  border-left: 3px solid #3779e3;
+}
+.bordercorner:before {
+  display: block;
+  content: "";
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  border-top: 3px solid #3779e3;
+  border-left: 3px solid #3779e3;
+}
+.bordercorner:after {
+  display: block;
+  content: "";
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  border-top: 3px solid #3779e3;
+  border-right: 3px solid #3779e3;
+}
+.online{
+  background: #101011;
+  color: #ebebeb;
 }
 
-
-
+.online__act{
+  background: #0101fe;
+  color: #f7a730;
+}
 
 
 
@@ -430,16 +621,53 @@ textarea {
   align-items: center;
 
 
-  gap: 5px;
+  gap: 10px;
 
 }
 
 
+.rmAns {
+  margin-left: -10px; 
+  /* background: #c40000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px; */
+  
+}
 
 
+/* CSS */
+.button-34 {
+  background: #5E5DF0;
+  border-radius: 999px;
+  box-shadow: #5E5DF0 0 10px 20px -10px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  padding: 8px 18px;
+  cursor: pointer;
+  width: fit-content;
+  font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  opacity: 1;
+  outline: 0 solid transparent;
+ 
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  
+  word-break: break-word;
+  border: 0;
+}
 .answer {
   /* flex:1 1 auto; */
-  flex-grow: 1;
+  /* flex-grow: 1; */
+  width: fit-content;
+  min-width: 300px;
 }
 
 .answer label,
@@ -459,6 +687,7 @@ textarea {
   background: white;
   vertical-align: middle;
   margin-right: 20px;
+  margin-top: 20px;
   width: 2em;
   height: 2em;
   cursor: pointer;
@@ -596,4 +825,13 @@ textarea {
     border: 0;
     opacity: 1;
   }
+}
+
+
+
+.error{
+  color: red;
+  padding: 0;
+  margin: 0;
+  
 }

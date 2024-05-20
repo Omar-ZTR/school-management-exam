@@ -7,7 +7,7 @@ import routerExam from "./routers/examRouter";
 
 const app = express();
 
-
+const cors = require('cors');
 app.use(json());
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -25,6 +25,11 @@ app.use(urlencoded({ extended: true }));
 
 app.use("/", UserRoutes,routerExam, );
 
+const corsOptions = {
+  origin: 'http://localhost:4200', // Or an array of origins: ['http://localhost:4200', 'http://example.com']
+  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+};
+app.use(cors(corsOptions));
 app.use(
   (
     err: Error,

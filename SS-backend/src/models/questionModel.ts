@@ -26,5 +26,11 @@ export class Question extends Model<Question> {
     exam!: Exam;
 
     @HasMany(() => Reponse)
-    reponses!: Response[];
+    reponses!: Reponse[];
+
+    @Column(DataType.FLOAT)  // Use FLOAT or INTEGER instead of NUMBER
+    note!: number;
+
+    @Column(DataType.STRING)
+    question__type!: string;
 }

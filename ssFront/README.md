@@ -25,3 +25,12 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+   }
+    },
+    "node_modules/preact": {
+      "version": "10.12.1",
+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.12.1.tgz",
+      "integrity": "sha512-l8386ixSsBdbreOAkqtrwqHwdvR35ID8c3rKPa8lCWuO86dBi32QWHV4vfsZK1utLLFMvw+Z5Ad4XLkZzchscg==",
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/preact"

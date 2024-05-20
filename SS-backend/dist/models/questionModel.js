@@ -41,6 +41,15 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => reponseModel_1.Reponse),
     __metadata("design:type", Array)
 ], Question.prototype, "reponses", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.FLOAT) // Use FLOAT or INTEGER instead of NUMBER
+    ,
+    __metadata("design:type", Number)
+], Question.prototype, "note", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], Question.prototype, "question__type", void 0);
 exports.Question = Question = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,
