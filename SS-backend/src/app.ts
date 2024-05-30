@@ -4,6 +4,7 @@ import  * as dotenv from 'dotenv';
 import connection from "./connection";
 import { json, urlencoded } from "body-parser";
 import routerExam from "./routers/examRouter";
+import routerQuestion from "./routers/questionRouter";
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.use(function (req, res, next) {
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/", UserRoutes,routerExam, );
+app.use("/", UserRoutes,routerExam, routerQuestion );
 
 const corsOptions = {
   origin: 'http://localhost:4200', // Or an array of origins: ['http://localhost:4200', 'http://example.com']

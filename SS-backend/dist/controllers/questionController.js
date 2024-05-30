@@ -8,22 +8,91 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteQuestion = exports.updateQuestion = exports.getAllQuestions = exports.getQuestionById = exports.createQuestion = void 0;
+exports.deleteQuestion = exports.updateQuestion = exports.getAllQuestions = exports.getQuestionById = exports.getFakeQuestions = exports.createQuestion = void 0;
 const questionModel_1 = require("../models/questionModel"); // Import your Question model
+const upload_1 = __importDefault(require("../utils/upload"));
+const reponseModel_1 = require("../models/reponseModel");
+const fileModel_1 = require("../models/fileModel");
+const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const question = yield questionModel_1.Question.create(req.body);
+        console.log("exam 2", req.files);
+        yield (0, upload_1.default)(req, res); // Handle file upload
+        console.log("exam 3", req.file);
+        const questDatas = Object.assign({}, req.body);
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>", questDatas);
+        // Assuming exam data is in req.body
+        console.log("exam 4", questDatas[0]);
+        const questionData = JSON.parse(questDatas.question);
+        console.log("Parsed question data:", questionData);
+        const question = yield questionModel_1.Question.create(questionData);
+        console.log("exam 6");
+        if (req.files && req.files.length != 0) {
+            console.log("file 7", req.file);
+            for (const file of req.files) {
+                const support__files = {
+                    file__name: file.originalname,
+                    file__path: baseUrl + file.filename,
+                    file__type: "Question",
+                    question__id: question.question__id,
+                };
+                console.log("file attribute", support__files);
+                const filesup = yield fileModel_1.FileQuestion.create({
+                    file__name: file.originalname,
+                    file__path: baseUrl + file.filename,
+                    file__type: "Question",
+                    question__id: question.question__id,
+                });
+            }
+        }
+        console.log("file 8");
+        // Create the questions for the exam
+        if (questDatas.reponses &&
+            Array.isArray(questDatas.reponses) &&
+            questDatas.reponses.length > 0) {
+            console.log("if ethanya fotnaha");
+            const responsesData = questDatas.reponses;
+            for (const responseData of responsesData) {
+                responseData.question__id = question.question__id;
+                yield reponseModel_1.Reponse.create(responseData);
+            }
+        }
         res.status(201).json(question);
     }
     catch (error) {
-        console.error("Error creation question", error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error creation exam", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.createQuestion = createQuestion;
-// Get Question by ID
+// Get fake Question 
+const getFakeQuestions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const examId = -1;
+        const questions = yield questionModel_1.Question.findAll({
+            where: { exam__id: examId },
+            include: [
+                {
+                    model: fileModel_1.FileQuestion,
+                    as: 'file',
+                    required: false,
+                },
+            ],
+        });
+        console.log("<><<<>>", questions);
+        res.status(200).json(questions);
+    }
+    catch (error) {
+        console.error("Error fetching questions with files", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getFakeQuestions = getFakeQuestions;
 const getQuestionById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -37,7 +106,7 @@ const getQuestionById = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     catch (error) {
         console.error("Error fetch question", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getQuestionById = getQuestionById;
@@ -49,7 +118,7 @@ const getAllQuestions = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     catch (error) {
         console.error("Error fetch questions:", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getAllQuestions = getAllQuestions;
@@ -57,13 +126,17 @@ exports.getAllQuestions = getAllQuestions;
 const updateQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const [updated] = yield questionModel_1.Question.update(req.body, { where: { question__id: id } });
+        const [updated] = yield questionModel_1.Question.update(req.body, {
+            where: { question__id: id },
+        });
         if (updated) {
-            const updatedQuestion = yield questionModel_1.Question.findOne({ where: { question__id: id } });
+            const updatedQuestion = yield questionModel_1.Question.findOne({
+                where: { question__id: id },
+            });
             res.status(200).json(updatedQuestion);
         }
         else {
-            throw new Error('Question not found');
+            throw new Error("Question not found");
         }
     }
     catch (error) {
@@ -81,7 +154,7 @@ const deleteQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(204).send();
         }
         else {
-            throw new Error('Question not found');
+            throw new Error("Question not found");
         }
     }
     catch (error) {

@@ -9,12 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.File = void 0;
+exports.FileQuestion = exports.FileExam = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const examModel_1 = require("./examModel"); // Import the Exam model if it exists
-let File = class File extends sequelize_typescript_1.Model {
+const questionModel_1 = require("./questionModel");
+let FileExam = class FileExam extends sequelize_typescript_1.Model {
 };
-exports.File = File;
+exports.FileExam = FileExam;
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
@@ -22,31 +23,69 @@ __decorate([
         autoIncrement: true
     }),
     __metadata("design:type", Number)
-], File.prototype, "file__id", void 0);
+], FileExam.prototype, "file__id", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => examModel_1.Exam),
     sequelize_typescript_1.Column,
     __metadata("design:type", Number)
-], File.prototype, "exam__id", void 0);
+], FileExam.prototype, "exam__id", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => examModel_1.Exam),
     __metadata("design:type", examModel_1.Exam)
-], File.prototype, "exam", void 0);
+], FileExam.prototype, "exam", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
-], File.prototype, "file__name", void 0);
+], FileExam.prototype, "file__name", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
-], File.prototype, "file__path", void 0);
+], FileExam.prototype, "file__path", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
-], File.prototype, "file__type", void 0);
-exports.File = File = __decorate([
+], FileExam.prototype, "file__type", void 0);
+exports.FileExam = FileExam = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,
-        tableName: "File",
+        tableName: "FileExam",
     })
-], File);
+], FileExam);
+let FileQuestion = class FileQuestion extends sequelize_typescript_1.Model {
+};
+exports.FileQuestion = FileQuestion;
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    }),
+    __metadata("design:type", Number)
+], FileQuestion.prototype, "file__id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => questionModel_1.Question),
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Number)
+], FileQuestion.prototype, "question__id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => questionModel_1.Question),
+    __metadata("design:type", questionModel_1.Question)
+], FileQuestion.prototype, "question", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], FileQuestion.prototype, "file__name", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], FileQuestion.prototype, "file__path", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], FileQuestion.prototype, "file__type", void 0);
+exports.FileQuestion = FileQuestion = __decorate([
+    (0, sequelize_typescript_1.Table)({
+        timestamps: true,
+        tableName: "FileQuestion",
+    })
+], FileQuestion);

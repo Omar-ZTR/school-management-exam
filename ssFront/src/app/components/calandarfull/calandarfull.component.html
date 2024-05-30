@@ -1,76 +1,88 @@
-<div class="calendar-container">
+<div class="calendar-container" >
   <div class="calendar-header">
-    <button (click)="previous()">&#9664;</button>
-    <span *ngIf="isMonthView">{{ monthName }}</span>
-    <span *ngIf="!isMonthView"
-      >{{ getWeekDates()[0] | date : "MMM d" }} -
-      {{ getWeekDates()[6] | date : "MMM d, yyyy" }}</span
-    >
-    <button (click)="next()">&#9654;</button>
-    <button (click)="toggleView()">
-      {{ isMonthView ? "Switch to Week View" : "Switch to Month View" }}
-    </button>
-  </div>
-  <div *ngIf="isMonthView" class="calendar-grid">
-    <div class="calendar-day-header" *ngFor="let day of weekDays">
-      {{ day }}
+    <div class="content-header">
+      <button class="button-34" (click)="toggleView()">
+        {{ isMonthView ? "Switch to Week View" : "Switch to Month View" }}
+      </button>
+      <span *ngIf="isMonthView">{{ monthName }}</span>
+      <span *ngIf="!isMonthView"
+        >{{ getWeekDates()[0] | date : "MMM d" }} -
+        {{ getWeekDates()[6] | date : "MMM d, yyyy" }}</span
+      >
+      
     </div>
-    <div
-      class="calendar-day"
-      *ngFor="let day of daysInMonth"
-      (click)="openWeekView(day)"
-      [ngClass]="{ 'has-event': hasEvents(day) }"
-    >
-      <div class="day-number">
+  </div>
+  <div class="content-Calendar">
+    <button class="button-34" (click)="previous()">
+      <i class="fa-solid fa-forward fa-rotate-180" style="color: #ebebeb"></i>
+    </button>
+
+    <div *ngIf="isMonthView" class="calendar-grid">
+      <div class="week-day" *ngFor="let day of weekDays">
         {{ day }}
       </div>
-
-      <div class="event-container">
-        <!-- Empty event container for adding events later -->
-      </div>
-    </div>
-  </div>
-  <div *ngIf="!isMonthView" class="week-view">
-    <div class="week-header">
-      <div class="week-day" *ngFor="let date of getWeekDates()">
-        {{ weekDays[date.getDay()] }} {{ date | date : "MMM d" }}
-      </div>
-    </div>
-    <div>
-      <div class="week-grid" *ngFor="let hour of getHoursOfDay()">
-        <div class="hour-label">
-          {{ hour }}
+      <div
+        class="calendar-day"
+        *ngFor="let day of daysInMonth"
+        (click)="openWeekView(day)"
+        [ngClass]="{ 'dayhas-event': hasEvents(day) }"
+      >
+        <div class="day-number">
+          {{ day }}
         </div>
+
+        <div class="event-container">
+          <!-- Empty event container for adding events later -->
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!isMonthView" class="week-view">
+      <div class="week-header">
         <div class="week-day" *ngFor="let date of getWeekDates()">
-          <div
-            class="hour-cell"
-            (click)="
-              !isEvent(date, hour) && openEventForm(date, hour, eventFormModal)
-            "
-          >
+          <div>{{ weekDays[date.getDay()] }}</div>
+          <div>{{ date | date : "MMM d" }}</div>
+        </div>
+      </div>
+      <div >
+        <div class="week-grid" *ngFor="let hour of getHoursOfDay()">
+          <div class="hour-label">
+            {{ hour }}
+          </div>
+          <div class="week-day" *ngFor="let date of getWeekDates()">
             <div
-              class="has-event"
-              *ngIf="isEvent(date, hour)"
-              [ngStyle]="getEventStyles(date, hour)"
+              class="hour-cell"
+              (click)="
+                !isEvent(date, hour) &&
+                  openEventForm(date, hour, eventFormModal)
+              "
             >
-              <ng-container 
-                *ngFor="let event of getEventsForDateAndHour(date, hour)"
+              <div
+                class="has-event"
+                *ngIf="isEvent(date, hour)"
+                [ngStyle]="getEventStyles(date, hour)"
               >
-                <div>
-                  <strong>{{ event.title }}</strong
-                  ><br />
-                  <small
-                    >{{ event.start | date : "shortTime" }} -
-                    {{ event.end | date : "shortTime" }}</small
-                  >
-                </div>
-              </ng-container>
+                <ng-container
+                  *ngFor="let event of getEventsForDateAndHour(date, hour)"
+                >
+                  <div>
+                    <strong>{{ event.title }}</strong
+                    ><br />
+                    <small
+                      >{{ event.start | date : "shortTime" }} -
+                      {{ event.end | date : "shortTime" }}</small
+                    >
+                  </div>
+                </ng-container>
+              </div>
+              <!-- Add event content here -->
             </div>
-            <!-- Add event content here -->
           </div>
         </div>
       </div>
     </div>
+    <button class="button-34" (click)="next()">
+      <i class="fa-solid fa-forward" style="color: #ebebeb"></i>
+    </button>
   </div>
 </div>
 

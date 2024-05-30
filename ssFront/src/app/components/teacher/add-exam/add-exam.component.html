@@ -14,10 +14,14 @@
                 examForm.get('exam__name')?.touched)
             "
           >
-            <span class="error" *ngIf="examForm.controls['exam__name'].errors?.['required']"
+            <span
+              class="error"
+              *ngIf="examForm.controls['exam__name'].errors?.['required']"
               >This field is mandatory.</span
             >
-            <span class="error" *ngIf="examForm.controls['exam__name'].errors?.['pattern']"
+            <span
+              class="error"
+              *ngIf="examForm.controls['exam__name'].errors?.['pattern']"
               >This field is invalid.</span
             >
           </div>
@@ -45,24 +49,20 @@
           </div>
         </div> -->
         <label for="examType">Type Exam</label>
+        <div class="Row">
+          <div class="online">
+            online
+            <i
+              *ngIf="
+                examForm.get('exam__type')?.value !== '' &&
+                examForm.get('exam__type')?.value !== 'offline'
+              "
+              class="fa-solid fa-check fa-bounce fa-xl"
+              style="color: #ffbd2e"
+            ></i>
+          </div>
+        </div>
         <div id="examType" class="Row radio-group">
-          <input
-            type="radio"
-            id="offline"
-            name="exam__type"
-            value="offline"
-            formControlName="exam__type"
-          /><label for="offline">offline</label>
-          <label
-            for=""
-            [ngClass]="
-              examForm.get('exam__type')?.value === '' ||
-              examForm.get('exam__type')?.value === 'offline'
-                ? 'online'
-                : 'online__act'
-            "
-            >online</label
-          >
           <input
             type="radio"
             id="QCM"
@@ -86,6 +86,27 @@
             formControlName="exam__type"
           /><label for="File">File</label>
         </div>
+
+        <div class="offline">
+          <div class="online">OR</div>
+          <div id="examType" class="radio-group" style="margin: 10px 5px">
+            <input
+              type="radio"
+              id="offline"
+              name="exam__type"
+              value="offline"
+              formControlName="exam__type"
+            /><label for="offline">offline</label>
+          </div>
+          <i
+            *ngIf="
+              examForm.get('exam__type')?.value !== '' &&
+              examForm.get('exam__type')?.value == 'offline'
+            "
+            class="fa-solid fa-check fa-bounce fa-xl"
+            style="color: #ffbd2e"
+          ></i>
+        </div>
         <div
           *ngIf="
             examForm.get('exam__type')?.invalid &&
@@ -93,10 +114,14 @@
               examForm.get('exam__type')?.touched)
           "
         >
-          <span class="error" *ngIf="examForm.controls['exam__type'].errors?.['required']"
+          <span
+            class="error"
+            *ngIf="examForm.controls['exam__type'].errors?.['required']"
             >This field is mandatory.</span
           >
-          <span class="error" *ngIf="examForm.controls['exam__type'].errors?.['pattern']"
+          <span
+            class="error"
+            *ngIf="examForm.controls['exam__type'].errors?.['pattern']"
             >This field is invalid.</span
           >
         </div>
@@ -141,191 +166,54 @@
             />
           </div>
         </div>
+        <div
+        *ngIf="
+          examForm.get('exam__type')?.value === 'QCM' ||
+          examForm.get('exam__type')?.value === 'Normal'
+        "
+        class="quistionForm box"
+        >
+<app-add-question (questionAdded)="loadQuestions()"></app-add-question>
 
+        </div>
         <!-- add question  -->
 
-        <div
-          *ngIf="
-            examForm.get('exam__type')?.value === 'QCM' ||
-            examForm.get('exam__type')?.value === 'Normal'
-          "
-          class="quistionForm box"
-        >
-          <!-- <div class="ADD" (click)="addQuestion()">ADD Question</div> -->
-          <!-- Your question and answer form here -->
-          <div [formGroup]="questionsForm">
-            <legend>Question</legend>
-            <!-- Text -->
-            <div class="inputs bordercorner">
-              <div class="Row">
-                <div>
-                  <div class="noteDiv">
-                    <label for="number">Note :</label>
-
-                    <input
-                      type="number"
-                      id="number"
-                      formControlName="note"
-                      min="1"
-                      max="5"
-                    />
-                  </div>
-                </div>
-                <div class="Row radio-group">
-                  <input
-                    type="radio"
-                    id="QCM_Q"
-                    name="question__type"
-                    formControlName="question__type"
-                    value="QCM"
-                  />
-                  <label for="QCM_Q">QCM</label>
-                  <input
-                    type="radio"
-                    id="NormalQ"
-                    name="question__type"
-                    formControlName="question__type"
-                    value="Normal"
-                    checked="true"
-                  />
-                  <label for="NormalQ">Normal</label>
-                  <input
-                    type="radio"
-                    id="Problem_Q"
-                    name="question__type"
-                    formControlName="question__type"
-                    value="Problem"
-                  />
-                  <label for="Problem_Q">Problem</label>
-                </div>
-              </div>
-              <div class="Row">
-                <div
-                  *ngIf="
-                    questionsForm.get('note')?.invalid &&
-                    (questionsForm.get('note')?.dirty ||
-                      questionsForm.get('note')?.touched)
-                  "
-                  style="margin-left: 0;"
-                >
-                  <span class="error"
-                    *ngIf="questionsForm.controls['note'].errors?.['required']"
-                    >This field is mandatory.</span
-                  >
-                  <span class="error" *ngIf="questionsForm.controls['note'].errors?.['msg']"
-                    >Note must be in
-                    {{ questionsForm.controls['note'].errors?.['msg'] }}.</span
-                  >
-                </div>
-                <div
-                  *ngIf="
-                    questionsForm.get('question__type')?.invalid &&
-                    (questionsForm.get('question__type')?.dirty ||
-                      questionsForm.get('question__type')?.touched)
-                  "
-                >
-                  <span class="error"
-                    *ngIf="questionsForm.controls['question__type'].errors?.['required']"
-                    >This field is mandatory.</span
-                  >
-                  <span class="error"
-                    *ngIf="questionsForm.controls['question__type'].errors?.['pattern']"
-                    >This field is invalid.</span
-                  >
-                </div>
-              </div>
-              <div>
-                <label for="text">Question</label>
-                <textarea id="text" formControlName="question__text"></textarea>
-                <div
-                  *ngIf="
-                    questionsForm.get('question__text')?.invalid &&
-                    (questionsForm.get('question__text')?.dirty ||
-                      questionsForm.get('question__text')?.touched)
-                  "
-                >
-                  <span class="error"
-                    *ngIf="questionsForm.controls['question__text'].errors?.['required']"
-                    >This field is mandatory.</span
-                  >
-                  <span class="error"
-                    *ngIf="questionsForm.controls['question__text'].errors?.['pattern']"
-                    >This field is invalid.</span
-                  >
-                </div>
-              </div>
-
-              <!-- answerQuiz -->
-              <hr>
-              <div
-                *ngIf="questionsForm.get('question__type')?.value !== ''"
-              class="repQuiz"
-              >
-                <div formArrayName="reponses">
-                  <div
-                    *ngFor="
-                      let answer of $any(questionsForm.get('reponses')).controls;
-                      let j = index
-                    "
-                    formGroupName="{{ j }}"
-                  
-                  >
-                  
-                    <div class="answer-container"  >
-                      <div class="rmAns" (click)="removeAnswer(j)">
-                        <i class="fa-solid fa-eraser fa-lg" style="color: #d50707; margin-top: 20px;"></i>
-                      </div>
-                      <div class="answer">
-                        <label for="text">Answer</label>
-                        <textarea
-                          id="text"
-                          formControlName="reponse__text"
-                        ></textarea>
-                      </div>
-                      <label class="label">
-                        <input
-                          class="label__checkbox"
-                          type="checkbox"
-                          formControlName="reponse__statut"
-                        />
-                        <span class="label__text">
-                          <span class="label__check">
-                            <i class="fa fa-check icon"></i>
-                          </span>
-                        </span>
-                      </label>
-                     
-                    </div>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="add" (click)="addAnswer()">
-                <i class="fa-solid fa-plus" style="color: #ebebeb;"></i>add question
-              </div>
-              <span class="border_btm"></span>
-           
-            </div>
-            <div class="button-34" (click)="addQuestionAndReset()">
-              add to the list
-            </div>
-          </div>
-        </div>
+       
         <!-- Button -->
-        <button (click)="saveexam()">Submit</button>
+        <hr>
+        <div class="Row">
+          <button (click)="saveexam()">
+            <i class="fa-solid fa-folder-plus" ></i>Save
+          </button>
+          <button (click)="saveexam()">
+            <i class="fa-solid fa-calendar-days"></i> Save & Planing
+          </button>
+        
+        </div>
       </div>
     </div>
   </form>
-
-  <div class="listQuestions" *ngIf="questarr.length > 0">
+  <div *ngIf="showCalendar" class="planingPop visible">
+    <div  class="calendar-popup " [ngStyle]="{'margin-top': !isMonthView ? '20%' : '0'}">
+      <app-calandarfull  (isMonthViewChange)="onIsMonthViewChange($event)"></app-calandarfull>
+    </div>
+  </div>
+  <div class="listQuestions" *ngIf="questarr !=''">
+    <h3>list question</h3>
     <app-listview [data]="questarr"></app-listview>
   </div>
 </div>
 
+
+
+
+
+
+
 <!-- uploadFile of exam -->
-<div class="ADD">{{ this.listFile}}</div>
-   <!-- <div class="card" *ngFor="let question of questarr; let k = index">
+<!-- <div class="card" *ngFor="let question of questarr; let k = index">
       
+
       <div class="infoQuest">
         <div class="cardinfo"><span class="lab">N: </span> {{ question.note }}</div>
         <div class="cardinfo">

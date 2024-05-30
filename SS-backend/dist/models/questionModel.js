@@ -13,6 +13,7 @@ exports.Question = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const examModel_1 = require("./examModel"); // Import the Exam model if it exists
 const reponseModel_1 = require("./reponseModel");
+const fileModel_1 = require("./fileModel");
 let Question = class Question extends sequelize_typescript_1.Model {
 };
 exports.Question = Question;
@@ -34,16 +35,15 @@ __decorate([
     __metadata("design:type", Number)
 ], Question.prototype, "exam__id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => examModel_1.Exam),
-    __metadata("design:type", examModel_1.Exam)
-], Question.prototype, "exam", void 0);
+    (0, sequelize_typescript_1.HasMany)(() => fileModel_1.FileQuestion),
+    __metadata("design:type", Array)
+], Question.prototype, "file", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => reponseModel_1.Reponse),
     __metadata("design:type", Array)
 ], Question.prototype, "reponses", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.FLOAT) // Use FLOAT or INTEGER instead of NUMBER
-    ,
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.FLOAT),
     __metadata("design:type", Number)
 ], Question.prototype, "note", void 0);
 __decorate([

@@ -5,21 +5,23 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  getFakeQuestions,
 } from '../controllers/questionController';
 
 const routerQuestion = express.Router();
 
 routerQuestion.get('/', getAllQuestions);
 
+routerQuestion.get('/fake', getFakeQuestions);
 
-routerQuestion.get('/Question/:id', getQuestionById);
+routerQuestion.get('/question/:id', getQuestionById);
 
-routerQuestion.post('/Questions', createQuestion);
-
-
-routerQuestion.put('/Questions/:id', updateQuestion);
+routerQuestion.post('/question', createQuestion);
 
 
-routerQuestion.delete('/Questions/:id', deleteQuestion);
+routerQuestion.put('/questions/:id', updateQuestion);
+
+
+routerQuestion.delete('/questions/:id', deleteQuestion);
 
 export default routerQuestion;

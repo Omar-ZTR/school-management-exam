@@ -15,6 +15,6 @@ const connection = new sequelize_typescript_1.Sequelize('smartskills', 'root', '
     host: 'localhost',
     dialect: 'mysql',
     database: "smartskills",
-    models: [User__model_1.User, examModel_1.Exam, questionModel_1.Question, reponseModel_1.Reponse, salleModel_1.Salle, reservationModel_1.Reservation, studentModel_1.Student, teacherModel_1.Teacher, tokenModel_1.Token, fileModel_1.File],
+    models: [User__model_1.User, examModel_1.Exam, questionModel_1.Question, reponseModel_1.Reponse, salleModel_1.Salle, reservationModel_1.Reservation, studentModel_1.Student, teacherModel_1.Teacher, tokenModel_1.Token, fileModel_1.FileExam, fileModel_1.FileQuestion],
 });
 exports.default = connection;

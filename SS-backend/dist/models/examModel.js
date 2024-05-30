@@ -37,7 +37,7 @@ __decorate([
     __metadata("design:type", Array)
 ], Exam.prototype, "questions", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => fileModel_1.File),
+    (0, sequelize_typescript_1.HasMany)(() => fileModel_1.FileExam),
     __metadata("design:type", Array)
 ], Exam.prototype, "file", void 0);
 exports.Exam = Exam = __decorate([

@@ -8,13 +8,13 @@ import { Reservation } from "./models/reservationModel";
 import { Student } from "./models/studentModel";
 import { Teacher } from "./models/teacherModel";
 import { Token } from "./models/tokenModel";
-import { File } from "./models/fileModel";
+import {  FileExam, FileQuestion } from "./models/fileModel";
 
 const connection = new Sequelize('smartskills', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     database: "smartskills",
-    models: [User, Exam, Question, Reponse, Salle, Reservation, Student, Teacher,Token,File],
+    models: [User, Exam, Question, Reponse, Salle, Reservation, Student, Teacher,Token,FileExam,FileQuestion],
 
 });
 

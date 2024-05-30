@@ -42,7 +42,7 @@ const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 exam__id: exam.exam__id
             };
             console.log("file attribute", support__files);
-            const filesup = yield fileModel_1.File.create({
+            const filesup = yield fileModel_1.FileExam.create({
                 file__name: req.file.originalname,
                 file__path: baseUrl + req.file.filename,
                 file__type: "support",

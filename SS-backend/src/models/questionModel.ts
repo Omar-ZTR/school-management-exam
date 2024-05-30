@@ -1,6 +1,7 @@
 import { Table, Model, Column, DataType, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
 import { Exam } from "./examModel"; // Import the Exam model if it exists
 import { Reponse } from "./reponseModel";
+import { FileQuestion } from "./fileModel";
 
 @Table({
     timestamps: true,
@@ -22,13 +23,14 @@ export class Question extends Model<Question> {
     @Column
     exam__id!: number;
 
-    @BelongsTo(() => Exam)
-    exam!: Exam;
-
+    // @BelongsTo(() => Exam)
+    // exam!: Exam;
+    @HasMany(() => FileQuestion)
+    file!: FileQuestion[];
     @HasMany(() => Reponse)
     reponses!: Reponse[];
 
-    @Column(DataType.FLOAT)  // Use FLOAT or INTEGER instead of NUMBER
+    @Column(DataType.FLOAT)  
     note!: number;
 
     @Column(DataType.STRING)

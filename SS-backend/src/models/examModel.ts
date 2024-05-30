@@ -1,6 +1,6 @@
 import { Table, Model, Column, DataType, HasMany } from "sequelize-typescript";
 import { Question } from "./questionModel";
-import { File } from "./fileModel";
+import {  FileExam } from "./fileModel";
 
 
 @Table({
@@ -24,6 +24,6 @@ export class Exam extends Model<Exam> {
   @HasMany(() => Question)
   questions!: Question[];
 
-  @HasMany(() => File)
-  file!: File[];
+  @HasMany(() => FileExam)
+  file!: FileExam[];
 }

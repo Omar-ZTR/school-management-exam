@@ -46,7 +46,6 @@ const storage = multer_1.default.diskStorage({
 });
 const uploadFile = (0, multer_1.default)({
     storage: storage,
-    limits: { fileSize: maxSize },
-}).single("file");
+}).array("files");
 const uploadFileMiddleware = util.promisify(uploadFile);
 exports.default = uploadFileMiddleware;

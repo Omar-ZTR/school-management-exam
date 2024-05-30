@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { NgbModal, NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 
@@ -31,7 +31,8 @@ export class CalandarfullComponent implements OnInit {
   weekDays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   isMonthView: boolean = true; // Toggle between month view and week view
   currentWeekStart: Date = new Date();
-
+  
+  @Output() isMonthViewChange = new EventEmitter<boolean>();
   constructor(private fb: FormBuilder, private modalService: NgbModal) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -75,6 +76,7 @@ export class CalandarfullComponent implements OnInit {
   
     this.currentWeekStart = startOfWeek;
     this.isMonthView = false;
+    this.isMonthViewChange.emit(this.isMonthView);
     this.generateCurrentWeek();
   }
 
@@ -88,8 +90,10 @@ export class CalandarfullComponent implements OnInit {
   
   toggleView() {
     this.isMonthView = !this.isMonthView;
+    this.isMonthViewChange.emit(this.isMonthView);
     if (!this.isMonthView) {
-      // Set currentWeekStart to the start of the first week of the current month
+      
+      
       const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1);
       const dayOfWeek = firstDayOfMonth.getDay();
       this.currentWeekStart = new Date(firstDayOfMonth);

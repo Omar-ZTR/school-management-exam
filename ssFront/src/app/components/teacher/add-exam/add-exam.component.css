@@ -13,32 +13,48 @@ form {
   min-width: 30rem;
   
 }
-
-.plus {
-  background: #166008;
-  height: 30px;
-  position: relative;
-  width: 6px;
-  border-radius: 10px;
-}
-
-.plus:after {
-  background: #166008;
-  content: "";
-  border-radius: 10px;
-  height: 6px;
-  left: -11px;
+.planingPop{
   position: absolute;
-  top: 11px;
-  width: 30px;
+  width: 100%;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: opacity 0.3s ease;
+  opacity: 0; /* Initially hidden */
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  padding: 50px;
 }
+.calendar-popup {
+ 
+  display: block; /* or flex, inline-block, etc. based on your layout */
+  position: absolute; 
 
+  background: white;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+ 
+}
+.planingPop.visible {
+  opacity: 1; /* Visible when showCalendar is true */
+}
 .add {
-  background: #0cb731;
+  background: #eff8ff;
   border-radius: 999px;
-  box-shadow: #0cb731 0 10px 20px -10px;
+  box-shadow: #252525 0 10px 20px -10px;
 
-  color: #FFFFFF;
+  color: #0f3cdf;
   padding: 8px 18px;
   cursor: pointer;
   width: fit-content;
@@ -159,23 +175,27 @@ input[type=radio] {
 }
 
 input[type=radio]:checked+label {
-  color: lighten(#1d18ac, 60%);
-  background: #1d18ac;
-  color: #ebebeb;
+  /* color: lighten(#1d18ac, 60%); */
+  background: #ff8b43;
+  color: #ffffff;
+  transform: translateY(-5px);
+  border-left: solid 3px #120f61;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.566) 0px 22px 70px 4px;
 }
 
 label+input[type=radio]+label {
-  border-left: solid 3px #1d18ac;
+  border-left: solid 3px #120f61;
 }
 
 .radio-group {
-  border: solid #1d18ac 1px;
+  border: solid #120f61 1px;
   /* display: inline-block; */
   margin: 10px auto;
   width: max-content;
   column-gap: 0;
   border-radius: 10px;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .duration input {
@@ -204,8 +224,10 @@ label+input[type=radio]+label {
 .inputs {
   display: flex;
   flex-flow: column;
+  justify-content: center;
+  align-items: center;
   height: auto;
-  margin: 20px;
+  /* margin: 20px; */
   row-gap: 10px;
 }
 
@@ -215,7 +237,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 label {
   display: block;
-
+margin-bottom: 0 !important;
   font-size: 16px;
   font-weight: 500;
 }
@@ -224,7 +246,7 @@ input,
 textarea {
   display: block;
   height: 50px;
-  width: 100%;
+  width: 25rem;
   background-color: rgba(255, 255, 255, 0.07);
   border-radius: 3px;
   /* padding: 0 10px; */
@@ -239,14 +261,19 @@ textarea {
 
 button {
   margin-top: 30px;
-  width: 100%;
-  background-color: #061a7e;
-  color: #020203 !important;
-  padding: 15px 0;
+  background: #1935a3;
+
+  box-shadow: #1935a3 0 10px 20px -10px;
+  color:  #ffffff !important;
+  padding: 15px 20px;
   font-size: 18px;
   font-weight: 600;
   border-radius: 30px;
   cursor: pointer;
+  border: none !important;
+  display: flex;
+  justify-content: center;
+  column-gap: 5px;
 }
 
 textarea {
@@ -272,6 +299,7 @@ textarea {
   width: 140px;
   height: max-content;
   border-radius: 100px;
+  border-bottom: solid 3px rgb(55, 55, 55);
   position: relative;
   display: flex;
   justify-content: center;
@@ -322,7 +350,18 @@ textarea {
   gap: 10px;
 }
 
-
+.QuestFileView{
+  position: relative;
+  width: 110px;
+  box-shadow:rgba(170, 170, 255, 0.175) 0px 30px 60px -12px inset, rgb(11 28 255 / 11%) 0px 18px 36px -18px inset;
+padding: 5px;
+border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  row-gap: 5px;
+  margin: 0 10px;
+}
 .filepreview {
   position: relative;
   width: 110px;
@@ -363,15 +402,35 @@ textarea {
 
 .removeFile {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background: transparent;
+ width: 23px;
+ height: 23px;
+ text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+background: transparent;
+  
   backdrop-filter: blur(10px);
-  margin-right: 2px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+ border-radius:50% ;
+  box-shadow: rgba(39, 39, 43, 0.337) 0px 7px 29px 0px;
 }
 .removeFile:hover{
   color: red;
+}
+.removeFile:hover ~ .fileTitle {
+  position: relative;
+}
+
+.removeFile:hover ~ .fileTitle::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background-color: red;
+  transform: translateY(50%);
+  pointer-events: none;
 }
 .fileTitle {
   overflow: hidden;
@@ -381,8 +440,7 @@ textarea {
   color: #0f0f0f;
   white-space: nowrap;
   text-overflow: ellipsis;
-
-
+  pointer-events: none;
 
 }
 
@@ -515,8 +573,8 @@ hr{
   width: 30px;
   height: 30px;
   position: absolute;
-  bottom: -10px;
-  right: -10px;
+  bottom: 0px;
+  right: 0px;
   border-bottom: 3px solid #3779e3;
   border-right: 3px solid #3779e3;
 }
@@ -526,8 +584,8 @@ hr{
   width: 30px;
   height: 30px;
   position: absolute;
-  bottom: -10px;
-  left: -10px;
+  bottom: 0px;
+  left: 0px;
   border-bottom: 3px solid #3779e3;
   border-left: 3px solid #3779e3;
 }
@@ -537,8 +595,8 @@ hr{
   width: 30px;
   height: 30px;
   position: absolute;
-  top: -10px;
-  left: -10px;
+  top: 0px;
+  left: 0px;
   border-top: 3px solid #3779e3;
   border-left: 3px solid #3779e3;
 }
@@ -548,20 +606,48 @@ hr{
   width: 30px;
   height: 30px;
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: 0px;
+  right: 0px;
   border-top: 3px solid #3779e3;
   border-right: 3px solid #3779e3;
 }
 .online{
-  background: #101011;
-  color: #ebebeb;
+  background: #e2e2e200;
+  color: #1b1a1a;
+  padding: 8px 18px;
+  font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 10px;
+  
 }
 
-.online__act{
-  background: #0101fe;
-  color: #f7a730;
+.offline{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -571,6 +657,9 @@ hr{
   width: 30%;
   min-width: 30rem;
   height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .noteDiv {
@@ -641,28 +730,35 @@ hr{
 
 /* CSS */
 .button-34 {
-  background: #5E5DF0;
-  border-radius: 999px;
-  box-shadow: #5E5DF0 0 10px 20px -10px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  padding: 8px 18px;
-  cursor: pointer;
-  width: fit-content;
-  font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 24px;
-  opacity: 1;
-  outline: 0 solid transparent;
- 
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
   
-  word-break: break-word;
-  border: 0;
-}
+  background: #eff8ff;
+  border-radius: 999px;
+  box-shadow: #252525 0 10px 20px -10px;
+  margin: 0 20px;
+  color: #1935a3;
+    padding: 8px 18px;
+    cursor: pointer;
+    width: fit-content;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 990px;
+  
+  }
+  .supportQuestion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap:wrap;
+    padding-bottom:10px ;
+    border-bottom: 1px rgb(156, 156, 156) solid ;
+  }
 .answer {
   /* flex:1 1 auto; */
   /* flex-grow: 1; */

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import uploadFile from "../utils/upload";
 import { Reponse } from "../models/reponseModel";
 import { Question } from "../models/questionModel";
-import { File } from "../models/fileModel";
+import { FileExam } from "../models/fileModel";
 
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
@@ -35,7 +35,7 @@ export const createExam = async (req: Request, res: Response) => {
         }
       ;
       console.log("file attribute",support__files)
-      const filesup = await File.create({
+      const filesup = await FileExam.create({
         file__name: req.file.originalname,
         file__path: baseUrl + req.file.filename,
         file__type:"support",
