@@ -50,6 +50,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Question.prototype, "question__type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], Question.prototype, "question__subject", void 0);
 exports.Question = Question = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

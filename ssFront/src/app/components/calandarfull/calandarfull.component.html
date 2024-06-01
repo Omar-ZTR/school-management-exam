@@ -173,35 +173,44 @@
           End time is required.
         </div>
       </div>
-      <div class="form-group">
-        <label for="salle">Salle</label>
-        <select id="salle" class="form-control" formControlName="salle">
-          <option *ngFor="let salle of salles" [value]="salle.id">
-            {{ salle.name }}
-          </option>
-        </select>
-        <div
-          *ngIf="
-            eventForm.controls['salle'].invalid &&
-            eventForm.controls['salle'].touched
-          "
-          class="text-danger"
-        >
-          Salle is required.
+      <div class="form-group d-flex justify-content-center align-items-center">
+        <div class="mr-2">
+          <label for="salle">Salle</label>
+          <select id="salle" class="form-control" formControlName="salle">
+            <option *ngFor="let salle of salles" [value]="salle.id">
+              {{ salle.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              eventForm.controls['salle'].invalid &&
+              eventForm.controls['salle'].touched
+            "
+            class="text-danger"
+          >
+            Salle is required.
+          </div>
+        </div>
+        <div class="ml-2">
+          <label for="group">Group</label>
+          <select id="group" class="form-control" formControlName="group">
+            <option *ngFor="let group of groups" [value]="group.id">
+              {{ group.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              eventForm.controls['group'].invalid &&
+              eventForm.controls['group'].touched
+            "
+            class="text-danger"
+          >
+            Group is required.
+          </div>
         </div>
       </div>
-      <div formGroupName="color">
-        <div class="form-group">
-          <label for="primaryColor">Primary Color</label>
-          <input
-            id="primaryColor"
-            type="color"
-            class="form-control"
-            formControlName="primary"
-          />
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary">Save Event</button>
+     
+      <button type="submit" class="btn btn-primary">Save Exam plan</button>
     </form>
   </div>
 </ng-template>

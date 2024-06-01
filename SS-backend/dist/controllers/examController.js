@@ -28,9 +28,9 @@ const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log("exam 3", req.body.file);
         const examDatas = Object.assign({}, req.body); // Assuming exam data is in req.body
         console.log("exam 4", examDatas);
-        // const examData= JSON.parse(examDatas.exam)
-        // console.log("LLLL 5",examData)
-        const exam = yield examModel_1.Exam.create(examDatas);
+        const examData = JSON.parse(examDatas.exam);
+        console.log("LLLL 5", examData);
+        const exam = yield examModel_1.Exam.create(examData);
         console.log("exam 6");
         if (req.file !== undefined) {
             console.log("file 7", req.file);
@@ -114,18 +114,33 @@ exports.getAllExams = getAllExams;
 // Update operation
 const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("Request Body:", req.body);
+        console.log("Request Params:", req.params);
         const { id } = req.params;
-        const [updated] = yield examModel_1.Exam.update(req.body, { where: { exam__id: id } });
+        const { operation } = req.body;
+        // Validate the operation
+        if (typeof operation !== 'number') {
+            return res.status(400).send("Invalid operation value");
+        }
+        // Find the exam by primary key
+        const exam = yield examModel_1.Exam.findByPk(id);
+        if (!exam) {
+            return res.status(404).send("Exam not found");
+        }
+        console.log("Existing Exam:", exam);
+        // Update the nb__reserve field
+        const nb__reserve = exam.nb__reserve + operation;
+        const [updated] = yield examModel_1.Exam.update({ nb__reserve }, { where: { exam__id: id } });
         if (updated) {
             const updatedExam = yield examModel_1.Exam.findOne({ where: { exam__id: id } });
             res.status(200).json(updatedExam);
         }
         else {
-            throw new Error("Exam not found");
+            res.status(500).send("Failed to update exam");
         }
     }
     catch (error) {
-        console.error("Error updating exam", error);
+        console.error("Error updating exam:", error);
         res.status(500).send("Error updating exam");
     }
 });

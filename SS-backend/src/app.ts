@@ -5,6 +5,7 @@ import connection from "./connection";
 import { json, urlencoded } from "body-parser";
 import routerExam from "./routers/examRouter";
 import routerQuestion from "./routers/questionRouter";
+import routerReservation from "./routers/reservationRouter";
 
 const app = express();
 
@@ -24,11 +25,11 @@ app.use(function (req, res, next) {
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/", UserRoutes,routerExam, routerQuestion );
+app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation );
 
 const corsOptions = {
-  origin: 'http://localhost:4200', // Or an array of origins: ['http://localhost:4200', 'http://example.com']
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  origin: 'http://localhost:4200', 
+  optionsSuccessStatus: 200 
 };
 app.use(cors(corsOptions));
 app.use(

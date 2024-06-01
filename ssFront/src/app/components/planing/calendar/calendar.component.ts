@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { mapCoursesToSchedulerEvents } from '../reservUtils';
+// import { mapCoursesToSchedulerEvents } from '../reservUtils';
 import { CommonModule } from '@angular/common';
-import { BookedCourse } from '../entities';
+// import { BookedCourse } from '../entities';
 import { MonthViewModule, SchedulerModule } from '@progress/kendo-angular-scheduler';
 
 
@@ -13,6 +13,6 @@ import { MonthViewModule, SchedulerModule } from '@progress/kendo-angular-schedu
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent {
-  @Input({ transform: mapCoursesToSchedulerEvents }) courses: BookedCourse[] =
-  [];
+  // @Input({ transform: mapCoursesToSchedulerEvents }) courses: BookedCourse[] =
+  // [];
 }

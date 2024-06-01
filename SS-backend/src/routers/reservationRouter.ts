@@ -9,17 +9,17 @@ import {
 
 const routerReservation = express.Router();
 
-routerReservation.get('/', getAllReservations);
+routerReservation.get('/reservation', getAllReservations);
 
 
-routerReservation.get('/Reservation/:id', getReservationById);
+routerReservation.get('/reservation/:id', getReservationById);
 
-routerReservation.post('/Reservations', createReservation);
-
-
-routerReservation.put('/Reservations/:id', updateReservation);
+routerReservation.post('/reservation', createReservation);
 
 
-routerReservation.delete('/Reservations/:id', deleteReservation);
+routerReservation.put('/reservation/:id', updateReservation);
+
+
+routerReservation.delete('/reservation/:id', deleteReservation);
 
 export default routerReservation;

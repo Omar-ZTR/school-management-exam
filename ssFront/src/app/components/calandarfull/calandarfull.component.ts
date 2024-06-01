@@ -1,17 +1,17 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { NgbModal, NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
+import { ExamService } from "../teacher/serviceTeacher/exam.service";
+import { CalandarService } from "../teacher/serviceTeacher/calandar.service";
 
 interface CalendarEvent {
   title: string;
   start: string;
   end: string;
   salle:string;
-  color: {
-    primary: string;
-    secondary: string;
-  };
+  group:string;
+ 
 }
 
 @Component({
@@ -27,13 +27,14 @@ export class CalandarfullComponent implements OnInit {
   currentMonth: number = new Date().getMonth();
   monthName: string = '';
   eventForm: FormGroup;
+  examlist: any;
   events: { [key: string]: CalendarEvent[] } = {}; // Stores events keyed by date
   weekDays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   isMonthView: boolean = true; // Toggle between month view and week view
   currentWeekStart: Date = new Date();
-  
+  @Input() data: any;
   @Output() isMonthViewChange = new EventEmitter<boolean>();
-  constructor(private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private examService: ExamService, private calandarService: CalandarService) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       startDate: ['', Validators.required],
@@ -41,10 +42,8 @@ export class CalandarfullComponent implements OnInit {
       endDate: ['', Validators.required],
       endTime: ['', Validators.required],
       salle: ['', Validators.required],
-      color: this.fb.group({
-        primary: ['#10c634', Validators.required],
-        secondary: ['#676670', Validators.required]
-      })
+      group: ['', Validators.required],
+    
     });
   }
   salles: Array<{ id: number, name: string }> = [
@@ -52,7 +51,11 @@ export class CalandarfullComponent implements OnInit {
     { id: 2, name: 'Salle B' },
     { id: 3, name: 'Salle C' },
   ];
-
+  groups: Array<{ id: number, name: string }> = [
+    { id: 1, name: 'Group 1' },
+    { id: 2, name: 'Group 2' },
+    { id: 3, name: 'Group 3' },
+  ];
   ngOnInit(): void  {
     this.generateCalendar();
     this.generateCurrentWeek();
@@ -62,12 +65,35 @@ export class CalandarfullComponent implements OnInit {
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       salle: ['', Validators.required],
-      color: this.fb.group({
-        primary: ['#000000']
-      })
+      group: ['', Validators.required],
+    
     });
+    this.fetchEvents();
   }
 
+  fetchEvents(): void {
+    this.calandarService.getEvents().subscribe(
+      (data) => {
+        this.examlist = data;
+        console.log("nnddd", this.examlist)
+      },
+      (error) => {
+        console.error('Error fetching fake questions', error);
+      }
+    );
+  }
+
+  groupEventsByDate(events: CalendarEvent[]): { [key: string]: CalendarEvent[] } {
+    const groupedEvents: { [key: string]: CalendarEvent[] } = {};
+    events.forEach(event => {
+      const date = event.start.split('T')[0];
+      if (!groupedEvents[date]) {
+        groupedEvents[date] = [];
+      }
+      groupedEvents[date].push(event);
+    });
+    return groupedEvents;
+  }
   openWeekView(day: number) {
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
     const startOfWeek = new Date(selectedDate);
@@ -163,58 +189,11 @@ openEventForm(date: Date, hour: string, modal: any): void {
   // Open the modal
   this.modalService.open(modal);
 }
-  // saveEvent() {
-  //   if (this.eventForm.valid) {
-  //     const formValues = this.eventForm.value;
-  //     const eventData: CalendarEvent = {
-  //       title: formValues.title,
-  //       start: `${formValues.startDate}T${formValues.startTime}`,
-  //       end: `${formValues.startDate}T${formValues.endTime}`,
-  //       color: formValues.color,
-  //       salle: formValues.salle
-  //     };
-  //     const eventDate = formValues.startDate;
-
-  //     if (!this.events[eventDate]) {
-  //       this.events[eventDate] = [];
-  //     }
-
-  //     this.events[eventDate].push(eventData);
-  //     console.log(this.events); // For debugging purposes
-  //     this.modalService.dismissAll();
-  //   }
-  //   else{
-  //     console.log("fghjkl;")
-  //   }
-  // }
-
-  saveEvent() {
-    if (this.eventForm.valid) {
-      const formValues = this.eventForm.value;
-      const eventData: CalendarEvent = {
-        title: formValues.title,
-        start: `${formValues.startDate}T${formValues.startTime}`,
-        end: `${formValues.startDate}T${formValues.endTime}`,
-        color: formValues.color,
-        salle: formValues.salle
-      };
-      const eventDate = formValues.startDate;
-  
-      if (!this.events[eventDate]) {
-        this.events[eventDate] = [];
-      }
-  
-      this.events[eventDate].push(eventData);
-      console.log('Events:', this.events); // For debugging purposes
-      this.modalService.dismissAll();
-    } else {
-      console.log('Invalid form controls:');
-      this.logInvalidControls(this.eventForm);
-    }
-  }
   
 
-// Helper method to log invalid controls
+
+
+
 logInvalidControls(formGroup: FormGroup) {
   Object.keys(formGroup.controls).forEach(key => {
     const control = formGroup.get(key);
@@ -227,94 +206,129 @@ logInvalidControls(formGroup: FormGroup) {
   });
 }
 
+isEvent(date: Date, hour: string): boolean {
+  const dateString = date.toISOString().split('T')[0];
+  const hourValue = parseInt(hour.split(':')[0], 10);
+  const minuteValue = parseInt(hour.split(':')[1], 10);
+
+  if (this.examlist) {
+    return this.examlist.some((event: { startDate: string | number | Date; }) => {
+      const eventStartDate = new Date(event.startDate).toISOString().split('T')[0];
+      const eventStartHour = new Date(event.startDate).getHours();
+      const eventStartMinute = new Date(event.startDate).getMinutes();
+
+      return eventStartDate === dateString && eventStartHour === hourValue && eventStartMinute >= 0 && eventStartMinute < 60;
+    });
+  }
+
+  return false;
+}
 
 
 
-
-  hasEvents(day: number): boolean {
+// Update the hasEvents function to work with examlist
+hasEvents(day: number): boolean {
+  if (this.examlist) {
     const date = new Date(this.currentYear, this.currentMonth, day).toISOString().split('T')[0];
-    return this.events[date] && this.events[date].length > 0;
+    return this.examlist.some((event: { startDate: string | number | Date; }) => {
+      const eventDate = new Date(event.startDate).toISOString().split('T')[0];
+      return eventDate === date;
+    });
   }
 
-  hasEvent(date: Date, hour: string): boolean {
-    const dateString = date.toISOString().split('T')[0];
-    const eventHour = hour.split(':')[0];
+  return false;
+}
+
+
+
+  // hasEvents(day: number): boolean {
+  //   const date = new Date(this.currentYear, this.currentMonth, day).toISOString().split('T')[0];
+  //   return this.events[date] && this.events[date].length > 0;
+  // }
+
+ 
+  // isEvent(date: Date, hour: string): boolean {
+  //   const dateString = date.toISOString().split('T')[0];
+  //   const hourValue = parseInt(hour.split(':')[0], 10);
+  //   const minuteValue = parseInt(hour.split(':')[1], 10);
   
-    if (this.events[dateString]) {
-      return this.events[dateString].some(event => {
-        const eventStartHour = new Date(event.start).getHours().toString();
-        return eventStartHour === eventHour;
-      });
-    }
-    return false;
-  }
-  isEvent(date: Date, hour: string): boolean {
-    const dateString = date.toISOString().split('T')[0];
-    const hourValue = parseInt(hour.split(':')[0], 10);
-    const minuteValue = parseInt(hour.split(':')[1], 10);
+  //   if (this.events[dateString]) {
+  //     return this.events[dateString].some(event => {
+  //       const eventStart = new Date(event.start);
+  //       const eventEnd = new Date(event.end);
   
-    if (this.events[dateString]) {
-      return this.events[dateString].some(event => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
+  //       const eventStartHour = eventStart.getHours();
+  //       const eventEndHour = eventEnd.getHours();
+  //       const eventStartMinute = eventStart.getMinutes();
+  //       const eventEndMinute = eventEnd.getMinutes();
   
-        const eventStartHour = eventStart.getHours();
-        const eventEndHour = eventEnd.getHours();
-        const eventStartMinute = eventStart.getMinutes();
-        const eventEndMinute = eventEnd.getMinutes();
+  //       if (eventStartHour === hourValue && minuteValue < 15) {
+  //         return true;
+  //       }
   
-        if (eventStartHour === hourValue && minuteValue < 15) {
-          return true;
-        }
+  //       if (eventEndHour === hourValue && minuteValue > 45) {
+  //         return true;
+  //       }
   
-        if (eventEndHour === hourValue && minuteValue > 45) {
-          return true;
-        }
+  //       const eventStartTotalMinutes = eventStartHour * 60 + eventStartMinute;
+  //       const eventEndTotalMinutes = eventEndHour * 60 + eventEndMinute;
+  //       const currentTotalMinutes = hourValue * 60 + minuteValue;
   
-        const eventStartTotalMinutes = eventStartHour * 60 + eventStartMinute;
-        const eventEndTotalMinutes = eventEndHour * 60 + eventEndMinute;
-        const currentTotalMinutes = hourValue * 60 + minuteValue;
+  //       return currentTotalMinutes >= eventStartTotalMinutes && currentTotalMinutes < eventEndTotalMinutes;
+  //     });
+  //   }
   
-        return currentTotalMinutes >= eventStartTotalMinutes && currentTotalMinutes < eventEndTotalMinutes;
-      });
-    }
-  
-    return false;
-  }
-  
+  //   return false;
+  // }
   getEventStyles(date: Date, hour: string): { [key: string]: string } {
     const dateString = date.toISOString().split('T')[0];
     const hourValue = parseInt(hour.split(':')[0], 10);
     const minuteValue = parseInt(hour.split(':')[1], 10);
-    
+    const colors = [
+      '#615EFC', '#7E8EF1', '#68D2E8', '#121481', '#FEEFAD', '#FFC55A', '#1D24CA'
+    ];
+  
+    const defaultColor = '#5e83fc'; // Default color if only one event on the same day
+
     let styles = {
       'width': '10%',
       'height': 'auto',
       'transform': `translateY(0px)`,
+      'box-shadow': `0 4px 30px ${defaultColor}`,
       'z-index': '99',
-      'background-color': 'transparent'
+      'background-color': `${defaultColor}33`
     };
   
     console.log('Checking event styles for:', dateString, hour);
   
-    if (this.events[dateString]) {
-      const event = this.events[dateString].find(event => {
-        const eventStart = new Date(event.start);
+    if (this.examlist) {
+      const eventsOnSameDay = this.examlist.filter((event: { startDate: string | number | Date; }) => {
+        const eventStart = new Date(event.startDate);
+        return eventStart.toISOString().split('T')[0] === dateString;
+      });
+  
+      const eventIndex = eventsOnSameDay.findIndex((event: { startDate: string | number | Date; }) => {
+        const eventStart = new Date(event.startDate);
         return eventStart.getHours() === hourValue;
       });
   
-      if (event) {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
+      if (eventIndex !== -1) {
+        const event = eventsOnSameDay[eventIndex];
+        const eventStart = new Date(event.startDate);
+        const eventEnd = new Date(event.endDate);
         const durationMinutes = (eventEnd.getTime() - eventStart.getTime()) / (1000 * 60);
         const minute = eventStart.getMinutes();
+  
+        // Use default color if there's only one event on the same day
+        const colorIndex = eventsOnSameDay.length > 1 ? Math.floor(Math.random() * colors.length) : -1;
   
         styles = {
           'width': '9%',
           'height': `${durationMinutes}px`,
           'transform': `translateY(${minute}px)`,
+         'box-shadow': `0 4px 30px ${defaultColor}1A`,
           'z-index': '99',
-          'background-color': event.color.primary
+          'background-color': colorIndex !== -1 ? `${colors[colorIndex]}33` : `${defaultColor}33`
         };
   
         console.log('Event found:', event);
@@ -324,15 +338,16 @@ logInvalidControls(formGroup: FormGroup) {
   
     return styles;
   }
+  
   getEventsForDateAndHour(date: Date, hour: string): CalendarEvent[] {
     const dateString = date.toISOString().split('T')[0];
     const eventHour = parseInt(hour.split(':')[0], 10);
   
-    if (this.events[dateString]) {
-      return this.events[dateString].filter(event => {
-        const eventStart = new Date(event.start);
+    if (this.examlist) {
+      return this.examlist.filter((event: { startDate: string | number | Date; endDate: string | number | Date; }) => {
+        const eventStart = new Date(event.startDate);
         const eventHourStart = eventStart.getHours();
-        const eventHourEnd = new Date(event.end).getHours();
+        const eventHourEnd = new Date(event.endDate).getHours();
   
         return eventHour >= eventHourStart && eventHour < eventHourEnd;
       });
@@ -340,8 +355,74 @@ logInvalidControls(formGroup: FormGroup) {
   
     return [];
   }
-  
   getHoursOfDay(): string[] {
     return Array.from({ length: 11 }, (_, i) => `${i + 8}:00`);
   }
+
+
+
+
+
+
+  saveEvent() {
+    console.log("hhhhhhhhhhheeeeeeeeeeeelooooooooooooooo" , this.data)
+    if (this.eventForm.valid) {
+      const formValues = this.eventForm.value;
+    // For debugging purposes
+      this.modalService.dismissAll();
+
+
+      const calandarData = {
+        exam__id: this.data,
+        
+        startDate:  new Date( `${formValues.startDate}T${formValues.startTime}`),
+        endDate:  new Date( `${formValues.startDate}T${formValues.endTime}`),
+        group__name: formValues.group,
+        salle: formValues.salle,
+        exam__title: formValues.title,
+      };
+  console.log("before", calandarData)
+
+  this.calandarService.createReserv(calandarData).subscribe(
+      
+    (response: any) => {
+      alert('Successfully create');
+      console.log('seccess create', response);
+      const examData = {
+        exam__id: 1,
+        operation: 1,
+      };
+
+      this.examService.updateExam(examData).subscribe(
+      
+        (response: any) => {
+          alert('Successfully create');
+          console.log('seccess update', response);
+        
+        },
+        (error: { error: { message: any } }) => {
+          console.log('errrr', error);
+          
+        }
+      );
+
+    
+    },
+    (error: { error: { message: any } }) => {
+      console.log('errrr', error);
+      
+    }
+  );
+
+     
+
+    } else {
+      console.log('Invalid form controls:');
+      this.logInvalidControls(this.eventForm);
+    }
+  
+
+  }
+
+  
 }

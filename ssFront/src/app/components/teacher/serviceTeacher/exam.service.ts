@@ -24,6 +24,15 @@ formData.append('file', data.file);
       headers:new HttpHeaders().set('Accept' , 'application/json')
     })
   }
+
+
+  updateExam(data:any){
+    const id = data.exam__id;
+    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<./////////",id)
+    return this.httpClient.put(`${this.url}/Exams/${id}`, data , {
+      headers:new HttpHeaders().set('Content-Type' , 'application/json')
+    })
+  }
 }
 
 

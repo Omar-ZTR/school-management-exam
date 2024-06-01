@@ -18,9 +18,9 @@ export const createExam = async (req: Request, res: Response) => {
     console.log("exam 3",req.body.file)
     const examDatas = { ...req.body}; // Assuming exam data is in req.body
     console.log("exam 4",examDatas)
-    // const examData= JSON.parse(examDatas.exam)
-    // console.log("LLLL 5",examData)
-    const exam = await Exam.create(examDatas);
+    const examData= JSON.parse(examDatas.exam)
+    console.log("LLLL 5",examData)
+    const exam = await Exam.create(examData);
     console.log("exam 6")
     if (req.file !== undefined) {
       console.log("file 7", req.file)
@@ -111,16 +111,37 @@ export const getAllExams = async (req: Request, res: Response) => {
 // Update operation
 export const updateExam = async (req: Request, res: Response) => {
   try {
+    console.log("Request Body:", req.body);
+    console.log("Request Params:", req.params);
+
     const { id } = req.params;
-    const [updated] = await Exam.update(req.body, { where: { exam__id: id } });
+    const { operation } = req.body;
+
+    // Validate the operation
+    if (typeof operation !== 'number') {
+      return res.status(400).send("Invalid operation value");
+    }
+
+    // Find the exam by primary key
+    const exam = await Exam.findByPk(id);
+    if (!exam) {
+      return res.status(404).send("Exam not found");
+    }
+
+    console.log("Existing Exam:", exam);
+
+    // Update the nb__reserve field
+    const nb__reserve = exam.nb__reserve + operation;
+    const [updated] = await Exam.update({ nb__reserve }, { where: { exam__id: id } });
+
     if (updated) {
       const updatedExam = await Exam.findOne({ where: { exam__id: id } });
       res.status(200).json(updatedExam);
     } else {
-      throw new Error("Exam not found");
+      res.status(500).send("Failed to update exam");
     }
   } catch (error) {
-    console.error("Error updating exam", error);
+    console.error("Error updating exam:", error);
     res.status(500).send("Error updating exam");
   }
 };

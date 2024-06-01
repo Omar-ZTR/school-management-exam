@@ -43,7 +43,7 @@ export class AddExamComponent {
   listFile: any = {};
   
   dataexam: any = {};
- 
+  dataPLan: any ;
   typ: string = '';
   ext: any;
   questarr: any;
@@ -52,11 +52,11 @@ export class AddExamComponent {
  
   constructor(private elementRef: ElementRef, private examService: ExamService, private questService: QuestionService, private fb: FormBuilder) {
     this.examForm = this.fb.group({
-      exam__name: [
+      subject: [
         '',
         [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
       ], // Required validator for exam name
-      exam__type: ['offline', Validators.required], // Required validator for exam type
+      exam__type: ['offline', Validators.required], 
      
       questions: {},
    
@@ -66,12 +66,7 @@ export class AddExamComponent {
   }
  
 
-  // @HostListener('document:click', ['$event'])
-  // onClickOutside(event: Event) {
-  //   if (!this.elementRef.nativeElement.contains(event.target)) {
-  //     this.showCalendar = false;
-  //   }
-  // }
+
   
    isMonthView: boolean = true;
 
@@ -152,7 +147,7 @@ export class AddExamComponent {
       questions: this.questarr,
     });
     if (this.examForm.invalid ) {
-      // Mark all fields as touched to show validation errors
+      
       this.examForm.markAllAsTouched();
    
       return;
@@ -161,21 +156,20 @@ export class AddExamComponent {
       exam: this.examForm.value,
       file: this.listFile[0],
     };
-    console.log(this.questarr);
-    console.log(this.examForm.value);
-    console.log('dataexam', this.dataexam);
-    console.log('listFile', this.listFile);
+
   }
   
   onSubmit() {
-    console.log(this.questarr);
-    console.log(this.examForm.value);
-
+   
+console.log(this.dataexam)
     this.examService.createExam(this.dataexam).subscribe(
       (response: any) => {
         alert('Successfully create');
         console.log('seccess', response);
         this.showCalendar = true;
+         this.dataPLan = response.exam__id;
+        
+        
        
       },
       (error: { error: { message: any } }) => {
@@ -191,6 +185,6 @@ export class AddExamComponent {
       }
     );
 
-    // Here you can send the form data to your backend or perform other actions
+
   }
 }

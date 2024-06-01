@@ -13,37 +13,44 @@ export class Reservation extends Model<Reservation> {
         type: DataType.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    })
-    reserv__id!: number;
-
-    @ForeignKey(() => Exam)
-    @Column
-    exam__id!: number;
-
-    @BelongsTo(() => Exam)
-    exam!: Exam;
-
-    @ForeignKey(() => User)
-    @Column
-    User__id!: number;
-
-    @BelongsTo(() => User)
-    User!: User;
-
-    @ForeignKey(() => Salle)
-    @Column
-    salle__id!: number;
-
-    @BelongsTo(() => Salle)
-    salle!: Salle;
-
-    @Column(DataType.DATEONLY)
-    date!: Date;
-
-    @Column(DataType.TIME)
-    Timing!: string;
-
-    @Column(DataType.TIME)
-    time!: string;
+      })
+      reserv__id!: number;
     
-}
+      @ForeignKey(() => Exam)
+      @Column
+      exam__id!: number;
+    
+      @BelongsTo(() => Exam)
+      exam!: Exam;
+    
+      @Column(DataType.STRING)
+      exam__title!: string;
+    
+      @Column(DataType.STRING)
+      salle!: string;
+    
+      @Column({
+        type: DataType.STRING,
+    
+      })
+      group__name!: string;
+    
+      @Column(DataType.DATE)
+      startDate!: Date;
+    
+      @Column(DataType.DATE)
+      endDate!: Date;
+    }
+  // @ForeignKey(() => User)
+    // @Column
+    // User__id!: number;
+
+    // @BelongsTo(() => User)
+    // User!: User;
+
+    // @ForeignKey(() => Salle)
+    // @Column
+    // salle__id!: number;
+
+    // @BelongsTo(() => Salle)
+    // salle!: Salle;

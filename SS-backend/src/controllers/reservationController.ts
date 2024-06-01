@@ -4,6 +4,11 @@ import { Request, Response } from "express";
 // Create operation
 export const createReservation = async (req: Request, res: Response) => {
     try {
+
+        console.log("bbbbbbbb",req.body)
+        const re= req.body
+   
+   
         const reservation = await Reservation.create(req.body);
         res.status(201).json(reservation);
     } catch (error) {

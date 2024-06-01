@@ -33,6 +33,7 @@ const connection_1 = __importDefault(require("./connection"));
 const body_parser_1 = require("body-parser");
 const examRouter_1 = __importDefault(require("./routers/examRouter"));
 const questionRouter_1 = __importDefault(require("./routers/questionRouter"));
+const reservationRouter_1 = __importDefault(require("./routers/reservationRouter"));
 const app = (0, express_1.default)();
 const cors = require('cors');
 app.use((0, body_parser_1.json)());
@@ -44,10 +45,10 @@ app.use(function (req, res, next) {
     next();
 });
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
-app.use("/", authRouter_1.default, examRouter_1.default, questionRouter_1.default);
+app.use("/", authRouter_1.default, examRouter_1.default, questionRouter_1.default, reservationRouter_1.default);
 const corsOptions = {
-    origin: 'http://localhost:4200', // Or an array of origins: ['http://localhost:4200', 'http://example.com']
-    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+    origin: 'http://localhost:4200',
+    optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
 app.use((err, req, res, next) => {

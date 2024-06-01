@@ -12,8 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Reservation = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const examModel_1 = require("./examModel");
-const User__model_1 = require("./User__model");
-const salleModel_1 = require("./salleModel");
 let Reservation = class Reservation extends sequelize_typescript_1.Model {
 };
 exports.Reservation = Reservation;
@@ -35,38 +33,40 @@ __decorate([
     __metadata("design:type", examModel_1.Exam)
 ], Reservation.prototype, "exam", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => User__model_1.User),
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], Reservation.prototype, "User__id", void 0);
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], Reservation.prototype, "exam__title", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => User__model_1.User),
-    __metadata("design:type", User__model_1.User)
-], Reservation.prototype, "User", void 0);
-__decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => salleModel_1.Salle),
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], Reservation.prototype, "salle__id", void 0);
-__decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => salleModel_1.Salle),
-    __metadata("design:type", salleModel_1.Salle)
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
 ], Reservation.prototype, "salle", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.DATEONLY),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+    }),
+    __metadata("design:type", String)
+], Reservation.prototype, "group__name", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.DATE),
     __metadata("design:type", Date)
-], Reservation.prototype, "date", void 0);
+], Reservation.prototype, "startDate", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.TIME),
-    __metadata("design:type", String)
-], Reservation.prototype, "Timing", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.TIME),
-    __metadata("design:type", String)
-], Reservation.prototype, "time", void 0);
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.DATE),
+    __metadata("design:type", Date)
+], Reservation.prototype, "endDate", void 0);
 exports.Reservation = Reservation = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,
         tableName: "Reservation",
     })
 ], Reservation);
+// @ForeignKey(() => User)
+// @Column
+// User__id!: number;
+// @BelongsTo(() => User)
+// User!: User;
+// @ForeignKey(() => Salle)
+// @Column
+// salle__id!: number;
+// @BelongsTo(() => Salle)
+// salle!: Salle;

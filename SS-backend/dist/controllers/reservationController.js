@@ -14,6 +14,8 @@ const reservationModel_1 = require("../models/reservationModel"); // Import your
 // Create operation
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("bbbbbbbb", req.body);
+        const re = req.body;
         const reservation = yield reservationModel_1.Reservation.create(req.body);
         res.status(201).json(reservation);
     }

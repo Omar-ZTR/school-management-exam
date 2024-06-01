@@ -27,6 +27,7 @@ export class Question extends Model<Question> {
     // exam!: Exam;
     @HasMany(() => FileQuestion)
     file!: FileQuestion[];
+    
     @HasMany(() => Reponse)
     reponses!: Reponse[];
 
@@ -35,4 +36,7 @@ export class Question extends Model<Question> {
 
     @Column(DataType.STRING)
     question__type!: string;
+
+    @Column(DataType.STRING)
+    question__subject!: string;
 }
