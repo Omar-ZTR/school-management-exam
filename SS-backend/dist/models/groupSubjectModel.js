@@ -9,36 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Subject = void 0;
+exports.GroupSubject = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const groupModel_1 = require("./groupModel");
-const groupSubjectModel_1 = require("./groupSubjectModel");
-let Subject = class Subject extends sequelize_typescript_1.Model {
+const subjectModel_1 = require("./subjectModel");
+let GroupSubject = class GroupSubject extends sequelize_typescript_1.Model {
 };
-exports.Subject = Subject;
+exports.GroupSubject = GroupSubject;
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => groupModel_1.Group),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
         primaryKey: true,
-        autoIncrement: true
     }),
     __metadata("design:type", Number)
-], Subject.prototype, "subject__id", void 0);
+], GroupSubject.prototype, "group__id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.INTEGER),
+    (0, sequelize_typescript_1.ForeignKey)(() => subjectModel_1.Subject),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        primaryKey: true,
+    }),
     __metadata("design:type", Number)
-], Subject.prototype, "min__Rank", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
-    __metadata("design:type", String)
-], Subject.prototype, "subject__name", void 0);
-__decorate([
-    (0, sequelize_typescript_1.BelongsToMany)(() => groupModel_1.Group, () => groupSubjectModel_1.GroupSubject),
-    __metadata("design:type", Array)
-], Subject.prototype, "groups", void 0);
-exports.Subject = Subject = __decorate([
+], GroupSubject.prototype, "subject__id", void 0);
+exports.GroupSubject = GroupSubject = __decorate([
     (0, sequelize_typescript_1.Table)({
-        timestamps: true,
-        tableName: "Subject",
+        timestamps: false,
+        tableName: "GroupSubject",
     })
-], Subject);
+], GroupSubject);

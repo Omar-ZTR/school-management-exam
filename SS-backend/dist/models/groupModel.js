@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Group = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
+const subjectModel_1 = require("./subjectModel");
+const groupSubjectModel_1 = require("./groupSubjectModel");
 let Group = class Group extends sequelize_typescript_1.Model {
 };
 exports.Group = Group;
@@ -34,6 +36,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Group.prototype, "subject", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => subjectModel_1.Subject, () => groupSubjectModel_1.GroupSubject),
+    __metadata("design:type", Array)
+], Group.prototype, "subjects", void 0);
 exports.Group = Group = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

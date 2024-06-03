@@ -13,13 +13,14 @@ import { AddExamComponent } from "./components/teacher/add-exam/add-exam.compone
 import { CalandarfullComponent } from "./components/calandarfull/calandarfull.component";
 import { PlaningComponent } from "./components/planing/planing.component";
 import { ChatComponent } from "./components/chat/chat.component";
+import { TeacherExamComponent } from "./components/teacher/teacher-exam/teacher-exam.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
-    imports: [RouterOutlet, MaterialModule, HomeComponent, SignUpComponent, NavComponent, AuthComponent, StudentComponent, HttpClientModule, ResetPasswordComponent, TeacherComponent, AddExamComponent, CalandarfullComponent, PlaningComponent, ChatComponent]
+    imports: [RouterOutlet, MaterialModule, HomeComponent, SignUpComponent, NavComponent, AuthComponent, StudentComponent, HttpClientModule, ResetPasswordComponent, TeacherComponent, AddExamComponent, CalandarfullComponent, PlaningComponent, ChatComponent, TeacherExamComponent]
 })
 export class AppComponent {
   title = 'ssFront';

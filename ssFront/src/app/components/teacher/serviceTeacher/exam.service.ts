@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
+import { Observable } from 'rxjs';
+import { Exam } from '../teacher-exam/teacher-exam.component';
 @Injectable({
   providedIn: 'root'
 })
@@ -33,6 +34,11 @@ formData.append('file', data.file);
       headers:new HttpHeaders().set('Content-Type' , 'application/json')
     })
   }
+
+  getTeacherExam(): Observable<Exam[]> {
+    return this.httpClient.get<Exam[]>(`${this.url}/exams`);
+  }
+
 }
 
 

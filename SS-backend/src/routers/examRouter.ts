@@ -5,12 +5,15 @@ import {
   createExam,
   updateExam,
   deleteExam,
+  getTeacherExams,
 } from '../controllers/examController';
 
 const routerExam= express.Router();
 
-routerExam.get('/Exams', getAllExams);
+routerExam.get('/allexams', getAllExams);
 
+
+routerExam.get('/exams', getTeacherExams);
 
 routerExam.get('/Exams/:id', getExamById);
 

@@ -12,12 +12,13 @@ import {  FileExam, FileQuestion } from "./models/fileModel";
 import { Rank } from "./models/rankModel";
 import { Subject } from "./models/subjectModel";
 import { Group } from "./models/groupModel";
+import { GroupSubject } from "./models/groupSubjectModel";
 
 const connection = new Sequelize('smartskills', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     database: "smartskills",
-    models: [User, Exam, Question, Reponse, Salle, Reservation, Student, Teacher,Token,FileExam,FileQuestion, Rank, Subject, Group, ],
+    models: [User, Exam, Question, Reponse, Salle, Reservation, Student, Teacher,Token,FileExam,FileQuestion, Rank, Subject, Group, GroupSubject ],
 
 });
 

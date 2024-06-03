@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteExam = exports.updateExam = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.deleteExam = exports.updateExam = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const upload_1 = __importDefault(require("../utils/upload"));
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
 const fileModel_1 = require("../models/fileModel");
+const reservationModel_1 = require("../models/reservationModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -111,6 +112,23 @@ const getAllExams = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getAllExams = getAllExams;
+const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const exams = yield examModel_1.Exam.findAll({
+            include: [
+                { model: questionModel_1.Question },
+                { model: reservationModel_1.Reservation },
+                { model: fileModel_1.FileExam },
+            ],
+        });
+        res.status(200).json(exams);
+    }
+    catch (error) {
+        console.error("Error fetching exams:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getTeacherExams = getTeacherExams;
 // Update operation
 const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

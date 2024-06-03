@@ -4,6 +4,7 @@ import uploadFile from "../utils/upload";
 import { Reponse } from "../models/reponseModel";
 import { Question } from "../models/questionModel";
 import { FileExam } from "../models/fileModel";
+import { Reservation } from "../models/reservationModel";
 
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
@@ -108,6 +109,21 @@ export const getAllExams = async (req: Request, res: Response) => {
   }
 };
 
+export const getTeacherExams = async (req: Request, res: Response) => {
+  try {
+    const exams = await Exam.findAll({
+      include: [
+        { model: Question },
+        { model: Reservation },
+        { model: FileExam },
+      ],
+    });
+    res.status(200).json(exams);
+  } catch (error) {
+    console.error("Error fetching exams:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 // Update operation
 export const updateExam = async (req: Request, res: Response) => {
   try {

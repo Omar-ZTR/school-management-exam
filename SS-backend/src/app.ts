@@ -6,6 +6,8 @@ import { json, urlencoded } from "body-parser";
 import routerExam from "./routers/examRouter";
 import routerQuestion from "./routers/questionRouter";
 import routerReservation from "./routers/reservationRouter";
+import routerGroup from "./routers/groupRouter";
+import routerSalle from "./routers/salleRouter";
 
 const app = express();
 
@@ -25,7 +27,7 @@ app.use(function (req, res, next) {
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation );
+app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle );
 
 const corsOptions = {
   origin: 'http://localhost:4200', 

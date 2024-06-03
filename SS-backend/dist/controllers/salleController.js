@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSalle = exports.updateSalle = exports.getSalleById = exports.getAllSalles = exports.createSalle = void 0;
+exports.deleteSalle = exports.updateSalle = exports.getSalleById = exports.getSallesSpecific = exports.getAllSalles = exports.createSalle = void 0;
+const sequelize_1 = require("sequelize");
+const reservationModel_1 = require("../models/reservationModel");
 const salleModel_1 = require("../models/salleModel"); // Import your Salle model
 // Create operation
 const createSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -19,7 +21,7 @@ const createSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         console.error("Error creation salle", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.createSalle = createSalle;
@@ -31,10 +33,96 @@ const getAllSalles = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (error) {
         console.error("Error fetch salle:", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getAllSalles = getAllSalles;
+const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { starthour, endhour, nb } = req.body;
+    if (!starthour || !endhour) {
+        return res.status(400).json({ error: "Hours are required" });
+    }
+    try {
+        const reservations = yield reservationModel_1.Reservation.findAll({
+            where: {
+                [sequelize_1.Op.or]: [
+                    {
+                        startDate: {
+                            [sequelize_1.Op.and]: [
+                                {
+                                    [sequelize_1.Op.gte]: starthour,
+                                },
+                                {
+                                    [sequelize_1.Op.lte]: endhour,
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        endDate: {
+                            [sequelize_1.Op.and]: [
+                                {
+                                    [sequelize_1.Op.gte]: starthour,
+                                },
+                                {
+                                    [sequelize_1.Op.lte]: endhour,
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+            attributes: ["salle"],
+        });
+        let availableSalles;
+        if (reservations.length === 0) {
+            // If there are no reservations, return all salles
+            if (nb !== undefined) {
+                availableSalles = yield salleModel_1.Salle.findAll({
+                    where: {
+                        nb__place: {
+                            [sequelize_1.Op.gte]: nb,
+                        },
+                    },
+                });
+            }
+            else {
+                availableSalles = yield salleModel_1.Salle.findAll();
+            }
+        }
+        else {
+            // If there are reservations, find salles not in the reserved list
+            const reservedSalles = reservations.map((reservation) => reservation.salle);
+            if (nb !== undefined) {
+                availableSalles = yield salleModel_1.Salle.findAll({
+                    where: {
+                        salle__name: {
+                            [sequelize_1.Op.notIn]: reservedSalles,
+                        },
+                        nb__place: {
+                            [sequelize_1.Op.gte]: nb,
+                        },
+                    },
+                });
+            }
+            else {
+                availableSalles = yield salleModel_1.Salle.findAll({
+                    where: {
+                        salle__name: {
+                            [sequelize_1.Op.notIn]: reservedSalles,
+                        },
+                    },
+                });
+            }
+        }
+        res.status(200).json(availableSalles);
+    }
+    catch (error) {
+        console.error("Error fetching available salles:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getSallesSpecific = getSallesSpecific;
 // Read operation - Get salle by ID
 const getSalleById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -49,7 +137,7 @@ const getSalleById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (error) {
         console.error("Error fetch salle", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getSalleById = getSalleById;
@@ -57,13 +145,15 @@ exports.getSalleById = getSalleById;
 const updateSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const [updated] = yield salleModel_1.Salle.update(req.body, { where: { salle__id: id } });
+        const [updated] = yield salleModel_1.Salle.update(req.body, {
+            where: { salle__id: id },
+        });
         if (updated) {
             const updatedSalle = yield salleModel_1.Salle.findOne({ where: { salle__id: id } });
             res.status(200).json(updatedSalle);
         }
         else {
-            throw new Error('Salle not found');
+            throw new Error("Salle not found");
         }
     }
     catch (error) {
@@ -81,7 +171,7 @@ const deleteSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(204).send();
         }
         else {
-            throw new Error('Salle not found');
+            throw new Error("Salle not found");
         }
     }
     catch (error) {

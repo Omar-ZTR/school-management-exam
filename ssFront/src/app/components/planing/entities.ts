@@ -203,3 +203,24 @@
 //   </div>
 // </div>
 // </div>
+
+
+// "@progress/kendo-angular-buttons": "^16.0.0",
+// "@progress/kendo-angular-common": "^16.0.0",
+// "@progress/kendo-angular-dateinputs": "^16.0.0",
+// "@progress/kendo-angular-dialog": "^16.0.0",
+// "@progress/kendo-angular-dropdowns": "^16.0.0",
+// "@progress/kendo-angular-icons": "^16.0.0",
+// "@progress/kendo-angular-inputs": "^16.0.0",
+// "@progress/kendo-angular-intl": "^16.0.0",
+// "@progress/kendo-angular-l10n": "^16.0.0",
+// "@progress/kendo-angular-label": "^16.0.0",
+// "@progress/kendo-angular-popup": "^16.0.0",
+// "@progress/kendo-angular-scheduler": "^16.0.0",
+// "@progress/kendo-angular-tooltip": "^16.0.0",
+// "@progress/kendo-data-query": "^1.7.0",
+// "@progress/kendo-date-math": "^1.5.13",
+// "@progress/kendo-drawing": "^1.20.1",
+// "@progress/kendo-licensing": "^1.3.5",
+// "@progress/kendo-recurrence": "^1.0.3",
+// "@progress/kendo-theme-default": "^8.0.1",

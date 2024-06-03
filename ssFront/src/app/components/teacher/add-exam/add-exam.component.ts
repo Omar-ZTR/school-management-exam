@@ -74,7 +74,20 @@ export class AddExamComponent {
     this.loadQuestions()
 
   }
- 
+  statutExam: string = 'is obligatoire';
+
+  toggleStatut(): void {
+    if (this.statutExam === 'is obligatoire') {
+      this.statutExam = 'is opptionnel';
+    } else {
+      this.statutExam = 'is obligatoire';
+    }
+    console.log(this.getStatutValue());
+  }
+
+  getStatutValue(): boolean {
+    return this.statutExam === 'is opptionnel';
+  }
  
    onIsMonthViewChange(value: boolean) {
       this.isMonthView = value;

@@ -1,4 +1,6 @@
-import { Table, Model, Column, DataType } from "sequelize-typescript";
+import { Table, Model, Column, DataType, BelongsToMany } from "sequelize-typescript";
+import { Subject } from "./subjectModel";
+import { GroupSubject } from "./groupSubjectModel";
 
 
 @Table({
@@ -22,6 +24,9 @@ export class Group extends Model<Group> {
 
       @Column(DataType.STRING)
       subject!: string;
+  
+      @BelongsToMany(() => Subject, () => GroupSubject)
+      subjects!: Subject[];
 
 
 
