@@ -61,7 +61,7 @@
           />
         </g>
       </svg>
-      <ul class="topUL">
+      <ul>
         <li>
           <a routerLink="/contact"
             ><i class="fa-solid fa-bell"></i>
@@ -71,7 +71,7 @@
         <li>
           <a (click)="toggleSettingsMenu()">
             <img src="../../../assets/mee.jpeg" alt="me" />
-            <div class="bartitle">Omar zouiter</div>
+            <div class="bartitle">Name</div>
           </a>
           <ul *ngIf="isSettingsMenuOpen">
             <li>
@@ -81,7 +81,8 @@
             </li>
             <li>
               <a routerLink="/about"
-                ><i class="fa-solid fa-bell"></i> contact</a
+                ><i class="fa-solid fa-bell"></i>
+                <div class="bartitle">contact</div></a
               >
             </li>
             <hr />
@@ -96,68 +97,50 @@
     </div>
   </div>
   <div id="div2">
-    <!-- <router-outlet></router-outlet> -->
-    <h1>sssa11sss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ss11ss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
-    <h1>ssss</h1>
+    <router-outlet></router-outlet>
   </div>
   <div id="div3">
     <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
-          <li>
-            <i class="fas fa-home icon"></i>
+          <li routerLink="/dash">
+            <i class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
+        
+          <li (click)="toggleExams()">
+            <i class="fa-solid fa-folder-tree fa-xs icon"></i>
+            <div class="title">Exams</div>
+          </li>
+          <ul *ngIf="showExams" class="sub-menu">
+            <li routerLink="/dash">
+              <i class="fas fa-home fa-xs icon"></i>
+              <div class="title">Dashboard</div>
+            </li>
+            <li routerLink="/dash">
+              <i class="fas fa-home fa-xs icon"></i>
+              <div class="title">Dashboard</div>
+            </li>
+          </ul>
           <li routerLink="/exam">
-            <i class="fas fa-underline icon"></i>
+            <i class="fa-solid fa-calendar-days fa-xs icon"></i>
             <div class="title">Exams</div>
           </li>
           <li routerLink="/update">
-            <i class="fas fa-user-edit icon"></i>
+            <i class="fas fa-user-edit fa-xs icon"></i>
             <div class="title">Edit Profile</div>
           </li>
+          <li routerLink="/update">
+            <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
+            <div class="title">Result</div>
+          </li>
           <li>
-            <i class="fas fa-chart-pie icon"></i>
+            <i class="fa-solid fa-message fa-xs icon"></i>
             <div class="title">Contact</div>
           </li>
           <hr />
           <li>
-            <i class="fas fa-boxes icon"></i>
+            <i class="fa-solid fa-right-from-bracket fa-xs icon"></i>
             <div class="title">Logout</div>
           </li>
         </ul>

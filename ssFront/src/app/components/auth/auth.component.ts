@@ -68,26 +68,31 @@ forgotpass: FormGroup;
       
     }
 
-  onlogin(loginObj: { user__email: string; password: string }) {
-    console.log(loginObj);
-    this.userService.login(loginObj).subscribe(
-      (response: any) => {
-        localStorage.setItem('token', response.token);
-        alert('Successfully Login');
-        console.log('secc', response);
-        this.router.navigate(['/dash']);
-      },
-      (error: { error: { message: any; }; })=>{
-        //this.ngxService.stop();
-        if(error.error?.message){
-          this.responseMessage = error.error?.message;
-        }else{
-          this.responseMessage = GlobalConstants.genericError;
-        }
-        // alert(this.responseMessage +" " +GlobalConstants.error);
-        this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
-      })
+    onlogin(loginObj: { user__email: string; password: string }) {
+      this.userService.login(loginObj).subscribe(
+        (response: any) => {
+          localStorage.setItem('token', response.token);
+          alert('Successfully Login');
   
+          const tokenPayload = JSON.parse(atob(response.token.split('.')[1]));
+          console.log(tokenPayload);
+          if (tokenPayload.role === 'Student') {
+            this.router.navigate(['/student/dash']);
+          } else if (tokenPayload.role === 'teacher') {
+            this.router.navigate(['/teacher/dash']);
+          } else {
+            this.router.navigate(['/']);
+          }
+        },
+        (error: { error: { message: any } }) => {
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = GlobalConstants.genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, GlobalConstants.error);
+        }
+      );
     }
 
 

@@ -4,23 +4,29 @@
   grid-template-columns: max-content max-content 1fr;
   gap: 0;
   grid-template-areas:
-    "head head head  "
-    "nav  main main "
-    "nav  main main";
+      "head head head  "
+      "nav  main main "
+      "nav  main main";
   width: 100%;
   height: 100%;
 }
 
 #div1 {
   grid-area: head;
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  left: 0;
   background: linear-gradient(to bottom, #EFEDFA, #AAC5F3);
 
 }
 
 #div2 {
   grid-area: main;
+  padding-top: 100px;
   background-color: #f2f5f7;
 }
+
 /* router-outlet {
   grid-area: main;
   background-color: #5c6d78;
@@ -28,8 +34,8 @@
 } */
 #div3 {
   grid-area: nav;
-  background-color: #f2f5f7;
-  
+  background-color: #0b0946;
+
 }
 
 
@@ -37,24 +43,25 @@
 
 
 .card {
-  width: 300px;
+  width: 350px;
 
-  background-color: #aac5f380;
+  background-color: #0b0946;
   border-radius: 10px 10px;
   transition: 1s all;
-  top: 200px;
+  top: 100px;
   left: 10px;
-position: sticky;
+  position: sticky;
 }
 
 .Scard {
-  margin-top: 50%;
+  /* margin-top: 50%; */
   transition: 1s all;
+
   width: 100px;
-  top: 200px;
+  top: 100px;
   left: 10px;
-position: sticky;
-  background-color: #aac5f380;
+  position: sticky;
+  background-color: #0b0946;
   border-radius: 10px 10px;
 }
 
@@ -65,7 +72,7 @@ position: sticky;
 
 
 .icon {
-  margin-right: 8px;
+  width: 51px;
 }
 
 .Sbody ul li {
@@ -74,32 +81,80 @@ position: sticky;
   transition: 1s all;
   font-family: 'Roboto', sans-serif;
   font-size: 40px;
-  padding: 15px;
+  padding: 30px;
   margin-left: -40px;
   margin-top: 0px;
-  color: #131313;
+  color: #ffffff;
   list-style: none;
-  display: block;
+  display: flex;
+  /* text-align: center; */
+  justify-items: center;
+  /* justify-content: space-between; */
+  /* column-gap: 5px; */
   border-top-right-radius: 10px 10px;
   border-bottom-right-radius: 10px 10px;
 
 }
 
 .Sbody ul li .title {
-  display: none;
+  animation-duration: 0.5s;
+  animation-name: slideout;
+  opacity: 0;
+}
+
+@keyframes slideout {
+  from {
+      margin-left: 0;
+      opacity: 1;
+  }
+20%{opacity: 0;}
+  to {
+      margin-left: -100%;
+      opacity: 0;
+  }
+}
+
+
+.body ul li .title {
+  animation-duration: 0.5s;
+  animation-name: slidein;
+}
+
+@keyframes slidein {
+  from {
+      margin-left: -100%;
+      opacity: 0;
+  }
+  50% {opacity: 0;}
+  to {
+      margin-left: 0%;
+      opacity: 1;
+  }
+}
+
+.title {
+  margin: auto 0 0;
+  color: #ebebeb;
+  font-size: 20px;
+  /* transition: 1s all  ease ; */
+
 }
 
 .body li {
   transition: 1s all;
   font-family: 'Roboto', sans-serif;
-  font-size: 18px;
-  padding: 15px;
-  margin-left: -40px;
+  font-size: 40px;
+  padding: 30px 0;
+  /* margin-left: -40px; */
   margin-top: 0px;
-  color: #151414;
+  color: #ffffff;
   list-style: none;
   display: flex;
-
+  text-wrap: nowrap;
+  text-align: center;
+  justify-items: center;
+  /* justify-content:space-around; */
+  column-gap: 5px;
   border-top-right-radius: 10px 10px;
   border-bottom-right-radius: 10px 10px;
 }
@@ -147,14 +202,13 @@ li:hover {
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0px 20px 0 20px;
   width: 100%;
-  height: 60px;
-  background: rgba(100, 167, 250, 0.145);
+  height: 70px;
+  background: rgba(20, 7, 75, 0.832);
   backdrop-filter: blur(10px);
-  top: 1px;
-  position: fixed;
-  z-index: 9999;
+
+
 }
 
 .topBar a {
@@ -177,7 +231,9 @@ li:hover {
   border-radius: 10px 10px;
 
 }
-
+.bartitle {
+  display: none;
+}
 .topBar ul li img {
   width: 50px;
   height: 50px;
@@ -185,44 +241,55 @@ li:hover {
 }
 
 .topBar li ul li {
-  margin-left:-20px;
+  margin-left: -30px;
+  margin-bottom: 4px;
+padding: 10px 5px;
   /* background: #aac5f380; */
 
+
+}
+.topBar li ul li:hover {
+ 
   
+  background: #7fbff780;
+
+
 }
 
 .topBar ul {
   display: flex;
   justify-content: space-between;
-
+margin-bottom: 0;
 
 
 }
 
 .topBar ul ul {
   display: none;
-  margin-left: -40px;
+  margin-left: -90px;
   margin-top: 50px;
   padding-top: 30px;
   padding-right: 10px;
   padding-bottom: 20px;
   padding-left: 40px;
-  background-color: #ffffffa6;
+  background-color: #edededa6;
   backdrop-filter: blur(10px);
   z-index: 2;
 }
-hr{
+
+hr {
   width: 100%;
   margin-left: -15px;
 }
+
 .topBar ul li:hover ul {
   display: flex;
   flex-direction: column;
   row-gap: 7px;
-/* padding: 7px; */
+  /* padding: 7px; */
 
   position: absolute;
-  
+
 }
 
 ul li .notification-count {
@@ -237,13 +304,15 @@ ul li .notification-count {
   border-radius: 50%;
   background-color: #ff4927;
   color: #fff;
-display: flex;
-justify-content: center;
-align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 .topBar i {
   font-size: 25px;
 }
+
 svg {
   scale: 0.5;
   transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -255,8 +324,8 @@ svg {
 
 path {
   transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1),
-    stroke-dasharray 500ms cubic-bezier(0.4, 0, 0.2, 1),
-    stroke-dashoffset 500ms cubic-bezier(0.4, 0, 0.2, 1);
+      stroke-dasharray 500ms cubic-bezier(0.4, 0, 0.2, 1),
+      stroke-dashoffset 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 path:nth-child(1) {
@@ -313,39 +382,39 @@ path:nth-child(6) {
 /* Media query for responsiveness */
 @media screen and (max-width: 768px) {
   .Scard {
-    display: none;
+      display: none;
   }
 
   #cssportal-grid {
-    grid-template-rows: max-content max-content;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "head"
-      "main"
-    ;
+      grid-template-rows: max-content max-content;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+          "head"
+          "main"
+      ;
   }
 
   #div3 {
-    position: absolute;
-    margin-top: 55px;
+      position: absolute;
+      margin-top: 55px;
   }
 
   #div1 {
-    height: 55px;
+      height: 55px;
   }
 
   .topBar {
-    padding-left: 0.5%;
+      padding-left: 0.5%;
 
   }
 
   .topBar ul li img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
   }
 
   .bartitle {
-    display: none;
+      display: none;
   }
 }

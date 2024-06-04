@@ -8,32 +8,33 @@ import { UpdateProfileComponent } from './components/student/update-profile/upda
 import path from 'path';
 import { Component } from '@angular/core';
 import { NavComponent } from './components/home/nav/nav.component';
+import { TeacherComponent } from './components/teacher/teacher.component';
+import { RouteGuardService } from './servicesUser/route-guard.service';
 
 export const routes: Routes = [
-  { path: 'a', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
+  { path: 'home', component: HomeComponent, canActivate: [RouteGuardService] },
+  { path: 'auth', component: AuthComponent},
   {
-    path: 'home',
-    component: HomeComponent,
-   
-  },
-  {    path: 'auth',
-  component: AuthComponent,},
-  {
-    path: '',
+    path: 'student',
     component: StudentComponent,
+    canActivate: [RouteGuardService],
+    data: { expectedRole: ['Student'] },
     children: [
-      {
-        path: 'dash',
-        component: DashStudentComponent,
-      },
-      {
-        path: 'update',
-        component: UpdateProfileComponent,
-      },
-      {
-        path: 'exam',
-        component: SidebarComponent,
-      },
+      { path: 'dash', component: DashStudentComponent },
+      { path: 'update', component: UpdateProfileComponent },
+      { path: 'exam', component: SidebarComponent },
+    ],
+  },
+  {
+    path: 'teacher',
+    component: TeacherComponent,
+    canActivate: [RouteGuardService],
+    data: { expectedRole: ['Teacher'] },
+    children: [
+      { path: 'dash', component: DashStudentComponent },
+      { path: 'update', component: UpdateProfileComponent },
+      { path: 'exam', component: SidebarComponent },
     ],
   },
 ];

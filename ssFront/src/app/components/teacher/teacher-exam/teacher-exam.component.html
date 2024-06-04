@@ -60,17 +60,22 @@
               : "-"
           }}
         </td>
-        <td style="display: flex">
-          <div>{{ exam.scheduled ? "Yes" : "No" }}</div>
-          <div style="height: 50px" class="flex align-items-center justify-content-center">
+        <td style="display: flex; justify-content: space-around; ">
+          <div style="display: flex; align-items: center;">{{ exam.scheduled ? "Yes" : "No" }}</div>
+          <!-- <div style="height: 20px !important" class="flex align-items-center justify-content-center">
            
-            <p-speedDial 
-                [model]="items" 
-                type="semi-circle" 
-                [mask]="true"
-                [radius]="80"
-                buttonClassName="bb"/>
-        </div>
+           
+        </div> -->
+        <p-speedDial 
+        [model]="items" 
+        type="semi-circle" 
+        [mask]="true"
+        transitionDelay="80" 
+        showIcon="pi pi-bars" 
+        hideIcon="pi pi-times" 
+        raised="true"
+        severity="secondary"
+        buttonClassName="p-button-outlined"/>
         </td>
       </tr>
     </ng-template>
@@ -82,11 +87,4 @@
     </ng-template>
   </p-table>
 </div>
-<div class="card">
-  <div style="height: 500px; position: relative" class="speeddial-linear-demo">
-    <p-speedDial [model]="items" direction="up" />
-    <p-speedDial [model]="items" direction="down" />
-    <p-speedDial [model]="items" direction="left" />
-    <p-speedDial [model]="items" direction="right" />
-  </div>
-</div>
+

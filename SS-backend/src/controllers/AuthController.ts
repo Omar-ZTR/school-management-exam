@@ -38,8 +38,8 @@ export const signup = async (req: Request, res: Response) => {
       res
         .status(201)
         .json({ message: "Student registered successfully", user: newUser });
-    } else {
-      const existingUser = await User.findOne({
+    } else if (userData.role == "Teacher"){
+      const existingUser = await Teacher.findOne({
         where: { user__email: userData.user__email },
       });
       if (existingUser) {
@@ -49,11 +49,28 @@ export const signup = async (req: Request, res: Response) => {
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       userData.password = hashedPassword; // Update userData.password with hashedPassword
 
-      const newUser = await User.create(userData);
+      const newUser = await Teacher.create(userData);
 
       res
         .status(201)
         .json({ message: "Teacher registered successfully", user: newUser });
+    }
+    else {
+      const existingUser = await User.findOne({
+        where: { user__email: userData.user__email },
+      });
+      if (existingUser) {
+        return res.status(400).json({ message: "user already exists" });
+      }
+
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      userData.password = hashedPassword; // Update userData.password with hashedPassword
+
+      const newUser = await User.create(userData);
+
+      res
+        .status(201)
+        .json({ message: "user registered successfully", user: newUser });
     }
   } catch (error) {
     console.error("Error signing up:", error);
@@ -62,15 +79,17 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 
-
+type UserType = Student | Teacher; 
 // Login function
 export const login = async (req: Request, res: Response) => {
   try {
     // console.log("innnnnw",req.body.email)
     const { user__email, password } = req.body;
 
-    const user = await Student.findOne({ where: { user__email } });
-
+    let user: UserType | null = await Student.findOne({ where: { user__email } });
+    if (!user) {
+     user = await Teacher.findOne({ where: { user__email } });
+    }
     if (user && (await bcrypt.compare(password, user.password))) {
       let tokens = await Token.findOne({ where: { user__id: user.user__id } });
       if (!tokens) {

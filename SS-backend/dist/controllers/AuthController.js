@@ -16,6 +16,7 @@ exports.forgotPassword = exports.ssignup = exports.login = exports.signup = void
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const User__model_1 = require("../models/User__model");
 const studentModel_1 = require("../models/studentModel");
+const teacherModel_1 = require("../models/teacherModel");
 const tokenModel_1 = require("../models/tokenModel");
 const token_1 = __importDefault(require("../utils/token"));
 // Signup function
@@ -38,8 +39,8 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 .status(201)
                 .json({ message: "Student registered successfully", user: newUser });
         }
-        else {
-            const existingUser = yield User__model_1.User.findOne({
+        else if (userData.role == "Teacher") {
+            const existingUser = yield teacherModel_1.Teacher.findOne({
                 where: { user__email: userData.user__email },
             });
             if (existingUser) {
@@ -47,10 +48,24 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             const hashedPassword = yield bcryptjs_1.default.hash(userData.password, 10);
             userData.password = hashedPassword; // Update userData.password with hashedPassword
-            const newUser = yield User__model_1.User.create(userData);
+            const newUser = yield teacherModel_1.Teacher.create(userData);
             res
                 .status(201)
                 .json({ message: "Teacher registered successfully", user: newUser });
+        }
+        else {
+            const existingUser = yield User__model_1.User.findOne({
+                where: { user__email: userData.user__email },
+            });
+            if (existingUser) {
+                return res.status(400).json({ message: "user already exists" });
+            }
+            const hashedPassword = yield bcryptjs_1.default.hash(userData.password, 10);
+            userData.password = hashedPassword; // Update userData.password with hashedPassword
+            const newUser = yield User__model_1.User.create(userData);
+            res
+                .status(201)
+                .json({ message: "user registered successfully", user: newUser });
         }
     }
     catch (error) {
@@ -64,7 +79,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // console.log("innnnnw",req.body.email)
         const { user__email, password } = req.body;
-        const user = yield studentModel_1.Student.findOne({ where: { user__email } });
+        let user = yield studentModel_1.Student.findOne({ where: { user__email } });
+        if (!user) {
+            user = yield teacherModel_1.Teacher.findOne({ where: { user__email } });
+        }
         if (user && (yield bcryptjs_1.default.compare(password, user.password))) {
             let tokens = yield tokenModel_1.Token.findOne({ where: { user__id: user.user__id } });
             if (!tokens) {

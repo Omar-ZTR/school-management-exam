@@ -1,57 +1,72 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { SnackbarService } from './snackbar.service';
 import { AuthService } from './auth.service';
 // import jwtdecode from "jwt-decode";
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { GlobalConstants } from '../shared/global-constants';
+import { isPlatformBrowser } from '@angular/common';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RouteGuardService {
-  constructor(public auth:AuthService,
-    public router:Router,
+  constructor(
+    private authService: AuthService,
+    private router: Router,
     private jwtHelper: JwtHelperService,
-    private snackbarService:SnackbarService) { }
+    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID
+  ) { }
 
-    canActivate(router:ActivatedRouteSnapshot):boolean{
-      let expectRoleArray = router.data;
-      expectRoleArray = expectRoleArray['expectedRole'];
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean  {
+    // Check if the code is running in a browser environment
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const tokenPayload = this.jwtHelper.decodeToken(token);
+          if (this.authService.isAuthenticated()) {
+            if (state.url === '/' || state.url === '/home') {
+              if (tokenPayload.role === 'Student') {
+                this.router.navigate(['/student/dash']);
+                return true;
+              } else if (tokenPayload.role === 'Teacher') {
+                this.router.navigate(['/teacher/dash']);
+                return true;
+              }
+            }
 
-      const token:any = localStorage.getItem('token');
-
-      var tokenPayload:any;
-
-      try{
-        tokenPayload = this.jwtHelper.decodeToken(token);
-      }catch(err){
-        localStorage.clear();
-        this.router.navigate(['/']);
-      }
-
-      let expectedRole = '';
-
-      for(let i = 0 ;  i < expectRoleArray['length']; i++){
-        if(expectRoleArray[i] == tokenPayload.role){
-          expectedRole = tokenPayload.role;
+            const expectedRoles = route.data['expectedRole'] as Array<string>;
+            if (expectedRoles.includes(tokenPayload.role)) {
+              return true;
+            } else {
+              this.router.navigate(['/']);
+              return false;
+            }
+          } else {
+            this.router.navigate(['/auth']);
+            return false;
+          }
+        } catch (error) {
+          localStorage.clear();
+          this.router.navigate(['/auth']);
+          return false;
         }
-      }
-
-
-      if(tokenPayload.role == 'user' || tokenPayload.role == 'admin'){
-        if(this.auth.isAuthenticated() && tokenPayload.role == expectedRole){
-          return true;
+      } else {
+        if (state.url === '/' || state.url === '/home') {
+          return true; // Allow navigation to home if no token is present
         }
-        
-        this.snackbarService.openSnackBar(GlobalConstants.unauthroized , GlobalConstants.error);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/auth']);
         return false;
       }
-      else{
-        this.router.navigate(['/']);  
-        localStorage.clear();
-        return false;
-      }
+    } else {
+      console.warn('localStorage is not available in this environment.'); // Log a warning if localStorage is not available
+      return false; // Return false to prevent navigation
     }
+  }
 }

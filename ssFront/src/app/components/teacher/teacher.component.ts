@@ -12,7 +12,11 @@ import { RouterOutlet } from '@angular/router';
 export class TeacherComponent {
 
   isMenuMobile = true;
+  showExams = false;
 
+  toggleExams(): void {
+    this.showExams = !this.showExams;
+  }
   toggleMenu() {
     this.isMenuMobile = !this.isMenuMobile;
   }
