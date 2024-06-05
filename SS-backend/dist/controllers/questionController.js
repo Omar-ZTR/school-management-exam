@@ -17,8 +17,60 @@ const questionModel_1 = require("../models/questionModel"); // Import your Quest
 const upload_1 = __importDefault(require("../utils/upload"));
 const reponseModel_1 = require("../models/reponseModel");
 const fileModel_1 = require("../models/fileModel");
+const examModel_1 = require("../models/examModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
+// export const createQuestion = async (req: Request, res: Response) => {
+//   try {
+//     console.log("exam 2", req.files);
+//     await uploadFile(req, res); // Handle file upload
+//     console.log("exam 3", req.file);
+//     const questDatas = { ...req.body }; 
+// console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>",questDatas)
+//     // Assuming exam data is in req.body
+//     console.log("exam 4", questDatas[0]);
+//     const questionData = JSON.parse(questDatas.question);
+//     console.log("Parsed question data:", questionData);
+//     const question = await Question.create(questionData);
+//     console.log("exam 6");
+//     if (req.files && req.files.length != 0) {
+//       console.log("file 7", req.file);
+//       for (const file of req.files as Express.Multer.File[]) {
+//         const support__files = {
+//           file__name: file.originalname,
+//           file__path: baseUrl + file.filename,
+//           file__type: "Question",
+//           question__id: question.question__id,
+//         };
+//         console.log("file attribute", support__files);
+//         const filesup = await FileQuestion.create({
+//           file__name: file.originalname,
+//           file__path: baseUrl + file.filename,
+//           file__type: "Question",
+//           question__id: question.question__id,
+//         });
+//       }
+//     }
+//     console.log("file 8");
+//     // Create the questions for the exam
+//     if (
+//       questDatas.reponses &&
+//       Array.isArray(questDatas.reponses) &&
+//       questDatas.reponses.length > 0
+//     ) {
+//       console.log("if ethanya fotnaha");
+//       const responsesData = questDatas.reponses;
+//       for (const responseData of responsesData) {
+//         responseData.question__id = question.question__id;
+//         await Reponse.create(responseData);
+//       }
+//     }
+//     res.status(201).json(question);
+//   } catch (error) {
+//     console.error("Error creation exam", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("exam 2", req.files);
@@ -42,22 +94,25 @@ const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     question__id: question.question__id,
                 };
                 console.log("file attribute", support__files);
-                const filesup = yield fileModel_1.FileQuestion.create({
-                    file__name: file.originalname,
-                    file__path: baseUrl + file.filename,
-                    file__type: "Question",
-                    question__id: question.question__id,
-                });
+                yield fileModel_1.FileQuestion.create(support__files);
             }
         }
-        console.log("file 8");
-        // Create the questions for the exam
-        if (questDatas.reponses &&
-            Array.isArray(questDatas.reponses) &&
-            questDatas.reponses.length > 0) {
+        console.log("file 8", questDatas);
+        // Associate question with exam if exam__id is provided
+        if (questionData.exam__id) {
+            const exam = yield examModel_1.Exam.findByPk(questionData.exam__id);
+            if (exam) {
+                yield exam.$add('questions', question);
+                console.log(`Associated question ${question.question__id} with exam ${questionData.exam__id}`);
+            }
+        }
+        console.log(",,,,,,,,,,,,,,,,,,,,3332,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", questionData.reponses);
+        // Create the responses for the question
+        if (questionData.reponses && Array.isArray(questionData.reponses) && questionData.reponses.length > 0) {
             console.log("if ethanya fotnaha");
-            const responsesData = questDatas.reponses;
+            const responsesData = questionData.reponses;
             for (const responseData of responsesData) {
+                console.log(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", responseData);
                 responseData.question__id = question.question__id;
                 yield reponseModel_1.Reponse.create(responseData);
             }
@@ -65,7 +120,7 @@ const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(201).json(question);
     }
     catch (error) {
-        console.error("Error creation exam", error);
+        console.error("Error creating question", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
@@ -75,8 +130,13 @@ const getFakeQuestions = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const examId = -1;
         const questions = yield questionModel_1.Question.findAll({
-            where: { exam__id: examId },
             include: [
+                {
+                    model: examModel_1.Exam,
+                    as: 'exams',
+                    where: { exam__id: examId },
+                    through: { attributes: [] } // Exclude join table attributes
+                },
                 {
                     model: fileModel_1.FileQuestion,
                     as: 'file',

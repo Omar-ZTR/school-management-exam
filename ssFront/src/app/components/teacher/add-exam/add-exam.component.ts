@@ -38,15 +38,15 @@ export class AddExamComponent {
   
   selectedOption: string = '';
   urls: any[] = [];
-  
-
+  subjectValue='';
+  examType:string ='';
   listFile: any = {};
   
   dataexam: any = {};
   dataPLan: any ;
   typ: string = '';
   ext: any;
-  questarr: any;
+  questarr: any[] = []
   
   showCalendar: boolean = false;
  
@@ -71,8 +71,13 @@ export class AddExamComponent {
    isMonthView: boolean = true;
 
   ngOnInit(): void {
-    this.loadQuestions()
-
+    // this.loadQuestions()
+    this.examForm.get('subject')?.valueChanges.subscribe(value => {
+      this.subjectValue = value;
+    });
+    this.examForm.get('exam__type')?.valueChanges.subscribe(value => {
+      this.examType = value;
+    });
   }
   statutExam: string = 'is obligatoire';
 
@@ -97,15 +102,9 @@ export class AddExamComponent {
   
     
 
-  loadQuestions() {
-    this.questService.getfakeQuestion().subscribe(
-      (data) => {
-        this.questarr = data;
-      },
-      (error) => {
-        console.error('Error fetching fake questions', error);
-      }
-    );
+  loadQuestions(response: any): void {
+    console.log('Question added with response:', response);
+    this.questarr.push(response)
   }
 
   async detectFiles(event: any) {

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-teacher',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, RouterModule,],
   templateUrl: './teacher.component.html',
   styleUrl: './teacher.component.css'
 })
@@ -13,7 +13,7 @@ export class TeacherComponent {
 
   isMenuMobile = true;
   showExams = false;
-
+  constructor(private router: Router) { }
   toggleExams(): void {
     this.showExams = !this.showExams;
   }
@@ -26,8 +26,9 @@ export class TeacherComponent {
     this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
   }
 
-  logout() {
-    // Add your logout logic here
+  logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['/auth']);
   }
 
 }

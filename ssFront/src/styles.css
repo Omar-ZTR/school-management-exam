@@ -43,8 +43,10 @@ body {
     color: rgb(4, 32, 132) !important;
   }
 .p-button-outlined{
-  border: none !important;
+  padding: 0.8rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}.p-button.p-button-icon-only{
+  padding: 0.75rem !important;
 }
   .p-speeddial-list {
     margin: 0;
@@ -54,14 +56,18 @@ body {
     align-items: center;
     justify-content: center;
     transition: top 0s linear .2s;
-    pointer-events: none
+    pointer-events: none;
+    transform:translate(65px, -25px)  !important;
+  
+    
   }
 
   .p-speeddial-item {
     transform: scale(0);
     opacity: 0;
     transition: transform .2s cubic-bezier(.4, 0, .2, 1) 0ms, opacity .8s;
-    will-change: transform
+    will-change: transform;
+    
   }
 
   .p-speeddial-action {
@@ -72,6 +78,7 @@ body {
     position: relative;
     overflow: hidden;
     cursor: pointer;
+  
     z-index: 99 !important;
   }
 /* ul{
@@ -87,6 +94,7 @@ ul li {
   .p-speeddial-quarter-circle .p-speeddial-item {
     position: absolute;
     margin-top: 0 !important;
+    
   }
 
   .p-speeddial-rotate {
@@ -119,24 +127,28 @@ ul li {
 
   .p-speeddial-opened .p-speeddial-list {
     pointer-events: auto;
+    position: absolute !important;
+    z-index: 99 !important;
+    margin-left: -800% !important;
       }
           .p-speeddial-opened {
     z-index: 7 !important;
-    
-    
+    border: none !important;
+   
   }
 
   .p-speeddial-opened .p-speeddial-item {
     transform: scale(1);
     opacity: 1;
-  
+
   }
   .p-speeddial-item {
     background: rgb(249, 249, 249) !important;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     border-radius: 50% !important;
+    
   }
-
+ 
   .p-speeddial-opened .p-speeddial-rotate {
     transform: rotate(45deg)
   }

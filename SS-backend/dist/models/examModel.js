@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Exam = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const questionModel_1 = require("./questionModel");
+const examQuestionModel_1 = require("./examQuestionModel");
 const fileModel_1 = require("./fileModel");
 const reservationModel_1 = require("./reservationModel");
 let Exam = class Exam extends sequelize_typescript_1.Model {
@@ -42,7 +43,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Exam.prototype, "obligatoire", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => questionModel_1.Question),
+    (0, sequelize_typescript_1.BelongsToMany)(() => questionModel_1.Question, () => examQuestionModel_1.ExamQuestion),
     __metadata("design:type", Array)
 ], Exam.prototype, "questions", void 0);
 __decorate([
@@ -59,3 +60,33 @@ exports.Exam = Exam = __decorate([
         tableName: "Exam",
     })
 ], Exam);
+// import { Table, Model, Column, DataType, HasMany } from "sequelize-typescript";
+// import { Question } from "./questionModel";
+// import { FileExam } from "./fileModel";
+// import { Reservation } from "./reservationModel";
+// @Table({
+//   timestamps: true,
+//   tableName: "Exam",
+// })
+// export class Exam extends Model<Exam> {
+//   @Column({
+//     type: DataType.INTEGER,
+//     primaryKey: true,
+//     autoIncrement: true,
+//   })
+//   exam__id!: number;
+//   @Column(DataType.INTEGER)
+//   nb__reserve!: number;
+//   @Column(DataType.STRING)
+//   subject!: string;
+//   @Column(DataType.STRING)
+//   exam__type!: string;
+//   @Column(DataType.BOOLEAN)
+//   obligatoire!: boolean;
+//   @HasMany(() => Question)
+//   questions!: Question[];
+//   @HasMany(() => Reservation)
+//   reservation!: Reservation[];
+//   @HasMany(() => FileExam)
+//   file!: FileExam[];
+// }

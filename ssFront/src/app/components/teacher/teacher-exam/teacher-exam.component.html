@@ -60,22 +60,24 @@
               : "-"
           }}
         </td>
-        <td style="display: flex; justify-content: space-around; ">
+        <td style="display: flex; justify-content: space-around;" >
           <div style="display: flex; align-items: center;">{{ exam.scheduled ? "Yes" : "No" }}</div>
-          <!-- <div style="height: 20px !important" class="flex align-items-center justify-content-center">
+          <div style=" --item-diff-x : 0px !important">
            
-           
-        </div> -->
-        <p-speedDial 
+            <p-speedDial 
         [model]="items" 
-        type="semi-circle" 
+        direction="left" 
+        type="linear" 
         [mask]="true"
         transitionDelay="80" 
         showIcon="pi pi-bars" 
         hideIcon="pi pi-times" 
         raised="true"
         severity="secondary"
-        buttonClassName="p-button-outlined"/>
+        buttonClassName="p-button-outlined"
+        />
+        </div>
+       
         </td>
       </tr>
     </ng-template>

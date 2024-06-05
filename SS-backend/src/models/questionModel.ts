@@ -1,42 +1,92 @@
-import { Table, Model, Column, DataType, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
-import { Exam } from "./examModel"; // Import the Exam model if it exists
+import { Table, Model, Column, DataType, BelongsToMany, HasMany } from "sequelize-typescript";
+import { Exam } from "./examModel";
 import { Reponse } from "./reponseModel";
 import { FileQuestion } from "./fileModel";
+import { ExamQuestion } from "./examQuestionModel";
 
 @Table({
-    timestamps: true,
-    tableName: "Question",
+  timestamps: true,
+  tableName: "Question",
 })
 export class Question extends Model<Question> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  question__id!: number;
 
-    @Column({
-        type: DataType.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    })
-    question__id!: number;
+  @Column(DataType.STRING)
+  question__text!: string;
 
-    @Column(DataType.STRING)
-    question__text!: string;
+  @Column(DataType.FLOAT)
+  note!: number;
 
-    @ForeignKey(() => Exam)
-    @Column
-    exam__id!: number;
+  @Column(DataType.STRING)
+  question__type!: string;
 
-    // @BelongsTo(() => Exam)
-    // exam!: Exam;
-    @HasMany(() => FileQuestion)
-    file!: FileQuestion[];
-    
-    @HasMany(() => Reponse)
-    reponses!: Reponse[];
+  @Column(DataType.STRING)
+  question__subject!: string;
 
-    @Column(DataType.FLOAT)  
-    note!: number;
+  @BelongsToMany(() => Exam, () => ExamQuestion)
+  exams!: Exam[];
 
-    @Column(DataType.STRING)
-    question__type!: string;
+  @HasMany(() => FileQuestion)
+  file!: FileQuestion[];
 
-    @Column(DataType.STRING)
-    question__subject!: string;
+  @HasMany(() => Reponse)
+  reponses!: Reponse[];
 }
+
+
+
+
+
+
+
+
+
+
+// import { Table, Model, Column, DataType, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
+// import { Exam } from "./examModel"; // Import the Exam model if it exists
+// import { Reponse } from "./reponseModel";
+// import { FileQuestion } from "./fileModel";
+
+// @Table({
+//     timestamps: true,
+//     tableName: "Question",
+// })
+// export class Question extends Model<Question> {
+
+//     @Column({
+//         type: DataType.INTEGER,
+//         primaryKey: true,
+//         autoIncrement: true
+//     })
+//     question__id!: number;
+
+//     @Column(DataType.STRING)
+//     question__text!: string;
+
+//     @ForeignKey(() => Exam)
+//     @Column({
+//         type: DataType.INTEGER,
+//         allowNull: true, // Make this column optional
+//     })
+//     exam__id!: number | null;
+  
+//     @HasMany(() => FileQuestion)
+//     file!: FileQuestion[];
+    
+//     @HasMany(() => Reponse)
+//     reponses!: Reponse[];
+
+//     @Column(DataType.FLOAT)  
+//     note!: number;
+
+//     @Column(DataType.STRING)
+//     question__type!: string;
+
+//     @Column(DataType.STRING)
+//     question__subject!: string;
+// }

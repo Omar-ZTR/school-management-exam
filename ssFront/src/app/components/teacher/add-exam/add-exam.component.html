@@ -162,7 +162,7 @@
         "
         class="quistionForm box"
         >
-<app-add-question (questionAdded)="loadQuestions()"></app-add-question>
+<app-add-question  (questionAdded)="loadQuestions($event)"   [subjectValue]="subjectValue"  [examType]="examType"></app-add-question>
 
         </div>
         <!-- add question  -->
@@ -187,7 +187,7 @@
       <app-calandarfull [data]="dataPLan" (isMonthViewChange)="onIsMonthViewChange($event)"></app-calandarfull>
     </div>
   </div>
-  <div class="listQuestions" *ngIf="questarr !=''">
+  <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
     <h3>list question</h3>
     <app-listview [data]="questarr"></app-listview>
   </div>

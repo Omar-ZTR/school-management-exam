@@ -29,41 +29,41 @@
             d="M72 82.286h28.75"
             fill="#009100"
             fill-rule="evenodd"
-            stroke="#000"
+            stroke="#fff"
           />
           <path
             d="M100.75 103.714l72.482-.143c.043 39.398-32.284 71.434-72.16 71.434-39.878 0-72.204-32.036-72.204-71.554"
             fill="none"
-            stroke="#000"
+            stroke="#fff"
           />
           <path
             d="M72 125.143h28.75"
             fill="red"
             fill-rule="evenodd"
-            stroke="#000"
+            stroke="#fff"
           />
           <path
             d="M100.75 103.714l-71.908-.143c.026-39.638 32.352-71.674 72.23-71.674 39.876 0 72.203 32.036 72.203 71.554"
             fill="none"
-            stroke="#000"
+            stroke="#fff"
           />
           <path
             d="M100.75 82.286h28.75"
             fill="#009100"
             fill-rule="evenodd"
-            stroke="#000"
+            stroke="#fff"
           />
           <path
             d="M100.75 125.143h28.75"
             fill="#009100"
             fill-rule="evenodd"
-            stroke="#000"
+            stroke="#fff"
           />
         </g>
       </svg>
       <ul>
         <li>
-          <a routerLink="/contact"
+          <a routerLink="/teacher/contact"
             ><i class="fa-solid fa-bell"></i>
             <span class="notification-count">6</span>
           </a>
@@ -75,12 +75,12 @@
           </a>
           <ul *ngIf="isSettingsMenuOpen">
             <li>
-              <a routerLink="/edit-profile"
+              <a routerLink="/teacher/edit-profile"
                 ><i class="fas fa-user-edit"></i> Edit Profile</a
               >
             </li>
             <li>
-              <a routerLink="/about"
+              <a routerLink="/teacher/about"
                 ><i class="fa-solid fa-bell"></i>
                 <div class="bartitle">contact</div></a
               >
@@ -103,43 +103,43 @@
     <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
-          <li routerLink="/dash">
+          <li  routerLink="/teacher/dash">
             <i class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
         
-          <li (click)="toggleExams()">
+          <li  (click)="toggleExams()">
             <i class="fa-solid fa-folder-tree fa-xs icon"></i>
             <div class="title">Exams</div>
           </li>
           <ul *ngIf="showExams" class="sub-menu">
-            <li routerLink="/dash">
-              <i class="fas fa-home fa-xs icon"></i>
-              <div class="title">Dashboard</div>
+            <li  routerLink="/teacher/addExam">
+              <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
+              <div class="title">Add Exam</div>
             </li>
-            <li routerLink="/dash">
-              <i class="fas fa-home fa-xs icon"></i>
-              <div class="title">Dashboard</div>
+            <li  routerLink="/teacher/listExam">
+              <i class="fa-solid fa-table-list fa-xs icon"></i>
+              <div class="title">List Exam</div>
             </li>
           </ul>
-          <li routerLink="/exam">
+          <li  routerLink="/teacher/exam">
             <i class="fa-solid fa-calendar-days fa-xs icon"></i>
             <div class="title">Exams</div>
           </li>
-          <li routerLink="/update">
+          <li  routerLink="/teacher/addQuestion">
             <i class="fas fa-user-edit fa-xs icon"></i>
             <div class="title">Edit Profile</div>
           </li>
-          <li routerLink="/update">
+          <li  routerLink="/teacher/update">
             <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
             <div class="title">Result</div>
           </li>
-          <li>
+          <li >
             <i class="fa-solid fa-message fa-xs icon"></i>
             <div class="title">Contact</div>
           </li>
           <hr />
-          <li>
+          <li  (click)="logout()">
             <i class="fa-solid fa-right-from-bracket fa-xs icon"></i>
             <div class="title">Logout</div>
           </li>

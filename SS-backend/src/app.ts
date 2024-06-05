@@ -8,6 +8,7 @@ import routerQuestion from "./routers/questionRouter";
 import routerReservation from "./routers/reservationRouter";
 import routerGroup from "./routers/groupRouter";
 import routerSalle from "./routers/salleRouter";
+import routersubject from "./routers/routerSubject";
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use(function (req, res, next) {
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle );
+app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle, routersubject );
 
 const corsOptions = {
   origin: 'http://localhost:4200', 

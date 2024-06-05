@@ -1,10 +1,30 @@
-
 <!-- <div class="ADD" (click)="addQuestion()">ADD Question</div> -->
 <!-- Your question and answer form here -->
-<div [formGroup]="questionsForm">
+<div class="containerForm" [formGroup]="questionsForm">
   <legend>Question</legend>
   <!-- Text -->
   <div class="inputs bordercorner">
+    <div [formGroup]="subjectForm"  *ngIf="showQuestionField">
+    <p-dropdown 
+    [options]="subjects"
+    formControlName="selectedSubject"
+    optionLabel="subject__name"
+    [filter]="true"
+    filterBy="subject__name" 
+    [showClear]="true"
+    placeholder="Select a Subject">
+    <ng-template pTemplate="selectedItem" let-selectedOption>
+        <div class="flex align-items-center gap-2">
+            <div>{{ selectedOption.subject__name }}</div>
+        </div>
+    </ng-template>
+    <ng-template let-subject pTemplate="item">
+        <div class="flex align-items-center gap-2">
+            <div>{{ subject.subject__name }}</div>
+        </div>
+    </ng-template>
+</p-dropdown>
+</div>
     <div class="Row">
       <div>
         <div class="noteDiv">
@@ -122,26 +142,28 @@
             multiple
             (change)="QuestionFiles($event)"
           />
-          
         </div>
-        
-        <div class="QuestFileView" *ngFor="let file of fileQuest; let i = index">
-           
-              <div  [matTooltip]="file.name">
-                <div class="removeFile" style="
-                right: 0px; top: -15px; box-shadow: none;" (click)="removeFile(i)">
-                  <i class="fa-solid fa-xmark fa-xl"></i>
-                </div>
-               
 
-                <div class="fileTitle">{{ file.name }}</div>
-              </div>
-            
+        <div
+          class="QuestFileView"
+          *ngFor="let file of fileQuest; let i = index"
+        >
+          <div [matTooltip]="file.name">
+            <div
+              class="removeFile"
+              style="right: 0px; top: -15px; box-shadow: none"
+              (click)="removeFile(i)"
+            >
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+
+            <div class="fileTitle">{{ file.name }}</div>
           </div>
-       
-      </div> <div class="button-34" (click)="addAnswer()" style="max-height:50px ;">
-          <i class="fa-solid fa-plus" style="color: #ff8b43 ;"></i>Answer
         </div>
+      </div>
+      <div class="button-34" (click)="addAnswer()" style="max-height: 50px">
+        <i class="fa-solid fa-plus" style="color: #ff8b43"></i>Answer
+      </div>
     </div>
 
     <!-- answerQuiz -->
@@ -153,8 +175,7 @@
       <div formArrayName="reponses">
         <div
           *ngFor="
-            let answer of $any(questionsForm.get('reponses'))
-              .controls;
+            let answer of $any(questionsForm.get('reponses')).controls;
             let j = index
           "
           formGroupName="{{ j }}"
@@ -168,10 +189,7 @@
             </div>
             <div class="answer">
               <label for="text">Answer</label>
-              <textarea
-                id="text"
-                formControlName="reponse__text"
-              ></textarea>
+              <textarea id="text" formControlName="reponse__text"></textarea>
             </div>
             <label class="label">
               <input
@@ -189,10 +207,11 @@
         </div>
       </div>
     </div>
- 
+
     <span class="border_btm"></span>
   </div>
-  <div class="button-34"  (click)="addQuestionAndReset()">
-    <i class="fa-solid fa-list-check" style="color: #ff8b43 ;"> </i> Add to the list
+  <div class="button-34" (click)="addQuestionAndReset()">
+    <i class="fa-solid fa-list-check" style="color: #ff8b43"> </i> Add to the
+    list
   </div>
 </div>

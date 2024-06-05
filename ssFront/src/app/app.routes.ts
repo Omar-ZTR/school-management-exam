@@ -10,6 +10,9 @@ import { Component } from '@angular/core';
 import { NavComponent } from './components/home/nav/nav.component';
 import { TeacherComponent } from './components/teacher/teacher.component';
 import { RouteGuardService } from './servicesUser/route-guard.service';
+import { AddExamComponent } from './components/teacher/add-exam/add-exam.component';
+import { TeacherExamComponent } from './components/teacher/teacher-exam/teacher-exam.component';
+import { AddQuestionComponent } from './components/teacher/add-question/add-question.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -33,8 +36,9 @@ export const routes: Routes = [
     data: { expectedRole: ['Teacher'] },
     children: [
       { path: 'dash', component: DashStudentComponent },
-      { path: 'update', component: UpdateProfileComponent },
-      { path: 'exam', component: SidebarComponent },
+      { path: 'addExam', component: AddExamComponent },
+      { path: 'listExam', component: TeacherExamComponent },
+      { path: 'addQuestion', component: AddQuestionComponent },
     ],
   },
 ];

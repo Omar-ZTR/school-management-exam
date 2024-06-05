@@ -40,10 +40,7 @@ section {
     padding: 1rem 0;
   }
   
-  .listView-link h3{
-    font-weight:500;
-    font-size: 20px;
-  }
+
   
   .listView-link i{
     color: #e7d5ff;
@@ -68,19 +65,9 @@ section {
   .listView-link div{
     display: flex;
   }
-  
-  .listView-link .fa-down{
-    display: none;
-  }
-  
-  .Question{
-    max-height: 0;
-    overflow: hidden;
-    position: relative;
  
-    transition: max-height 650ms;
-  }
   
+
   
   
   .Question p{
@@ -89,15 +76,4 @@ section {
     padding-left:  2rem;
     
   }
-  
-  .listView-item:target .Question{
-    max-height: 20rem;
-  }
-  
-  .listView-item:target .listView-link .fa-rght{
-    display: none
-  }
-  
-  .listView-item:target .listView-link .fa-down{
-    display: block;
-  }
+ 

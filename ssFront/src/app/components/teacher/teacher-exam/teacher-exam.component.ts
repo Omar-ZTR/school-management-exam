@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ExamService } from '../serviceTeacher/exam.service';
 import { MenuItem } from 'primeng/api';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { RouterModule, RouterOutlet } from '@angular/router';
 export interface Exam {
   subject: string;
   exam__type: string;
@@ -16,7 +17,7 @@ export interface Exam {
 @Component({
   selector: 'app-teacher-exam',
   standalone: true,
-  imports: [TableModule, CommonModule,SpeedDialModule, ButtonModule, HttpClientModule],
+  imports: [TableModule, CommonModule,SpeedDialModule, ButtonModule, HttpClientModule,RouterOutlet,RouterModule,],
   templateUrl: './teacher-exam.component.html',
   styleUrl: './teacher-exam.component.css'
 })
@@ -41,11 +42,7 @@ export class TeacherExamComponent {
           command: () => {
              console.log("helooo")}
       },
-      {
-          icon: 'pi pi-trash',
-          command: () => {
-             console.log("helooo")}
-      },
+   
       {
           icon: 'pi pi-upload',
           routerLink: ['/fileupload']

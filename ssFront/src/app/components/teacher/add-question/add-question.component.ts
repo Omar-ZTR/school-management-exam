@@ -1,43 +1,83 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { QuestionService } from '../serviceTeacher/question.service';
 import { GlobalConstants, rangeNumber } from '../../../shared/global-constants';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListviewComponent } from '../listview/listview.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DropdownModule } from 'primeng/dropdown';
+import { SubjectService } from '../../servicesUtils/subject.service';
 
 @Component({
   selector: 'app-add-question',
   standalone: true,
-  imports: [ CommonModule,
+  imports: [
+    CommonModule,
     MatTooltipModule,
     ReactiveFormsModule,
     FormsModule,
-    ListviewComponent,],
+    ListviewComponent,
+    DropdownModule,
+  ],
   templateUrl: './add-question.component.html',
-  styleUrl: '../add-exam/add-exam.component.css'
+  styleUrl: '../add-exam/add-exam.component.css',
 })
 export class AddQuestionComponent {
-  @Output() questionAdded = new EventEmitter<void>();
+  @Input() subjectValue: any;
+  @Input() examType: any;
+  
+  @Output() questionAdded = new EventEmitter<any>();
   questionsForm: FormGroup;
-
-
+  subjectForm!: FormGroup;
   fileQuest: any[] = [];
   questarr: any[] = [];
-  fake__id:number =-1;
+
   questionFile: any = [];
- 
+
   dataquest: any = {};
-
-
+  examid = 1;
+  subjects: any;
+  sub='a';
+  selectedSubject: any;
   showrep = false;
-
+  showQuestionField: boolean = true;
+  checkRoute() {
+    const currentRoute = this.router.url;
+    const hideRoutes = [
+      '/teacher/addQuestion',
+      '/student/addQuestion',
+      '/admin/addQuestion',
+    ];
+    this.showQuestionField = hideRoutes.includes(currentRoute);
+    console.log(this.showQuestionField, currentRoute);
+  }
   setswitch() {
     this.showrep = !this.showrep;
   }
-  constructor( private questService: QuestionService, private fb: FormBuilder) {
-   
+  constructor(
+    private subjectService: SubjectService,
+    private questService: QuestionService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+
+    this.subjectForm = this.fb.group({
+selectedSubject: new FormControl<any | null>(null)
+
+    })
+
+
     this.questionsForm = this.fb.group({
       question__text: [
         '',
@@ -45,10 +85,8 @@ export class AddQuestionComponent {
       ],
       note: ['', [Validators.required, rangeNumber(0, 20)]],
       question__type: ['', Validators.required],
-      exam__id: this.fake__id,
-      reponses: this.fb.array([
-       
-      ]),
+      question__subject: '',
+      reponses: this.fb.array([]),
     });
   }
   createAnswerFormGroup() {
@@ -59,7 +97,9 @@ export class AddQuestionComponent {
   }
 
   ngOnInit(): void {
-   
+    console.log('kkkkkkkkkkkkkkkkkkkkkkinput',this.examType)
+    this.questionsForm.get('question__type')?.setValue(this.examType || 'Normal');
+    this.checkRoute();
     this.questionsForm
       .get('question__type')
       ?.valueChanges.subscribe((value) => {
@@ -73,6 +113,39 @@ export class AddQuestionComponent {
           }
         }
       });
+      this.subjectService.getSubjects().subscribe(
+        data => {
+          this.subjects = data;
+        },
+        error => {
+          console.error("Error fetching subjects", error);
+        }
+      );
+
+      this.subjectForm.get('selectedSubject')?.valueChanges.subscribe((selectedSubject: any) => {
+        console.log('Selected Subject:', selectedSubject);
+        
+      
+        if (!selectedSubject && this.subjectValue) {
+          this.questionsForm.patchValue({
+            question__subject: this.subjectValue,
+          });
+        } else {
+          this.sub = selectedSubject?.subject__name || '';
+          console.log('sssssaaaaaaaaaaaaassssss', this.sub);
+          this.questionsForm.patchValue({
+            question__subject: this.sub,
+          });
+        }
+      });
+      
+      
+      if (!this.selectedSubject && this.subjectValue) {
+        this.questionsForm.patchValue({
+          question__subject: this.subjectValue,
+        });
+      }
+    
   }
   addAnswer(): void {
     const reponses = this.questionsForm.get('reponses') as FormArray;
@@ -80,11 +153,10 @@ export class AddQuestionComponent {
   }
 
   removeAnswer(index: number): void {
-    const reponses = this.questionsForm.get('reponses') as FormArray;
+    const reponses = this.questionsForm.get('reponses')  as FormArray;
     reponses.removeAt(index);
   }
 
-  
   async QuestionFiles(event: any) {
     let files = event.target.files;
 
@@ -110,15 +182,14 @@ export class AddQuestionComponent {
       reader.readAsDataURL(file);
     });
   }
-
+ 
   removeFile(index: number) {
-    
     this.fileQuest.splice(index, 1);
   }
   formReponses() {
     return this.questionsForm.get('reponses') as FormArray;
   }
- 
+
   private markisTouched(formGroup: FormGroup | FormArray) {
     (Object as any)
       .values(formGroup.controls)
@@ -131,6 +202,7 @@ export class AddQuestionComponent {
       });
   }
   addQuestionAndReset() {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",this.selectedSubject)
     const reponseForm = this.formReponses();
     if (reponseForm.invalid) {
       // Mark all fields as touched to show validation errors
@@ -149,24 +221,19 @@ export class AddQuestionComponent {
     this.questarr.push(this.dataquest);
     console.log(this.questarr);
 
-    
-
     this.questService.createquestion(this.dataquest).subscribe(
       (response: any) => {
         alert('Successfully create');
         console.log('seccess', response);
-        this.questionAdded.emit();
+        this.questionAdded.emit(response);
         this.questionsForm.reset();
-        this.fileQuest=[]
+        this.fileQuest = [];
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
-        
       }
     );
 
-   
     // this.questionsForm.patchValue({ question__type: this.typ });
   }
-
 }
