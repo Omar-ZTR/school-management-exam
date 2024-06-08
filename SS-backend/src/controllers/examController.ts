@@ -5,6 +5,8 @@ import { Reponse } from "../models/reponseModel";
 import { Question } from "../models/questionModel";
 import { FileExam } from "../models/fileModel";
 import { Reservation } from "../models/reservationModel";
+import { Group } from "../models/groupModel";
+import { Student } from "../models/studentModel";
 
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
@@ -124,6 +126,28 @@ export const getTeacherExams = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
+
+export const getExamsGroupsStutents = async (req: Request, res: Response) => {
+  try {
+    const exams = await Exam.findAll({
+      include: [{
+        model: Group,
+        include: [{ model: Student }],
+        through: { attributes: [] }, // Exclude join table attributes
+      }],
+    });
+  
+    res.status(200).json(exams);
+  } catch (error) {
+    console.error('Error fetching students for groups:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 // Update operation
 export const updateExam = async (req: Request, res: Response) => {
   try {

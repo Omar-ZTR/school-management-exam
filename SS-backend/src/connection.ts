@@ -14,12 +14,13 @@ import { Subject } from "./models/subjectModel";
 import { Group } from "./models/groupModel";
 import { GroupSubject } from "./models/groupSubjectModel";
 import { ExamQuestion } from "./models/examQuestionModel";
+import { ExamGroup } from "./models/examGroupModel";
 
 const connection = new Sequelize('smartskills', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     database: "smartskills",
-    models: [User, Exam, Question, Reponse, Salle, Reservation, Student,ExamQuestion, Teacher,Token,FileExam,FileQuestion, Rank, Subject, Group, GroupSubject ],
+    models: [User, Exam, Question, Reponse, Salle, Reservation, Student,ExamQuestion, ExamGroup, Teacher,Token,FileExam,FileQuestion, Rank, Subject, Group, GroupSubject ],
 
 });
 

@@ -13,6 +13,7 @@ import { RouteGuardService } from './servicesUser/route-guard.service';
 import { AddExamComponent } from './components/teacher/add-exam/add-exam.component';
 import { TeacherExamComponent } from './components/teacher/teacher-exam/teacher-exam.component';
 import { AddQuestionComponent } from './components/teacher/add-question/add-question.component';
+import { ResultComponent } from './components/teacher/result/result.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'addExam', component: AddExamComponent },
       { path: 'listExam', component: TeacherExamComponent },
       { path: 'addQuestion', component: AddQuestionComponent },
+      { path: 'Result', component: ResultComponent },
     ],
   },
 ];

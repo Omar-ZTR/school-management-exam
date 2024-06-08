@@ -15,6 +15,8 @@ const questionModel_1 = require("./questionModel");
 const examQuestionModel_1 = require("./examQuestionModel");
 const fileModel_1 = require("./fileModel");
 const reservationModel_1 = require("./reservationModel");
+const examGroupModel_1 = require("./examGroupModel");
+const groupModel_1 = require("./groupModel");
 let Exam = class Exam extends sequelize_typescript_1.Model {
 };
 exports.Exam = Exam;
@@ -54,6 +56,10 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => fileModel_1.FileExam),
     __metadata("design:type", Array)
 ], Exam.prototype, "file", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => groupModel_1.Group, () => examGroupModel_1.ExamGroup),
+    __metadata("design:type", Array)
+], Exam.prototype, "groups", void 0);
 exports.Exam = Exam = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Exam } from '../teacher-exam/teacher-exam.component';
+import { ExamGS } from '../result/result.component';
 @Injectable({
   providedIn: 'root'
 })
@@ -37,6 +38,10 @@ formData.append('file', data.file);
 
   getTeacherExam(): Observable<Exam[]> {
     return this.httpClient.get<Exam[]>(`${this.url}/exams`);
+  }
+
+  getTeacherExamGS(): Observable<ExamGS[]> {
+    return this.httpClient.get<ExamGS[]>(`${this.url}/examsGS`);
   }
 
 }

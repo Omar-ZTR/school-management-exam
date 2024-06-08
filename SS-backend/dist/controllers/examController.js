@@ -12,13 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteExam = exports.updateExam = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const upload_1 = __importDefault(require("../utils/upload"));
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
 const fileModel_1 = require("../models/fileModel");
 const reservationModel_1 = require("../models/reservationModel");
+const groupModel_1 = require("../models/groupModel");
+const studentModel_1 = require("../models/studentModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -129,6 +131,23 @@ const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getTeacherExams = getTeacherExams;
+const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const exams = yield examModel_1.Exam.findAll({
+            include: [{
+                    model: groupModel_1.Group,
+                    include: [{ model: studentModel_1.Student }],
+                    through: { attributes: [] }, // Exclude join table attributes
+                }],
+        });
+        res.status(200).json(exams);
+    }
+    catch (error) {
+        console.error('Error fetching students for groups:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getExamsGroupsStutents = getExamsGroupsStutents;
 // Update operation
 const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

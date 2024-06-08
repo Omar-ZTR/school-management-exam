@@ -6,12 +6,15 @@ import {
   updateExam,
   deleteExam,
   getTeacherExams,
+  getExamsGroupsStutents,
 } from '../controllers/examController';
 
 const routerExam= express.Router();
 
 routerExam.get('/allexams', getAllExams);
 
+
+routerExam.get('/examsGS', getExamsGroupsStutents);
 
 routerExam.get('/exams', getTeacherExams);
 

@@ -16,10 +16,11 @@ const subjectModel_1 = require("./models/subjectModel");
 const groupModel_1 = require("./models/groupModel");
 const groupSubjectModel_1 = require("./models/groupSubjectModel");
 const examQuestionModel_1 = require("./models/examQuestionModel");
+const examGroupModel_1 = require("./models/examGroupModel");
 const connection = new sequelize_typescript_1.Sequelize('smartskills', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     database: "smartskills",
-    models: [User__model_1.User, examModel_1.Exam, questionModel_1.Question, reponseModel_1.Reponse, salleModel_1.Salle, reservationModel_1.Reservation, studentModel_1.Student, examQuestionModel_1.ExamQuestion, teacherModel_1.Teacher, tokenModel_1.Token, fileModel_1.FileExam, fileModel_1.FileQuestion, rankModel_1.Rank, subjectModel_1.Subject, groupModel_1.Group, groupSubjectModel_1.GroupSubject],
+    models: [User__model_1.User, examModel_1.Exam, questionModel_1.Question, reponseModel_1.Reponse, salleModel_1.Salle, reservationModel_1.Reservation, studentModel_1.Student, examQuestionModel_1.ExamQuestion, examGroupModel_1.ExamGroup, teacherModel_1.Teacher, tokenModel_1.Token, fileModel_1.FileExam, fileModel_1.FileQuestion, rankModel_1.Rank, subjectModel_1.Subject, groupModel_1.Group, groupSubjectModel_1.GroupSubject],
 });
 exports.default = connection;

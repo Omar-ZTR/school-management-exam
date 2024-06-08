@@ -3,6 +3,8 @@ import { Question } from "./questionModel";
 import { ExamQuestion } from "./examQuestionModel";
 import { FileExam } from "./fileModel";
 import { Reservation } from "./reservationModel";
+import { ExamGroup } from "./examGroupModel";
+import { Group } from "./groupModel";
 
 @Table({
   timestamps: true,
@@ -36,6 +38,9 @@ export class Exam extends Model<Exam> {
 
   @HasMany(() => FileExam)
   file!: FileExam[];
+
+  @BelongsToMany(() => Group, () => ExamGroup)
+  groups!: Group[];
 }
 
 

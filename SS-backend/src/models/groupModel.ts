@@ -1,6 +1,9 @@
-import { Table, Model, Column, DataType, BelongsToMany } from "sequelize-typescript";
+import { Table, Model, Column, DataType, BelongsToMany, HasMany } from "sequelize-typescript";
 import { Subject } from "./subjectModel";
 import { GroupSubject } from "./groupSubjectModel";
+import { Student } from "./studentModel";
+import { ExamGroup } from "./examGroupModel";
+import { Exam } from "./examModel";
 
 
 @Table({
@@ -28,6 +31,10 @@ export class Group extends Model<Group> {
       @BelongsToMany(() => Subject, () => GroupSubject)
       subjects!: Subject[];
 
+      @HasMany(() => Student)
+      students!: Student[];
 
+      @BelongsToMany(() => Exam, () => ExamGroup)
+      exams!: Exam[];
 
 }
