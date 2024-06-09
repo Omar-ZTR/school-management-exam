@@ -11,6 +11,7 @@ import { ExamService } from '../teacher/serviceTeacher/exam.service';
 import { CalandarService } from '../teacher/serviceTeacher/calandar.service';
 import { GroupService } from '../servicesUtils/group.service';
 import { SalleService } from '../servicesUtils/salle.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 export interface GroupResponse {
   groupsSubject: any[];
@@ -19,7 +20,7 @@ export interface GroupResponse {
 @Component({
   selector: 'app-calandarfull',
   standalone: true,
-  imports: [ReactiveFormsModule, NgbModalModule, CommonModule],
+  imports: [ReactiveFormsModule,TooltipModule, NgbModalModule, CommonModule],
   templateUrl: './calandarfull.component.html',
   styleUrls: ['./calandarfull.component.css'],
 })
@@ -83,6 +84,7 @@ export class CalandarfullComponent implements OnInit {
       group: ['', Validators.required],
     });
     this.fetchEvents();
+    this.fetchGroups()
   }
 
   fetchEvents(): void {
@@ -103,6 +105,7 @@ export class CalandarfullComponent implements OnInit {
         console.log('Response from backend:', data);
         this.groupSub = data.groupsSubject;
         this.groupRank = data.groupsRank;
+      
       },
       (error: any) => {
         console.error('Error fetching groups', error);
@@ -172,8 +175,7 @@ export class CalandarfullComponent implements OnInit {
       this.currentMonth + 1,
       0
     ).getDate();
-    console.log(this.currentWeekStart);
-    console.log('aaaaaaaaa', mmdate);
+   
   }
 
   toggleView() {
@@ -392,7 +394,7 @@ export class CalandarfullComponent implements OnInit {
       'background-color': `${defaultColor}33`,
     };
 
-    console.log('Checking event styles for:', dateString, hour);
+   
 
     if (this.examlist) {
       const eventsOnSameDay = this.examlist.filter(
@@ -424,7 +426,7 @@ export class CalandarfullComponent implements OnInit {
             : -1;
 
         styles = {
-          width: '9%',
+          width: '90%',
           height: `${durationMinutes}px`,
           transform: `translateY(${minute}px)`,
           'box-shadow': `0 4px 30px ${defaultColor}1A`,
@@ -433,8 +435,7 @@ export class CalandarfullComponent implements OnInit {
             colorIndex !== -1 ? `${colors[colorIndex]}33` : `${defaultColor}33`,
         };
 
-        console.log('Event found:', event);
-        console.log('Styles:', styles);
+       
       }
     }
 
@@ -446,7 +447,7 @@ export class CalandarfullComponent implements OnInit {
   }
 
   saveEvent() {
-    console.log('hhhhhhhhhhheeeeeeeeeeeelooooooooooooooo', this.data);
+ 
     if (this.eventForm.valid) {
       const formValues = this.eventForm.value;
       // For debugging purposes
@@ -457,19 +458,22 @@ export class CalandarfullComponent implements OnInit {
 
         startDate: new Date(`${formValues.startDate}T${formValues.startTime}`),
         endDate: new Date(`${formValues.startDate}T${formValues.endTime}`),
-        group__name: formValues.group,
+      
+  group__name: formValues.group.group__name,
         salle: formValues.salle,
         exam__title: formValues.title,
       };
-      console.log('before', calandarData);
+      console.log('beforzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzze', calandarData);
 
       this.calandarService.createReserv(calandarData).subscribe(
         (response: any) => {
           alert('Successfully create');
           console.log('seccess create', response);
+          this.fetchEvents();
           const examData = {
             exam__id: this.data,
             operation: 1,
+            group__id: formValues.group.group__id,
           };
 
           this.examService.updateExam(examData).subscribe(

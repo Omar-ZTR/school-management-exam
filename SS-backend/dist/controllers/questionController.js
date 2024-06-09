@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteQuestion = exports.updateQuestion = exports.getAllQuestions = exports.getQuestionById = exports.getFakeQuestions = exports.createQuestion = void 0;
+exports.deleteQuestion = exports.updateQuestion = exports.getAllQuestions = exports.getQuestionById = exports.updateQuestionsWithExam = exports.getFakeQuestions = exports.createQuestion = void 0;
 const questionModel_1 = require("../models/questionModel"); // Import your Question model
-const upload_1 = __importDefault(require("../utils/upload"));
 const reponseModel_1 = require("../models/reponseModel");
 const fileModel_1 = require("../models/fileModel");
 const examModel_1 = require("../models/examModel");
+const upload_1 = __importDefault(require("../utils/upload"));
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 // export const createQuestion = async (req: Request, res: Response) => {
@@ -74,7 +74,7 @@ const baseUrl = "http://localhost:3000/files/";
 const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("exam 2", req.files);
-        yield (0, upload_1.default)(req, res); // Handle file upload
+        yield (0, upload_1.default)(req, res);
         console.log("exam 3", req.file);
         const questDatas = Object.assign({}, req.body);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>", questDatas);
@@ -84,8 +84,8 @@ const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.log("Parsed question data:", questionData);
         const question = yield questionModel_1.Question.create(questionData);
         console.log("exam 6");
-        if (req.files && req.files.length != 0) {
-            console.log("file 7", req.file);
+        if (req.files && req.files.length > 0) {
+            console.log("files 7", req.files);
             for (const file of req.files) {
                 const support__files = {
                     file__name: file.originalname,
@@ -153,6 +153,33 @@ const getFakeQuestions = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getFakeQuestions = getFakeQuestions;
+const updateQuestionsWithExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { exam__id, questionIds } = req.body;
+        if (!exam__id || !Array.isArray(questionIds) || questionIds.length === 0) {
+            return res.status(400).json({ error: "Invalid input data" });
+        }
+        const exam = yield examModel_1.Exam.findByPk(exam__id);
+        if (!exam) {
+            return res.status(404).json({ error: "Exam not found" });
+        }
+        const questions = yield questionModel_1.Question.findAll({
+            where: {
+                question__id: questionIds,
+            },
+        });
+        if (questions.length !== questionIds.length) {
+            return res.status(404).json({ error: "One or more questions not found" });
+        }
+        yield exam.$add('questions', questions);
+        return questions;
+    }
+    catch (error) {
+        console.error("Error updating questions with exam", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.updateQuestionsWithExam = updateQuestionsWithExam;
 const getQuestionById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

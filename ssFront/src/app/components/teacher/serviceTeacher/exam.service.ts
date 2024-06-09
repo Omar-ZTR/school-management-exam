@@ -16,12 +16,16 @@ export class ExamService {
     // if (data.files.length > 0) {
     //   for (let file of data.files) {
     //     formData.append('files', file);
-    //   }
+    //   }for (const file of files) {
+  
+
     // }
-    // console.log("fffffffffffffffffffffffl",formData)
+    console.log("fffffffffffffffffffffffl",data)
     const formData = new FormData();
-formData.append('exam', JSON.stringify(data.exam)); // Serialize exam data
-formData.append('file', data.file);
+formData.append('exam', JSON.stringify(data.exam)); 
+for (const file of data.files) {// Serialize exam data
+formData.append('files', file);
+}
     return this.httpClient.post(this.url + "/examc" , formData , {
       headers:new HttpHeaders().set('Accept' , 'application/json')
     })

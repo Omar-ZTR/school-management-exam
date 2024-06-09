@@ -45,7 +45,7 @@ console.log("id is : " ,req.params)
 
         console.log("sub is : ",subjectName)
         const subject = await Subject.findOne({ where: { subject__name: subjectName } });
-
+        console.log("hhhay: ",subject)
         if (!subject) {
             return res.status(404).json({ message: "Subject not found" });
         }
@@ -58,7 +58,7 @@ console.log("id is : " ,req.params)
                 through: { attributes: [] }, 
             }
         });
-
+        console.log("gr hay : ",groupSubject)
         const groupsRank = await Group.findAll({
             where: {
                 Rank: {
@@ -66,7 +66,7 @@ console.log("id is : " ,req.params)
                 }
             }
         });
-
+        console.log("reee: ",groupsRank)
     
       
         res.json({

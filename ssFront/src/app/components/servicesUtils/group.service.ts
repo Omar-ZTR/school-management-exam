@@ -22,6 +22,8 @@ export class GroupService {
   }
 
   getGroupSubject(exam_id: any): Observable<any> {
+
+    console.log("sssaaaaaaaaaa",exam_id)
     return this.httpClient.get(`${this.url}/groupSub/${exam_id}`, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });

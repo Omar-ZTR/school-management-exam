@@ -4,6 +4,7 @@ import uploadFile from "../utils/upload";
 import { Reponse } from "../models/reponseModel";
 import {FileQuestion } from "../models/fileModel";
 import { Exam } from "../models/examModel";
+import uploadFileMiddleware from "../utils/upload";
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 // export const createQuestion = async (req: Request, res: Response) => {
@@ -69,7 +70,7 @@ export const createQuestion = async (req: Request, res: Response) => {
   try {
     console.log("exam 2", req.files);
 
-    await uploadFile(req, res); // Handle file upload
+    await uploadFileMiddleware(req, res)
     console.log("exam 3", req.file);
     const questDatas = { ...req.body };
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>", questDatas);
@@ -82,8 +83,8 @@ export const createQuestion = async (req: Request, res: Response) => {
     const question = await Question.create(questionData);
     console.log("exam 6");
 
-    if (req.files && req.files.length != 0) {
-      console.log("file 7", req.file);
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+      console.log("files 7", req.files);
 
       for (const file of req.files as Express.Multer.File[]) {
         const support__files = {
@@ -156,6 +157,39 @@ console.log("<><<<>>",questions)
 };
 
 
+
+export const updateQuestionsWithExam = async (req: Request, res: Response) => {
+  try {
+    const { exam__id, questionIds } = req.body;
+
+    if (!exam__id || !Array.isArray(questionIds) || questionIds.length === 0) {
+      return res.status(400).json({ error: "Invalid input data" });
+    }
+
+    const exam = await Exam.findByPk(exam__id);
+
+    if (!exam) {
+      return res.status(404).json({ error: "Exam not found" });
+    }
+
+    const questions = await Question.findAll({
+      where: {
+        question__id: questionIds,
+      },
+    });
+
+    if (questions.length !== questionIds.length) {
+      return res.status(404).json({ error: "One or more questions not found" });
+    }
+
+    await exam.$add('questions', questions);
+
+    return questions;
+  } catch (error) {
+    console.error("Error updating questions with exam", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
 

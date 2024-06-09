@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
-const upload_1 = __importDefault(require("../utils/upload"));
-const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
 const fileModel_1 = require("../models/fileModel");
 const reservationModel_1 = require("../models/reservationModel");
 const groupModel_1 = require("../models/groupModel");
 const studentModel_1 = require("../models/studentModel");
+const questionController_1 = require("./questionController");
+const upload_1 = __importDefault(require("../utils/upload"));
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -35,46 +35,27 @@ const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log("LLLL 5", examData);
         const exam = yield examModel_1.Exam.create(examData);
         console.log("exam 6");
-        if (req.file !== undefined) {
-            console.log("file 7", req.file);
-            // If file uploaded, save file information in the support__files attribute
-            const support__files = {
-                file__name: req.file.originalname,
-                file__path: baseUrl + req.file.filename,
-                file__type: "support",
-                exam__id: exam.exam__id
-            };
-            console.log("file attribute", support__files);
-            const filesup = yield fileModel_1.FileExam.create({
-                file__name: req.file.originalname,
-                file__path: baseUrl + req.file.filename,
-                file__type: "support",
-                exam__id: exam.exam__id
-            });
+        if (req.files && req.files.length > 0) {
+            console.log("files 7", req.files);
+            for (const file of req.files) {
+                const support__files = {
+                    file__name: file.originalname,
+                    file__path: baseUrl + file.filename,
+                    file__type: "support",
+                    exam__id: exam.exam__id,
+                };
+                console.log("file attribute", support__files);
+                yield fileModel_1.FileExam.create(support__files);
+            }
         }
         console.log("file 8");
-        // Create the questions for the exam
-        if (examDatas.questions &&
-            Array.isArray(examDatas.questions) &&
-            examDatas.questions.length > 0) {
-            console.log("if eloula fotnaha");
-            const questionsData = examDatas.questions;
-            for (const questionData of questionsData) {
-                questionData.exam__id = exam.exam__id;
-                const question = yield questionModel_1.Question.create(questionData);
-                console.log("question fotnaha");
-                // Create the responses for each question
-                if (questionData.reponses &&
-                    Array.isArray(questionData.reponses) &&
-                    questionData.reponses.length > 0) {
-                    console.log("if ethanya fotnaha");
-                    const responsesData = questionData.reponses;
-                    for (const responseData of responsesData) {
-                        responseData.question__id = question.question__id;
-                        yield reponseModel_1.Reponse.create(responseData);
-                    }
+        if (examData.questions && Array.isArray(examData.questions) && examData.questions.length > 0) {
+            yield (0, questionController_1.updateQuestionsWithExam)({
+                body: {
+                    exam__id: exam.exam__id,
+                    questionIds: examData.questions.map((q) => q.question__id || q)
                 }
-            }
+            }, res);
         }
         res.status(201).json(exam);
     }
@@ -84,6 +65,32 @@ const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.createExam = createExam;
+// if (
+//   examDatas.questions &&
+//   Array.isArray(examDatas.questions) &&
+//   examDatas.questions.length > 0
+// ) {
+//   console.log("if eloula fotnaha");
+//   const questionsData = examDatas.questions;
+//   for (const questionData of questionsData) {
+//     questionData.exam__id = exam.exam__id;
+//     const question = await Question.create(questionData);
+//     console.log("question fotnaha");
+//     // Create the responses for each question
+//     if (
+//       questionData.reponses &&
+//       Array.isArray(questionData.reponses) &&
+//       questionData.reponses.length > 0
+//     ) {
+//       console.log("if ethanya fotnaha");
+//       const responsesData = questionData.reponses;
+//       for (const responseData of responsesData) {
+//         responseData.question__id = question.question__id;
+//         await Reponse.create(responseData);
+//       }
+//     }
+//   }
+// }
 // Get Exam by ID
 const getExamById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -134,17 +141,19 @@ exports.getTeacherExams = getTeacherExams;
 const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const exams = yield examModel_1.Exam.findAll({
-            include: [{
+            include: [
+                {
                     model: groupModel_1.Group,
                     include: [{ model: studentModel_1.Student }],
                     through: { attributes: [] }, // Exclude join table attributes
-                }],
+                },
+            ],
         });
         res.status(200).json(exams);
     }
     catch (error) {
-        console.error('Error fetching students for groups:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching students for groups:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getExamsGroupsStutents = getExamsGroupsStutents;
@@ -155,8 +164,9 @@ const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log("Request Params:", req.params);
         const { id } = req.params;
         const { operation } = req.body;
+        const { group__id } = req.body;
         // Validate the operation
-        if (typeof operation !== 'number') {
+        if (typeof operation !== "number") {
             return res.status(400).send("Invalid operation value");
         }
         // Find the exam by primary key
@@ -164,7 +174,12 @@ const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!exam) {
             return res.status(404).send("Exam not found");
         }
+        const group = yield groupModel_1.Group.findByPk(group__id);
         console.log("Existing Exam:", exam);
+        if (!group) {
+            return res.status(404).send("group not found");
+        }
+        yield exam.$add('groups', group);
         // Update the nb__reserve field
         const nb__reserve = exam.nb__reserve + operation;
         const [updated] = yield examModel_1.Exam.update({ nb__reserve }, { where: { exam__id: id } });

@@ -2,6 +2,8 @@ import { Table, Model, Column, DataType, HasMany, ForeignKey, BelongsTo } from "
 import { Question } from "./questionModel";
 import { Exam } from "./examModel";
 import { User } from "./User__model";
+import { Reponse } from "./reponseModel";
+import { AnswerStudent } from "./answerStudentModel";
 
 
 @Table({
@@ -17,29 +19,14 @@ export class Answer extends Model<Answer> {
     })
     ans__id!: number;
 
-    @ForeignKey(() => Exam)
-    @Column
+    @Column(DataType.NUMBER)
     exam__id!: number;
 
-    @BelongsTo(() => Exam)
-    exam!: Exam;
+    @Column(DataType.NUMBER)
+    Student__id!: number;
 
-    @ForeignKey(() => User)
-    @Column
-    user__id!: number;
-
-    @BelongsTo(() => User)
-    user!: User;
-
-    @ForeignKey(() => Question)
-    @Column
-    questiom__id!: number;
-
-    @BelongsTo(() => Question)
-    question!: Exam;
-
-    @Column(DataType.STRING)
-    ans__value!: string;
+    @HasMany(() => AnswerStudent)
+   answers!: AnswerStudent[];
 
     @Column(DataType.STRING)
     ans__filePath!: string;

@@ -56,21 +56,19 @@
                   openEventForm(date, hour, eventFormModal)
               "
             >
-              <div
-                class="has-event"
-                *ngIf="isEvent(date, hour)"
-                [ngStyle]="getEventStyles(date, hour)"
-              >
+            <div  *ngIf="isEvent(date, hour)" [ngStyle]="getEventStyles(date, hour)" class=" has-event event-container">
               <ng-container *ngFor="let event of examlist">
-                <div *ngIf="isEventForDateAndHour(event, date, hour)">
-                  <strong>{{ event.exam__title }}</strong><br />
-                  <small>
-                    {{ event.startDate | date: 'shortTime' }} -
-                    {{ event.endDate | date: 'shortTime' }}
-                  </small>
+                <div *ngIf="isEventForDateAndHour(event, date, hour)" >
+                 
+                  <span class="tooltip-text">
+                    <strong>{{ event.exam__title }}</strong><br />
+                    <small>
+                      {{ event.startDate | date: 'shortTime' }} - {{ event.endDate | date: 'shortTime' }}
+                    </small>
+                  </span>
                 </div>
               </ng-container>
-              </div>
+            </div>
               <!-- Add event content here -->
             </div>
           </div>
@@ -84,7 +82,7 @@
 </div>
 
 <!-- Event Form Modal -->
-<ng-template #eventFormModal let-modal>
+<ng-template style="z-index: 99999;" #eventFormModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Add Event</h4>
     <button
@@ -190,13 +188,12 @@
         </div>
         <div class="ml-2">
           <label for="group">Group</label>
-          <select id="group" class="form-control" formControlName="group" (click)="fetchGroups()">
-            <option *ngFor="let groupS of groupSub" [value]="groupS.group__id">
-              {{ groupS.group__name }} 
+          <select id="group" class="form-control" formControlName="group" >
+            <option *ngFor="let groupS of groupSub" value="groupS">
+              {{ groupS.group__name }}
             </option>
-            groupRanks
-            <option *ngFor="let groupR of groupRank"  [value]="groupR.group__id">
-              {{ groupR.group__name }} 
+            <option *ngFor="let groupR of groupRank" [ngValue]="{group__id: groupR.group__id, group__name: groupR.group__name}">
+              {{ groupR.group__name }}
             </option>
           </select>
           <div

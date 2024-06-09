@@ -216,7 +216,7 @@ selectedSubject: new FormControl<any | null>(null)
 
     this.dataquest = {
       question: this.questionsForm.value,
-      files: this.questionFile[0],
+      files: this.questionFile,
     };
     this.questarr.push(this.dataquest);
     console.log(this.questarr);
@@ -225,6 +225,7 @@ selectedSubject: new FormControl<any | null>(null)
       (response: any) => {
         alert('Successfully create');
         console.log('seccess', response);
+        console.log('ffffilessss', this.dataquest.files);
         this.questionAdded.emit(response);
         this.questionsForm.reset();
         this.fileQuest = [];

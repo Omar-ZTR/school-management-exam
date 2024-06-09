@@ -166,7 +166,7 @@ export class AddExamComponent {
     }
     this.dataexam = {
       exam: this.examForm.value,
-      file: this.listFile[0],
+      files: this.listFile,
     };
 
   }

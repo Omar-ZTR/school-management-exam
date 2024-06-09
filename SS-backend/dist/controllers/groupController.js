@@ -50,6 +50,7 @@ const getGroupsSubject = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const subjectName = exam.subject;
         console.log("sub is : ", subjectName);
         const subject = yield subjectModel_1.Subject.findOne({ where: { subject__name: subjectName } });
+        console.log("hhhay: ", subject);
         if (!subject) {
             return res.status(404).json({ message: "Subject not found" });
         }
@@ -60,6 +61,7 @@ const getGroupsSubject = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 through: { attributes: [] },
             }
         });
+        console.log("gr hay : ", groupSubject);
         const groupsRank = yield groupModel_1.Group.findAll({
             where: {
                 Rank: {
@@ -67,6 +69,7 @@ const getGroupsSubject = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 }
             }
         });
+        console.log("reee: ", groupsRank);
         res.json({
             groupsSubject: groupSubject,
             groupsRank: groupsRank

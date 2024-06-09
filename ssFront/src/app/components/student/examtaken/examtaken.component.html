@@ -1,0 +1,100 @@
+<p-table    styleClass="p-datatable-gridlines"   [tableStyle]="{'min-width': '60rem','width':'100%'}">
+    <ng-template pTemplate="header">
+        <tr>
+            <th rowspan="2" colspan="2">Title Exam</th>
+            <th colspan="2">date exam </th>
+            <th rowspan="2" colspan="2">name Student</th>
+        </tr>
+        <tr>
+            <th colspan="2">time exam</th>
+          
+        </tr>
+      
+    </ng-template>
+</p-table>
+
+<p-fieldset legend="Type section" [toggleable]="true">
+    <p-panel header="Question">
+        <div class="flex flex-wrap gap-3">
+            <div class="flex align-items-center text-align-center">
+                <p-radioButton 
+                    name="pizza" 
+                    value="Cheese" 
+                    [(ngModel)]="ingredient" 
+                    inputId="ingredient1" />
+                <label for="ingredient1" class="ml-2">
+                    Cheese
+                </label>
+            </div>
+            
+            <div class="flex align-items-center">
+                <p-radioButton 
+                    name="pizza" 
+                    value="Mushroom" 
+                    [(ngModel)]="ingredient" 
+                    inputId="ingredient2" />
+                <label for="ingredient2" class="ml-2">
+                    Mushroom
+                </label>
+            </div>
+            
+            <div class="flex align-items-center">
+                <p-radioButton 
+                    name="pizza" 
+                    value="Pepper" 
+                    [(ngModel)]="ingredient" 
+                    inputId="ingredient3" />
+                <label for="ingredient3" class="ml-2">
+                    Pepper
+                </label>
+            </div>
+        
+            <div class="flex align-items-center">
+                <p-radioButton 
+                    name="pizza" 
+                    value="Onion" 
+                    [(ngModel)]="ingredient" 
+                    inputId="ingredient4" />
+                <label for="ingredient4" class="ml-2">
+                    Onion
+                </label>
+            </div>
+        </div>
+
+        
+    </p-panel>
+
+
+    <p-panel header="Question">
+        <div class="flex align-items-center">
+            <p-checkbox 
+                [(ngModel)]="pizza"
+                label="Cheese" 
+                name="pizza" 
+                value="Cheese" />
+        </div>
+        <div class="flex align-items-center">
+            <p-checkbox 
+                [(ngModel)]="pizza"
+                label="Mushroom"
+                name="pizza" 
+                value="Mushroom" 
+              StyleClass="checkbox-label"/>
+        </div>
+        <div class="flex align-items-center">
+            <p-checkbox 
+                [(ngModel)]="pizza"
+                label="Pepper" 
+                name="pizza" 
+                value="Pepper" />
+        </div>
+        <div class="flex align-items-center">
+            <p-checkbox 
+                [(ngModel)]="pizza"
+                label="Onion" 
+                name="pizza" 
+                value="Onion" />
+        </div>
+        
+    </p-panel>
+</p-fieldset>

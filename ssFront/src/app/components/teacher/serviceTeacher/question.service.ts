@@ -9,17 +9,13 @@ export class QuestionService {
   constructor(private httpClient: HttpClient) {}
 
   createquestion(data: any) {
-    // const formData = new FormData();
-    // formData.append('exam', JSON.stringify(data.exam));
-    // if (data.files.length > 0) {
-    //   for (let file of data.files) {
-    //     formData.append('files', file);
-    //   }
-    // }
-    // console.log("fffffffffffffffffffffffl",formData)
+ 
     const formData = new FormData();
     formData.append('question', JSON.stringify(data.question));
-    formData.append('files', data.files);
+
+    for (const file of data.files) {
+formData.append('files', file);
+}
     return this.httpClient.post(this.url + '/question', formData, {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });

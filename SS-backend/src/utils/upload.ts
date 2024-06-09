@@ -26,5 +26,7 @@ const uploadFile = multer({
 }).array("files");
 
 const uploadFileMiddleware = util.promisify(uploadFile);
+
+console.log("ddddddddddd")
 export default uploadFileMiddleware;
 

@@ -76,8 +76,8 @@
 }
 
 .has-event {
-  position: absolute;
-  pointer-events: none;
+ 
+
  
 border-radius: 10px;
 
@@ -153,3 +153,28 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 .hour-cell:hover {
   background: #b6b6b6;
 }
+
+
+
+.event-container .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%; /* Position above the event */
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.event-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
