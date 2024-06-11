@@ -485,6 +485,7 @@ export class CalandarfullComponent implements OnInit {
               console.log('errrr', error);
             }
           );
+          // window.location.reload();
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);

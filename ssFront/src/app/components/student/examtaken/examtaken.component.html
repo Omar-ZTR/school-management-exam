@@ -12,89 +12,33 @@
       
     </ng-template>
 </p-table>
-
-<p-fieldset legend="Type section" [toggleable]="true">
-    <p-panel header="Question">
-        <div class="flex flex-wrap gap-3">
-            <div class="flex align-items-center text-align-center">
-                <p-radioButton 
-                    name="pizza" 
-                    value="Cheese" 
-                    [(ngModel)]="ingredient" 
-                    inputId="ingredient1" />
-                <label for="ingredient1" class="ml-2">
-                    Cheese
-                </label>
+<p-fieldset legend="Type section" [toggleable]="true" *ngIf="Exam">
+    <ng-container *ngFor="let question of Exam.questions">
+      <p-panel header="Question: {{ question.question__text }}">
+        <div>{{ question.question__text }}</div>
+        <div *ngIf="question.question__type === 'QCM'">
+          <div *ngFor="let reponse of question.reponses">
+            <div class="flex align-items-center">
+              <p-checkbox 
+                [label]="reponse.reponse__text" 
+                [name]="'question_' + question.question__id"
+                [value]="reponse.reponse__id"
+                (onChange)="onCheckboxChange($event, question, reponse)">
+              </p-checkbox>
             </div>
+          </div>
+        </div>
+        <div *ngIf="question.question__type === 'Normal'">
+          <div >
+            <textarea 
             
-            <div class="flex align-items-center">
-                <p-radioButton 
-                    name="pizza" 
-                    value="Mushroom" 
-                    [(ngModel)]="ingredient" 
-                    inputId="ingredient2" />
-                <label for="ingredient2" class="ml-2">
-                    Mushroom
-                </label>
-            </div>
-            
-            <div class="flex align-items-center">
-                <p-radioButton 
-                    name="pizza" 
-                    value="Pepper" 
-                    [(ngModel)]="ingredient" 
-                    inputId="ingredient3" />
-                <label for="ingredient3" class="ml-2">
-                    Pepper
-                </label>
-            </div>
-        
-            <div class="flex align-items-center">
-                <p-radioButton 
-                    name="pizza" 
-                    value="Onion" 
-                    [(ngModel)]="ingredient" 
-                    inputId="ingredient4" />
-                <label for="ingredient4" class="ml-2">
-                    Onion
-                </label>
-            </div>
+              (blur)="answer($any($event.target)?.value, question.question__id)"></textarea>
+          </div>
         </div>
-
-        
-    </p-panel>
-
-
-    <p-panel header="Question">
-        <div class="flex align-items-center">
-            <p-checkbox 
-                [(ngModel)]="pizza"
-                label="Cheese" 
-                name="pizza" 
-                value="Cheese" />
-        </div>
-        <div class="flex align-items-center">
-            <p-checkbox 
-                [(ngModel)]="pizza"
-                label="Mushroom"
-                name="pizza" 
-                value="Mushroom" 
-              StyleClass="checkbox-label"/>
-        </div>
-        <div class="flex align-items-center">
-            <p-checkbox 
-                [(ngModel)]="pizza"
-                label="Pepper" 
-                name="pizza" 
-                value="Pepper" />
-        </div>
-        <div class="flex align-items-center">
-            <p-checkbox 
-                [(ngModel)]="pizza"
-                label="Onion" 
-                name="pizza" 
-                value="Onion" />
-        </div>
-        
-    </p-panel>
+      </p-panel>
+    </ng-container>
+    <button pButton type="button" label="Submit" (click)="submitAnswers()"> send</button>
 </p-fieldset>
+
+  
+  

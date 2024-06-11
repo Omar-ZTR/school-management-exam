@@ -18,7 +18,7 @@ routerExam.get('/examsGS', getExamsGroupsStutents);
 
 routerExam.get('/exams', getTeacherExams);
 
-routerExam.get('/Exams/:id', getExamById);
+routerExam.get('/exams/:id', getExamById);
 
 
 routerExam.post('/examc', createExam);

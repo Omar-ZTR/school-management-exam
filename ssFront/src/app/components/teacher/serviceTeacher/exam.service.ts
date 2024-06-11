@@ -47,7 +47,13 @@ formData.append('files', file);
   getTeacherExamGS(): Observable<ExamGS[]> {
     return this.httpClient.get<ExamGS[]>(`${this.url}/examsGS`);
   }
+  getExamByid(exam_id: any): Observable<any> {
 
+    console.log("sssaaaaaaaaaa",exam_id)
+    return this.httpClient.get(`${this.url}/exams/${exam_id}`, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 }
 
 

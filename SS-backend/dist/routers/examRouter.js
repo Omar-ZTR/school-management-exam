@@ -9,7 +9,7 @@ const routerExam = express_1.default.Router();
 routerExam.get('/allexams', examController_1.getAllExams);
 routerExam.get('/examsGS', examController_1.getExamsGroupsStutents);
 routerExam.get('/exams', examController_1.getTeacherExams);
-routerExam.get('/Exams/:id', examController_1.getExamById);
+routerExam.get('/exams/:id', examController_1.getExamById);
 routerExam.post('/examc', examController_1.createExam);
 routerExam.put('/Exams/:id', examController_1.updateExam);
 routerExam.delete('/Exams/:id', examController_1.deleteExam);

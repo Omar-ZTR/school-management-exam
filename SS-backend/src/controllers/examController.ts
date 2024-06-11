@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import uploadFile from "../utils/upload";
 import { Reponse } from "../models/reponseModel";
 import { Question } from "../models/questionModel";
-import { FileExam } from "../models/fileModel";
+import { FileExam, FileQuestion } from "../models/fileModel";
 import { Reservation } from "../models/reservationModel";
 import { Group } from "../models/groupModel";
 import { Student } from "../models/studentModel";
@@ -108,14 +108,30 @@ export const createExam = async (req: Request, res: Response) => {
 export const getExamById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const exam = await Exam.findByPk(id);
+    console.log("Requested Exam ID:", id);
+
+    const exam = await Exam.findOne({
+      where: { exam__id: id },
+      include: [
+        {
+          model: Question,
+          include: [FileQuestion,Reponse],
+        },
+        {
+          model: FileExam,
+        }
+        
+      ],
+    });
+
     if (exam) {
+      console.log(exam);
       res.status(200).json(exam);
     } else {
       res.status(404).json({ message: "Exam not found" });
     }
   } catch (error) {
-    console.error("Error fetch exam", error);
+    console.error("Error fetching exam:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

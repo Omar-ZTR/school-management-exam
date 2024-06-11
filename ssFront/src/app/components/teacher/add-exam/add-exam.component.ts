@@ -49,6 +49,8 @@ export class AddExamComponent {
   questarr: any[] = []
   
   showCalendar: boolean = false;
+  showAlert: boolean=false;
+  
  
   constructor(private elementRef: ElementRef, private examService: ExamService, private questService: QuestionService, private fb: FormBuilder) {
     this.examForm = this.fb.group({
@@ -66,7 +68,9 @@ export class AddExamComponent {
   }
  
 
-
+  toggleCalendar() {
+    this.showCalendar = !this.showCalendar;
+  }
   
    isMonthView: boolean = true;
 
@@ -153,8 +157,33 @@ export class AddExamComponent {
   }
 
 
+  resetForm() {
+    this.examForm.reset({
+      subject: '',
+      exam__type: 'offline',
+      questions: {}
+    });
+    this.listFile = [];
+    this.urls = [];
+    this.questarr = [];
+    
+  }
+  showSuccessAlert(callback?: () => void): void {
+    this.showAlert = true;
+    setTimeout(() => {
+      this.closeAlert();
+      if (callback) {
+        callback();
+      }
+    }, 3000); // Hide the alert after 3 seconds
+  }
+  
 
-  saveexam() {
+  closeAlert(): void {
+    this.showAlert = false;
+  }
+
+  savePlan() {
     this.examForm.patchValue({
       questions: this.questarr,
     });
@@ -169,18 +198,18 @@ export class AddExamComponent {
       files: this.listFile,
     };
 
-  }
-  
-  onSubmit() {
-   
 console.log(this.dataexam)
     this.examService.createExam(this.dataexam).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        this.showSuccessAlert(() => {
+          this.showCalendar = true;
+        });
         console.log('seccess', response);
-        this.showCalendar = true;
+       
+       
          this.dataPLan = response.exam__id;
-        
+         this.resetForm()
+       
         
        
       },
@@ -198,5 +227,53 @@ console.log(this.dataexam)
     );
 
 
+  }
+  save() {
+    this.examForm.patchValue({
+      questions: this.questarr,
+    });
+    if (this.examForm.invalid ) {
+      
+      this.examForm.markAllAsTouched();
+   
+      return;
+    }
+    this.dataexam = {
+      exam: this.examForm.value,
+      files: this.listFile,
+    };
+
+console.log(this.dataexam)
+    this.examService.createExam(this.dataexam).subscribe(
+      (response: any) => {
+        this.showSuccessAlert(() => {
+        
+        });
+        console.log('seccess', response);
+       
+       
+         this.dataPLan = response.exam__id;
+         this.resetForm()
+       
+        
+       
+      },
+      (error: { error: { message: any } }) => {
+        //this.ngxService.stop();
+        console.log('errrr', error);
+        // if(error.error?.message){
+        //   this.responseMessage = error.error?.message;
+        // }else{
+        //   this.responseMessage = GlobalConstants.genericError;
+        // }
+        // // alert(this.responseMessage +" " +GlobalConstants.error);
+        // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+      }
+    );
+
+  }
+  
+  onSubmit() {
+  
   }
 }

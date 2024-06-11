@@ -1,3 +1,8 @@
+<div *ngIf="showAlert" class="custom-alert">
+  
+  Successfully created
+</div>
+
 <div class="containerExam">
   <form [formGroup]="examForm" (ngSubmit)="onSubmit()">
     <div class="containerForm">
@@ -171,10 +176,10 @@
         <!-- Button -->
         <hr>
         <div class="Row">
-          <button (click)="saveexam()">
+          <button   (click)="save()">
             <i class="fa-solid fa-folder-plus" ></i>Save
           </button>
-          <button (click)="saveexam()">
+          <button (click)="savePlan()">
             <i class="fa-solid fa-calendar-days"></i> Save & Planing
           </button>
         
@@ -183,6 +188,7 @@
     </div>
   </form>
   <div *ngIf="showCalendar" class="planingPop visible">
+    <button class="button-62" (click)="  toggleCalendar() " role="button">Button 62</button>
     <div  class="calendar-popup " [ngStyle]="{'margin-top': !isMonthView ? '20%' : '0'}">
       <app-calandarfull [data]="dataPLan" (isMonthViewChange)="onIsMonthViewChange($event)"></app-calandarfull>
     </div>
