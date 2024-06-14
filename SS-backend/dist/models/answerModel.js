@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Answer = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
+const examModel_1 = require("./examModel");
 const answerStudentModel_1 = require("./answerStudentModel");
 let Answer = class Answer extends sequelize_typescript_1.Model {
 };
@@ -24,11 +25,22 @@ __decorate([
     __metadata("design:type", Number)
 ], Answer.prototype, "ans__id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.NUMBER),
+    (0, sequelize_typescript_1.ForeignKey)(() => examModel_1.Exam),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false
+    }),
     __metadata("design:type", Number)
 ], Answer.prototype, "exam__id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.NUMBER),
+    (0, sequelize_typescript_1.BelongsTo)(() => examModel_1.Exam),
+    __metadata("design:type", examModel_1.Exam)
+], Answer.prototype, "exam", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false
+    }),
     __metadata("design:type", Number)
 ], Answer.prototype, "Student__id", void 0);
 __decorate([
@@ -36,7 +48,10 @@ __decorate([
     __metadata("design:type", Array)
 ], Answer.prototype, "answers", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true
+    }),
     __metadata("design:type", String)
 ], Answer.prototype, "ans__filePath", void 0);
 exports.Answer = Answer = __decorate([

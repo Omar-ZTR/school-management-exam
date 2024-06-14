@@ -96,12 +96,38 @@ ul li {
     margin-top: 0 !important;
     
   }
+  .p-fieldset.p-fieldset-toggleable .p-fieldset-legend a{
+    color: #FF8E00!important;
 
+}
   .p-speeddial-rotate {
     transition: transform .25s cubic-bezier(.4, 0, .2, 1) 0ms;
     will-change: transform
   }
-
+  .p-image>img{
+    /* */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+      }
+  .p-image{
+   max-width:  500px;
+    max-height: 500px;
+    min-width: 100px; 
+    min-height: 100px; 
+    width: 200px;
+  
+  
+    text-align: center;
+    height: auto;
+      resize: both;
+      overflow: auto;
+   /*   border: 1px solid #8d8d8d;  Optional: To visualize the container */
+      display: inline-block;
+   
+  }
   /* .p-speeddial-mask {
     position: absolute;
     left: 0;

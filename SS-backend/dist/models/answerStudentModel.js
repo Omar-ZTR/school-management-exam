@@ -11,7 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnswerStudent = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const questionModel_1 = require("./questionModel"); // Import the Question model if it exists
+const questionModel_1 = require("./questionModel");
+const answerModel_1 = require("./answerModel");
 let AnswerStudent = class AnswerStudent extends sequelize_typescript_1.Model {
 };
 exports.AnswerStudent = AnswerStudent;
@@ -24,12 +25,30 @@ __decorate([
     __metadata("design:type", Number)
 ], AnswerStudent.prototype, "Answer__id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true
+    }),
     __metadata("design:type", String)
 ], AnswerStudent.prototype, "Answer__text", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => answerModel_1.Answer),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false
+    }),
+    __metadata("design:type", Number)
+], AnswerStudent.prototype, "ans__id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => answerModel_1.Answer),
+    __metadata("design:type", answerModel_1.Answer)
+], AnswerStudent.prototype, "answer", void 0);
+__decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => questionModel_1.Question),
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false
+    }),
     __metadata("design:type", Number)
 ], AnswerStudent.prototype, "question__id", void 0);
 __decorate([

@@ -9,6 +9,7 @@ import routerReservation from "./routers/reservationRouter";
 import routerGroup from "./routers/groupRouter";
 import routerSalle from "./routers/salleRouter";
 import routersubject from "./routers/routerSubject";
+import path from "path";
 
 const app = express();
 
@@ -45,9 +46,11 @@ app.use(
     res.status(500).json({ message: err.message });
   }
 );
-
+app.use('/files', express.static(path.join(__dirname, 'utils/filesUpload')));
+console.log("dirname:",__dirname)
+console.log("ddddsdsddsds",path.join(__dirname, 'utils/filesUpload'))
 dotenv.config()
-
+// alter: true
 connection
   .sync({})
   .then(() => {

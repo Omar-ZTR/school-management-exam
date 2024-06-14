@@ -8,22 +8,41 @@ import { Reservation } from "./models/reservationModel";
 import { Student } from "./models/studentModel";
 import { Teacher } from "./models/teacherModel";
 import { Token } from "./models/tokenModel";
-import {  FileExam, FileQuestion } from "./models/fileModel";
+import { FileExam, FileQuestion } from "./models/fileModel";
 import { Rank } from "./models/rankModel";
 import { Subject } from "./models/subjectModel";
 import { Group } from "./models/groupModel";
 import { GroupSubject } from "./models/groupSubjectModel";
 import { ExamQuestion } from "./models/examQuestionModel";
 import { ExamGroup } from "./models/examGroupModel";
+import { Answer } from "./models/answerModel";
+import { AnswerStudent } from "./models/answerStudentModel";
 
-const connection = new Sequelize('smartskills', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql',
-    database: "smartskills",
-    models: [User, Exam, Question, Reponse, Salle, Reservation, Student,ExamQuestion, ExamGroup, Teacher,Token,FileExam,FileQuestion, Rank, Subject, Group, GroupSubject ],
-
+const connection = new Sequelize("smartskills", "root", "", {
+  host: "localhost",
+  dialect: "mysql",
+  database: "smartskills",
+  models: [
+    User,
+    Exam,
+    Question,
+    Reponse,
+    Salle,
+    Reservation,
+    Student,
+    ExamQuestion,
+    ExamGroup,
+    Teacher,
+    Token,
+    FileExam,
+    FileQuestion,
+    Rank,
+    Subject,
+    Group,
+    GroupSubject,
+    Answer,
+    AnswerStudent,
+  ],
 });
-
-
 
 export default connection;

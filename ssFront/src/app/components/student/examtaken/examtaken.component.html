@@ -1,44 +1,121 @@
-<p-table    styleClass="p-datatable-gridlines"   [tableStyle]="{'min-width': '60rem','width':'100%'}">
+<div class="card flex justify-content-center">
+  <p-table
+    styleClass="p-datatable-gridlines"
+    [tableStyle]="{ 'min-width': '60rem', width: '100%' }"
+  >
     <ng-template pTemplate="header">
-        <tr>
-            <th rowspan="2" colspan="2">Title Exam</th>
-            <th colspan="2">date exam </th>
-            <th rowspan="2" colspan="2">name Student</th>
-        </tr>
-        <tr>
-            <th colspan="2">time exam</th>
-          
-        </tr>
-      
+      <tr>
+        <th rowspan="2" colspan="2">Title Exam</th>
+        <th colspan="2">date exam</th>
+        <th rowspan="2" colspan="2">name Student</th>
+      </tr>
+      <tr>
+        <th colspan="2">time exam: {{ formattedTime }}</th>
+      </tr>
     </ng-template>
-</p-table>
-<p-fieldset legend="Type section" [toggleable]="true" *ngIf="Exam">
-    <ng-container *ngFor="let question of Exam.questions">
-      <p-panel header="Question: {{ question.question__text }}">
-        <div>{{ question.question__text }}</div>
-        <div *ngIf="question.question__type === 'QCM'">
-          <div *ngFor="let reponse of question.reponses">
-            <div class="flex align-items-center">
-              <p-checkbox 
-                [label]="reponse.reponse__text" 
-                [name]="'question_' + question.question__id"
-                [value]="reponse.reponse__id"
-                (onChange)="onCheckboxChange($event, question, reponse)">
-              </p-checkbox>
+  </p-table>
+  <ng-container *ngFor="let questionType of getQuestionTypes()">
+    <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
+      <ng-container
+        *ngFor="let question of groupedQuestions[questionType]; let i = index"
+      >
+        <p-panel header="Question: {{ question.question__text }}">
+          <div
+            *ngIf="question.fileQuestion"
+            class="fleximg"
+            style="margin-bottom: 10px"
+          >
+            <div
+              *ngFor="let f of question.fileQuestion; let index = index"
+              key="index"
+            >
+              <div>
+                <p-image
+                  [src]="f.file__path"
+                  resize="both"
+                  [preview]="true"
+                ></p-image>
+              </div>
             </div>
           </div>
-        </div>
-        <div *ngIf="question.question__type === 'Normal'">
-          <div >
-            <textarea 
-            
-              (blur)="answer($any($event.target)?.value, question.question__id)"></textarea>
+          <div *ngIf="question.question__type === 'QCM'">
+            <div *ngFor="let reponse of question.reponses">
+              <div class="flex align-items-center">
+                <p-checkbox
+                  [label]="reponse.reponse__text"
+                  [name]="'question_' + question.question__id"
+                  [value]="reponse.reponse__id"
+                  (onChange)="onCheckboxChange($event, question, reponse)"
+                ></p-checkbox>
+              </div>
+            </div>
           </div>
-        </div>
-      </p-panel>
-    </ng-container>
-    <button pButton type="button" label="Submit" (click)="submitAnswers()"> send</button>
-</p-fieldset>
+          <div *ngIf="question.question__type === 'Normal'">
+            <div>
+              <textarea
+                (blur)="
+                  answer($any($event.target)?.value, question.question__id)
+                "
+              ></textarea>
+            </div>
+          </div>
+        </p-panel>
+      </ng-container>
+    </p-fieldset>
+  </ng-container>
 
-  
-  
+  <div class="RowButton">
+    <button class="buttonSend" type="button" (click)="showDialog()">
+      Done
+    </button>
+  </div>
+
+  <p-dialog
+    header="Check your Answers"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <div *ngIf="!allAnswersEmpty()">
+      <ng-container *ngFor="let questionType of getQuestionTypes()">
+        <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
+          <ng-container *ngFor="let question of groupedQuestions[questionType]">
+            <div *ngIf="question.question__type === 'QCM'">
+              <p-panel header="Question: {{ question.question__text }}">
+                <ng-container
+                  *ngFor="
+                    let answer of getAnswersByQuestionId(question.question__id)
+                  "
+                >
+                  <p>{{ answer.value.Answer__text || "noAnswer" }}</p>
+                </ng-container>
+              </p-panel>
+            </div>
+            <div *ngIf="question.question__type != 'QCM'">
+              <p-panel header="Question: {{ question.question__text }}">
+                <ng-container
+                  *ngFor="
+                    let answer of getAnswersByQuestionId(question.question__id)
+                  "
+                >
+                  <p>{{ answer.value.Answer__text || "noAnswer" }}</p>
+                </ng-container>
+              </p-panel>
+            </div>
+          </ng-container>
+          </p-fieldset
+        >
+      </ng-container>
+    </div>
+
+    <p *ngIf="allAnswersEmpty()">No answers available.</p>
+    <p-footer>
+      <div class="RowButton">
+        <button class="buttonSend" type="button"  (click)="submitAnswers()">
+          Send
+        </button>
+      </div>
+    </p-footer>
+  </p-dialog>
+</div>

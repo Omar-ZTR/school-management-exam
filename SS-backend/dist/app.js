@@ -37,6 +37,7 @@ const reservationRouter_1 = __importDefault(require("./routers/reservationRouter
 const groupRouter_1 = __importDefault(require("./routers/groupRouter"));
 const salleRouter_1 = __importDefault(require("./routers/salleRouter"));
 const routerSubject_1 = __importDefault(require("./routers/routerSubject"));
+const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 const cors = require('cors');
 app.use((0, body_parser_1.json)());
@@ -57,7 +58,11 @@ app.use(cors(corsOptions));
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });
+app.use('/files', express_1.default.static(path_1.default.join(__dirname, 'utils/filesUpload')));
+console.log("dirname:", __dirname);
+console.log("ddddsdsddsds", path_1.default.join(__dirname, 'utils/filesUpload'));
 dotenv.config();
+// alter: true
 connection_1.default
     .sync({})
     .then(() => {

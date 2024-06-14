@@ -5,7 +5,6 @@ import { User } from "./User__model";
 import { Reponse } from "./reponseModel";
 import { AnswerStudent } from "./answerStudentModel";
 
-
 @Table({
     timestamps: true,
     tableName: "Answer",
@@ -19,16 +18,28 @@ export class Answer extends Model<Answer> {
     })
     ans__id!: number;
 
-    @Column(DataType.NUMBER)
+    @ForeignKey(() => Exam)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false
+    })
     exam__id!: number;
+  
+    @BelongsTo(() => Exam)
+    exam!: Exam;
 
-    @Column(DataType.NUMBER)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false
+    })
     Student__id!: number;
 
     @HasMany(() => AnswerStudent)
-   answers!: AnswerStudent[];
+    answers!: AnswerStudent[];
 
-    @Column(DataType.STRING)
+    @Column({
+        type: DataType.STRING,
+        allowNull: true
+    })
     ans__filePath!: string;
-
 }

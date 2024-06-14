@@ -111,7 +111,8 @@ const getExamById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
         if (exam) {
             console.log(exam);
-            res.status(200).json(exam);
+            const examTaken = formatExamData(exam);
+            res.status(200).json(examTaken);
         }
         else {
             res.status(404).json({ message: "Exam not found" });
@@ -123,6 +124,32 @@ const getExamById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getExamById = getExamById;
+function formatExamData(exam) {
+    return {
+        exam__id: exam.exam__id,
+        subject: exam.subject,
+        fileExam: exam.FileExam ? {
+            file__id: exam.FileExam.file__id,
+            file__name: exam.FileExam.file__name,
+            file__path: exam.FileExam.file__path,
+        } : null,
+        questions: exam.questions.map((question) => ({
+            question__id: question.question__id,
+            question__text: question.question__text,
+            question__type: question.question__type,
+            fileQuestion: question.file.map((f) => ({
+                file__id: f.file__id,
+                file__name: f.file__name,
+                file__path: f.file__path,
+            })),
+            reponses: question.reponses.map((reponse) => ({
+                reponse__id: reponse.reponse__id,
+                reponse__text: reponse.reponse__text,
+                reponse__statut: reponse.reponse__statut
+            }))
+        }))
+    };
+}
 // Get all exams
 const getAllExams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

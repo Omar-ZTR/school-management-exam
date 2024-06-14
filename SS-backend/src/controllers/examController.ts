@@ -126,7 +126,9 @@ export const getExamById = async (req: Request, res: Response) => {
 
     if (exam) {
       console.log(exam);
-      res.status(200).json(exam);
+      
+      const examTaken =  formatExamData(exam)
+      res.status(200).json(examTaken);
     } else {
       res.status(404).json({ message: "Exam not found" });
     }
@@ -135,7 +137,32 @@ export const getExamById = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
+function   formatExamData(exam: any): any {
+  return {
+    exam__id: exam.exam__id,
+    subject: exam.subject,
+    fileExam: exam.FileExam ? {
+      file__id: exam.FileExam.file__id,
+      file__name: exam.FileExam.file__name,
+      file__path: exam.FileExam.file__path,
+    } : null,
+    questions: exam.questions.map((question: any) => ({
+      question__id: question.question__id,
+      question__text: question.question__text,
+      question__type: question.question__type,
+      fileQuestion: question.file.map((f: any) => ({
+        file__id: f.file__id,
+        file__name: f.file__name,
+        file__path: f.file__path,
+      })),
+      reponses: question.reponses.map((reponse: any) => ({
+        reponse__id: reponse.reponse__id,
+        reponse__text: reponse.reponse__text,
+        reponse__statut: reponse.reponse__statut
+      }))
+    }))
+  };
+}
 // Get all exams
 export const getAllExams = async (req: Request, res: Response) => {
   try {
