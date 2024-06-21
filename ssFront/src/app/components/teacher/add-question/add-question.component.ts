@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { QuestionService } from '../serviceTeacher/question.service';
+import { QuestionService } from '../../../services/serviceTeacher/question.service';
 import { GlobalConstants, rangeNumber } from '../../../shared/global-constants';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 import { CommonModule } from '@angular/common';

@@ -8,7 +8,7 @@ import { Reservation } from "./models/reservationModel";
 import { Student } from "./models/studentModel";
 import { Teacher } from "./models/teacherModel";
 import { Token } from "./models/tokenModel";
-import { FileExam, FileQuestion } from "./models/fileModel";
+import { FileAnswer, FileExam, FileQuestion } from "./models/fileModel";
 import { Rank } from "./models/rankModel";
 import { Subject } from "./models/subjectModel";
 import { Group } from "./models/groupModel";
@@ -42,6 +42,7 @@ const connection = new Sequelize("smartskills", "root", "", {
     GroupSubject,
     Answer,
     AnswerStudent,
+    FileAnswer,
   ],
 });
 

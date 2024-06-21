@@ -11,10 +11,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ExamService } from '../serviceTeacher/exam.service';
+import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { GlobalConstants, rangeNumber } from '../../../shared/global-constants';
 import { ListviewComponent } from '../listview/listview.component';
-import { QuestionService } from '../serviceTeacher/question.service';
+import { QuestionService } from '../../../services/serviceTeacher/question.service';
 import { AddQuestionComponent } from "../add-question/add-question.component";
 import { CalandarfullComponent } from "../../calandarfull/calandarfull.component";
 
@@ -37,11 +37,11 @@ export class AddExamComponent {
   examForm: FormGroup;
   
   selectedOption: string = '';
-  urls: any[] = [];
+  
   subjectValue='';
   examType:string ='';
   listFile: any = {};
-  
+  urls: any[] = [];
   dataexam: any = {};
   dataPLan: any ;
   typ: string = '';

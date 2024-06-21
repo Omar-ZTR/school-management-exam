@@ -4,7 +4,7 @@ import { TableModule } from 'primeng/table';
 import { HttpClientModule } from '@angular/common/http';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
-import { ExamService } from '../serviceTeacher/exam.service';
+import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { InputTextModule } from 'primeng/inputtext';
 
 import { IconFieldModule } from 'primeng/iconfield';

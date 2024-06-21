@@ -126,6 +126,42 @@ export const createQuestion = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+// getby Id
+
+export const QuestionById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params;
+  
+   
+    const questions = await Question.findOne({
+      where: {
+        question__id: id,
+      },
+      
+      include: [
+        {
+          model: Reponse,
+          as: 'reponses',
+        },
+        {
+          model: FileQuestion,
+          as: 'file',
+        },
+      ],
+    });
+  console.log("<><<<>>",questions)
+    res.status(200).json(questions);
+  } catch (error) {
+    console.error("Error fetching questions with files", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+  };
+
+
+
+
 // Get fake Question 
 
 export const getFakeQuestions = async (req: Request, res: Response) => {

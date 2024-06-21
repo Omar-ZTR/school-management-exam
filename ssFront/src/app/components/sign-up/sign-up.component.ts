@@ -8,8 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { GlobalConstants } from '../../shared/global-constants';
-import { UserService } from '../../servicesUser/user.service';
-import { SnackbarService } from '../../servicesUser/snackbar.service';
+import { UserService } from '../../services/servicesUser/user.service';
+import { SnackbarService } from '../../services/servicesUser/snackbar.service';
 
 @Component({
   selector: 'app-sign-up',

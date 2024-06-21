@@ -4,6 +4,7 @@ import { Exam } from "./examModel";
 import { User } from "./User__model";
 import { Reponse } from "./reponseModel";
 import { AnswerStudent } from "./answerStudentModel";
+import { FileAnswer } from "./fileModel";
 
 @Table({
     timestamps: true,
@@ -37,9 +38,9 @@ export class Answer extends Model<Answer> {
     @HasMany(() => AnswerStudent)
     answers!: AnswerStudent[];
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: true
-    })
-    ans__filePath!: string;
+    @HasMany(() => FileAnswer)
+    file!: FileAnswer[];
+
+    @Column(DataType.STRING)
+    ans__descreption!: string;
 }

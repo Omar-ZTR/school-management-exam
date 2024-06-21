@@ -1,0 +1,79 @@
+.fleximg{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+  }
+  .NoteInput{
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    text-align: center;
+    margin: 10px auto;
+  }
+  .inputNumbe{
+    width: 40px;
+    border: none;
+    border-bottom: 2px solid black;
+    background: transparent;
+  }
+  .buttonSend {
+    background: #5E5DF0;
+    border-radius: 999px;
+    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 8px 18px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: fit-content;
+    word-break: break-word;
+    border: 0;
+  }
+
+  .previewimg {
+    margin-top: 5px;
+    width: 90px;
+    height: 110px;
+    border-radius: 10px;
+    background: #ebebeb86;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  
+  
+  }
+  
+  .previewimg img {
+    width: 90px;
+    height: 110px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+  
+  .previewimg .fa {
+    font-size: 4.5rem;
+    color: #00159a;
+  }
+.examFiles{
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  align-content: start;
+  align-items: stretch;
+}
+  .fileAnswer{
+    border: #00159a solid 2px;
+  
+  }

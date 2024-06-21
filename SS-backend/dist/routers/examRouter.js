@@ -16,4 +16,5 @@ routerExam.put('/Exams/:id', examController_1.updateExam);
 routerExam.delete('/Exams/:id', examController_1.deleteExam);
 //Answers
 routerExam.post('/answers', answerStudentController_1.createAnswers);
+routerExam.get('/getanswers', answerStudentController_1.getAnswers);
 exports.default = routerExam;

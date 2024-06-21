@@ -8,7 +8,7 @@ import {
   getTeacherExams,
   getExamsGroupsStutents,
 } from '../controllers/examController';
-import { createAnswers } from '../controllers/answerStudentController';
+import { createAnswers, getAnswers } from '../controllers/answerStudentController';
 
 const routerExam= express.Router();
 
@@ -33,4 +33,5 @@ routerExam.delete('/Exams/:id', deleteExam);
 
 routerExam.post('/answers', createAnswers);
 
+routerExam.get('/getanswers', getAnswers);
 export default routerExam

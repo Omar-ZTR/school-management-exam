@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../servicesUser/auth.service';
+import { AuthService } from '../../services/servicesUser/auth.service';
 import { HttpResponse } from '@angular/common/http';
-import { UserService } from '../../servicesUser/user.service';
+import { UserService } from '../../services/servicesUser/user.service';
 import { GlobalConstants } from '../../shared/global-constants';
-import { SnackbarService } from '../../servicesUser/snackbar.service';
+import { SnackbarService } from '../../services/servicesUser/snackbar.service';
 import { CommonModule, Location } from '@angular/common';
 import { SignUpComponent } from "../sign-up/sign-up.component";
 import { ResetPasswordComponent } from "../reset-password/reset-password.component";

@@ -13,6 +13,7 @@ exports.Answer = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const examModel_1 = require("./examModel");
 const answerStudentModel_1 = require("./answerStudentModel");
+const fileModel_1 = require("./fileModel");
 let Answer = class Answer extends sequelize_typescript_1.Model {
 };
 exports.Answer = Answer;
@@ -48,12 +49,13 @@ __decorate([
     __metadata("design:type", Array)
 ], Answer.prototype, "answers", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING,
-        allowNull: true
-    }),
+    (0, sequelize_typescript_1.HasMany)(() => fileModel_1.FileAnswer),
+    __metadata("design:type", Array)
+], Answer.prototype, "file", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
-], Answer.prototype, "ans__filePath", void 0);
+], Answer.prototype, "ans__descreption", void 0);
 exports.Answer = Answer = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

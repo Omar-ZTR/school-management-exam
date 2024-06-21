@@ -141,15 +141,17 @@ function   formatExamData(exam: any): any {
   return {
     exam__id: exam.exam__id,
     subject: exam.subject,
-    fileExam: exam.FileExam ? {
-      file__id: exam.FileExam.file__id,
-      file__name: exam.FileExam.file__name,
-      file__path: exam.FileExam.file__path,
-    } : null,
+    exam__type: exam.exam__type,
+    fileExam: exam.file.map((f: any) => ({
+      file__id: f.file__id,
+      file__name: f.file__name,
+      file__path: f.file__path,
+    })),
     questions: exam.questions.map((question: any) => ({
       question__id: question.question__id,
       question__text: question.question__text,
       question__type: question.question__type,
+      note: question.note,
       fileQuestion: question.file.map((f: any) => ({
         file__id: f.file__id,
         file__name: f.file__name,

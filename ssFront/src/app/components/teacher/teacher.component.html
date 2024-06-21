@@ -103,7 +103,7 @@
     <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
-          <li  routerLink="/teacher/dash">
+          <li  routerLink="/teacher/dash" routerLinkActive="actives">
             <i class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
@@ -113,28 +113,28 @@
             <div class="title">Exams</div>
           </li>
           <ul *ngIf="showExams" class="sub-menu">
-            <li  routerLink="/teacher/addExam">
+            <li  routerLink="/teacher/addExam" routerLinkActive="actives">
               <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
               <div class="title">Add Exam</div>
             </li>
-            <li  routerLink="/teacher/listExam">
+            <li  routerLink="/teacher/listExam" routerLinkActive="actives">
               <i class="fa-solid fa-table-list fa-xs icon"></i>
               <div class="title">List Exam</div>
             </li>
           </ul>
-          <li  routerLink="/teacher/exam">
+          <li  routerLink="/teacher/exam" routerLinkActive="actives">
             <i class="fa-solid fa-calendar-days fa-xs icon"></i>
             <div class="title">Exams</div>
           </li>
-          <li  routerLink="/teacher/addQuestion">
+          <li  routerLink="/teacher/addQuestion" routerLinkActive="actives">
             <i class="fas fa-user-edit fa-xs icon"></i>
             <div class="title">Edit Profile</div>
           </li>
-          <li  routerLink="/teacher/Result">
+          <li  routerLink="/teacher/Result" routerLinkActive="actives">
             <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
             <div class="title">Result</div>
           </li>
-          <li >
+          <li  routerLink="/teacher/Correction" routerLinkActive="actives">
             <i class="fa-solid fa-message fa-xs icon"></i>
             <div class="title">Contact</div>
           </li>

@@ -43,6 +43,7 @@ const connection = new sequelize_typescript_1.Sequelize("smartskills", "root", "
         groupSubjectModel_1.GroupSubject,
         answerModel_1.Answer,
         answerStudentModel_1.AnswerStudent,
+        fileModel_1.FileAnswer,
     ],
 });
 exports.default = connection;

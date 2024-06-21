@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteQuestion = exports.updateQuestion = exports.getAllQuestions = exports.getQuestionById = exports.updateQuestionsWithExam = exports.getFakeQuestions = exports.createQuestion = void 0;
+exports.deleteQuestion = exports.updateQuestion = exports.getAllQuestions = exports.getQuestionById = exports.updateQuestionsWithExam = exports.getFakeQuestions = exports.QuestionById = exports.createQuestion = void 0;
 const questionModel_1 = require("../models/questionModel"); // Import your Question model
 const reponseModel_1 = require("../models/reponseModel");
 const fileModel_1 = require("../models/fileModel");
@@ -125,6 +125,34 @@ const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.createQuestion = createQuestion;
+// getby Id
+const QuestionById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params;
+        const questions = yield questionModel_1.Question.findOne({
+            where: {
+                question__id: id,
+            },
+            include: [
+                {
+                    model: reponseModel_1.Reponse,
+                    as: 'reponses',
+                },
+                {
+                    model: fileModel_1.FileQuestion,
+                    as: 'file',
+                },
+            ],
+        });
+        console.log("<><<<>>", questions);
+        res.status(200).json(questions);
+    }
+    catch (error) {
+        console.error("Error fetching questions with files", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.QuestionById = QuestionById;
 // Get fake Question 
 const getFakeQuestions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

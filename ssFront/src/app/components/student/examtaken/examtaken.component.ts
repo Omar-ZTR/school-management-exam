@@ -6,13 +6,18 @@ import { PanelModule } from 'primeng/panel';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
-import { ExamService } from '../../teacher/serviceTeacher/exam.service';
-import { TokenServiceService } from '../../../servicesUser/token-service.service';
-import { ExamAnswersService } from './exam-answers.service';
-import { GalleriaModule } from 'primeng/galleria';
+import { ExamService } from '../../../services/serviceTeacher/exam.service';
+import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
+
+
+
 import { ImageModule } from 'primeng/image';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { ExamAnswersService } from '../../../services/serviceAnswers/exam-answers.service';
+import { getFileExtension, getFileType } from '../../../shared/utilsFile';
+import { saveAs } from 'file-saver';
+
 
 @Component({
   selector: 'app-examtaken',
@@ -26,7 +31,7 @@ import { ButtonModule } from 'primeng/button';
     PanelModule,
     CommonModule,
     ReactiveFormsModule,
-    GalleriaModule,
+
     ImageModule,
     DialogModule,
     ButtonModule,
@@ -35,7 +40,9 @@ import { ButtonModule } from 'primeng/button';
   styleUrls: ['./examtaken.component.css']
 })
 export class ExamtakenComponent {
-
+  listFile: any = {};
+  urls: any[] = [];
+  descreption='';
   activeIndex: number = 0;
   displayCustom!: boolean ;
   exam__id = 15;
@@ -43,7 +50,7 @@ export class ExamtakenComponent {
   groupedQuestions: { [key: string]: any[] } = {};
   AnswersForm: FormGroup;
   user__id = this.tokenService.getUserIdFromToken();
-
+  examType!:string;
   visible: boolean = false;
 
   showDialog() {
@@ -62,26 +69,64 @@ export class ExamtakenComponent {
     this.AnswersForm = this.fb.group({
       exam__id: this.exam__id,
       Student__id: this.user__id,
-      answers: this.fb.array([])
+      answers: this.fb.array([]),
+      ans__description:''
     });
   }
 
   ngOnInit(): void {
     this.fetchExam();
     this.startTimer();
-    console.log(this.groupedQuestions)
-  }
 
+  }
+  description(value: string): void {
+    this.AnswersForm.patchValue({
+      ans__description: value
+    });
+
+  }
   imageClick(index: number) {
     this.activeIndex = index;
     this.displayCustom = true;
   }
+  async detectFiles(event: any) {
+    let files = event.target.files;
+    this.listFile = [];
+    this.urls = [];
 
+    if (files) {
+      for (let file of files) {
+        this.listFile.push(file);
+        const extension = getFileExtension(file.name);
+        const fileType = getFileType(extension);
+
+        await this.readFileAsync(file).then((url: any) => {
+          this.urls.push({ name: file.name, type: fileType, url: url });
+        });
+      }
+    }
+  }
+ 
+  readFileAsync(file: File): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      reader.onload = (e: any) => {
+        resolve(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  removeFile(index: number) {
+    this.listFile.splice(index, 1);
+    this.urls.splice(index, 1);
+  }
   fetchExam(): void {
     this.examService.getExamByid(this.exam__id).subscribe(
       (data) => {
         this.Exam = data;
         this.groupQuestionsByType();
+        this.examType= this.Exam.exam__type;
         console.log("datataken", this.Exam);
       },
       (error: any) => {
@@ -114,7 +159,14 @@ export class ExamtakenComponent {
     }
     return '';
   }
-
+  typeFile(file: any):any {
+  
+    const extension = getFileExtension(file.file__name);
+    const fileType = getFileType(extension);
+// console.log("type file is",fileType)
+// console.log("type  is",file.file__type)
+    return { name: file.name, type: fileType }
+  }
   getQuestionTypes(): string[] {
     return Object.keys(this.groupedQuestions);
   }
@@ -210,7 +262,35 @@ export class ExamtakenComponent {
   get answers(): FormArray {
     return this.AnswersForm.get('answers') as FormArray;
   }
+  openFile(filePath: string): void {
+    window.open(filePath, '_blank');
+  }
 
+  downloadFile(file__name: any): void {
+    this.examAnswers.downloadFile(file__name).subscribe((blob: Blob) => {
+      saveAs(blob,file__name);
+          
+        }, error => {
+          console.error('Error downloading file:', error);
+          // Handle any errors here
+        });
+  }
+
+
+  downloadAllFiles(): void {
+    const delay = 500; // Delay in milliseconds
+
+    this.Exam.fileExam.forEach((file: { file__path: string; file__name: string; }, index: number) => {
+      console.log("this in ts file",file.file__name)
+      this.examAnswers.downloadFile(file.file__name).subscribe((blob: Blob) => {
+    saveAs(blob, file.file__name);
+        
+      }, error => {
+        console.error('Error downloading file:', error);
+        // Handle any errors here
+      });
+    });
+  }
   checkAnswers():void{
     const questions = this.Exam.questions;
 
@@ -229,10 +309,14 @@ export class ExamtakenComponent {
     });
   }
   submitAnswers(): void {
-    
+    console.log("listfile", this.listFile)
+const dataAnswers={
+  ans: this.AnswersForm.value,
+  files: this.listFile,
+}
 this.checkAnswers()
-    console.log(this.AnswersForm.value);
-    this.examAnswers.createAnswers(this.AnswersForm.value).subscribe(
+    console.log(dataAnswers);
+    this.examAnswers.createAnswers(dataAnswers).subscribe(
       (response: any) => {
         alert('Successfully created');
         console.log('success', response);

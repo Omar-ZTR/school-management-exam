@@ -7,8 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
-import { ExamService } from '../teacher/serviceTeacher/exam.service';
-import { CalandarService } from '../teacher/serviceTeacher/calandar.service';
+import { ExamService } from '../../services/serviceTeacher/exam.service';
+import { CalandarService } from '../../services/serviceTeacher/calandar.service';
 import { GroupService } from '../servicesUtils/group.service';
 import { SalleService } from '../servicesUtils/salle.service';
 import { TooltipModule } from 'primeng/tooltip';

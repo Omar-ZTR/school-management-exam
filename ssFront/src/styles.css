@@ -23,6 +23,44 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #DFE9EB;
+}
+
+::-webkit-scrollbar-track:hover {
+  background-color: #B8C0C2;
+}
+
+::-webkit-scrollbar-track:active {
+  background-color: #B8C0C2;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #F90;
+  background-image: -webkit-linear-gradient(45deg,
+                                            rgba(255, 255, 255, .2) 25%,
+                                            transparent 25%,
+                                            transparent 50%,
+                                            rgba(255, 255, 255, .2) 50%,
+                                            rgba(255, 255, 255, .2) 75%,
+                                            transparent 75%,
+                                            transparent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #FFBC2B;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #FFBA23;
+}
 
 @layer primeng {
   .p-speeddial {
@@ -34,7 +72,10 @@ body {
     height: 40px !important;
     width: 40px !important;
   }
+ .notet .p-dialog-footer{
+    background: rgb(135, 136, 136) !important;
 
+  }
   .p-button-rounded {
     border-radius: 50% !important;
     height: 40px !important;
@@ -104,7 +145,7 @@ ul li {
     transition: transform .25s cubic-bezier(.4, 0, .2, 1) 0ms;
     will-change: transform
   }
-  .p-image>img{
+ .p-image>img{
     /* */
     max-width: 100%;
     max-height: 100%;
@@ -112,14 +153,14 @@ ul li {
     height: auto;
     object-fit: cover;
       }
-  .p-image{
+    .p-image{
    max-width:  500px;
     max-height: 500px;
     min-width: 100px; 
     min-height: 100px; 
     width: 200px;
-  
-  
+      }
+    #taken>.p-image{
     text-align: center;
     height: auto;
       resize: both;

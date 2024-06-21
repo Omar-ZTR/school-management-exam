@@ -1,0 +1,198 @@
+<div class="card">
+  <p-table
+    [value]="Answers"
+    sortField="exam__title"
+    sortMode="single"
+    dataKey="representative.name"
+    rowGroupMode="subheader"
+    groupRowsBy="representative.name"
+    [tableStyle]="{ 'min-width': '70rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 20%">Name</th>
+        <th style="width: 20%">Country</th>
+        <th style="width: 20%">Company</th>
+        <th style="width: 20%">Status</th>
+        <th style="width: 20%">Date</th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="groupheader"
+      let-answerStudent
+      let-rowIndex="rowIndex"
+      let-expanded="expanded"
+    >
+      <tr>
+        <td colspan="5">
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="answerStudent"
+            class="p-button-text p-button-rounded p-button-plain mr-2"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+
+          <span class="font-bold ml-2">{{ answerStudent.exam__title }}</span>
+        </td>
+      </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="groupfooter" let-answerStudent>
+                <tr class="p-rowgroup-footer">
+                    <td colspan="4" style="text-align: right">Total answerStudents</td>
+                    <td>{{calculateanswerStudentTotal(answerStudent.representative.name)}}</td>
+                </tr>
+            </ng-template> -->
+    <ng-template pTemplate="rowexpansion" let-answerStudent>
+      <tr (click)="showDialog(answerStudent)">
+        <td></td>
+        <td>hella {{ answerStudent.Student__id }}</td>
+        <td>
+          {{ answerStudent.exam__id }}
+        </td>
+        <td>hello</td>
+        <td>
+          {{ answerStudent.createdAt }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  header="Check your Answers"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <div class="examFiles" *ngIf="examType == 'file'">
+    <div
+    *ngIf="Exam.fileExam"
+    class="fleximg"
+    style="margin-bottom: 10px"
+  >
+    <div
+      *ngFor="let f of Exam.fileExam; let index = index" 
+      key="index"
+    >
+      <div class="previewimg">
+        <i
+        *ngIf="typeFile(f).type !== 'image'"
+        class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+      ></i>
+        <img  *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+      </div>
+    </div>
+    
+  </div><div class="fileAnswer">
+    <div
+    *ngIf="Exam.fileExam"
+    class="fleximg"
+    style="margin-bottom: 10px"
+  >
+    <div
+      *ngFor="let f of Exam.fileExam; let index = index" 
+      key="index"
+    >
+      <div class="previewimg">
+        <i
+        *ngIf="typeFile(f).type !== 'image'"
+        class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+      ></i>
+        <img  *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+      </div>
+    </div>
+    
+  </div>
+    </div>
+  </div>
+  <div *ngIf="examType != 'file'">
+    <ng-container *ngFor="let questionType of getQuestionTypes()">
+      <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
+        <ng-container
+          *ngFor="let question of groupedQuestions[questionType]; let i = index"
+        >
+          <p-panel
+            header="Question: {{ question.question__text }} . {{
+              question.note
+            }} "
+          >
+            <div
+              *ngIf="question.fileQuestion"
+              class="fleximg"
+              style="margin-bottom: 10px"
+            >
+              <div
+                *ngFor="let f of question.fileQuestion; let index = index"
+                key="index"
+              >
+                <div>
+                  <p-image [src]="f.file__path" [preview]="true"></p-image>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="question.question__type === 'QCM'">
+              <div *ngFor="let reponse of question.reponses">
+                <div class="flex align-items-center">
+                  <!-- <p-checkbox
+                  [label]="reponse.reponse__text"
+                  [name]="'question_' + question.question__id"
+                  [value]="reponse.reponse__id"
+                  (onChange)="onCheckboxChange($event, question, reponse)"
+                ></p-checkbox> -->
+                  <div [ngStyle]="checkAnswer(question, reponse).styles">
+                    <i [class]="checkAnswer(question, reponse).iconClass"></i>
+                    {{ reponse.reponse__text }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="question.question__type === 'Normal'">
+              <div>
+                {{ getAnswer(question) }}
+              </div>
+            </div>
+
+            <!-- -->
+
+            <ng-template pTemplate="footer">
+              <div class="NoteInput">
+                <tr class="p-rowgroup-footer" style="text-align: right">
+                  <td colspan="4">Total Note</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="inputNumbe"
+                      [min]="0"
+                      [max]="question.note != null ? question.note : 20"
+                      [ngModel]="valNote(question.question__id)"
+                      (blur)="
+                        NoteQuestion($any($event.target)?.value, question)
+                      "
+                    />
+                  </td>
+                </tr>
+              </div>
+            </ng-template>
+          </p-panel>
+        </ng-container>
+      </p-fieldset>
+    </ng-container>
+  </div>
+
+  <!-- <p *ngIf="allAnswersEmpty()">No answers available.</p> -->
+  <p-footer>
+    <div class="NoteInput">
+      <tr class="p-rowgroup-footer" style="text-align: right">
+        <td colspan="4">Total Note</td>
+        <td>
+          <input type="number" class="inputNumbe"  [ngModel]="totalNote"  (ngModelChange)="onTotalNoteChange($event)"  />
+        </td>
+      </tr>
+
+      <button class="buttonSend" type="button" (click)="submitResult()">Send</button>
+    </div>
+  </p-footer>
+</p-dialog>

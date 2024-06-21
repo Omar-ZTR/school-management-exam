@@ -6,13 +6,14 @@ import {
   updateQuestion,
   deleteQuestion,
   getFakeQuestions,
+  QuestionById,
 } from '../controllers/questionController';
 
 const routerQuestion = express.Router();
 
 routerQuestion.get('/', getAllQuestions);
 
-routerQuestion.get('/fake', getFakeQuestions);
+routerQuestion.get('/fake', QuestionById);
 
 routerQuestion.get('/question/:id', getQuestionById);
 

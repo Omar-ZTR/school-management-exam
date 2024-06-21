@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 // import jwtdecode from "jwt-decode";
 import { JwtHelperService } from '@auth0/angular-jwt';
 
-import { GlobalConstants } from '../shared/global-constants';
+import { GlobalConstants } from '../../shared/global-constants';
 import { isPlatformBrowser } from '@angular/common';
 @Injectable({
   providedIn: 'root',

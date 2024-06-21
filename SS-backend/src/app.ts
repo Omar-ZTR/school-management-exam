@@ -10,6 +10,7 @@ import routerGroup from "./routers/groupRouter";
 import routerSalle from "./routers/salleRouter";
 import routersubject from "./routers/routerSubject";
 import path from "path";
+import routerFile from "./routers/fileRouter";
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(function (req, res, next) {
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle, routersubject );
+app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle, routerFile, routersubject );
 
 const corsOptions = {
   origin: 'http://localhost:4200', 
@@ -47,8 +48,7 @@ app.use(
   }
 );
 app.use('/files', express.static(path.join(__dirname, 'utils/filesUpload')));
-console.log("dirname:",__dirname)
-console.log("ddddsdsddsds",path.join(__dirname, 'utils/filesUpload'))
+
 dotenv.config()
 // alter: true
 connection

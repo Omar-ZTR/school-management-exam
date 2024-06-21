@@ -3,7 +3,7 @@ import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { HttpClientModule } from '@angular/common/http';
-import { ExamService } from '../serviceTeacher/exam.service';
+import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { MenuItem } from 'primeng/api';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { RouterModule, RouterOutlet } from '@angular/router';

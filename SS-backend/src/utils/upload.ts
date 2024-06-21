@@ -2,7 +2,7 @@ import * as util from "util";
 import multer from "multer";
 import path from "path";
 import  fs from 'fs';
-
+import { Request, Response } from "express";
 
 const maxSize = 2 * 1024 * 1024;
 
@@ -27,6 +27,26 @@ const uploadFile = multer({
 
 const uploadFileMiddleware = util.promisify(uploadFile);
 
-console.log("ddddddddddd")
 export default uploadFileMiddleware;
 
+
+
+
+
+
+
+export const downloadFile = async(req: Request, res: Response) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'filesUpload', filename);
+console.log(filePath)
+  if (fs.existsSync(filePath)) {
+    res.download(filePath, filename, (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Could not download the file!' });
+      }
+    });
+  } else {
+    res.status(404).send({ message: 'File not found!' });
+  }
+};

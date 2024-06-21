@@ -409,7 +409,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 background: transparent;
-  
+  top: 0;
   backdrop-filter: blur(10px);
  border-radius:50% ;
   box-shadow: rgba(39, 39, 43, 0.337) 0px 7px 29px 0px;

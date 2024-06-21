@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Exam } from '../teacher-exam/teacher-exam.component';
-import { ExamGS } from '../result/result.component';
+import { Exam } from '../../components/teacher/teacher-exam/teacher-exam.component';
+import { ExamGS } from '../../components/teacher/result/result.component';
 @Injectable({
   providedIn: 'root'
 })
