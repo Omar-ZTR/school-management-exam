@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ExamAnswersService } from '../../../services/serviceAnswers/exam-answers.service';
 // import { HttpClientModule } from '@angular/common/http'; HttpClientModule,
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +13,8 @@ import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { ImageModule } from 'primeng/image';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
-import { getFileExtension, getFileType } from '../../../shared/utilsFile';
+import { getFileExtension, getFileType, getMimeType } from '../../../shared/utilsFile';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-correction-exams',
@@ -22,12 +23,13 @@ import { getFileExtension, getFileType } from '../../../shared/utilsFile';
     CommonModule,
     FieldsetModule,
     PanelModule,
-    DialogModule,
+   
     TableModule,
     ButtonModule,
     RippleModule,
     TagModule,
     InputNumberModule,
+     DialogModule,
     ImageModule,
     FormsModule,
   ],
@@ -46,6 +48,11 @@ import { getFileExtension, getFileType } from '../../../shared/utilsFile';
   ],
 })
 export class CorrectionExamsComponent {
+  @ViewChild('myInput') myInput!: ElementRef;
+
+
+
+
   [x: string]: any;
   total!: number;
   result!:number;
@@ -89,6 +96,7 @@ export class CorrectionExamsComponent {
   constructor(
     private AnswerService: ExamAnswersService,
     private examService: ExamService
+  
   ) {}
   ngOnInit(): void {
     this.fetchAnswers();
@@ -236,13 +244,73 @@ export class CorrectionExamsComponent {
   get totalNote(): number {
     return this.questionNotes.reduce((total, note) => total + note.value, 0);
   }
-
-
-
-
-  onTotalNoteChange(value: number): void {
-    this.total = value;
+  openFile(filePath: string): void {
+    window.open(filePath, '_blank');
   }
+
+  downloadFile(file__name: any): void {
+    this.AnswerService.downloadFile(file__name).subscribe((blob: Blob) => {
+      saveAs(blob,file__name);
+          
+        }, error => {
+          console.error('Error downloading file:', error);
+      
+        });
+  }
+
+
+  downloadAllFiles(): void {
+
+
+    this.studentAnswer.fileAnswer.forEach((file: { file__path: string; file__name: string; }, index: number) => {
+      console.log("this in ts file",file.file__name)
+      this.AnswerService.downloadFile(file.file__name).subscribe((response: Blob) => {
+        const extension = getFileExtension(file.file__name);
+        const mimeType = getMimeType(extension);
+        const blob = new Blob([response], { type: mimeType });
+        console.log( "blob....>",blob)
+    saveAs(blob, file.file__name);
+        
+      }, error => {
+        console.error('Error downloading file:', error);
+    
+      });
+    });
+  }
+
+  ngAfterViewInit() {
+    const input = this.myInput.nativeElement as HTMLInputElement;
+    const min = parseFloat(input.getAttribute('min') || '0');
+    const max = parseFloat(input.getAttribute('max') || '20');
+
+    input.onkeypress = (e: KeyboardEvent) => {
+      // 13: enter, +: 43, -: 45
+      if (e.keyCode === 13) input.blur();
+      if ([43, 45].includes(e.keyCode)) e.preventDefault();
+    };
+
+    input.onkeyup = () => {
+      const value = parseFloat(input.value);
+      if (value < min) {
+        input.value = min.toString();
+      } else if (value > max) {
+        input.value = max.toString();
+      }
+    };
+  }
+
+ 
+
+  onTotalNoteChange(value: number) {
+    if (value > 20) {
+      this.total = 20;
+    } else {
+      this.total = value;
+    }
+  }
+
+
+  
 
   submitResult(): void {
     console.log("totalNote is : ", this.totalNote)
@@ -256,5 +324,21 @@ export class CorrectionExamsComponent {
       this.result = this.total;
     }
     console.log("rerererre is : ", this.result)
+
+    const answerData = {
+      ans__id: this.studentAnswer.ans__id,
+     ans__result: this.result
+    };
+
+    this.AnswerService.updateAnswer(answerData).subscribe(
+      (response: any) => {
+        alert('Successfully create');
+        console.log('seccess update', response);
+      },
+      (error: { error: { message: any } }) => {
+        console.log('errrr', error);
+      }
+    );
+
   }
 }

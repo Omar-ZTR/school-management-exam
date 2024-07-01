@@ -16,6 +16,7 @@ import { AddQuestionComponent } from './components/teacher/add-question/add-ques
 import { ResultComponent } from './components/teacher/result/result.component';
 import { ExamtakenComponent } from './components/student/examtaken/examtaken.component';
 import { CorrectionExamsComponent } from './components/teacher/correction-exams/correction-exams.component';
+import { ExamsComponent } from './components/student/exams/exams.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -38,7 +39,7 @@ export const routes: Routes = [
     canActivate: [RouteGuardService],
     data: { expectedRole: ['Teacher'] },
     children: [
-      { path: 'dash', component: ExamtakenComponent },
+      { path: 'dash', component: ExamsComponent },
       { path: 'addExam', component: AddExamComponent },
       { path: 'listExam', component: TeacherExamComponent },
       { path: 'addQuestion', component: AddQuestionComponent },

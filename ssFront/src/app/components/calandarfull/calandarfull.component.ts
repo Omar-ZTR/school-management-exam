@@ -28,6 +28,7 @@ export class CalandarfullComponent implements OnInit {
   groupsub: any[] = [];
   grouprnk: any[] = [];
   @Input() data: any;
+  @Input() firstDate: any;
   @Output() isMonthViewChange = new EventEmitter<boolean>();
 
   daysInMonth: number[] = [];
@@ -73,6 +74,11 @@ export class CalandarfullComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.firstDate){
+      this.currentWeekStart= this.firstDate
+      this.isMonthView=false
+    }
+    this.isMonthViewChange.emit(this.isMonthView);
     this.generateCalendar();
     this.generateCurrentWeek();
     this.eventForm = this.fb.group({
@@ -85,6 +91,8 @@ export class CalandarfullComponent implements OnInit {
     });
     this.fetchEvents();
     this.fetchGroups()
+
+   
   }
 
   fetchEvents(): void {
@@ -122,7 +130,7 @@ export class CalandarfullComponent implements OnInit {
     const fetchSalleData = {
       starthour: new Date(`${startDate}T${startHour}`),
       endhour: new Date(`${startDate}T${endHour}`),
-      // nb: nb__place,
+      exam__id: this.data,
     };
     console.log("<>><<>><><><><<>", fetchSalleData)
     this.fetchSalles(fetchSalleData);
@@ -131,7 +139,7 @@ export class CalandarfullComponent implements OnInit {
   fetchSalles(fetchSalleData: {
     starthour: Date;
     endhour: Date;
-    // nb: any;
+    exam__id: any;
   }): void {
     this.salleService.getSalleSpecific(fetchSalleData).subscribe(
       (data) => {
@@ -156,12 +164,17 @@ export class CalandarfullComponent implements OnInit {
   //   return groupedEvents;
   // }
   openWeekView(day: number) {
+    console.log("day is <<<<<<<", day)
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
+    console.log("selectedDate is <<<<<<<", selectedDate)
     const startOfWeek = new Date(selectedDate);
+   
     const dayOfWeek = selectedDate.getDay();
+ 
     startOfWeek.setDate(selectedDate.getDate() - dayOfWeek);
 
     this.currentWeekStart = startOfWeek;
+    console.log("WeekStart is wwww", this.currentWeekStart)
     this.isMonthView = false;
     this.isMonthViewChange.emit(this.isMonthView);
     this.generateCurrentWeek();
@@ -192,9 +205,14 @@ export class CalandarfullComponent implements OnInit {
 
   generateCurrentWeek() {
     const startOfWeek = new Date(this.currentWeekStart);
+    const starwwtOfWeek = new Date(this.firstDate);
+    console.log("hassss11111111 is <<<<<<<", this.firstDate)
+    console.log("hassss22222222222 is <<<<<<<",starwwtOfWeek)
+    console.log("eee333333333333 is <<<<<<<", startOfWeek)
     this.currentWeekStart = new Date(
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
     );
+    console.log("3currentWeekStart is <<<<<<<", this.currentWeekStart)
   }
 
   getWeekDates(): Date[] {
@@ -253,7 +271,7 @@ export class CalandarfullComponent implements OnInit {
       salle: '',
     });
 
-    // Open the modal
+
     this.modalService.open(modal);
   }
 

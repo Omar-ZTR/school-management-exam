@@ -23,9 +23,12 @@ export class ExamService {
     console.log("fffffffffffffffffffffffl",data)
     const formData = new FormData();
 formData.append('exam', JSON.stringify(data.exam)); 
-for (const file of data.files) {// Serialize exam data
-formData.append('files', file);
+if (data.files && data.files.length > 0) {
+  for (const file of data.files) {// Serialize exam data
+    formData.append('files', file);
+    }
 }
+
     return this.httpClient.post(this.url + "/examc" , formData , {
       headers:new HttpHeaders().set('Accept' , 'application/json')
     })
@@ -51,6 +54,13 @@ formData.append('files', file);
 
     console.log("sssaaaaaaaaaa",exam_id)
     return this.httpClient.get(`${this.url}/exams/${exam_id}`, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  deleteExam(id: number): Observable<any> {
+    console.log("Deleting exam with ID:", id);
+    return this.httpClient.delete(`${this.url}/exam/${id}`, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
   }

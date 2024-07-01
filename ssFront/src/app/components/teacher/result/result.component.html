@@ -1,3 +1,91 @@
+
+
+ <div class="card">
+  <p-table
+    [value]="ExamD"
+    rowGroupMode="rowspan"
+    groupRowsBy="subject, group"
+    sortField="subject, group"
+    sortMode="single"
+    [paginator]="true"
+    [rows]="5"
+    [first]="first"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        (onPage)="onPageChange($event)"
+        [rowsPerPageOptions]="[10, 25, 5]"
+   
+    #dt1
+  >
+    <ng-template pTemplate="caption">
+      <p-iconField iconPosition="left">
+        <p-inputIcon>
+          <i class="pi pi-search"></i>
+        </p-inputIcon>
+        <input 
+          pInputText 
+          type="text" 
+          #searchInput
+          (input)="filterData(searchInput.value)" 
+
+          placeholder="Global Search" 
+        />
+      </p-iconField>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+   
+        <th>Exam</th>
+        <th>Group</th>
+        <th>Student Name</th>
+        <th>Student Email</th>
+        <th>Result</th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-exam
+      let-rowIndex="rowIndex"
+      let-rowgroup="rowgroup"
+      let-rowspan="rowspan"
+    >
+      <ng-container *ngFor="let group of exam.groups; let groupIndex = index">
+        <ng-container
+          *ngFor="let student of group.students; let studentIndex = index"
+        >
+          <tr>
+         
+            <td
+              *ngIf="groupIndex === 0 && studentIndex === 0"
+              [attr.rowspan]="rowGroups(exam)"
+            >
+              <span class="font-bold ml-2">{{ exam.subject }}</span>
+            </td>
+            <td *ngIf="studentIndex === 0" [attr.rowspan]="rowStudents(group)">
+              <span class="font-bold ml-2">{{ group.group__name }}</span>
+            </td>
+            <td>{{ student.first__name }} {{ student.last__name }}</td>
+            <td>{{ student.user__email }}</td>
+
+            <td></td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+  </p-table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 <!-- <div class="card">
   <p-table
     [value]="ExamGS"
@@ -129,77 +217,4 @@
           </tr>
       </ng-template>
   </p-table>
-</div>
- -->
- <div class="card">
-  <p-table
-    [value]="ExamD"
-    rowGroupMode="rowspan"
-    groupRowsBy="subject, group"
-    sortField="subject, group"
-    sortMode="multiple"
-    [paginator]="true"
-    [rows]="5"
-    [tableStyle]="{ 'min-width': '50rem' }"
-    [rowsPerPageOptions]="[5, 10, 20]"
-   
-    #dt1
-  >
-    <ng-template pTemplate="caption">
-      <p-iconField iconPosition="left">
-        <p-inputIcon>
-          <i class="pi pi-search"></i>
-        </p-inputIcon>
-        <input 
-          pInputText 
-          type="text" 
-          #searchInput
-          (input)="filterData(searchInput.value)" 
-
-          placeholder="Global Search" 
-        />
-      </p-iconField>
-    </ng-template>
-    <ng-template pTemplate="header">
-      <tr>
-   
-        <th>Exam</th>
-        <th>Group</th>
-        <th>Student Name</th>
-        <th>Student Email</th>
-        <th>Result</th>
-      </tr>
-    </ng-template>
-    <ng-template
-      pTemplate="body"
-      let-exam
-      let-rowIndex="rowIndex"
-      let-rowgroup="rowgroup"
-      let-rowspan="rowspan"
-    >
-      <ng-container *ngFor="let group of exam.groups; let groupIndex = index">
-        <ng-container
-          *ngFor="let student of group.students; let studentIndex = index"
-        >
-          <tr>
-         
-            <td
-              *ngIf="groupIndex === 0 && studentIndex === 0"
-              [attr.rowspan]="rowGroups(exam)"
-            >
-              <span class="font-bold ml-2">{{ exam.subject }}</span>
-            </td>
-            <td *ngIf="studentIndex === 0" [attr.rowspan]="rowStudents(group)">
-              <span class="font-bold ml-2">{{ group.group__name }}</span>
-            </td>
-            <td>{{ student.first__name }} {{ student.last__name }}</td>
-            <td>{{ student.user__email }}</td>
-
-            <td></td>
-          </tr>
-        </ng-container>
-      </ng-container>
-    </ng-template>
-  </p-table>
-</div>
-
+</div> -->

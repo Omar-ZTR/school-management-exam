@@ -18,6 +18,7 @@ export class ExamAnswersService {
         formData.append('files', file);
       }
     }
+    console.log("hay answers",formData)
     return this.httpClient.post(this.url + '/answers', formData, {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
@@ -25,6 +26,17 @@ export class ExamAnswersService {
 
   getAnswer() {
     return this.httpClient.get(this.url + '/getanswers');
+  }
+
+
+
+
+  updateAnswer(data:any){
+    const id = data.ans__id;
+    console.log("<<<////",id)
+    return this.httpClient.put(`${this.url}/result/${id}`, data , {
+      headers:new HttpHeaders().set('Content-Type' , 'application/json')
+    })
   }
 
   downloadFile(data:any): Observable<any> {

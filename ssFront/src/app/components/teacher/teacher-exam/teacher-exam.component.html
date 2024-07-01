@@ -20,8 +20,11 @@
     styleClass="p-button-text"
   />
 </div>
+
+<!-- table  -->
 <div class="card">
   <p-table
+  
     [value]="Exams"
     [paginator]="true"
     [rows]="5"
@@ -37,47 +40,76 @@
         <th style="width: max-content">Status</th>
         <th style="width: max-content">Subject</th>
         <th style="width: max-content">Type</th>
-        <th style="width: max-content">Questions</th>
-        <th style="width: max-content">File</th>
+        <!-- <th style="width: max-content">Questions</th>
+        <th style="width: max-content">File</th> -->
         <th style="width: max-content">Create At</th>
-        <th style="width: max-content">update At</th>
+        <!-- <th style="width: max-content">update At</th> -->
         <th style="width: max-content">scheduled</th>
+        <th style="width: max-content"></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-exam>
       <tr>
-        <td>{{ exam.obligatoire ? "Active" : "Inactive" }}</td>
+        <td>{{ exam.obligatoire ? "certification" : "Course" }}</td>
         <td>{{ exam.subject }}</td>
         <td>{{ exam.exam__type }}</td>
-        <td>{{ exam.questions.length }}</td>
-        <td>{{ exam.file.length }}</td>
+        <!-- <td>{{ exam.questions.length }}</td>
+        <td>{{ exam.file.length }}</td> -->
         <td>{{ exam.createdAt | date : "EEEE dd MMMM  HH:mm" }}</td>
-        <td>
+        <!-- <td>
           {{
             (exam.updatedAt | date : "EEEE dd MMMM HH:mm") !==
             (exam.createdAt | date : "EEEE dd MMMM HH:mm")
               ? (exam.updatedAt | date : "EEEE dd MMMM HH:mm")
               : "-"
           }}
+        </td> -->
+        <td style="display: flex; justify-content: space-around">
+          <div style="display: flex; align-items: center; width: max-content">
+            <!-- {{ exam.reservation.length > 0 ? "" : "No" }} -->
+            <!-- <p-button *ngIf="exam.reservation.length > 0 "
+              (click)="listPlan(exam, op)"
+             
+              
+             
+            >Show list</p-button> -->
+            <p-button
+              *ngIf="exam.reservation.length <= 0"
+              label=" Add plan"
+              (click)="toggleCalendar(exam, op)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px' }"
+              icon="pi pi-plus"
+              severity="success"
+            />
+            <p-button
+              *ngIf="exam.reservation.length > 0"
+              label="Show list"
+              (click)="listPlan(exam, op)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px' }"
+              icon="pi pi-search"
+              severity="warning"
+            />
+          </div>
         </td>
-        <td style="display: flex; justify-content: space-around;" >
-          <div style="display: flex; align-items: center;">{{ exam.scheduled ? "Yes" : "No" }}</div>
-          <div style=" --item-diff-x : 0px !important">
-           
-            <p-speedDial 
-        [model]="items" 
-        direction="left" 
-        type="linear" 
-        [mask]="true"
-        transitionDelay="80" 
-        showIcon="pi pi-bars" 
-        hideIcon="pi pi-times" 
-        raised="true"
-        severity="secondary"
-        buttonClassName="p-button-outlined"
-        />
-        </div>
-       
+        <td>
+          <div style="--item-diff-x: 0px !important">
+            <p-speedDial
+              [model]="getSpeedDialItems(exam)"
+              direction="left"
+              type="linear"
+              [mask]="true"
+              transitionDelay="80"
+              showIcon="pi pi-bars"
+              hideIcon="pi pi-times"
+              raised="true"
+              severity="secondary"
+              buttonClassName="p-button-outlined"
+            />
+          </div>
         </td>
       </tr>
     </ng-template>
@@ -90,3 +122,559 @@
   </p-table>
 </div>
 
+<!-- list planification -->
+<p-overlayPanel #op [style]="{ maxwidth: '450px', maxheight: '250px' }">
+  <p-button
+    class="overpanelClose"
+    (click)="overpanelClose( op)"
+    icon="pi pi-times"
+    [rounded]="true"
+    severity="danger"
+    [outlined]="true"
+  />
+  <ng-template pTemplate="content">
+    <p-table
+      [value]="examShudeled.reservation"
+      selectionMode="single"
+      [paginator]="examShudeled.reservation.length > 4"
+      [rows]="4" 
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>group</th>
+          <th>salle</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-product>
+        <tr [pSelectableRow]="rowData" (click)="updatePlan(rowData)">
+          <td>
+            {{ product.exam__title }}
+          </td>
+          <td>
+            {{ product.group__name }}
+          </td>
+          <td>{{ product.salle }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-button
+   
+    label=" Add plan"
+    (click)="toggleCalendar(examShudeled, op)"
+    [text]="true"
+    [raised]="true"
+    [style]="{ 'border-radius': '15px','margin-top':'8px'}"
+    icon="pi pi-plus"
+    severity="success"
+  />
+  </ng-template>
+</p-overlayPanel>
+
+<!-- planification -->
+<div *ngIf="showCalendar" >
+  <button class="button-62" (click)="toggleCalendar([],op)" >
+    <i class="fa-solid fa-xmark"></i>
+    Cancel
+  </button>
+  </div>
+<div *ngIf="showCalendar" class="planingPop visible">
+  <!-- <button class="button-62" (click)="toggleCalendar([],op)" >
+    Button 62
+  </button> -->
+  <div
+    class="calendar-popup"
+    [ngStyle]="{ 'margin-top': !isMonthView ? '20%' : '0'}"
+  >
+    <app-calandarfull
+      [data]="examPlan.exam__id"
+      [firstDate]="firstDate"
+      (isMonthViewChange)="onIsMonthViewChange($event)"
+    ></app-calandarfull>
+  </div>
+</div>
+
+<!-- confirmation -->
+<p-dialog
+  [modal]="true"
+  header="Delete Confirmation "
+  [(visible)]="deletexam"
+  [style]="{ width: '25rem' }"
+>
+  <p>Do you want to delete this {{deleteform.type}}?</p>
+
+  <p-button
+  *ngIf="deleteform.type ==='question'"
+  label="Remove "
+  (click)=" deleteObj(deleteid,'unassociate')"
+ 
+  [raised]="true"
+  [style]="{ 'border-radius': '15px','background':'#ff8e00','margin':'8px'}"
+  icon="pi pi-times"
+
+/>
+
+  <p-button
+   
+  label="Delete  "
+  (click)="deleteObj(deleteid,'delete')"
+ 
+  [raised]="true"
+  [style]="{ 'border-radius': '15px','background':'red','margin':'8px'}"
+  icon="pi pi-trash"
+
+/>
+</p-dialog>
+
+<!-- update planification  -->
+
+<p-dialog
+  [modal]="true"
+  header="update planification "
+  [(visible)]="updatecalendar"
+  [style]="{ width: '25rem' }"
+>
+  <form [formGroup]="eventForm">
+    <div class="marginleft d-flex justify-content-center align-items-center">
+      <label for="title">Title</label>
+      <input
+        id="title"
+        type="text"
+        class="marginleft form-control"
+        formControlName="title"
+      />
+    </div>
+    <div class="marginleft form-group">
+      <label for="startDate">Date</label>
+      <input
+        id="startDate"
+        type="date"
+        class="marginleft form-control"
+        formControlName="startDate"
+      />
+    </div>
+    <div
+      class="marginleft ml-2 d-flex justify-content-center align-items-center"
+    >
+      <label for="startTime">Start Time</label>
+      <input
+        id="startTime"
+        type="time"
+        class="marginleft form-control"
+        formControlName="startTime"
+      />
+
+      <label for="endTime">End Time</label>
+      <input
+        id="endTime"
+        type="time"
+        class="marginleft form-control"
+        formControlName="endTime"
+      />
+    </div>
+    <div
+      class="marginleft form-group d-flex justify-content-center align-items-center"
+    >
+      <div
+        class="marginleft mr-2 d-flex justify-content-center align-items-center"
+      >
+        <label for="salle">Salle</label>
+        <select
+          id="salle"
+          class="marginleft form-control styled-select"
+          style="min-width: 100px; max-width: max-content"
+          formControlName="salle"
+          (click)="onSalleSelect()"
+        >
+          <option
+            style="padding: 30px"
+            class="styled-option"
+            *ngFor="let salle of salles"
+            [value]="salle.salle__name"
+          >
+            {{ salle.salle__name }}
+          </option>
+        </select>
+      </div>
+      <div
+        class="marginleft ml-2 d-flex justify-content-center align-items-center"
+      >
+        <label for="group">Group</label>
+        <input
+          id="group"
+          type="text"
+          class="marginleft form-control readonly-input"
+          formControlName="group"
+          readonly
+        />
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="saveplan()">
+      Save update
+    </button>
+  </form>
+</p-dialog>
+
+
+<!-- edit Exam -->
+<p-dialog
+  header="exam"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <div class="examFiles" *ngIf="examType == 'file'">
+    <div>
+      <div class="titlebox">Exam file</div>
+      <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
+        <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
+          <div class="previewimg" (click)="openFile(f.file__path)">
+            <i
+              *ngIf="typeFile(f).type !== 'image'"
+              class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+            ></i>
+            <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="examType != 'file'">
+    <ng-container *ngFor="let questionType of getQuestionTypes()">
+      <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
+        <button
+          class="p-panel-header-icon p-link mr-2"
+          (click)="addQuestion(questionType)"
+        >
+          <span class="pi pi-plus"></span>
+        </button>
+        <ng-container
+          *ngFor="let question of groupedQuestions[questionType]; let i = index"
+        >
+          <p-panel>
+            <ng-template pTemplate="header">
+              <div class="flex align-items-center gap-2">
+                <span class="font-bold">
+                  {{ question.question__text }}. {{ question.note }}
+                </span>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="icons">
+              <button
+                class="p-panel-header-icon p-link mr-2"
+                (click)="editQuestion(question)"
+              >
+                <span class="pi pi-pencil"></span>
+              </button>
+              <button
+              class="p-panel-header-icon p-link mr-2"
+              (click)="toggleDelete(question,Exam.exam__id,'question')"
+            >
+              <span class="pi pi-times"></span>
+            </button>
+            </ng-template>
+            <!-- <button (click)="editQuestion(question)">edit</button> -->
+
+            <div
+              *ngIf="question.fileQuestion"
+              class="fleximg"
+              style="margin-bottom: 10px"
+            >
+              <div
+                *ngFor="let f of question.fileQuestion; let index = index"
+                key="index"
+              >
+                <div>
+                  <p-image [src]="f.file__path" [preview]="true"></p-image>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="question.question__type === 'QCM'">
+              <div
+                class="flex align-items-center"
+                *ngFor="let reponse of question.reponses"
+              >
+                <div [ngStyle]="checkAnswer(reponse).styles">
+                  <i [class]="checkAnswer(reponse).iconClass"></i>
+                  {{ reponse.reponse__text }}
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="question.question__type === 'Normal'">
+              <div>
+                <!-- Add form controls for normal questions here -->
+              </div>
+            </div>
+          </p-panel>
+        </ng-container>
+      </p-fieldset>
+    </ng-container>
+  </div>
+
+  <!-- <p *ngIf="allAnswersEmpty()">No answers available.</p> -->
+</p-dialog>
+
+<!-- dialog edit Question -->
+
+<p-dialog
+  [modal]="true"
+  header="Edit Question"
+  [(visible)]="update"
+  [style]="{ width: '25rem' }"
+>
+  <span class="p-text-secondary block mb-5">Update your information.</span>
+  <form [formGroup]="questionForms">
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="question" class="font-semibold w-6rem">question:</label>
+      <input
+        pInputText
+        id="question"
+        class="flex-auto"
+        formControlName="question__text"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="note" class="font-semibold w-6rem">note:</label>
+      <input
+        pInputText
+        id="note"
+        class="flex-auto"
+        type="number"
+        formControlName="note"
+      />
+    </div>
+
+    <div formArrayName="reponses">
+      <div class="flex align-items-center gap-3 mb-5">
+        <label for="Answers" class="font-semibold w-6rem">Answers:</label>
+        <div
+          *ngFor="let reponse of reponsesControls; let i = index"
+          [formGroupName]="i"
+          class="flex align-items-center"
+        >
+          <div [ngStyle]="checkAnswer(reponse.value).styles">
+            <input
+              name="chkBox_2"
+              type="checkbox"
+              formControlName="reponse__statut"
+            />
+            <input
+              pInputText
+              id="Answers"
+              class="flex-auto"
+              formControlName="reponse__text"
+            />
+            <p-button
+              icon="pi pi-times"
+              [rounded]="true"
+              [text]="true"
+              [raised]="true"
+              (click)="deleteReponse(i)"
+              severity="danger "
+            />
+          </div>
+        </div>
+        <p-button
+          icon="pi pi-plus"
+          [rounded]="true"
+          [text]="true"
+          [raised]="true"
+          (click)="addReponse()"
+          severity="info "
+        />
+
+        <!-- <button (click)="addReponse()">add reponse</button> -->
+      </div>
+    </div>
+    <div class="fileAnswer">
+      <div *ngIf="questionFile" class="fleximg" style="margin-bottom: 10px">
+        <div *ngFor="let file of questionFile; let i = index">
+          <div class="filepreview">
+            <div class="removeFile" (click)="deleteFile(file.fileId, i)">
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+            <div class="previewimg">
+              <img *ngIf="file.type === 'image'" [src]="file.url" />
+              <i
+                *ngIf="file.type !== 'image'"
+                class="fa-solid  fa-file-{{ file.type }} fa"
+              ></i>
+            </div>
+
+            <div class="fileTitle">{{ file.name }}</div>
+          </div>
+        </div>
+        <div *ngFor="let file of FileAdds; let i = index">
+          <div class="filepreview">
+            <div class="removeFile" (click)="removeFile(i)">
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+            <div class="previewimg">
+              <img *ngIf="file.type === 'image'" [src]="file.url" />
+              <i
+                *ngIf="file.type !== 'image'"
+                class="fa-solid  fa-file-{{ file.type }} fa"
+              ></i>
+            </div>
+
+            <div class="fileTitle">{{ file.name }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custome-file">
+        <span>
+          <img
+            src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
+            alt=""
+          />Attach File
+        </span>
+        <input
+          type="file"
+          accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+          multiple
+          (change)="detectFiles($event)"
+        />
+      </div>
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Cancel" severity="secondary" (click)="closeQuest()" />
+      <p-button label="Save" (click)="saveQuestion()" />
+    </div>
+  </form>
+</p-dialog>
+
+<!-- dialog  Add Question -->
+
+<p-dialog
+  [modal]="true"
+  header="Add Question"
+  [(visible)]="add"
+  [style]="{ width: '25rem' }"
+>
+  <span class="p-text-secondary block mb-5">Update your information.</span>
+  <form [formGroup]="questionForms">
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="question" class="font-semibold w-6rem">question:</label>
+      <input
+        pInputText
+        id="question"
+        class="flex-auto"
+        formControlName="question__text"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="note" class="font-semibold w-6rem">note:</label>
+      <input
+        pInputText
+        id="note"
+        class="flex-auto"
+        type="number"
+        formControlName="note"
+      />
+    </div>
+
+    <div formArrayName="reponses">
+      <div class="flex align-items-center gap-3 mb-5">
+        <label for="Answers" class="font-semibold w-6rem">Answers:</label>
+        <div
+          *ngFor="let reponse of reponsesControls; let i = index"
+          [formGroupName]="i"
+          class="flex align-items-center"
+        >
+          <div [ngStyle]="checkAnswer(reponse.value).styles">
+            <input
+              name="chkBox_2"
+              type="checkbox"
+              formControlName="reponse__statut"
+            />
+            <input
+              pInputText
+              id="Answers"
+              class="flex-auto"
+              formControlName="reponse__text"
+            />
+            <p-button
+              icon="pi pi-times"
+              [rounded]="true"
+              [text]="true"
+              [raised]="true"
+              (click)="deleteReponse(i)"
+              severity="danger "
+            />
+          </div>
+        </div>
+        <p-button
+          icon="pi pi-plus"
+          [rounded]="true"
+          [text]="true"
+          [raised]="true"
+          (click)="addReponse()"
+          severity="info "
+        />
+
+        <!-- <button (click)="addReponse()">add reponse</button> -->
+      </div>
+    </div>
+    <div class="fileAnswer">
+      <div *ngIf="questionFile" class="fleximg" style="margin-bottom: 10px">
+        <div *ngFor="let file of questionFile; let i = index">
+          <div class="filepreview">
+            <div class="removeFile" (click)="deleteFile(file.fileId, i)">
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+            <div class="previewimg">
+              <img *ngIf="file.type === 'image'" [src]="file.url" />
+              <i
+                *ngIf="file.type !== 'image'"
+                class="fa-solid  fa-file-{{ file.type }} fa"
+              ></i>
+            </div>
+
+            <div class="fileTitle">{{ file.name }}</div>
+          </div>
+        </div>
+        <div *ngFor="let file of FileAdds; let i = index">
+          <div class="filepreview">
+            <div class="removeFile" (click)="removeFile(i)">
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+            <div class="previewimg">
+              <img *ngIf="file.type === 'image'" [src]="file.url" />
+              <i
+                *ngIf="file.type !== 'image'"
+                class="fa-solid  fa-file-{{ file.type }} fa"
+              ></i>
+            </div>
+
+            <div class="fileTitle">{{ file.name }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custome-file">
+        <span>
+          <img
+            src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
+            alt=""
+          />Attach File
+        </span>
+        <input
+          type="file"
+          accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+          multiple
+          (change)="detectFiles($event)"
+        />
+      </div>
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Cancel" severity="secondary" (click)="closeQuest()" />
+      <p-button label="Save" (click)="saveQuestion()" />
+    </div>
+  </form>
+</p-dialog>

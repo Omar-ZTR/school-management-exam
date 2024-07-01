@@ -68,44 +68,47 @@
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
 >
   <div class="examFiles" *ngIf="examType == 'file'">
-    <div
-    *ngIf="Exam.fileExam"
-    class="fleximg"
-    style="margin-bottom: 10px"
-  >
-    <div
-      *ngFor="let f of Exam.fileExam; let index = index" 
-      key="index"
-    >
-      <div class="previewimg">
-        <i
-        *ngIf="typeFile(f).type !== 'image'"
-        class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
-      ></i>
-        <img  *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+    <div>
+      <div class="titlebox">Exam file</div>
+      <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
+        <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
+          <div class="previewimg"   (click)="openFile(f.file__path)">
+            <i
+              *ngIf="typeFile(f).type !== 'image'"
+              class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+            ></i>
+            <img  *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+          </div>
+        </div>
       </div>
     </div>
-    
-  </div><div class="fileAnswer">
-    <div
-    *ngIf="Exam.fileExam"
-    class="fleximg"
-    style="margin-bottom: 10px"
-  >
-    <div
-      *ngFor="let f of Exam.fileExam; let index = index" 
-      key="index"
-    >
-      <div class="previewimg">
-        <i
-        *ngIf="typeFile(f).type !== 'image'"
-        class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
-      ></i>
-        <img  *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+   
+    <div>
+      <div class="titlebox">Answer file</div>
+      <div class="fileAnswer">
+        <div
+          *ngIf="studentAnswer.fileAnswer"
+          class="fleximg"
+          style="margin-bottom: 10px"
+        >
+          <div
+            *ngFor="let f of studentAnswer.fileAnswer; let index = index"
+            key="index"
+          > <div class="downloadFile" (click)="downloadFile(f.file__name)">
+            <i class="fa-solid fa-download"></i>
+              </div> 
+            <div class="previewimg" (click)="openFile(f.file__path)">
+              <i
+                *ngIf="typeFile(f).type !== 'image'"
+                class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+              ></i>
+              <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    
-  </div>
+      <button class="buttonSend scale" (click)="downloadAllFiles()"><i class="fa-solid fa-download"></i> Download</button>
+
     </div>
   </div>
   <div *ngIf="examType != 'file'">
@@ -160,12 +163,13 @@
             <ng-template pTemplate="footer">
               <div class="NoteInput">
                 <tr class="p-rowgroup-footer" style="text-align: right">
-                  <td colspan="4">Total Note</td>
+                  <td colspan="4">Note</td>
                   <td>
                     <input
                       type="number"
                       class="inputNumbe"
-                      [min]="0"
+                      min="0"
+                      #myInput
                       [max]="question.note != null ? question.note : 20"
                       [ngModel]="valNote(question.question__id)"
                       (blur)="
@@ -188,11 +192,21 @@
       <tr class="p-rowgroup-footer" style="text-align: right">
         <td colspan="4">Total Note</td>
         <td>
-          <input type="number" class="inputNumbe"  [ngModel]="totalNote"  (ngModelChange)="onTotalNoteChange($event)"  />
+          <input
+            type="number"
+            min="0"
+            max="200"
+            #myInput
+            class="inputNumbe"
+            [ngModel]="totalNote"
+            (ngModelChange)="onTotalNoteChange($event)"
+          />
         </td>
       </tr>
 
-      <button class="buttonSend" type="button" (click)="submitResult()">Send</button>
+      <button class="buttonSend" type="button" (click)="submitResult()">
+        Send
+      </button>
     </div>
   </p-footer>
 </p-dialog>

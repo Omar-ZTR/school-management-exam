@@ -15,6 +15,17 @@ export class CalandarService {
       headers:new HttpHeaders().set('Content-Type' , 'application/json')
     })
   }
+
+  updatereservation(data:any){
+    const id = data.id;
+    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<./////////",id)
+    return this.httpClient.put(`${this.url}/reservation/${id}`, data , {
+      headers:new HttpHeaders().set('Content-Type' , 'application/json')
+    })
+  }
+  getExams(){
+    return this.httpClient.get(this.url + "/specificreservation");
+  }
   getEvents(){
     return this.httpClient.get(this.url + "/reservation");
   }

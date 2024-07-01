@@ -31,3 +31,29 @@ export function getFileType(extension: string): string {
       return 'unknown';
   }
 }
+
+export function getMimeType(extension: string): string {
+  switch (extension) {
+    case 'zip':
+      return 'application/zip';
+      break;
+    case 'pdf':
+      return 'application/pdf;base64,';
+      break;
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+      break;
+    case 'png':
+      return 'image/png';
+      break;
+    case 'doc':
+      return 'application/msword';
+      break;
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      break;
+    default:
+      return 'application/octet-stream';
+  }
+}
