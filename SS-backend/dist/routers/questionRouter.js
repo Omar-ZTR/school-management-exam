@@ -10,6 +10,6 @@ routerQuestion.get('/', questionController_1.getAllQuestions);
 routerQuestion.get('/fake', questionController_1.QuestionById);
 routerQuestion.get('/question/:id', questionController_1.getQuestionById);
 routerQuestion.post('/question', questionController_1.createQuestion);
-routerQuestion.put('/questions/:id', questionController_1.updateQuestion);
-routerQuestion.delete('/questions/:id', questionController_1.deleteQuestion);
+routerQuestion.put('/question/:id', questionController_1.updateQuestion);
+routerQuestion.delete('/question/:id', questionController_1.deleteQuestion);
 exports.default = routerQuestion;

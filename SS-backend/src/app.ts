@@ -11,6 +11,7 @@ import routerSalle from "./routers/salleRouter";
 import routersubject from "./routers/routerSubject";
 import path from "path";
 import routerFile from "./routers/fileRouter";
+import routerAnswer from "./routers/answerRouter";
 
 const app = express();
 
@@ -30,7 +31,7 @@ app.use(function (req, res, next) {
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle, routerFile, routersubject );
+app.use("/", UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle, routerFile, routerAnswer, routersubject );
 
 const corsOptions = {
   origin: 'http://localhost:4200', 

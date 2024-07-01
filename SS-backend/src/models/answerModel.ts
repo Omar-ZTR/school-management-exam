@@ -43,4 +43,7 @@ export class Answer extends Model<Answer> {
 
     @Column(DataType.STRING)
     ans__descreption!: string;
+
+    @Column(DataType.INTEGER)
+    ans__result!: number;
 }

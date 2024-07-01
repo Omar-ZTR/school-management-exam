@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteReservation = exports.updateReservation = exports.getReservationById = exports.getAllReservations = exports.createReservation = void 0;
+exports.deleteReservation = exports.updateReservation = exports.getReservationById = exports.getAllReservations = exports.getSpecificReservations = exports.createReservation = void 0;
+const sequelize_1 = require("sequelize");
 const reservationModel_1 = require("../models/reservationModel"); // Import your Reservation model
+const examModel_1 = require("../models/examModel");
 // Create operation
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -25,6 +27,41 @@ const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.createReservation = createReservation;
+const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const groupName = 'group A';
+    try {
+        const reservations = yield reservationModel_1.Reservation.findAll({
+            where: {
+                [sequelize_1.Op.or]: [
+                    { group__name: groupName },
+                    { group__name: "all" }
+                ]
+            }
+        });
+        const formattedReservations = yield Promise.all(reservations.map((reservation) => __awaiter(void 0, void 0, void 0, function* () {
+            const exam = yield examModel_1.Exam.findByPk(reservation.exam__id);
+            return {
+                reserv__id: reservation.reserv__id,
+                exam__id: reservation.exam__id,
+                salle: reservation.salle,
+                group__name: reservation.group__name,
+                title: reservation.exam__title,
+                startDate: reservation.startDate,
+                endDate: reservation.endDate,
+                createdAt: reservation.createdAt,
+                updatedAt: reservation.updatedAt,
+                obligation: exam ? exam.obligatoire : null,
+            };
+        })));
+        res.status(200).json(formattedReservations);
+    }
+    catch (error) {
+        console.error("Error fetch reservations:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+    ;
+});
+exports.getSpecificReservations = getSpecificReservations;
 // Read operation - Get all reservations
 const getAllReservations = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

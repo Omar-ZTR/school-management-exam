@@ -246,7 +246,7 @@ const deleteExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { id } = req.params;
         const deleted = yield examModel_1.Exam.destroy({ where: { exam__id: id } });
         if (deleted) {
-            res.status(204).send();
+            res.status(204).send("yes deleting exam");
         }
         else {
             throw new Error("Exam not found");

@@ -26,92 +26,179 @@ export const getAllSalles = async (req: Request, res: Response) => {
 };
 
 export const getSallesSpecific = async (req: Request, res: Response) => {
-  const { starthour, endhour, nb } = req.body;
-
-  if (!starthour || !endhour) {
-    return res.status(400).json({ error: "Hours are required" });
-  }
-
   try {
+    const { starthour, endhour,exam__id } = req.body;
+   
+    console.log("start", starthour, "end", endhour);
+    
+    if (!starthour || !endhour) {
+      return res.status(400).json({ error: "Hours are required" });
+    }
+    
+    const start = new Date(starthour);
+    const end = new Date(endhour);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
+
+    // Calculate the difference in milliseconds
+    const durationMs = end.getTime() - start.getTime();
+    
+    // Check for overlapping reservations
     const reservations = await Reservation.findAll({
       where: {
         [Op.or]: [
           {
             startDate: {
-              [Op.and]: [
-                {
-                  [Op.gte]: starthour,
-                },
-                {
-                  [Op.lte]: endhour,
-                },
-              ],
+              [Op.lt]: new Date(start.getTime() + durationMs),
+            },
+            endDate: {
+              [Op.gte]: end,
+            },
+            exam__id: {
+              [Op.ne]: exam__id,
             },
           },
           {
             endDate: {
               [Op.and]: [
                 {
-                  [Op.gte]: starthour,
+                  [Op.lte]: new Date(start.getTime() + durationMs),
                 },
-                {
-                  [Op.lte]: endhour,
-                },
+                { [Op.gt]: start },
               ],
+            },
+            startDate: {
+              [Op.lte]: start,
+            },
+            exam__id: {
+              [Op.ne]: exam__id,
+            },
+          },
+          {
+            endDate: {
+              [Op.gt]: end,
+            },
+            startDate: {
+              [Op.lt]: start,
+            },
+            exam__id: {
+              [Op.ne]: exam__id,
+            },
+          },
+          {
+            endDate: {
+              [Op.lte]: end,
+            },
+            startDate: {
+              [Op.gte]: start,
+            },
+            exam__id: {
+              [Op.ne]: exam__id,
             },
           },
         ],
       },
       attributes: ["salle"],
     });
+  
 
-    let availableSalles: any[];
+    console.log("Reservations:", reservations);
 
-    if (reservations.length === 0) {
-      // If there are no reservations, return all salles
-      if (nb !== undefined) {
-        availableSalles = await Salle.findAll({
-          where: {
-            nb__place: {
-              [Op.gte]: nb,
-            },
+    let salles: any[] = [];
+
+    if (reservations.length > 0) {
+      const salleNames = reservations.map(reservation => reservation.salle);
+      salles = await Salle.findAll({
+        where: {
+          salle__name: {
+            [Op.notIn]: salleNames,
           },
-        });
-      } else {
-        availableSalles = await Salle.findAll();
-      }
+        },
+      });
     } else {
-      // If there are reservations, find salles not in the reserved list
-      const reservedSalles = reservations.map((reservation) => reservation.salle);
-
-      if (nb !== undefined) {
-        availableSalles = await Salle.findAll({
-          where: {
-            salle__name: {
-              [Op.notIn]: reservedSalles,
-            },
-            nb__place: {
-              [Op.gte]: nb,
-            },
-          },
-        });
-      } else {
-        availableSalles = await Salle.findAll({
-          where: {
-            salle__name: {
-              [Op.notIn]: reservedSalles,
-            },
-          },
-        });
-      }
+      salles = await Salle.findAll();
     }
 
-    res.status(200).json(availableSalles);
+    console.log("Available Salles:", salles);
+    res.status(200).json(salles);
+
   } catch (error) {
     console.error("Error fetching available salles:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+   // const examreservations = await Reservation.findAll({
+    //   where: {
+    //     [Op.and]: [
+    //       {
+    //         startDate: {
+    //           [Op.eq]: start,
+    //         },
+          
+    //         exam__id: {
+    //           [Op.eq]: nb,
+    //         },
+    //       },
+          
+    //     ],
+    //   },
+    //   attributes: ["salle , group__name"],
+    // });
+
+    // console.log("exaaaa ress", examreservations);
+    // let availableSalles: any[];
+
+    // if (reservations.length === 0) {
+    //   // If there are no reservations, return all salles
+    //   if (nb !== undefined) {
+    //     availableSalles = await Salle.findAll({
+    //       where: {
+    //         nb__place: {
+    //           [Op.gte]: nb,
+    //         },
+    //       },
+    //     });
+    //   } else {
+    //     availableSalles = await Salle.findAll();
+    //   }
+    // } else {
+    //   // If there are reservations, find salles not in the reserved list
+    //   const reservedSalles = reservations.map(
+    //     (reservation) => reservation.salle
+    //   );
+
+    //   if (nb !== undefined) {
+    //     availableSalles = await Salle.findAll({
+    //       where: {
+    //         salle__name: {
+    //           [Op.notIn]: reservedSalles,
+    //         },
+    //         nb__place: {
+    //           [Op.gte]: nb,
+    //         },
+    //       },
+    //     });
+    //   } else {
+    //     availableSalles = await Salle.findAll({
+    //       where: {
+    //         salle__name: {
+    //           [Op.notIn]: reservedSalles,
+    //         },
+    //       },
+    //     });
+    //   }
+    // }
+
+
+
+
+
+
+
 
 
 // Read operation - Get salle by ID

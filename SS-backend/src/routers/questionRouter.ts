@@ -20,9 +20,9 @@ routerQuestion.get('/question/:id', getQuestionById);
 routerQuestion.post('/question', createQuestion);
 
 
-routerQuestion.put('/questions/:id', updateQuestion);
+routerQuestion.put('/question/:id', updateQuestion);
 
 
-routerQuestion.delete('/questions/:id', deleteQuestion);
+routerQuestion.delete('/question/:id', deleteQuestion);
 
 export default routerQuestion;

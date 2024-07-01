@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAnswers = exports.createAnswers = void 0;
+exports.getAnswers = exports.updateResult = exports.createAnswers = void 0;
 const examModel_1 = require("../models/examModel");
 const answerModel_1 = require("../models/answerModel");
 const answerStudentModel_1 = require("../models/answerStudentModel");
@@ -67,6 +67,24 @@ const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createAnswers = createAnswers;
+const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const [updated] = yield answerModel_1.Answer.update(req.body, { where: { ans__id: id } });
+        if (updated) {
+            const updatedResult = yield answerModel_1.Answer.findOne({ where: { ans__id: id } });
+            res.status(200).json(updatedResult);
+        }
+        else {
+            throw new Error('Result not found');
+        }
+    }
+    catch (error) {
+        console.error("Error updating result", error);
+        res.status(500).send("Error updating result");
+    }
+});
+exports.updateResult = updateResult;
 const getAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const answers = yield answerModel_1.Answer.findAll({

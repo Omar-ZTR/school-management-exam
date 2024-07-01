@@ -27,11 +27,8 @@ routerExam.post('/examc', createExam);
 routerExam.put('/Exams/:id', updateExam);
 
 
-routerExam.delete('/Exams/:id', deleteExam);
+routerExam.delete('/exam/:id', deleteExam);
 
-//Answers
 
-routerExam.post('/answers', createAnswers);
 
-routerExam.get('/getanswers', getAnswers);
 export default routerExam

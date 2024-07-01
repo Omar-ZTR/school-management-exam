@@ -5,12 +5,14 @@ import {
   createReservation,
   updateReservation,
   deleteReservation,
+  getSpecificReservations,
 } from '../controllers/reservationController';
 
 const routerReservation = express.Router();
 
 routerReservation.get('/reservation', getAllReservations);
 
+routerReservation.get('/specificreservation', getSpecificReservations);
 
 routerReservation.get('/reservation/:id', getReservationById);
 

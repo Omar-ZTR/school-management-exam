@@ -36,6 +36,10 @@ export class Question extends Model<Question> {
 
   @HasMany(() => Reponse)
   reponses!: Reponse[];
+
+  @Column(DataType.INTEGER)
+question__result!: number;
+
 }
 
 

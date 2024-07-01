@@ -56,6 +56,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Answer.prototype, "ans__descreption", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.INTEGER),
+    __metadata("design:type", Number)
+], Answer.prototype, "ans__result", void 0);
 exports.Answer = Answer = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

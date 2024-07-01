@@ -31,6 +31,10 @@ export class users<T extends users<T>> extends Model<T> {
   })
   user__email!: string;
 
+  @Column(DataType.BOOLEAN)
+  active!: boolean;
+
+
   @Column({
     type: DataType.STRING,
     allowNull: false,

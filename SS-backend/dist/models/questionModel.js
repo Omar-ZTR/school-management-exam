@@ -54,6 +54,10 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => reponseModel_1.Reponse),
     __metadata("design:type", Array)
 ], Question.prototype, "reponses", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.INTEGER),
+    __metadata("design:type", Number)
+], Question.prototype, "question__result", void 0);
 exports.Question = Question = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

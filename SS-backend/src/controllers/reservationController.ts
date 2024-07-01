@@ -1,5 +1,7 @@
+import { Op } from "sequelize";
 import { Reservation } from "../models/reservationModel"; // Import your Reservation model
 import { Request, Response } from "express";
+import { Exam } from "../models/examModel";
 
 // Create operation
 export const createReservation = async (req: Request, res: Response) => {
@@ -17,7 +19,42 @@ export const createReservation = async (req: Request, res: Response) => {
 
     }
 };
+export const getSpecificReservations = async (req: Request, res: Response) => {
+    const groupName= 'group A'
+     try {
+         const reservations = await Reservation.findAll({
+             where: {
+               [Op.or]: [
+                 { group__name: groupName },
+                 { group__name: "all" }
+               ]
+             }
+           });
 
+
+           const formattedReservations = await Promise.all(reservations.map(async (reservation) => {
+            const exam = await Exam.findByPk(reservation.exam__id);
+            return {
+                reserv__id: reservation.reserv__id,
+                exam__id:reservation.exam__id,
+                salle:reservation.salle,
+                group__name:reservation.group__name,
+                title: reservation.exam__title,
+                startDate: reservation.startDate,
+                endDate: reservation.endDate,
+                createdAt: reservation.createdAt,
+                updatedAt: reservation.updatedAt,
+                obligation: exam ? exam.obligatoire : null,
+            };
+        }));
+
+       
+         res.status(200).json(formattedReservations);
+     } catch (error) {
+         console.error("Error fetch reservations:", error);
+         res.status(500).json({ error: 'Internal server error' });
+     };
+ }
 // Read operation - Get all reservations
 export const getAllReservations = async (req: Request, res: Response) => {
     try {

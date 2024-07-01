@@ -264,7 +264,7 @@ export const deleteExam = async (req: Request, res: Response) => {
     const { id } = req.params;
     const deleted = await Exam.destroy({ where: { exam__id: id } });
     if (deleted) {
-      res.status(204).send();
+      res.status(204).send("yes deleting exam");
     } else {
       throw new Error("Exam not found");
     }

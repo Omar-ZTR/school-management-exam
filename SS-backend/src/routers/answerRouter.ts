@@ -1,25 +1,12 @@
 import express from 'express';
-import {
-  getAllAnswers,
-  getAnswerById,
-  createAnswer,
-  updateAnswer,
-  deleteAnswer,
-} from '../controllers/answerController';
+
+import { createAnswers, getAnswers, updateResult } from '../controllers/answerStudentController';
 
 const routerAnswer = express.Router();
 
-routerAnswer.get('/', getAllAnswers);
+routerAnswer.post('/answers', createAnswers);
 
-
-routerAnswer.get('/Answer/:id', getAnswerById);
-
-routerAnswer.post('/Answers', createAnswer);
-
-
-routerAnswer.put('/Answers/:id', updateAnswer);
-
-
-routerAnswer.delete('/Answers/:id', deleteAnswer);
+routerAnswer.get('/getanswers', getAnswers);
+routerAnswer.put('/result/:id', updateResult);
 
 export default routerAnswer;

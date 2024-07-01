@@ -45,6 +45,10 @@ __decorate([
     __metadata("design:type", String)
 ], users.prototype, "user__email", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.BOOLEAN),
+    __metadata("design:type", Boolean)
+], users.prototype, "active", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
         allowNull: false,

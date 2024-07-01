@@ -38,84 +38,93 @@ const getAllSalles = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getAllSalles = getAllSalles;
 const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { starthour, endhour, nb } = req.body;
-    if (!starthour || !endhour) {
-        return res.status(400).json({ error: "Hours are required" });
-    }
     try {
+        const { starthour, endhour, exam__id } = req.body;
+        console.log("start", starthour, "end", endhour);
+        if (!starthour || !endhour) {
+            return res.status(400).json({ error: "Hours are required" });
+        }
+        const start = new Date(starthour);
+        const end = new Date(endhour);
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return res.status(400).json({ error: "Invalid date format" });
+        }
+        // Calculate the difference in milliseconds
+        const durationMs = end.getTime() - start.getTime();
+        // Check for overlapping reservations
         const reservations = yield reservationModel_1.Reservation.findAll({
             where: {
                 [sequelize_1.Op.or]: [
                     {
                         startDate: {
-                            [sequelize_1.Op.and]: [
-                                {
-                                    [sequelize_1.Op.gte]: starthour,
-                                },
-                                {
-                                    [sequelize_1.Op.lte]: endhour,
-                                },
-                            ],
+                            [sequelize_1.Op.lt]: new Date(start.getTime() + durationMs),
+                        },
+                        endDate: {
+                            [sequelize_1.Op.gte]: end,
+                        },
+                        exam__id: {
+                            [sequelize_1.Op.ne]: exam__id,
                         },
                     },
                     {
                         endDate: {
                             [sequelize_1.Op.and]: [
                                 {
-                                    [sequelize_1.Op.gte]: starthour,
+                                    [sequelize_1.Op.lte]: new Date(start.getTime() + durationMs),
                                 },
-                                {
-                                    [sequelize_1.Op.lte]: endhour,
-                                },
+                                { [sequelize_1.Op.gt]: start },
                             ],
+                        },
+                        startDate: {
+                            [sequelize_1.Op.lte]: start,
+                        },
+                        exam__id: {
+                            [sequelize_1.Op.ne]: exam__id,
+                        },
+                    },
+                    {
+                        endDate: {
+                            [sequelize_1.Op.gt]: end,
+                        },
+                        startDate: {
+                            [sequelize_1.Op.lt]: start,
+                        },
+                        exam__id: {
+                            [sequelize_1.Op.ne]: exam__id,
+                        },
+                    },
+                    {
+                        endDate: {
+                            [sequelize_1.Op.lte]: end,
+                        },
+                        startDate: {
+                            [sequelize_1.Op.gte]: start,
+                        },
+                        exam__id: {
+                            [sequelize_1.Op.ne]: exam__id,
                         },
                     },
                 ],
             },
             attributes: ["salle"],
         });
-        let availableSalles;
-        if (reservations.length === 0) {
-            // If there are no reservations, return all salles
-            if (nb !== undefined) {
-                availableSalles = yield salleModel_1.Salle.findAll({
-                    where: {
-                        nb__place: {
-                            [sequelize_1.Op.gte]: nb,
-                        },
+        console.log("Reservations:", reservations);
+        let salles = [];
+        if (reservations.length > 0) {
+            const salleNames = reservations.map(reservation => reservation.salle);
+            salles = yield salleModel_1.Salle.findAll({
+                where: {
+                    salle__name: {
+                        [sequelize_1.Op.notIn]: salleNames,
                     },
-                });
-            }
-            else {
-                availableSalles = yield salleModel_1.Salle.findAll();
-            }
+                },
+            });
         }
         else {
-            // If there are reservations, find salles not in the reserved list
-            const reservedSalles = reservations.map((reservation) => reservation.salle);
-            if (nb !== undefined) {
-                availableSalles = yield salleModel_1.Salle.findAll({
-                    where: {
-                        salle__name: {
-                            [sequelize_1.Op.notIn]: reservedSalles,
-                        },
-                        nb__place: {
-                            [sequelize_1.Op.gte]: nb,
-                        },
-                    },
-                });
-            }
-            else {
-                availableSalles = yield salleModel_1.Salle.findAll({
-                    where: {
-                        salle__name: {
-                            [sequelize_1.Op.notIn]: reservedSalles,
-                        },
-                    },
-                });
-            }
+            salles = yield salleModel_1.Salle.findAll();
         }
-        res.status(200).json(availableSalles);
+        console.log("Available Salles:", salles);
+        res.status(200).json(salles);
     }
     catch (error) {
         console.error("Error fetching available salles:", error);
@@ -123,6 +132,62 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getSallesSpecific = getSallesSpecific;
+// const examreservations = await Reservation.findAll({
+//   where: {
+//     [Op.and]: [
+//       {
+//         startDate: {
+//           [Op.eq]: start,
+//         },
+//         exam__id: {
+//           [Op.eq]: nb,
+//         },
+//       },
+//     ],
+//   },
+//   attributes: ["salle , group__name"],
+// });
+// console.log("exaaaa ress", examreservations);
+// let availableSalles: any[];
+// if (reservations.length === 0) {
+//   // If there are no reservations, return all salles
+//   if (nb !== undefined) {
+//     availableSalles = await Salle.findAll({
+//       where: {
+//         nb__place: {
+//           [Op.gte]: nb,
+//         },
+//       },
+//     });
+//   } else {
+//     availableSalles = await Salle.findAll();
+//   }
+// } else {
+//   // If there are reservations, find salles not in the reserved list
+//   const reservedSalles = reservations.map(
+//     (reservation) => reservation.salle
+//   );
+//   if (nb !== undefined) {
+//     availableSalles = await Salle.findAll({
+//       where: {
+//         salle__name: {
+//           [Op.notIn]: reservedSalles,
+//         },
+//         nb__place: {
+//           [Op.gte]: nb,
+//         },
+//       },
+//     });
+//   } else {
+//     availableSalles = await Salle.findAll({
+//       where: {
+//         salle__name: {
+//           [Op.notIn]: reservedSalles,
+//         },
+//       },
+//     });
+//   }
+// }
 // Read operation - Get salle by ID
 const getSalleById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

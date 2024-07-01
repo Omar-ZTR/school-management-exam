@@ -66,12 +66,21 @@ ansData.ans__id= answer.ans__id
 
 
 
-
-
-
-
-
-
+export const updateResult = async (req: Request, res: Response) => {
+  try {
+      const { id } = req.params;
+      const [updated] = await Answer.update(req.body, { where: { ans__id: id } });
+      if (updated) {
+          const updatedResult = await Answer.findOne({ where: { ans__id: id } });
+          res.status(200).json(updatedResult);
+      } else {
+          throw new Error('Result not found');
+      }
+  } catch (error) {
+      console.error("Error updating result", error);
+      res.status(500).send("Error updating result");
+  }
+};
 
 
 export const getAnswers = async (req: Request, res: Response) => {
