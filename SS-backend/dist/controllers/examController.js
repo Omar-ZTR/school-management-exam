@@ -96,7 +96,7 @@ exports.createExam = createExam;
 const getExamById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        console.log("Requested Exam ID:", id);
+        console.log("Requested gggggggggggExam ID:", id);
         const exam = yield examModel_1.Exam.findOne({
             where: { exam__id: id },
             include: [
@@ -128,6 +128,7 @@ function formatExamData(exam) {
     return {
         exam__id: exam.exam__id,
         subject: exam.subject,
+        exam__title: exam.exam__title,
         exam__type: exam.exam__type,
         fileExam: exam.file.map((f) => ({
             file__id: f.file__id,

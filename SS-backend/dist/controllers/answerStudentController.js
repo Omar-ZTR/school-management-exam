@@ -28,6 +28,7 @@ const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         yield (0, upload_1.default)(req, res);
         const Answers = Object.assign({}, req.body);
         const answersData = JSON.parse(Answers.ans);
+        console.log("sssss", answersData.exam__id);
         const exam = yield examModel_1.Exam.findByPk(answersData.exam__id);
         if (!exam) {
             return res.status(404).json({ message: "Exam not found" });

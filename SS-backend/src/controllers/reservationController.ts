@@ -8,10 +8,15 @@ export const createReservation = async (req: Request, res: Response) => {
     try {
 
         console.log("bbbbbbbb",req.body)
-        const re= req.body
+        const code = generateCode();
+        
+        // Create the reservation object with the generated code
+        const reservationData = {
+            ...req.body,
+            code: code
+        };
    
-   
-        const reservation = await Reservation.create(req.body);
+        const reservation = await Reservation.create(reservationData);
         res.status(201).json(reservation);
     } catch (error) {
         console.error("Error creation reservation", error);
@@ -19,8 +24,21 @@ export const createReservation = async (req: Request, res: Response) => {
 
     }
 };
+
+
+const generateCode = (): string => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+        code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return code;
+};
+
+
 export const getSpecificReservations = async (req: Request, res: Response) => {
-    const groupName= 'group A'
+    const groupName= req.params.groupName
+    console.log("groupName",groupName)
      try {
          const reservations = await Reservation.findAll({
              where: {
@@ -42,6 +60,7 @@ export const getSpecificReservations = async (req: Request, res: Response) => {
                 title: reservation.exam__title,
                 startDate: reservation.startDate,
                 endDate: reservation.endDate,
+                code: reservation.code,
                 createdAt: reservation.createdAt,
                 updatedAt: reservation.updatedAt,
                 obligation: exam ? exam.obligatoire : null,

@@ -1,5 +1,6 @@
-import { Table, Model, Column, DataType } from "sequelize-typescript";
+import { Table, Model, Column, DataType, HasMany } from "sequelize-typescript";
 import { users } from "./usress/userModel";
+import { Exam } from "./examModel";
 
 
 @Table({
@@ -26,6 +27,9 @@ export class Teacher extends users<Teacher> {
     allowNull: false,}
   )
     role!: string;
+
+    @HasMany(() => Exam)
+  exam!: Exam[];
 
 
 }

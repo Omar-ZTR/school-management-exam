@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const reservationController_1 = require("../controllers/reservationController");
 const routerReservation = express_1.default.Router();
 routerReservation.get('/reservation', reservationController_1.getAllReservations);
-routerReservation.get('/specificreservation', reservationController_1.getSpecificReservations);
+routerReservation.get('/specificreservation/:groupName', reservationController_1.getSpecificReservations);
 routerReservation.get('/reservation/:id', reservationController_1.getReservationById);
 routerReservation.post('/reservation', reservationController_1.createReservation);
 routerReservation.put('/reservation/:id', reservationController_1.updateReservation);

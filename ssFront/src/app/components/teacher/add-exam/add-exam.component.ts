@@ -6,6 +6,7 @@ import { url } from 'inspector';
 import {
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -15,100 +16,142 @@ import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { GlobalConstants, rangeNumber } from '../../../shared/global-constants';
 import { ListviewComponent } from '../listview/listview.component';
 import { QuestionService } from '../../../services/serviceTeacher/question.service';
-import { AddQuestionComponent } from "../add-question/add-question.component";
-import { CalandarfullComponent } from "../../calandarfull/calandarfull.component";
-
+import { AddQuestionComponent } from '../add-question/add-question.component';
+import { CalandarfullComponent } from '../../calandarfull/calandarfull.component';
+import { SubjectService } from '../../servicesUtils/subject.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 @Component({
-    selector: 'app-add-exam',
-    standalone: true,
-    templateUrl: './add-exam.component.html',
-    styleUrl: './add-exam.component.css',
-    imports: [
-        CommonModule,
-        MatTooltipModule,
-        ReactiveFormsModule,
-        FormsModule,
-        ListviewComponent,
-        AddQuestionComponent,
-        CalandarfullComponent
-    ]
+  selector: 'app-add-exam',
+  standalone: true,
+  templateUrl: './add-exam.component.html',
+  styleUrl: './add-exam.component.css',
+  imports: [
+    CommonModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    FormsModule,
+    ListviewComponent,
+    AddQuestionComponent,
+    CalandarfullComponent,
+    DropdownModule,
+  ],
 })
 export class AddExamComponent {
   examForm: FormGroup;
-  
+  subjectForm!: FormGroup<any>;
   selectedOption: string = '';
-  
-  subjectValue='';
-  examType:string ='';
+
+  subjectValue = '';
+  examType: string = '';
   listFile: any = {};
   urls: any[] = [];
   dataexam: any = {};
-  dataPLan: any ;
+  dataPLan: any;
   typ: string = '';
   ext: any;
-  questarr: any[] = []
-  
+  questarr: any[] = [];
+
   showCalendar: boolean = false;
-  showAlert: boolean=false;
-  
- 
-  constructor(private elementRef: ElementRef, private examService: ExamService, private questService: QuestionService, private fb: FormBuilder) {
+  showAlert: boolean = false;
+
+  showQuestionField: any;
+  sub: any;
+  selectedSubject: any;
+  subjects: any;
+  user__id = this.tokenService.getUserIdFromToken();
+  constructor(
+    private subjectService: SubjectService,
+    private elementRef: ElementRef,
+    private examService: ExamService,
+    private questService: QuestionService,
+    private fb: FormBuilder,
+    private tokenService: TokenServiceService,
+  ) {
     this.examForm = this.fb.group({
-      subject: [
+      subject: ['', Validators.required], // Required validator for exam name
+      exam__type: ['offline', Validators.required],
+      obligatoire: ['false', Validators.required],
+      user__id:[this.user__id,Validators.required],
+      exam__title: [
         '',
         [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
-      ], // Required validator for exam name
-      exam__type: ['offline', Validators.required], 
-     
+      ],
       questions: {},
-   
     });
-  
-   
+    this.subjectForm = this.fb.group({
+      selectedSubject: new FormControl<any | null>(null),
+    });
   }
- 
 
   toggleCalendar() {
     this.showCalendar = !this.showCalendar;
   }
-  
-   isMonthView: boolean = true;
+
+  isMonthView: boolean = true;
 
   ngOnInit(): void {
     // this.loadQuestions()
-    this.examForm.get('subject')?.valueChanges.subscribe(value => {
+    this.examForm.get('subject')?.valueChanges.subscribe((value) => {
       this.subjectValue = value;
     });
-    this.examForm.get('exam__type')?.valueChanges.subscribe(value => {
+    this.examForm.get('exam__type')?.valueChanges.subscribe((value) => {
       this.examType = value;
     });
+    this.subjectService.getSubjects().subscribe(
+      (data) => {
+        this.subjects = data;
+      },
+      (error) => {
+        console.error('Error fetching subjects', error);
+      }
+    );
+
+    this.subjectForm
+      .get('selectedSubject')
+      ?.valueChanges.subscribe((selectedSubject: any) => {
+        console.log('Selected Subject:', selectedSubject);
+
+        if (!selectedSubject && this.subjectValue) {
+          this.examForm.patchValue({
+            subject: this.subjectValue,
+          });
+        } else {
+          this.sub = selectedSubject?.subject__name || '';
+          console.log('sssssaaaaaaaaaaaaassssss', this.sub);
+          this.examForm.patchValue({
+            subject: this.sub,
+          });
+        }
+      });
+
+    if (!this.selectedSubject && this.subjectValue) {
+      this.examForm.patchValue({
+        subject: this.subjectValue,
+      });
+    }
   }
-  statutExam: string = 'is obligatoire';
+  statutExam: boolean = false;
 
   toggleStatut(): void {
-    if (this.statutExam === 'is obligatoire') {
-      this.statutExam = 'is opptionnel';
-    } else {
-      this.statutExam = 'is obligatoire';
-    }
-    console.log(this.getStatutValue());
-  }
-
-  getStatutValue(): boolean {
-    return this.statutExam === 'is opptionnel';
-  }
- 
-   onIsMonthViewChange(value: boolean) {
-      this.isMonthView = value;
-      console.log("vvvvvvvvvvvvvvvvvv: .",this.isMonthView)
-    }
-
-  
     
+      this.statutExam = !this.statutExam;
+      this.examForm.patchValue({
+        obligatoire: this.statutExam,
+      });
+
+  }
+
+
+
+  onIsMonthViewChange(value: boolean) {
+    this.isMonthView = value;
+    console.log('vvvvvvvvvvvvvvvvvv: .', this.isMonthView);
+  }
 
   loadQuestions(response: any): void {
     console.log('Question added with response:', response);
-    this.questarr.push(response)
+    this.questarr.push(response);
   }
 
   async detectFiles(event: any) {
@@ -128,7 +171,7 @@ export class AddExamComponent {
       }
     }
   }
- 
+
   readFileAsync(file: File): Promise<any> {
     return new Promise((resolve, reject) => {
       let reader = new FileReader();
@@ -143,7 +186,7 @@ export class AddExamComponent {
     this.listFile.splice(index, 1);
     this.urls.splice(index, 1);
   }
-  
+
   private markisTouched(formGroup: FormGroup | FormArray) {
     (Object as any)
       .values(formGroup.controls)
@@ -156,17 +199,15 @@ export class AddExamComponent {
       });
   }
 
-
   resetForm() {
     this.examForm.reset({
       subject: '',
       exam__type: 'offline',
-      questions: {}
+      questions: {},
     });
     this.listFile = [];
     this.urls = [];
     this.questarr = [];
-    
   }
   showSuccessAlert(callback?: () => void): void {
     this.showAlert = true;
@@ -177,7 +218,6 @@ export class AddExamComponent {
       }
     }, 3000); // Hide the alert after 3 seconds
   }
-  
 
   closeAlert(): void {
     this.showAlert = false;
@@ -187,10 +227,9 @@ export class AddExamComponent {
     this.examForm.patchValue({
       questions: this.questarr,
     });
-    if (this.examForm.invalid ) {
-      
+    if (this.examForm.invalid) {
       this.examForm.markAllAsTouched();
-   
+
       return;
     }
     this.dataexam = {
@@ -198,20 +237,16 @@ export class AddExamComponent {
       files: this.listFile,
     };
 
-console.log(this.dataexam)
+    console.log(this.dataexam);
     this.examService.createExam(this.dataexam).subscribe(
       (response: any) => {
         this.showSuccessAlert(() => {
           this.showCalendar = true;
         });
         console.log('seccess', response);
-       
-       
-         this.dataPLan = response.exam__id;
-         this.resetForm()
-       
-        
-       
+
+        this.dataPLan = response.exam__id;
+        this.resetForm();
       },
       (error: { error: { message: any } }) => {
         //this.ngxService.stop();
@@ -225,17 +260,14 @@ console.log(this.dataexam)
         // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
       }
     );
-
-
   }
   save() {
     this.examForm.patchValue({
       questions: this.questarr,
     });
-    if (this.examForm.invalid ) {
-      
+    if (this.examForm.invalid) {
       this.examForm.markAllAsTouched();
-   
+
       return;
     }
     this.dataexam = {
@@ -243,20 +275,14 @@ console.log(this.dataexam)
       files: this.listFile,
     };
 
-console.log(this.dataexam)
+    console.log(this.dataexam);
     this.examService.createExam(this.dataexam).subscribe(
       (response: any) => {
-        this.showSuccessAlert(() => {
-        
-        });
+        this.showSuccessAlert(() => {});
         console.log('seccess', response);
-       
-       
-         this.dataPLan = response.exam__id;
-         this.resetForm()
-       
-        
-       
+
+        this.dataPLan = response.exam__id;
+        this.resetForm();
       },
       (error: { error: { message: any } }) => {
         //this.ngxService.stop();
@@ -270,10 +296,7 @@ console.log(this.dataexam)
         // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
       }
     );
+  }
 
-  }
-  
-  onSubmit() {
-  
-  }
+  onSubmit() {}
 }

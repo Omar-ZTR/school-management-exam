@@ -17,8 +17,10 @@ const examModel_1 = require("../models/examModel");
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("bbbbbbbb", req.body);
-        const re = req.body;
-        const reservation = yield reservationModel_1.Reservation.create(req.body);
+        const code = generateCode();
+        // Create the reservation object with the generated code
+        const reservationData = Object.assign(Object.assign({}, req.body), { code: code });
+        const reservation = yield reservationModel_1.Reservation.create(reservationData);
         res.status(201).json(reservation);
     }
     catch (error) {
@@ -27,8 +29,17 @@ const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.createReservation = createReservation;
+const generateCode = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+        code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return code;
+};
 const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const groupName = 'group A';
+    const groupName = req.params.groupName;
+    console.log("groupName", groupName);
     try {
         const reservations = yield reservationModel_1.Reservation.findAll({
             where: {
@@ -48,6 +59,7 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
                 title: reservation.exam__title,
                 startDate: reservation.startDate,
                 endDate: reservation.endDate,
+                code: reservation.code,
                 createdAt: reservation.createdAt,
                 updatedAt: reservation.updatedAt,
                 obligation: exam ? exam.obligatoire : null,

@@ -1,16 +1,13 @@
 <div class="ag-format-container">
-  <div *ngFor="let event of examlist" class="ag-courses_box">
-    <div class="ag-courses_item">
-      <a (click)="statutExam(event.exam__id)" class="ag-courses-item_link">
+  <div class="ag-courses_box">
+    <div *ngFor="let event of examlist" class="ag-courses_item">
+      <a (click)="showDialog(event)" class="ag-courses-item_link">
         <div class="ag-courses-item_bg"></div>
 
         <div class="ag-courses-item_title">
           {{ event.title }}
-		  <span class="ag-courses-item_date">
-			{{ event.obligation }}
-          </span>
-		  <span class="ag-courses-item_date">
-			{{ event.obligation }}
+          <span class="ag-courses-item_date">
+            {{ event.obligation }}
           </span>
         </div>
         <div class="ag-courses-item_date-box">
@@ -25,7 +22,7 @@
         </div>
       </a>
     </div>
-
+    <!--
     <div class="ag-courses_item">
       <a href="#" class="ag-courses-item_link">
         <div class="ag-courses-item_bg"></div>
@@ -40,7 +37,7 @@
         </div>
       </a>
     </div>
-    <!--
+  
 	  <div class="ag-courses_item">
 		<a href="#" class="ag-courses-item_link">
 		  <div class="ag-courses-item_bg"></div>
@@ -128,5 +125,162 @@
 		  </div>
 		</a>
 	  </div> -->
+  </div>
+</div>
+
+<p-dialog
+  header="{{ plan.title }}"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <div>
+    <div class="time-text">
+      <div class="time-item">
+        <div>{{ days }}</div>
+        <div class="medium-text">Days</div>
+      </div>
+
+      <div class="spaced-text">:</div>
+      <div class="time-item">
+        <div>{{ hours }}</div>
+        <div class="medium-text">Hours</div>
+      </div>
+      <div class="spaced-text">:</div>
+      <div class="time-item">
+        <div>{{ minutes }}</div>
+        <div class="medium-text">Min</div>
+      </div>
+      <div class="spaced-text">:</div>
+      <div class="time-item">
+        <div>{{ seconds }}</div>
+        <div class="medium-text">Sec</div>
+      </div>
+      <p-button
+        (click)="takeExam()"
+        [style]="{
+          margin: '0 10px',
+          height: '50px',
+          borderRadius: '10px',
+          lineHeight: '0',
+          outline: 'none'
+        }"
+        label="Time is almost up!"
+        [raised]="true"
+        severity="warning"
+      />
+      <!-- <div *ngIf="days === '07' && hours === '20' && minutes <= '10'" class="button-container">
+		<button >Time is almost up!</button>
+	  </div> -->
+    </div>
+    <div class="rowDetail">
+      <div class="new-text">Subject: {{ examShow.subject }}</div>
+      <div *ngIf="!examShow.obligatoire" class="new-text">course</div>
+      <div *ngIf="examShow.obligatoire" class="new-text">is certified</div>
+      <div class="new-text">Salle: {{ plan.salle }}</div>
+    </div>
+    <div class="new-text">Support course:</div>
+    <div class="examFiles">
+      <div
+        *ngIf="examShow.fileExam"
+        class="fleximg"
+        style="margin-bottom: 10px"
+      >
+        <div *ngFor="let f of examShow.fileExam; let index = index" key="index">
+          <div class="downloadFile">
+            <i class="fa-solid fa-download"></i>
+          </div>
+          <div class="previewimg">
+            <i
+              *ngIf="typeFile(f).type !== 'image'"
+              class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+              (click)="openFile(f.file__path)"
+            ></i>
+            <img
+              *ngIf="typeFile(f).type === 'image'"
+              (click)="openFile(f.file__path)"
+              [src]="f.file__path"
+            />
+          </div>
+          <div class="fileTitle">{{ f.file__name }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<div *ngIf="ready" class="examtaken">
+  <div class="boxstand" *ngIf="minutes !== '00' || seconds !== '00'">
+    <div class="time-left">
+      time left:
+      <div class="medium-text">{{ minutes }}:{{ seconds }}</div>
+    </div>
+   
+	<div *ngIf="!accept">
+ <form  [formGroup]="otpForm">
+      <input
+        class="otp-input"
+        formControlName="otp1"
+        type="text"
+        maxlength="1"
+      />
+      <input
+        class="otp-input"
+        formControlName="otp2"
+        type="text"
+        maxlength="1"
+      />
+      <input
+        class="otp-input"
+        formControlName="otp3"
+        type="text"
+        maxlength="1"
+      />
+      <input
+        class="otp-input"
+        formControlName="otp4"
+        type="text"
+        maxlength="1"
+      />
+    </form>
+    <p-button
+      *ngIf="
+        otpForm.get('otp1')?.value !== '' &&
+        otpForm.get('otp2')?.value !== '' &&
+        otpForm.get('otp3')?.value !== '' &&
+        otpForm.get('otp4')?.value !== ''
+      "
+      (click)="acceptcode()"
+      label="Valid"
+      [raised]="true"
+      [style]="{
+        margin: '0 10px',
+        color: '#444ae3',
+        borderRadius: '10px',
+        background: '#eef2ff',
+        outline: 'none'
+      }"
+      
+    />
+	</div>
+	<!-- <div *ngIf="!accept">
+
+	</div> -->
+    <!-- <button
+	*ngIf="
+	  otpForm.get('otp1')?.value !== '' &&
+	  otpForm.get('otp2')?.value !== '' &&
+	  otpForm.get('otp3')?.value !== '' &&
+	  otpForm.get('otp4')?.value !== ''
+	"
+	(click)="acceptcode()"
+  >
+	Enter
+  </button> -->
+  </div>
+  <div class="boxExam" *ngIf="accept ">
+    <!-- hours === '00' && minutes === '00' && seconds === '00' -->
+    <app-examtaken [idExam]="examShow.exam__id"></app-examtaken>
   </div>
 </div>

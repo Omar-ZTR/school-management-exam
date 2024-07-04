@@ -1,7 +1,4 @@
-<div *ngIf="showAlert" class="custom-alert">
-  
-  Successfully created
-</div>
+<div *ngIf="showAlert" class="custom-alert">Successfully created</div>
 
 <div class="containerExam">
   <form [formGroup]="examForm" (ngSubmit)="onSubmit()">
@@ -11,96 +8,119 @@
       <div class="inputs">
         <div class="Row">
           <label for="text">Title</label>
-          <input type="text" id="exam" formControlName="subject" />
-          <div
-            *ngIf="
-              examForm.get('subject')?.invalid &&
-              (examForm.get('subject')?.dirty ||
-                examForm.get('subject')?.touched)
-            "
+          <input type="text" id="exam" formControlName="exam__title" />
+        </div>
+        <div
+          *ngIf="
+            examForm.get('exam__title')?.invalid &&
+            (examForm.get('exam__title')?.dirty ||
+              examForm.get('exam__title')?.touched)
+          "
+        >
+          <span
+            class="error"
+            *ngIf="examForm.controls['exam__title'].errors?.['required']"
+            >This field is mandatory.</span
           >
-            <span
-              class="error"
-              *ngIf="examForm.controls['subject'].errors?.['required']"
-              >This field is mandatory.</span
+          <span
+            class="error"
+            *ngIf="examForm.controls['exam__title'].errors?.['pattern']"
+            >This field is invalid.</span
+          >
+        </div>
+        <div class="Row">
+          <div [formGroup]="subjectForm">
+            <p-dropdown
+              [options]="subjects"
+              formControlName="selectedSubject"
+              optionLabel="subject__name"
+              [filter]="true"
+              filterBy="subject__name"
+              [showClear]="true"
+              placeholder="Select a Subject"
             >
-            <span
-              class="error"
-              *ngIf="examForm.controls['subject'].errors?.['pattern']"
-              >This field is invalid.</span
-            >
+              <ng-template pTemplate="selectedItem" let-selectedOption>
+                <div class="flex align-items-center gap-2">
+                  <div>{{ selectedOption.subject__name }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-subject pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                  <div>{{ subject.subject__name }}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
           </div>
           <div>
             <label for="">Statut</label>
-            <div class="isStatut" (click)="toggleStatut()"> {{ statutExam }} </div>
+            <div class="isStatut" (click)="toggleStatut()">
+              {{ statutExam }}
+            </div>
           </div>
         </div>
 
-    
         <div>
-        <label for="examType">Type Exam</label>
-        <div class="Row">
-          
-          <div class="online">
-            online
+          <label for="examType">Type Exam</label>
+          <div class="Row">
+            <div class="online">
+              online
+              <i
+                *ngIf="
+                  examForm.get('exam__type')?.value !== '' &&
+                  examForm.get('exam__type')?.value !== 'offline'
+                "
+                class="fa-solid fa-check fa-bounce fa-xl"
+                style="color: #ffbd2e"
+              ></i>
+            </div>
+
+            <div id="examType" class="Row radio-group">
+              <input
+                type="radio"
+                id="QCM"
+                name="exam__type"
+                value="QCM"
+                formControlName="exam__type"
+              /><label for="QCM">QCM</label>
+              <input
+                type="radio"
+                id="Normal"
+                name="exam__type"
+                value="Normal"
+                formControlName="exam__type"
+              /><label for="Normal">Normal</label>
+
+              <input
+                type="radio"
+                id="File"
+                name="exam__type"
+                value="File"
+                formControlName="exam__type"
+              /><label for="File">File</label>
+            </div>
+          </div>
+          <div class="offline">
+            <div class="online">OR</div>
+            <div id="examType" class="radio-group" style="margin: 10px 5px">
+              <input
+                type="radio"
+                id="offline"
+                name="exam__type"
+                value="offline"
+                formControlName="exam__type"
+              />
+              <label for="offline">offline</label>
+            </div>
             <i
               *ngIf="
                 examForm.get('exam__type')?.value !== '' &&
-                examForm.get('exam__type')?.value !== 'offline'
+                examForm.get('exam__type')?.value == 'offline'
               "
               class="fa-solid fa-check fa-bounce fa-xl"
               style="color: #ffbd2e"
             ></i>
           </div>
-        
-        <div id="examType" class="Row radio-group">
-          <input
-            type="radio"
-            id="QCM"
-            name="exam__type"
-            value="QCM"
-            formControlName="exam__type"
-          /><label for="QCM">QCM</label>
-          <input
-            type="radio"
-            id="Normal"
-            name="exam__type"
-            value="Normal"
-            formControlName="exam__type"
-          /><label for="Normal">Normal</label>
-
-          <input
-            type="radio"
-            id="File"
-            name="exam__type"
-            value="File"
-            formControlName="exam__type"
-          /><label for="File">File</label>
         </div>
-      </div>
-        <div class="offline">
-          <div class="online">OR</div>
-          <div id="examType" class="radio-group" style="margin: 10px 5px">
-
-            <input
-            type="radio"
-            id="offline"
-            name="exam__type"
-            value="offline"
-            formControlName="exam__type"
-          /> <label for="offline">offline</label>
-          </div>
-          <i
-            *ngIf="
-              examForm.get('exam__type')?.value !== '' &&
-              examForm.get('exam__type')?.value == 'offline'
-            "
-            class="fa-solid fa-check fa-bounce fa-xl"
-            style="color: #ffbd2e"
-          ></i>
-        </div>
-     
-    </div>
         <div
           *ngIf="
             examForm.get('exam__type')?.invalid &&
@@ -161,36 +181,49 @@
           </div>
         </div>
         <div
-        *ngIf="
-          examForm.get('exam__type')?.value === 'QCM' ||
-          examForm.get('exam__type')?.value === 'Normal'
-        "
-        class="quistionForm box"
+          *ngIf="
+            examForm.get('exam__type')?.value === 'QCM' ||
+            examForm.get('exam__type')?.value === 'Normal'
+          "
+          class="quistionForm box"
         >
-<app-add-question  (questionAdded)="loadQuestions($event)"   [subjectValue]="subjectValue"  [examType]="examType"></app-add-question>
-
+          <app-add-question
+            (questionAdded)="loadQuestions($event)"
+            [subjectValue]="subjectValue"
+            [examType]="examType"
+          ></app-add-question>
         </div>
         <!-- add question  -->
 
-       
         <!-- Button -->
-        <hr>
+        <hr />
         <div class="Row">
-          <button   (click)="save()">
-            <i class="fa-solid fa-folder-plus" ></i>Save
+          <button (click)="save()">
+            <i class="fa-solid fa-folder-plus"></i>Save
           </button>
           <button (click)="savePlan()">
             <i class="fa-solid fa-calendar-days"></i> Save & Planing
           </button>
-        
         </div>
       </div>
     </div>
   </form>
+  <div *ngIf="showCalendar" >
+    <button class="button-62" (click)="toggleCalendar()" role="button">
+      <i class="fa-solid fa-xmark"></i>
+    Cancel
+  
+    </button>
+  </div>
   <div *ngIf="showCalendar" class="planingPop visible">
-    <button class="button-62" (click)="  toggleCalendar() " role="button">Button 62</button>
-    <div  class="calendar-popup " [ngStyle]="{'margin-top': !isMonthView ? '20%' : '0'}">
-      <app-calandarfull [data]="dataPLan" (isMonthViewChange)="onIsMonthViewChange($event)"></app-calandarfull>
+    <div
+      class="calendar-popup"
+      [ngStyle]="{ 'margin-top': !isMonthView ? '20%' : '0' }"
+    >
+      <app-calandarfull
+        [data]="dataPLan"
+        (isMonthViewChange)="onIsMonthViewChange($event)"
+      ></app-calandarfull>
     </div>
   </div>
   <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
@@ -198,12 +231,6 @@
     <app-listview [data]="questarr"></app-listview>
   </div>
 </div>
-
-
-
-
-
-
 
 <!-- uploadFile of exam -->
 <!-- <div class="card" *ngFor="let question of questarr; let k = index">

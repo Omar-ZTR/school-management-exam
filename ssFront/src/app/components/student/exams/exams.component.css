@@ -1,3 +1,187 @@
+.time-text {
+
+
+  line-height: 52pt;
+  display: flex;
+  justify-content: center;
+}
+
+.time-item {
+  font-family: Calibri;
+  font-size: 59pt;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.time-left{
+  font-family: Calibri;
+  font-size: 25pt;
+  display: flex;
+  margin: 20px 0
+}
+.spaced-text {
+  font-family: Calibri;
+  font-size: 59pt;
+  
+}
+
+.date-text {
+  margin-top: 43pt;
+  margin-left: 217.1pt;
+  text-align: justify;
+  line-height: 26.85pt;
+}
+
+.medium-text {
+  font-family: Calibri;
+  font-size: 22pt;
+}
+
+.spaced-medium-text {
+  font-family: Calibri;
+  font-size: 22pt;
+  letter-spacing: 42.25pt;
+}
+
+.new-text {
+  margin-top:40px;
+  margin-left: 0.7pt;
+  font-family: Calibri;
+  font-size: 22pt;
+ 
+}
+
+.small-text {
+  font-family: Calibri;
+  font-size: 20pt;
+}
+
+.miracle-text {
+  margin-top: 66.75pt;
+  margin-left: 0.7pt;
+  text-align: justify;
+  line-height: 43.9pt;
+}
+
+.large-miracle-text {
+  font-family: Calibri;
+  font-size: 36pt;
+}
+
+
+.previewimg {
+  margin-top: 5px;
+  width: 90px;
+  height: 110px;
+  border-radius: 10px;
+  background: #d6d6d6;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+
+}
+
+.rowDetail{
+  display: flex;
+  justify-content:space-around;
+  
+}
+.examtaken {
+  z-index: 99999;
+  display: block; /* Show when fullscreen class is applied */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(235, 235, 235); /* Optional: Add background color with opacity */
+  z-index: 1000; /* Ensure it appears on top */
+  overflow: auto; /* Handle overflow */
+}
+.otp-input {
+  width: 45px;
+  font-size: 36px;
+  border: 0 none;
+  appearance: none;
+  text-align: center;
+  transition: all 0.2s;
+  background: transparent;
+  border-bottom: 2px solid var(--surface-500);
+  border-radius: 0px;
+  margin: 0 0.2rem;
+}
+
+.otp-input:focus {
+  outline: 0 none;
+  box-shadow: none;
+  border-bottom-color: var(--primary-color);
+} 
+.boxstand{
+  min-height: 30%;
+width: 40%;
+display: flex;
+justify-content: center;
+align-items: center;
+text-align: center;
+flex-direction: column;
+gap: 20px;
+}
+.examtaken .boxExam,.examtaken .boxstand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: max-content;
+  max-height: 95%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: auto; /* Handle content overflow */
+  padding: 20px;
+}
+
+.previewimg img {
+  width: 90px;
+  height: 110px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.fileTitle {
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 500;
+  height: 23px;
+  width: 80px;
+  color: #0f0f0f;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+
+}
+.previewimg .fa {
+  font-size: 4.5rem;
+  color: #00159a;
+}
+
+.fleximg{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.examFiles{
+  margin: 20px 0;
+display:-webkit-inline-box;
+/* justify-content: space-around;
+gap: 10px;
+align-content: start;
+align-items: stretch; */
+
+
+}
 
 .ag-courses_box {
     display: -webkit-box;

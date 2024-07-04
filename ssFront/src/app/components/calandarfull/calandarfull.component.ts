@@ -53,6 +53,7 @@ export class CalandarfullComponent implements OnInit {
   groupSub: any;
   groupRank: any;
   salles: any;
+  Exam: any;
 
   constructor(
     private fb: FormBuilder,
@@ -91,10 +92,25 @@ export class CalandarfullComponent implements OnInit {
     });
     this.fetchEvents();
     this.fetchGroups()
-
+    this.fetchExam()
    
   }
-
+  fetchExam(): void {
+    console.log("kjljlklsddshdshkdskldkdshkdshkldskhldshkldslkhdskldshkd",this.data)
+    this.examService.getExamByid(this.data).subscribe(
+      (data) => {
+        this.Exam = data;
+        this.eventForm.patchValue({
+          title: this.Exam.exam__title
+        })
+        console.log("aaaaaaa2>>>>>", this.Exam);
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", this.Exam.exam__title);
+      },
+      (error: any) => {
+        console.error('Error fetching exam', error);
+      }
+    );
+  }
   fetchEvents(): void {
     this.calandarService.getEvents().subscribe(
       (data) => {

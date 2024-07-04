@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Teacher = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const userModel_1 = require("./usress/userModel");
+const examModel_1 = require("./examModel");
 let Teacher = class Teacher extends userModel_1.users {
 };
 exports.Teacher = Teacher;
@@ -35,6 +36,10 @@ __decorate([
         allowNull: false, }),
     __metadata("design:type", String)
 ], Teacher.prototype, "role", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => examModel_1.Exam),
+    __metadata("design:type", Array)
+], Teacher.prototype, "exam", void 0);
 exports.Teacher = Teacher = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: "Teacher",

@@ -40,7 +40,7 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
         allowNull: false,
-        unique: true,
+        unique: "user_email_unique_constraint" // Unique constraint name
     }),
     __metadata("design:type", String)
 ], User.prototype, "user__email", void 0);

@@ -47,6 +47,12 @@ __decorate([
     __metadata("design:type", String)
 ], Reservation.prototype, "group__name", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+    }),
+    __metadata("design:type", String)
+], Reservation.prototype, "code", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.DATE),
     __metadata("design:type", Date)
 ], Reservation.prototype, "startDate", void 0);

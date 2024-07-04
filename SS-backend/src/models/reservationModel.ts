@@ -34,6 +34,11 @@ export class Reservation extends Model<Reservation> {
     
       })
       group__name!: string;
+      @Column({
+        type: DataType.STRING,
+    
+      })
+      code!: string;
     
       @Column(DataType.DATE)
       startDate!: Date;

@@ -108,7 +108,7 @@ export const createExam = async (req: Request, res: Response) => {
 export const getExamById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    console.log("Requested Exam ID:", id);
+    console.log("Requested gggggggggggExam ID:", id);
 
     const exam = await Exam.findOne({
       where: { exam__id: id },
@@ -141,6 +141,7 @@ function   formatExamData(exam: any): any {
   return {
     exam__id: exam.exam__id,
     subject: exam.subject,
+    exam__title: exam.exam__title,
     exam__type: exam.exam__type,
     fileExam: exam.file.map((f: any) => ({
       file__id: f.file__id,

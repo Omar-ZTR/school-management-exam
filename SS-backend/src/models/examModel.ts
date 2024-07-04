@@ -1,10 +1,11 @@
-import { Table, Model, Column, DataType, BelongsToMany, HasMany } from "sequelize-typescript";
+import { Table, Model, Column, DataType, BelongsToMany, HasMany, ForeignKey, BelongsTo } from "sequelize-typescript";
 import { Question } from "./questionModel";
 import { ExamQuestion } from "./examQuestionModel";
 import { FileExam } from "./fileModel";
 import { Reservation } from "./reservationModel";
 import { ExamGroup } from "./examGroupModel";
 import { Group } from "./groupModel";
+import { Teacher } from "./teacherModel";
 
 @Table({
   timestamps: true,
@@ -20,12 +21,20 @@ export class Exam extends Model<Exam> {
 
   @Column(DataType.INTEGER)
   nb__reserve!: number;
+  @ForeignKey(() => Teacher)
+  @Column
+  user__id!: number;
 
+  @BelongsTo(() => Teacher)
+  teacher!: Teacher;
   @Column(DataType.STRING)
   subject!: string;
 
   @Column(DataType.STRING)
   exam__type!: string;
+
+  @Column(DataType.STRING)
+  exam__title!: string;
 
   @Column(DataType.BOOLEAN)
   obligatoire!: boolean;

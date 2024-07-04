@@ -17,6 +17,7 @@ const fileModel_1 = require("./fileModel");
 const reservationModel_1 = require("./reservationModel");
 const examGroupModel_1 = require("./examGroupModel");
 const groupModel_1 = require("./groupModel");
+const teacherModel_1 = require("./teacherModel");
 let Exam = class Exam extends sequelize_typescript_1.Model {
 };
 exports.Exam = Exam;
@@ -33,6 +34,15 @@ __decorate([
     __metadata("design:type", Number)
 ], Exam.prototype, "nb__reserve", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => teacherModel_1.Teacher),
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Number)
+], Exam.prototype, "user__id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => teacherModel_1.Teacher),
+    __metadata("design:type", teacherModel_1.Teacher)
+], Exam.prototype, "teacher", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Exam.prototype, "subject", void 0);
@@ -40,6 +50,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Exam.prototype, "exam__type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], Exam.prototype, "exam__title", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.BOOLEAN),
     __metadata("design:type", Boolean)

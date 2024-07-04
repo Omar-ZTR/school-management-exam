@@ -4,27 +4,28 @@
   <legend>Question</legend>
   <!-- Text -->
   <div class="inputs bordercorner">
-    <div [formGroup]="subjectForm"  *ngIf="showQuestionField">
-    <p-dropdown 
-    [options]="subjects"
-    formControlName="selectedSubject"
-    optionLabel="subject__name"
-    [filter]="true"
-    filterBy="subject__name" 
-    [showClear]="true"
-    placeholder="Select a Subject">
-    <ng-template pTemplate="selectedItem" let-selectedOption>
-        <div class="flex align-items-center gap-2">
+    <div [formGroup]="subjectForm" *ngIf="showQuestionField">
+      <p-dropdown
+        [options]="subjects"
+        formControlName="selectedSubject"
+        optionLabel="subject__name"
+        [filter]="true"
+        filterBy="subject__name"
+        [showClear]="true"
+        placeholder="Select a Subject"
+      >
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          <div class="flex align-items-center gap-2">
             <div>{{ selectedOption.subject__name }}</div>
-        </div>
-    </ng-template>
-    <ng-template let-subject pTemplate="item">
-        <div class="flex align-items-center gap-2">
+          </div>
+        </ng-template>
+        <ng-template let-subject pTemplate="item">
+          <div class="flex align-items-center gap-2">
             <div>{{ subject.subject__name }}</div>
-        </div>
-    </ng-template>
-</p-dropdown>
-</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
     <div class="Row">
       <div>
         <div class="noteDiv">

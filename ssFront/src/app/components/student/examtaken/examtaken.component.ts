@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
 import { PanelModule } from 'primeng/panel';
@@ -40,19 +40,26 @@ import { saveAs } from 'file-saver';
   styleUrls: ['./examtaken.component.css']
 })
 export class ExamtakenComponent {
+ 
+  exam__id:any;
   listFile: any = {};
   urls: any[] = [];
   descreption='';
   activeIndex: number = 0;
   displayCustom!: boolean ;
-  exam__id = 15;
+
   Exam: any;
   groupedQuestions: { [key: string]: any[] } = {};
   AnswersForm: FormGroup;
   user__id = this.tokenService.getUserIdFromToken();
   examType!:string;
   visible: boolean = false;
-
+ 
+  ngOnChanges() {
+ 
+      this.exam__id = this.idExam;
+   
+  }
   showDialog() {
     this.visible = true;
     this.checkAnswers()
@@ -60,6 +67,7 @@ export class ExamtakenComponent {
   allAnswersEmpty(): boolean {
     return this.answers.controls.every(control => !control.value.Answer__text);
   }
+  @Input() idExam: any;
   constructor(
     private examService: ExamService, 
     private examAnswers: ExamAnswersService, 
@@ -67,7 +75,7 @@ export class ExamtakenComponent {
     private tokenService: TokenServiceService
   ) {
     this.AnswersForm = this.fb.group({
-      exam__id: this.exam__id,
+      exam__id: '',
       Student__id: this.user__id,
       answers: this.fb.array([]),
       ans__description:''
@@ -77,7 +85,12 @@ export class ExamtakenComponent {
   ngOnInit(): void {
     this.fetchExam();
     this.startTimer();
-
+    this.AnswersForm.patchValue({
+      exam__id: this.idExam,
+     
+    });
+    console.log("klllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",this.AnswersForm.value)
+    this.ngOnChanges()
   }
   description(value: string): void {
     this.AnswersForm.patchValue({
@@ -122,12 +135,14 @@ export class ExamtakenComponent {
     this.urls.splice(index, 1);
   }
   fetchExam(): void {
-    this.examService.getExamByid(this.exam__id).subscribe(
+    console.log("kjljlklsddshdshkdskldkdshkdshkldskhldshkldslkhdskldshkd",this.exam__id)
+    this.examService.getExamByid(this.idExam).subscribe(
       (data) => {
         this.Exam = data;
+        this.exam__id= this.Exam.exam__id;
         this.groupQuestionsByType();
         this.examType= this.Exam.exam__type;
-        console.log("datataken", this.Exam);
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", this.Exam);
       },
       (error: any) => {
         console.error('Error fetching exam', error);

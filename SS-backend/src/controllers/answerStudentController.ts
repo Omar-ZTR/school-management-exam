@@ -20,6 +20,7 @@ export const createAnswers = async (req: Request, res: Response) => {
 
     const Answers= { ...req.body };
     const answersData = JSON.parse(Answers.ans);
+    console.log("sssss",answersData.exam__id)
     const exam = await Exam.findByPk(answersData.exam__id);
    if(!exam){
     return res.status(404).json({ message: "Exam not found" });

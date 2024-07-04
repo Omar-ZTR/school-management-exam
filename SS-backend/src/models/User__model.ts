@@ -4,7 +4,6 @@ import { Table, Model, Column, DataType } from "sequelize-typescript";
   timestamps: true,
   tableName: "User",
 })
-
 export class User extends Model<User> {
   @Column({
     type: DataType.INTEGER,
@@ -28,7 +27,7 @@ export class User extends Model<User> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
+    unique: "user_email_unique_constraint" // Unique constraint name
   })
   user__email!: string;
 
@@ -49,5 +48,4 @@ export class User extends Model<User> {
 
   @Column(DataType.STRING)
   status!: string;
-
 }
