@@ -19,6 +19,9 @@ const examQuestionModel_1 = require("./models/examQuestionModel");
 const examGroupModel_1 = require("./models/examGroupModel");
 const answerModel_1 = require("./models/answerModel");
 const answerStudentModel_1 = require("./models/answerStudentModel");
+const adminModel_1 = require("./models/adminModel");
+const teacherSubjectsModel_1 = require("./models/teacherSubjectsModel");
+const teacherGroupsModel_1 = require("./models/teacherGroupsModel");
 const connection = new sequelize_typescript_1.Sequelize("smartskills", "root", "", {
     host: "localhost",
     dialect: "mysql",
@@ -44,6 +47,9 @@ const connection = new sequelize_typescript_1.Sequelize("smartskills", "root", "
         answerModel_1.Answer,
         answerStudentModel_1.AnswerStudent,
         fileModel_1.FileAnswer,
+        adminModel_1.Admin,
+        teacherSubjectsModel_1.TeacherSubject,
+        teacherGroupsModel_1.TeacherGroup,
     ],
 });
 exports.default = connection;

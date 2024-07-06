@@ -13,9 +13,21 @@ exports.Teacher = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const userModel_1 = require("./usress/userModel");
 const examModel_1 = require("./examModel");
+const subjectModel_1 = require("./subjectModel");
+const teacherSubjectsModel_1 = require("./teacherSubjectsModel");
+const groupModel_1 = require("./groupModel");
+const teacherGroupsModel_1 = require("./teacherGroupsModel");
 let Teacher = class Teacher extends userModel_1.users {
 };
 exports.Teacher = Teacher;
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => subjectModel_1.Subject, () => teacherSubjectsModel_1.TeacherSubject),
+    __metadata("design:type", Array)
+], Teacher.prototype, "subjects", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => groupModel_1.Group, () => teacherGroupsModel_1.TeacherGroup),
+    __metadata("design:type", Array)
+], Teacher.prototype, "groups", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
         allowNull: false, }),
@@ -37,7 +49,9 @@ __decorate([
     __metadata("design:type", String)
 ], Teacher.prototype, "role", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => examModel_1.Exam),
+    (0, sequelize_typescript_1.HasMany)(() => examModel_1.Exam, {
+        onDelete: 'CASCADE', // This will enable cascading delete
+    }),
     __metadata("design:type", Array)
 ], Teacher.prototype, "exam", void 0);
 exports.Teacher = Teacher = __decorate([

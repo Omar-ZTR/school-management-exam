@@ -13,6 +13,8 @@ exports.Subject = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const groupModel_1 = require("./groupModel");
 const groupSubjectModel_1 = require("./groupSubjectModel");
+const teacherModel_1 = require("./teacherModel");
+const teacherSubjectsModel_1 = require("./teacherSubjectsModel");
 let Subject = class Subject extends sequelize_typescript_1.Model {
 };
 exports.Subject = Subject;
@@ -36,6 +38,10 @@ __decorate([
     (0, sequelize_typescript_1.BelongsToMany)(() => groupModel_1.Group, () => groupSubjectModel_1.GroupSubject),
     __metadata("design:type", Array)
 ], Subject.prototype, "groups", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => teacherModel_1.Teacher, () => teacherSubjectsModel_1.TeacherSubject),
+    __metadata("design:type", Array)
+], Subject.prototype, "teachers", void 0);
 exports.Subject = Subject = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

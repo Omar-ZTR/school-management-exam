@@ -1,6 +1,10 @@
-import { Table, Model, Column, DataType, HasMany } from "sequelize-typescript";
+import { Table, Model, Column, DataType, HasMany, BelongsToMany } from "sequelize-typescript";
 import { users } from "./usress/userModel";
 import { Exam } from "./examModel";
+import { Subject } from "./subjectModel";
+import { TeacherSubject } from "./teacherSubjectsModel";
+import { Group } from "./groupModel";
+import { TeacherGroup } from "./teacherGroupsModel";
 
 
 @Table({
@@ -8,6 +12,13 @@ import { Exam } from "./examModel";
 })
 export class Teacher extends users<Teacher> {
     
+
+  @BelongsToMany(() => Subject, () => TeacherSubject)
+  subjects!: Subject[];
+
+  @BelongsToMany(() => Group, () => TeacherGroup)
+  groups!: Group[];
+
       @Column({type:DataType.STRING,
     allowNull: false,}
   )
@@ -28,7 +39,9 @@ export class Teacher extends users<Teacher> {
   )
     role!: string;
 
-    @HasMany(() => Exam)
+   @HasMany(() => Exam, {
+        onDelete: 'CASCADE', // This will enable cascading delete
+    })
   exam!: Exam[];
 
 

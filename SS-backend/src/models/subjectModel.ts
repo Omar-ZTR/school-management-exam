@@ -1,6 +1,8 @@
 import { Table, Model, Column, DataType, BelongsToMany } from "sequelize-typescript";
 import { Group } from "./groupModel";
 import { GroupSubject } from "./groupSubjectModel";
+import { Teacher } from "./teacherModel";
+import { TeacherSubject } from "./teacherSubjectsModel";
 
 
 @Table({
@@ -25,6 +27,7 @@ export class Subject extends Model<Subject> {
       @BelongsToMany(() => Group, () => GroupSubject)
       groups!: Group[];
 
-
+      @BelongsToMany(() => Teacher, () => TeacherSubject)
+      teachers!: Teacher[];
 
 }

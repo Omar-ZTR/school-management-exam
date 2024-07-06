@@ -39,6 +39,10 @@ export class RouteGuardService {
                 this.router.navigate(['/teacher/dash']);
                 return true;
               }
+              else if (tokenPayload.role === 'Admin') {
+                this.router.navigate(['/admin/dash']);
+                return true;
+              }
             }
 
             const expectedRoles = route.data['expectedRole'] as Array<string>;

@@ -17,6 +17,11 @@ import { ResultComponent } from './components/teacher/result/result.component';
 import { ExamtakenComponent } from './components/student/examtaken/examtaken.component';
 import { CorrectionExamsComponent } from './components/teacher/correction-exams/correction-exams.component';
 import { ExamsComponent } from './components/student/exams/exams.component';
+import { AdminDashComponent } from './components/Admin/admin-dash/admin-dash.component';
+import { ManageTeacherComponent } from './components/Admin/manage-teacher/manage-teacher.component';
+import { ManageStudentComponent } from './components/Admin/manage-student/manage-student.component';
+import { ManageSchoolComponent } from './components/Admin/manage-school/manage-school.component';
+import { AdminComponent } from './components/Admin/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -45,6 +50,20 @@ export const routes: Routes = [
       { path: 'addQuestion', component: AddQuestionComponent },
       { path: 'Result', component: ResultComponent },
       { path: 'Correction', component: CorrectionExamsComponent },
+    ],
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [RouteGuardService],
+    data: { expectedRole: ['Admin'] },
+    children: [
+      { path: 'dash', component: AdminDashComponent },
+      { path: 'manageTeacher', component: ManageTeacherComponent },
+      { path: 'manageStudent', component: ManageStudentComponent },
+      { path: 'manageSchool', component: ManageSchoolComponent },
+      // { path: 'Result', component: ResultComponent },
+      // { path: 'Correction', component: CorrectionExamsComponent },
     ],
   },
 ];

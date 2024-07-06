@@ -17,6 +17,9 @@ import { ExamQuestion } from "./models/examQuestionModel";
 import { ExamGroup } from "./models/examGroupModel";
 import { Answer } from "./models/answerModel";
 import { AnswerStudent } from "./models/answerStudentModel";
+import { Admin } from "./models/adminModel";
+import { TeacherSubject } from "./models/teacherSubjectsModel";
+import { TeacherGroup } from "./models/teacherGroupsModel";
 
 const connection = new Sequelize("smartskills", "root", "", {
   host: "localhost",
@@ -43,6 +46,9 @@ const connection = new Sequelize("smartskills", "root", "", {
     Answer,
     AnswerStudent,
     FileAnswer,
+    Admin,
+    TeacherSubject,
+    TeacherGroup,
   ],
 });
 

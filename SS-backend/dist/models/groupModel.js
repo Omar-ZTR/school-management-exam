@@ -16,6 +16,8 @@ const groupSubjectModel_1 = require("./groupSubjectModel");
 const studentModel_1 = require("./studentModel");
 const examGroupModel_1 = require("./examGroupModel");
 const examModel_1 = require("./examModel");
+const teacherModel_1 = require("./teacherModel");
+const teacherGroupsModel_1 = require("./teacherGroupsModel");
 let Group = class Group extends sequelize_typescript_1.Model {
 };
 exports.Group = Group;
@@ -47,6 +49,10 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => studentModel_1.Student),
     __metadata("design:type", Array)
 ], Group.prototype, "students", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => teacherModel_1.Teacher, () => teacherGroupsModel_1.TeacherGroup),
+    __metadata("design:type", Array)
+], Group.prototype, "teachers", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsToMany)(() => examModel_1.Exam, () => examGroupModel_1.ExamGroup),
     __metadata("design:type", Array)

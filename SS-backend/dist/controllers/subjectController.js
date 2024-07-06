@@ -13,7 +13,6 @@ exports.getSubjects = void 0;
 const subjectModel_1 = require("../models/subjectModel");
 const getSubjects = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('slamou 3alaykom');
         const subjects = yield subjectModel_1.Subject.findAll();
         res.status(200).json(subjects);
     }

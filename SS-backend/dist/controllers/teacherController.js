@@ -9,70 +9,83 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTeacher = exports.updateTeacher = exports.getTeacherById = exports.getAllTeachers = exports.createTeacher = void 0;
-const teacherModel_1 = require("../models/teacherModel"); // Import your Teacher model
-// Create operation
-const createTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteTeacher = exports.updateTeacher = exports.getAllTeacher = void 0;
+const teacherModel_1 = require("../models/teacherModel");
+const subjectModel_1 = require("../models/subjectModel");
+const groupModel_1 = require("../models/groupModel");
+const getAllTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const teacher = yield teacherModel_1.Teacher.create(req.body);
-        res.status(201).json(teacher);
+        const Teachers = yield teacherModel_1.Teacher.findAll({ include: [
+                {
+                    model: subjectModel_1.Subject,
+                    as: 'subjects',
+                },
+                {
+                    model: groupModel_1.Group,
+                    as: 'groups',
+                },
+            ], });
+        console.log("teachers is : ", Teachers);
+        res.status(200).json(Teachers);
     }
     catch (error) {
-        console.error("Error creating teacher", error);
+        console.error("Error fetch Teacher:", error);
         res.status(500).json({ error: 'Internal server error' });
     }
+    ;
 });
-exports.createTeacher = createTeacher;
-// Read operation - Get all teachers
-const getAllTeachers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const teachers = yield teacherModel_1.Teacher.findAll();
-        res.status(200).json(teachers);
-    }
-    catch (error) {
-        console.error("Error fetching teachers:", error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-exports.getAllTeachers = getAllTeachers;
-// Read operation - Get teacher by ID
-const getTeacherById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const teacher = yield teacherModel_1.Teacher.findByPk(id);
-        if (teacher) {
-            res.status(200).json(teacher);
-        }
-        else {
-            res.status(404).json({ message: "Teacher not found" });
-        }
-    }
-    catch (error) {
-        console.error("Error fetching teacher", error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-exports.getTeacherById = getTeacherById;
-// Update operation
+exports.getAllTeacher = getAllTeacher;
 const updateTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const [updated] = yield teacherModel_1.Teacher.update(req.body, { where: { user__id: id } });
-        if (updated) {
-            const updatedTeacher = yield teacherModel_1.Teacher.findOne({ where: { user__id: id } });
-            res.status(200).json(updatedTeacher);
+        const teacherData = req.body;
+        const teacherExist = yield teacherModel_1.Teacher.findByPk(id);
+        if (!teacherExist) {
+            return res.status(404).json({ error: 'Teacher not found' });
+        }
+        console.log("teacherData.subjects", teacherData.subjects);
+        if (teacherData.groups && Array.isArray(teacherData.groups) && teacherData.groups.length > 0) {
+            const groups = yield groupModel_1.Group.findAll({
+                where: {
+                    group__id: teacherData.groups,
+                },
+            });
+            yield teacherExist.$set('groups', groups);
         }
         else {
-            throw new Error('Teacher not found');
+            // If no groups are provided or the array is empty, delete all associations
+            yield teacherExist.$set('groups', []);
         }
+        if (teacherData.subjects && Array.isArray(teacherData.subjects) && teacherData.subjects.length > 0) {
+            const subjects = yield subjectModel_1.Subject.findAll({
+                where: {
+                    subject__id: teacherData.subjects,
+                },
+            });
+            yield teacherExist.$set('subjects', subjects);
+        }
+        else {
+            // If no groups are provided or the array is empty, delete all associations
+            yield teacherExist.$set('subjects', []);
+        }
+        if (teacherExist.active !== teacherData.active) {
+            const [updated] = yield teacherModel_1.Teacher.update(teacherData, { where: { user__id: id } });
+            if (updated) {
+                const updatedTeacher = yield teacherModel_1.Teacher.findOne({ where: { user__id: id } });
+                return res.status(200).json(updatedTeacher);
+            }
+            else {
+                throw new Error('Teacher not updated');
+            }
+        } // If no updates were made, return the current teacher data
+        return res.status(200).json(teacherExist);
     }
     catch (error) {
-        console.error("Error updating teacher", error);
-        res.status(500).send("Error updating teacher");
+        console.error('Error updating teacher:', error);
+        res.status(500).send('Error updating teacher');
     }
 });
 exports.updateTeacher = updateTeacher;
-// Delete operation
 const deleteTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -85,8 +98,8 @@ const deleteTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
     }
     catch (error) {
-        console.error("Error deleting teacher", error);
-        res.status(500).send("Error deleting teacher");
+        console.error("Error deleting Teacher", error);
+        res.status(500).send("Error deleting Teacher");
     }
 });
 exports.deleteTeacher = deleteTeacher;

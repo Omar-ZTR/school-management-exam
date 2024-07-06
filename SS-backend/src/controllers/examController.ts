@@ -44,6 +44,8 @@ export const createExam = async (req: Request, res: Response) => {
 
     console.log("file 8");
     if (examData.questions && Array.isArray(examData.questions) && examData.questions.length > 0) {
+     
+     
       await updateQuestionsWithExam({
         body: {
           exam__id: exam.exam__id,
@@ -200,7 +202,7 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
         {
           model: Group,
           include: [{ model: Student }],
-          through: { attributes: [] }, // Exclude join table attributes
+          through: { attributes: [] }, 
         },
       ],
     });

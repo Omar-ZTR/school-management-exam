@@ -19,6 +19,7 @@ const studentModel_1 = require("../models/studentModel");
 const teacherModel_1 = require("../models/teacherModel");
 const tokenModel_1 = require("../models/tokenModel");
 const token_1 = __importDefault(require("../utils/token"));
+const adminModel_1 = require("../models/adminModel");
 // Signup function
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -82,6 +83,9 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         let user = yield studentModel_1.Student.findOne({ where: { user__email } });
         if (!user) {
             user = yield teacherModel_1.Teacher.findOne({ where: { user__email } });
+        }
+        if (!user) {
+            user = yield adminModel_1.Admin.findOne({ where: { user__email } });
         }
         if (user && (yield bcryptjs_1.default.compare(password, user.password))) {
             let tokens = yield tokenModel_1.Token.findOne({ where: { user__id: user.user__id } });

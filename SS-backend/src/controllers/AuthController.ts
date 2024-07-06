@@ -8,6 +8,7 @@ import { Teacher } from "../models/teacherModel";
 import { Token } from "../models/tokenModel";
 import generateToken from "../utils/token";
 import { users } from "../models/usress/userModel";
+import { Admin } from "../models/adminModel";
 
 
 
@@ -79,7 +80,7 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 
-type UserType = Student | Teacher; 
+type UserType = Student | Teacher | Admin; 
 // Login function
 export const login = async (req: Request, res: Response) => {
   try {
@@ -90,6 +91,9 @@ export const login = async (req: Request, res: Response) => {
     if (!user) {
      user = await Teacher.findOne({ where: { user__email } });
     }
+    if (!user) {
+      user = await Admin.findOne({ where: { user__email } });
+     }
     if (user && (await bcrypt.compare(password, user.password))) {
       let tokens = await Token.findOne({ where: { user__id: user.user__id } });
       if (!tokens) {

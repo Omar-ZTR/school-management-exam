@@ -189,7 +189,7 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
                 {
                     model: groupModel_1.Group,
                     include: [{ model: studentModel_1.Student }],
-                    through: { attributes: [] }, // Exclude join table attributes
+                    through: { attributes: [] },
                 },
             ],
         });

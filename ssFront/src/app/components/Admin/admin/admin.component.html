@@ -103,43 +103,40 @@
     <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
-          <li  routerLink="/teacher/dash" routerLinkActive="actives">
+          <li routerLink="/admin/dash" routerLinkActive="actives">
             <i class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
-        
-          <li  (click)="toggleExams()">
-            <i class="fa-solid fa-folder-tree fa-xs icon"></i>
-            <div class="title">Exams</div>
+
+  
+
+          <li routerLink="/admin/manageTeacher" routerLinkActive="actives">
+            <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
+            <div class="title">manage Teacher</div>
           </li>
-          <ul *ngIf="showExams" class="sub-menu">
-            <li  routerLink="/teacher/addExam" routerLinkActive="actives">
-              <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
-              <div class="title">Add Exam</div>
-            </li>
-            <li  routerLink="/teacher/listExam" routerLinkActive="actives">
-              <i class="fa-solid fa-table-list fa-xs icon"></i>
-              <div class="title">List Exam</div>
-            </li>
-          </ul>
-          <li  routerLink="/teacher/exam" routerLinkActive="actives">
+          <li routerLink="/admin/manageStudent" routerLinkActive="actives">
+            <i class="fa-solid fa-table-list fa-xs icon"></i>
+            <div class="title">manage Student</div>
+          </li>
+
+          <li routerLink="/admin/manageSchool" routerLinkActive="actives">
             <i class="fa-solid fa-calendar-days fa-xs icon"></i>
-            <div class="title">Exams</div>
+            <div class="title">manage School</div>
           </li>
-          <li  routerLink="/teacher/addQuestion" routerLinkActive="actives">
+          <li routerLink="/admin/addQuestion" routerLinkActive="actives">
             <i class="fas fa-user-edit fa-xs icon"></i>
             <div class="title">Add question</div>
           </li>
-          <li  routerLink="/teacher/Result" routerLinkActive="actives">
+          <li routerLink="/admin/Result" routerLinkActive="actives">
             <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
             <div class="title">Result</div>
           </li>
-          <li  routerLink="/teacher/Correction" routerLinkActive="actives">
+          <li routerLink="/admin/Correction" routerLinkActive="actives">
             <i class="fa-solid fa-message fa-xs icon"></i>
             <div class="title">Correction</div>
           </li>
           <hr />
-          <li  (click)="logout()">
+          <li (click)="logout()">
             <i class="fa-solid fa-right-from-bracket fa-xs icon"></i>
             <div class="title">Logout</div>
           </li>

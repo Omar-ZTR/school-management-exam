@@ -4,6 +4,8 @@ import { GroupSubject } from "./groupSubjectModel";
 import { Student } from "./studentModel";
 import { ExamGroup } from "./examGroupModel";
 import { Exam } from "./examModel";
+import { Teacher } from "./teacherModel";
+import { TeacherGroup } from "./teacherGroupsModel";
 
 
 @Table({
@@ -33,6 +35,10 @@ export class Group extends Model<Group> {
 
       @HasMany(() => Student)
       students!: Student[];
+
+      @BelongsToMany(() => Teacher, () => TeacherGroup)
+      teachers!: Teacher[];
+
 
       @BelongsToMany(() => Exam, () => ExamGroup)
       exams!: Exam[];

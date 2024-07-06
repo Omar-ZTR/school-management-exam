@@ -35,7 +35,9 @@ __decorate([
 ], Exam.prototype, "nb__reserve", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => teacherModel_1.Teacher),
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        onDelete: 'CASCADE' // Enable cascading delete
+    }),
     __metadata("design:type", Number)
 ], Exam.prototype, "user__id", void 0);
 __decorate([

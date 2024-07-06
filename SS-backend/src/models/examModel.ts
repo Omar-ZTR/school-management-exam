@@ -22,7 +22,9 @@ export class Exam extends Model<Exam> {
   @Column(DataType.INTEGER)
   nb__reserve!: number;
   @ForeignKey(() => Teacher)
-  @Column
+  @Column({
+    onDelete: 'CASCADE' // Enable cascading delete
+})
   user__id!: number;
 
   @BelongsTo(() => Teacher)
