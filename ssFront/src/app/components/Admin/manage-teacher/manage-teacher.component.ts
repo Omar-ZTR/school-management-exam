@@ -8,7 +8,12 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { ButtonModule } from 'primeng/button';
@@ -46,6 +51,7 @@ export interface Group {
   selector: 'app-manage-teacher',
   standalone: true,
   imports: [
+    FormsModule,
     TableModule,
     TagModule,
     IconFieldModule,
@@ -69,6 +75,9 @@ export interface Group {
         margin-bottom: 0 !important;
         padding: 0 !important;
       }
+      :host ::ng-deep .p-datatable-striped {
+        background-color: rgba(87, 4, 4, 0.749) !important;
+      }
     `,
   ],
 })
@@ -76,12 +85,16 @@ export class ManageTeacherComponent implements OnInit {
   teachers: Teacher[] = [];
   teachersAccept: Teacher[] = [];
   teachersWait: Teacher[] = [];
+  teachersRefused: Teacher[] = [];
+  currentTableData!: Teacher[];
   examShudeled: any;
   exam: any;
   Techerselesct!: Teacher;
   teacherIds: number[] = [];
   groupExist: { [key: string]: any[] } = {};
   groupNotIn: { [key: string]: any[] } = {};
+  searchValue: string = '';
+  filterButton!: string;
 
   constructor(
     private teacherService: TeacherService,
@@ -98,45 +111,44 @@ export class ManageTeacherComponent implements OnInit {
   subjectExist: { [key: string]: any[] } = {};
   subjectNotIn: { [key: string]: any[] } = {};
   groups!: any;
-  formsubjects: { [key: string]: FormGroup } = {};
-  formGroups: { [key: string]: FormGroup } = {};
-  formactivation: { [key: string]: FormGroup } = {};
+
   activate: { [key: number]: { active?: any } } = {};
-  private initializeForms() {
-    this.teachers.forEach((teacher) => {
-      this.formactivation[teacher.user__id.toString()] =
-        this.createFormactive(teacher);
-      // this.formGroups[teacher.user__id.toString()] =
-      //   this.createFormGroup(teacher);
-      // this.formsubjects[teacher.user__id.toString()] =
-      //   this.createFormSubjct(teacher);
-    });
+
+  switchTable(tableName: string) {
+    this.loading = true; // Example: Set loading state
+
+    switch (tableName) {
+      case 'teachers':
+        this.currentTableData = this.teachers;
+        this.filterButton = 'teachers';
+        break;
+      case 'teachersAccept':
+        this.currentTableData = this.teachersAccept;
+        this.filterButton = 'teachersAccept';
+        break;
+      case 'teachersRefused':
+        this.currentTableData = this.teachersRefused;
+        this.filterButton = 'teachersRefused';
+        break;
+      case 'teachersWait':
+        this.currentTableData = this.teachersWait;
+        this.filterButton = 'teachersWait';
+        break;
+      default:
+        this.currentTableData = [];
+        this.filterButton = '';
+    }
+
+    this.loading = false; // Example: Clear loading state
   }
   ngOnInit() {
     this.fetchGroups();
     this.fetchSubjects();
     this.fetchTeachers();
-  
+
     console.log('hhdhshs ids', this.teacherIds);
   }
-  // createFormGroup(teacher: Teacher): FormGroup {
-  //   return new FormGroup({
-  //     selectedgroups: new FormControl(null),
-  //     userId: new FormControl(teacher.user__id),
-  //   });
-  // }
 
-  // createFormSubjct(teacher: Teacher): FormGroup {
-  //   return new FormGroup({
-  //     selectedsubjects: new FormControl(null),
-  //     userId: new FormControl(teacher.user__id),
-  //   });
-  // }
-  createFormactive(teacher: Teacher): FormGroup {
-    return new FormGroup({
-      checked: new FormControl<boolean | null>(teacher.active),
-    });
-  }
   fetchGroups() {
     this.groupService.getGroups().subscribe(
       (data) => {
@@ -206,17 +218,22 @@ export class ManageTeacherComponent implements OnInit {
         console.log('All teachers:', this.teachers);
 
         this.teachersAccept = this.teachers.filter(
-          (teacher) => teacher.active !== null
+          (teacher) => teacher.active == true
+        );
+        this.teachersRefused = this.teachers.filter(
+          (teacher) => teacher.active == false
         );
         this.teachersWait = this.teachers.filter(
           (teacher) => teacher.active === null
         );
-        this.initializeForms();
+
         console.log('Accepted teachers:', this.teachersAccept);
         console.log('Waiting teachers:', this.teachersWait);
+        console.log('Refused teachers:', this.teachersRefused);
         this.filterSubjectsForAllTeachers();
         this.filtergroupsForAllTeachers();
         this.initializeActivation();
+        this.switchTable('teachers');
         this.loading = false;
       },
       (error) => {
@@ -225,27 +242,34 @@ export class ManageTeacherComponent implements OnInit {
     );
   }
 
-  arraysEqual(arr1: any[], arr2: any[], id:string): boolean {
-    
-    let ExistIds = arr1.map(g => g[id]);
-    let teacherIds = arr2.map(g => g[id]);
+  arraysEqual(arr1: any[], arr2: any[], id: string): boolean {
+    let ExistIds = arr1.map((g) => g[id]);
+    let teacherIds = arr2.map((g) => g[id]);
     const sortedArr1 = ExistIds.slice().sort((a, b) => a - b);
-  const sortedArr2 = teacherIds.slice().sort((a, b) => a - b);
-  console.log(sortedArr1 , sortedArr2)
-  // Convert arrays to JSON strings and compare
-  const str1 = JSON.stringify(sortedArr1);
-  const str2 = JSON.stringify(sortedArr2);
-console.log(str1 , str2)
-  return str1 === str2;
+    const sortedArr2 = teacherIds.slice().sort((a, b) => a - b);
+    console.log(sortedArr1, sortedArr2);
+    // Convert arrays to JSON strings and compare
+    const str1 = JSON.stringify(sortedArr1);
+    const str2 = JSON.stringify(sortedArr2);
+    console.log(str1, str2);
+    return str1 === str2;
   }
   checkIds(teacherId: number) {
     const teacher = this.teachers.find((t) => t.user__id === teacherId);
-    
+
     if (
       teacher &&
       this.teacherIds.includes(teacherId) &&
-      this.arraysEqual(this.groupExist[teacherId], teacher.groups, 'group__id') &&
-      this.arraysEqual(this.subjectExist[teacherId], teacher.subjects, 'subject__id') &&
+      this.arraysEqual(
+        this.groupExist[teacherId],
+        teacher.groups,
+        'group__id'
+      ) &&
+      this.arraysEqual(
+        this.subjectExist[teacherId],
+        teacher.subjects,
+        'subject__id'
+      ) &&
       this.activate[teacherId].active === teacher.active
     ) {
       // Remove teacherId from teacherIds if all conditions are met
@@ -355,6 +379,7 @@ console.log(str1 , str2)
 
   clear(table: Table) {
     table.clear();
+    this.searchValue = '';
   }
   mapValue(checked: any | null): string {
     if (checked === null) {
@@ -413,21 +438,40 @@ console.log(str1 , str2)
       (response: any) => {
         alert('Successfully create');
         console.log('seccess', response);
+
+        this.teacherIds = this.teacherIds.filter((id) => id !== teacherId);
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
       }
     );
   }
-  deleteTeacher(teacherId:number) {
+  deleteTeacher(teacherId: number) {
     this.teacherService.DeleteTeacher(teacherId).subscribe(
       (response: any) => {
         alert('Successfully create');
         console.log('seccess', response);
+        this.teachers = this.teachers.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        // Remove the teacher from the filtered lists
+        this.teachersAccept = this.teachersAccept.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        this.teachersRefused = this.teachersRefused.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        this.teachersWait = this.teachersWait.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        this.currentTableData = this.currentTableData.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
-      });
+      }
+    );
   }
   // overpanelClose(op: OverlayPanel) {
   //   op.hide();

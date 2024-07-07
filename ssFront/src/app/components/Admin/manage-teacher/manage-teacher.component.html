@@ -1,7 +1,7 @@
 <div class="card">
   <p-table
     #dt2
-    [value]="teachers"
+    [value]="currentTableData"
     dataKey="id"
     [rows]="10"
     [rowsPerPageOptions]="[10, 25, 50]"
@@ -24,10 +24,63 @@
           <input
             pInputText
             type="text"
+            [(ngModel)]="searchValue"
             (input)="dt2.filterGlobal($any($event.target)?.value, 'contains')"
             placeholder="Search keyword"
           />
         </p-iconField>
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          label="Clear"
+          [outlined]="true"
+          icon="pi pi-filter-slash"
+          (click)="clear(dt2)"
+        />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('teachers')"
+          label="All Teachers"
+          [severity]="filterButton ==='teachers'? 'secondary':'help'"
+        />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('teachersAccept')"
+          label="Accepted "
+          [severity]="filterButton ==='teachersAccept'? 'secondary':'help'"
+        />
+        <p-button
+        [style]="{
+          'border-radius': '15px',
+          'text-wrap': 'nowrap',
+          margin: '0 10px'
+        }"
+        (click)="switchTable('teachersRefused')"
+        label="Refused "
+        [severity]="filterButton ==='teachersRefused'? 'secondary':'help'"
+      />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('teachersWait')"
+          label="Waiting "
+          [severity]="filterButton ==='teachersWait'? 'secondary':'help'"
+        />
+     
       </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -57,98 +110,105 @@
         <!-- <td>
                 {{ teacher.specialty }}
             </td> -->
-            <td >
-        <div class="inlineflex">
-              <div class="list" *ngIf="subjectExist[teacher.user__id]!.length > 0">
-        <p-listbox 
-                  [options]="subjectExist[teacher.user__id]" 
-                 
-                  optionLabel="subject__name" 
-                  [style]="{ width: 'max-content' }" 
-                  [listStyle]="{'max-height': '50px'}" 
-                  (onChange)="removesubject($event, teacher.user__id)"/>
-                  <div class="ribbon">{{subjectExist[teacher.user__id]!.length}}</div>
-      
-              </div>
-          <p-button
-            label="Add"
-            (click)="selectsubject(op, teacher)"
-            [text]="true"
-            [raised]="true"
-            [style]="{ 'border-radius': '15px','text-wrap':'nowrap'  }"
-            icon="pi pi-plus"
-            severity="warning"
-          /></div>
-        </td>
-        <td >
+        <td>
           <div class="inlineflex">
-        <div class="list" *ngIf="groupExist[teacher.user__id]!.length > 0">
-  <p-listbox 
-            [options]="groupExist[teacher.user__id]" 
-           
-            optionLabel="group__name" 
-            [style]="{ width: 'max-content' }" 
-            [listStyle]="{'max-height': '50px'}" 
-            (onChange)="Removegroup($event, teacher.user__id)"/>
-            <div class="ribbon">{{groupExist[teacher.user__id]!.length}}</div>
-
-        </div>
-          
-          <p-button
-            label="Add"
-            (click)="selectgroup(op1, teacher)"
-            [text]="true"
-            [raised]="true"
-            [style]="{ 'border-radius': '15px','text-wrap':'nowrap' }"
-            icon="pi pi-plus"
-            severity="warning"
-          /></div>
+            <div
+              class="list"
+              *ngIf="subjectExist[teacher.user__id]!.length > 0"
+            >
+              <p-listbox
+                [options]="subjectExist[teacher.user__id]"
+                optionLabel="subject__name"
+                [style]="{ width: 'max-content' }"
+                [listStyle]="{ 'max-height': '50px' }"
+                (onChange)="removesubject($event, teacher.user__id)"
+              />
+              <div class="ribbon">
+                {{ subjectExist[teacher.user__id]!.length }}
+              </div>
+            </div>
+            <p-button
+              label="Add"
+              (click)="selectsubject(op, teacher)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+              icon="pi pi-plus"
+              severity="warning"
+            />
+          </div>
         </td>
-      
+        <td>
+          <div class="inlineflex">
+            <div class="list" *ngIf="groupExist[teacher.user__id]!.length > 0">
+              <p-listbox
+                [options]="groupExist[teacher.user__id]"
+                optionLabel="group__name"
+                [style]="{ width: 'max-content' }"
+                [listStyle]="{ 'max-height': '50px' }"
+                (onChange)="Removegroup($event, teacher.user__id)"
+              />
+              <div class="ribbon">
+                {{ groupExist[teacher.user__id]!.length }}
+              </div>
+            </div>
+
+            <p-button
+              label="Add"
+              (click)="selectgroup(op1, teacher)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+              icon="pi pi-plus"
+              severity="warning"
+            />
+          </div>
+        </td>
+
         <!-- [severity]="getSeverity(teacher.status)" -->
         <td>
-            <form
-            [formGroup]="formactivation[teacher.user__id]"
-            class="flex flex-column align-items-center gap-3"
-          >
-            <p-triStateCheckbox (onChange)="activation($event, teacher.user__id)"  class="hidden-checkbox" inputId="checked{{teacher.user__id}}" />
-            <label  for="checked{{teacher.user__id}}">
-                <p-tag 
+      
+            <p-triStateCheckbox
+              (onChange)="activation($event, teacher.user__id)"
+              class="hidden-checkbox"
+              inputId="checked{{ teacher.user__id }}"
+            />
+            <label for="checked{{ teacher.user__id }}">
+              <p-tag
                 [value]="mapValue(activate[teacher.user__id].active)"
-                [severity]="getSeverity(activate[teacher.user__id].active)" />
-               
+                [severity]="getSeverity(activate[teacher.user__id].active)"
+              />
             </label>
-          </form>
-
+     
         </td>
         <td>
           <div class="inlineflex">
             <p-button
-            *ngIf="teacherIds.includes(teacher.user__id)"
+              *ngIf="teacherIds.includes(teacher.user__id)"
               label="save"
               (click)="UpdateTeacher(teacher.user__id)"
               [text]="true"
               [raised]="true"
-              [style]="{ 'border-radius': '15px','text-wrap':'nowrap' }"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
               icon="pi pi-upload"
               severity="warning"
             />
             <p-button
-           
               label="delete"
               (click)="deleteTeacher(teacher.user__id)"
               [text]="true"
               [raised]="true"
-              [style]="{ 'border-radius': '15px','text-wrap':'nowrap' }"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
               icon="pi pi-trash"
               severity="warning"
-            /></div>
-          </td>
+            />
+          </div>
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">No customers found.</td>
+        <td colspan="5">No Teacher found.</td>
       </tr>
     </ng-template>
   </p-table>
@@ -156,42 +216,31 @@
 
 <p-overlayPanel #op [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
   <ng-template pTemplate="content">
-    
-        <p-listbox
+    <p-listbox
       [options]="subjectNotIn[Techerselesct.user__id]"
-   
-        optionLabel="subject__name"
-      
-        [style]="{ width: '15rem' }" 
-        [listStyle]="{'max-height': '220px'}"
-        (onChange)="Selectsubject($event, Techerselesct.user__id)"
-      >
-        <ng-template let-subject pTemplate="item">
-          <div
-          
-          >
-            {{ subject.subject__name }}
-          </div>
-        </ng-template>
-      </p-listbox>
-    
+      optionLabel="subject__name"
+      [style]="{ width: '15rem' }"
+      [listStyle]="{ 'max-height': '220px' }"
+      (onChange)="Selectsubject($event, Techerselesct.user__id)"
+    >
+      <ng-template let-subject pTemplate="item">
+        <div>
+          {{ subject.subject__name }}
+        </div>
+      </ng-template>
+    </p-listbox>
   </ng-template>
 </p-overlayPanel>
 
-
-
-
-<p-overlayPanel #op1  [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
+<p-overlayPanel #op1 [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
   <ng-template pTemplate="content">
-   
-    
-      <p-listbox *ngIf="groupNotIn[Techerselesct.user__id]!.length > 0"
-        [options]="groupNotIn[Techerselesct.user__id]"
-        optionLabel="group__name" 
-        [style]="{ width: '15rem' }" 
-        [listStyle]="{'max-height': '220px'}"
-        (onChange)="Selectgroup($event, Techerselesct.user__id)"
-      />
-   
+    <p-listbox
+      *ngIf="groupNotIn[Techerselesct.user__id]!.length > 0"
+      [options]="groupNotIn[Techerselesct.user__id]"
+      optionLabel="group__name"
+      [style]="{ width: '15rem' }"
+      [listStyle]="{ 'max-height': '220px' }"
+      (onChange)="Selectgroup($event, Techerselesct.user__id)"
+    />
   </ng-template>
 </p-overlayPanel>

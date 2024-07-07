@@ -1,6 +1,6 @@
 import express from "express";
 import UserRoutes from "./routers/authRouter";
-import  * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 import connection from "./connection";
 import { json, urlencoded } from "body-parser";
 import routerExam from "./routers/examRouter";
@@ -13,30 +13,50 @@ import path from "path";
 import routerFile from "./routers/fileRouter";
 import routerAnswer from "./routers/answerRouter";
 import routerTeacher from "./routers/teacherRouter";
+import routerStudents from "./routers/studentRouter";
 
 const app = express();
 
-const cors = require('cors');
+const cors = require("cors");
 app.use(json());
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id");
- 
   res.header(
-      'Access-Control-Expose-Headers',
-      'x-access-token, x-refresh-token'
+    "Access-Control-Allow-Methods",
+    "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id"
+  );
+
+  res.header(
+    "Access-Control-Expose-Headers",
+    "x-access-token, x-refresh-token"
   );
 
   next();
 });
 app.use(urlencoded({ extended: true }));
 
-app.use("/",routerTeacher, UserRoutes,routerExam, routerQuestion, routerReservation, routerGroup, routerSalle, routerFile, routerAnswer, routersubject );
+app.use(
+  "/",
+  routerTeacher,
+  UserRoutes,
+  routerExam,
+  routerQuestion,
+  routerReservation,
+  routerGroup,
+  routerSalle,
+  routerFile,
+  routerAnswer,
+  routersubject,
+  routerStudents,
+);
 
 const corsOptions = {
-  origin: 'http://localhost:4200', 
-  optionsSuccessStatus: 200 
+  origin: "http://localhost:4200",
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 app.use(
@@ -49,12 +69,12 @@ app.use(
     res.status(500).json({ message: err.message });
   }
 );
-app.use('/files', express.static(path.join(__dirname, 'utils/filesUpload')));
+app.use("/files", express.static(path.join(__dirname, "utils/filesUpload")));
 
-dotenv.config()
+dotenv.config();
 // alter: true
 connection
-  .sync({alter: true})
+  .sync({ alter: true })
   .then(() => {
     console.log("Database successfully connected");
   })

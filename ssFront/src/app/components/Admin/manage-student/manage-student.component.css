@@ -1,0 +1,107 @@
+
+
+.hidden-checkbox {
+    display: none;
+  }
+  .pointer {
+    width: 200px;
+    height: 40px;
+    position: relative;
+    background: red;
+  }
+  .pointer:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 20px solid white;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+  }
+  .pointer:before {
+    content: "";
+    position: absolute;
+    right: -20px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 20px solid red;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+  }
+
+.list .ribbon {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+}
+.list .ribbon {
+  --f: .1em; /* control the folded part */
+ 
+  position: absolute;
+  top: 25px;
+  left: -37px;
+  line-height: .8;
+  padding-inline: 1lh;
+  padding-bottom: var(--f);
+  border-image: conic-gradient(#0008 0 0) 51%/var(--f);
+  clip-path: polygon(
+    100% calc(100% - var(--f)),100% 100%,calc(100% - var(--f)) calc(100% - var(--f)),var(--f) calc(100% - var(--f)), 0 100%,0 calc(100% - var(--f)),999px calc(100% - var(--f) - 999px),calc(100% - 999px) calc(100% - var(--f) - 999px));
+  transform: translate(calc((1 - cos(-45deg))*100%), -100%) rotate(-45deg);
+
+  background-color: #c1c1c3; /* the main color  */
+}
+
+.list {
+  position: relative;
+  display: inline-block; 
+}
+.inlineflex {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.groupd {
+
+  background-color: transparent;
+
+ 
+  box-sizing: border-box;
+  color: #3B3B3B;
+ text-wrap: nowrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+
+  outline: none;
+  
+  text-align: center;
+  
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+gap: 5px;
+  width: 100%;
+  will-change: transform;
+}
+
+.groupname , .removeIcon{
+    padding: 10px ;
+    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+}
+
+.removeIcon:hover {
+    border-radius: 10px;
+  color: #fff;
+  background-color: #fb000087;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+

@@ -1,1 +1,204 @@
-<p>manage-student works!</p>
+<div class="card">
+  <p-table
+    #dt2
+    [value]="currentTableData"
+    dataKey="id"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [loading]="loading"
+    [paginator]="true"
+    [globalFilterFields]="[
+      'last__name',
+      'first__name',
+      'representative.name',
+      'status'
+    ]"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-striped" 
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <p-iconField iconPosition="left" class="ml-auto">
+          <p-inputIcon>
+            <i class="pi pi-search"></i>
+          </p-inputIcon>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchValue"
+            (input)="dt2.filterGlobal($any($event.target)?.value, 'contains')"
+            placeholder="Search keyword"
+          />
+        </p-iconField>
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          label="Clear"
+          [outlined]="true"
+          icon="pi pi-filter-slash"
+          (click)="clear(dt2)"
+        />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('students')"
+          label="All students"
+          [severity]="filterButton === 'students' ? 'secondary' : 'help'"
+        />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('studentsAccept')"
+          label="Accepted "
+          [severity]="filterButton === 'studentsAccept' ? 'secondary' : 'help'"
+        />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('studentsRefused')"
+          label="Refused "
+          [severity]="filterButton === 'studentsRefused' ? 'secondary' : 'help'"
+        />
+        <p-button
+          [style]="{
+            'border-radius': '15px',
+            'text-wrap': 'nowrap',
+            margin: '0 10px'
+          }"
+          (click)="switchTable('studentsWait')"
+          label="Waiting "
+          [severity]="filterButton === 'studentsWait' ? 'secondary' : 'help'"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 10%">first Name</th>
+        <th style="width: 10%">last Name</th>
+        <th style="width: 10%">Email</th>
+
+        <!-- <th style="width:max-content">specialty</th> -->
+        <th style="width: 25%">Domain</th>
+        <th style="width: 25%">Groups</th>
+        <th style="width: 10%">Status</th>
+        <th style="width: 10%">Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-student>
+      <tr>
+        <td>
+          {{ student.first__name }}
+        </td>
+        <td>
+          {{ student.last__name }}
+        </td>
+        <td>
+          {{ student.user__email }}
+        </td>
+        <!-- <td>
+                  {{ student.specialty }}
+              </td> -->
+        <td>s</td>
+        <td>
+          <div class="inlineflex">
+            <div class="groupd" *ngIf=" group[student.user__id].group__name">
+              <div class="groupname">
+                {{ group[student.user__id].group__name }}
+              </div>
+              <div
+                (click)="
+                  Removegroup(
+                    group[student.user__id].group__id,
+                    student.user__id
+                  )
+                "
+                class="removeIcon"
+              >
+                <i class="pi pi-trash"></i>
+              </div>
+            </div>
+            <div class="groupd" *ngIf=" !group[student.user__id].group__name">
+                -
+            </div>
+            <p-button
+              (click)="selectgroup(op1, student)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+              icon="pi pi-pencil"
+              severity="warning"
+            />
+          </div>
+        </td>
+
+        <!-- [severity]="getSeverity(student.status)" -->
+        <td>
+          <p-triStateCheckbox
+            (onChange)="activation($event, student.user__id)"
+            class="hidden-checkbox"
+            inputId="checked{{ student.user__id }}"
+          />
+          <label for="checked{{ student.user__id }}">
+            <p-tag
+              [value]="mapValue(activate[student.user__id].active)"
+              [severity]="getSeverity(activate[student.user__id].active)"
+            />
+          </label>
+        </td>
+        <td>
+          <div class="inlineflex">
+            <p-button
+              *ngIf="studentsIds.includes(student.user__id)"
+              label="save"
+              (click)="UpdateStudent(student.user__id)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+              icon="pi pi-upload"
+              severity="warning"
+            />
+            <p-button
+              label="delete"
+              (click)="deleteStudent(student.user__id)"
+              [text]="true"
+              [raised]="true"
+              [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+              icon="pi pi-trash"
+              severity="warning"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">No student found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-overlayPanel #op1 [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
+  <ng-template pTemplate="content">
+    <p-listbox
+      *ngIf="groupNotIn[studentselesct.user__id]!.length > 0"
+      [options]="groupNotIn[studentselesct.user__id]"
+      optionLabel="group__name"
+      [style]="{ width: '15rem' }"
+      [listStyle]="{ 'max-height': '220px' }"
+      (onChange)="Selectgroup($event, studentselesct.user__id)"
+    />
+  </ng-template>
+</p-overlayPanel>

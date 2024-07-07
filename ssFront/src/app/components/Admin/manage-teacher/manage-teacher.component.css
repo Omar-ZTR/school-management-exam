@@ -39,7 +39,7 @@
 }
 .list .ribbon {
   --f: .1em; /* control the folded part */
-  
+ 
   position: absolute;
   top: 25px;
   left: -37px;
