@@ -1,0 +1,199 @@
+<div class="card">
+    <p-table
+      #dt2
+      [value]="groups"
+      dataKey="id"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [loading]="loading"
+      [paginator]="true"
+      [globalFilterFields]="[
+        'last__name',
+        'first__name',
+        'representative.name',
+        'status'
+      ]"
+      [tableStyle]="{ 'min-width': '50vw' }"
+    >
+      <ng-template pTemplate="caption">
+      
+        <p-button
+        label="Add"
+        (click)="showDialog()"
+        [text]="true"
+        [raised]="true"
+        [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+        icon="pi pi-plus"
+        severity="warning"
+      />
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10%">Group Name</th>
+       
+  
+          <!-- <th style="width:max-content">specialty</th> -->
+         
+          <th style="width: 25%">Subjects</th>
+        
+          <th style="width: 10%">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-group>
+        <tr>
+          <td>
+           
+            <input type="text" class="no-border " pInputText (input)="changeName($any($event.target)?.value, group.group__id)" [value]="groupName[group.group__id].group__name" />
+            <div for="groupName" *ngIf="groupName[group.group__id].Msg!=''" style="color: red;">{{groupName[group.group__id].Msg}}</div>
+          </td>
+      
+          <td>
+            <div class="inlineflex">
+              <div
+                class="list"
+                *ngIf="subjectExist[group.group__id]!.length > 0"
+              >
+                <p-listbox
+                  [options]="subjectExist[group.group__id]"
+                  optionLabel="subject__name"
+                  [style]="{ width: 'max-content' }"
+                  [listStyle]="{ 'max-height': '50px' }"
+                  (onChange)="removesubject($event, group.group__id)"
+                />
+                <div class="ribbon">
+                  {{ subjectExist[group.group__id]!.length }}
+                </div>
+              </div>
+              <p-button
+              
+                label="Add"
+                (click)="selectsubject(op, group)"
+                [text]="true"
+                [raised]="true"
+                [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+                icon="pi pi-plus"
+                severity="warning"
+              />
+            </div>
+          </td>
+      
+       
+        
+          <td>
+            <div class="inlineflex">
+              <p-button
+                *ngIf="groupIds.includes(group.group__id)"
+                label="save"
+                (click)="UpdateGroup(group.group__id)"
+                [text]="true"
+                [raised]="true"
+                [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+                icon="pi pi-upload"
+                severity="warning"
+              />
+              <p-button
+                label="delete"
+                (click)="deletegroup(group.group__id)"
+                [text]="true"
+                [raised]="true"
+                [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+                icon="pi pi-trash"
+                severity="warning"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">No group found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  
+  <p-overlayPanel #op [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
+    <ng-template pTemplate="content">
+      <p-listbox
+        [options]="subjectNotIn[groupselesct.group__id]"
+        optionLabel="subject__name"
+        [style]="{ width: '15rem' }"
+        [listStyle]="{ 'max-height': '220px' }"
+        (onChange)="Selectsubject($event, groupselesct.group__id)"
+      >
+        <ng-template let-subject pTemplate="item">
+          <div>
+            {{ subject.subject__name }}
+          </div>
+        </ng-template>
+      </p-listbox>
+    </ng-template>
+  </p-overlayPanel>
+  
+  <p-dialog header="Add Group" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+    
+    <div class="flex align-items-center gap-3 mb-3">
+        <label for="groupName" class="font-semibold w-6rem">Group Name</label>
+       <div>
+        <input pInputText (input)="controller($any($event.target)?.value)" id="groupName" class="flex-auto" [(ngModel)]="NameNew" />
+        <div for="groupName" *ngIf="MsgError!=''" style="color: red;">{{MsgError}}</div>
+       </div>
+    </div>
+    
+    <div class="flex align-items-center gap-3 mb-5">
+        <label for="subjects" class="font-semibold w-6rem">Subjects</label>
+        <div id="subjects">
+        <p-listbox
+        *ngIf="subjectAdd && subjectAdd.length!==0"
+
+        [options]="subjectAdd"
+        optionLabel="subject__name"
+        [style]="{ width: '15rem' }"
+        [listStyle]="{ 'max-height': '220px' }"
+        (onChange)="RemovesubjectNew($event)"
+      />
+        <p-button
+        *ngIf="listsubjects &&listsubjects.length!==0"
+        label="Add"
+        (click)="selectNewsubject(op1)"
+        [text]="true"
+        [raised]="true"
+        [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+        icon="pi pi-plus"
+        severity="warning"
+      />     
+        </div>
+       
+    </div>
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Cancel"  (click)="closeDialog()" severity="secondary" [style]="{ 'border-radius': '15px','margin':'7px', 'text-wrap': 'nowrap' }" (click)="visible = false" />
+        <p-button label="Save" (click)="CreatGroup()"  [style]="{ 'border-radius': '15px','margin':'7px', 'text-wrap': 'nowrap' }" />
+    </div>
+</p-dialog>
+
+<p-overlayPanel #op1 [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
+    <ng-template pTemplate="content">
+      <p-listbox
+        *ngIf="listsubjects"
+        [options]="listsubjects"
+        optionLabel="subject__name"
+        [style]="{ width: '15rem' }"
+        [listStyle]="{ 'max-height': '220px' }"
+        (onChange)="SelectsubjectNew($event,op1)"
+      />
+    </ng-template>
+  </p-overlayPanel>
+
+  <!-- <p-overlayPanel #op1 [style]="{ maxwidth: 'max-content', maxheight: '250px' }">
+    <ng-template pTemplate="content">
+      <p-listbox
+        *ngIf="groupNotIn[Techerselesct.group__id]!.length > 0"
+        [options]="groupNotIn[Techerselesct.group__id]"
+        optionLabel="group__name"
+        [style]="{ width: '15rem' }"
+        [listStyle]="{ 'max-height': '220px' }"
+        (onChange)="Selectgroup($event, Techerselesct.group__id)"
+      />
+    </ng-template>
+  </p-overlayPanel> -->
+  

@@ -30,7 +30,13 @@ const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
             yield group.$set("subjects", subjects);
         }
-        res.status(201).json(groupModel_1.Group);
+        const newGroup = yield groupModel_1.Group.findOne({ where: { group__id: group.group__id }, include: [
+                {
+                    model: subjectModel_1.Subject,
+                    as: "subjects",
+                },
+            ], });
+        res.status(201).json(newGroup);
     }
     catch (error) {
         console.error("Error creation Group", error);

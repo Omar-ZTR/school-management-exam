@@ -18,8 +18,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { ButtonModule } from 'primeng/button';
 import { ListboxModule } from 'primeng/listbox';
-import { SubjectService } from '../../servicesUtils/subject.service';
-import { GroupService } from '../../servicesUtils/group.service';
+import { SubjectService } from '../../../services/servicesUtils/subject.service';
+import { GroupService } from '../../../services/servicesUtils/group.service';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 
 export interface Teacher {

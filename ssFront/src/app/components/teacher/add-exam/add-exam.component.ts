@@ -18,7 +18,7 @@ import { ListviewComponent } from '../listview/listview.component';
 import { QuestionService } from '../../../services/serviceTeacher/question.service';
 import { AddQuestionComponent } from '../add-question/add-question.component';
 import { CalandarfullComponent } from '../../calandarfull/calandarfull.component';
-import { SubjectService } from '../../servicesUtils/subject.service';
+import { SubjectService } from '../../../services/servicesUtils/subject.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 @Component({

@@ -21,6 +21,10 @@ export class Subject extends Model<Subject> {
       @Column(DataType.INTEGER)
       min__Rank!: Number;
 
+      @Column(DataType.FLOAT)
+      coefficient!: Number;
+
+
       @Column(DataType.STRING)
       subject__name!: string;
 

@@ -14,7 +14,7 @@ import { TableModule, Table } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 
-import { GroupService } from '../../servicesUtils/group.service';
+import { GroupService } from '../../../services/servicesUtils/group.service';
 
 import { Teacher } from '../manage-teacher/manage-teacher.component';
 import { StudentService } from '../../../services/serviceStudent/student.service';

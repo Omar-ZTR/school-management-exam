@@ -28,7 +28,7 @@ export interface Exam {
 }
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { CalandarService } from '../../../services/serviceTeacher/calandar.service';
-import { SalleService } from '../../servicesUtils/salle.service';
+import { SalleService } from '../../../services/servicesUtils/salle.service';
 import { CalandarfullComponent } from '../../calandarfull/calandarfull.component';
 @Component({
   selector: 'app-teacher-exam',

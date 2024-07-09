@@ -31,6 +31,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Subject.prototype, "min__Rank", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.FLOAT),
+    __metadata("design:type", Number)
+], Subject.prototype, "coefficient", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Subject.prototype, "subject__name", void 0);

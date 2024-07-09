@@ -24,8 +24,14 @@ export const createGroup = async (req: Request, res: Response) => {
 
       await group.$set("subjects", subjects);
     }
+    const newGroup = await Group.findOne({ where: { group__id: group.group__id }, include: [
+      {
+        model: Subject,
+        as: "subjects",
+      },
+    ], });
 
-    res.status(201).json(Group);
+    res.status(201).json(newGroup);
   } catch (error) {
     console.error("Error creation Group", error);
     res.status(500).json({ error: "Internal server error" });

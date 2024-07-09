@@ -9,8 +9,8 @@ import {
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExamService } from '../../services/serviceTeacher/exam.service';
 import { CalandarService } from '../../services/serviceTeacher/calandar.service';
-import { GroupService } from '../servicesUtils/group.service';
-import { SalleService } from '../servicesUtils/salle.service';
+import { GroupService } from '../../services/servicesUtils/group.service';
+import { SalleService } from '../../services/servicesUtils/salle.service';
 import { TooltipModule } from 'primeng/tooltip';
 
 export interface GroupResponse {

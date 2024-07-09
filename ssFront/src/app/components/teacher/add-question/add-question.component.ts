@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListviewComponent } from '../listview/listview.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DropdownModule } from 'primeng/dropdown';
-import { SubjectService } from '../../servicesUtils/subject.service';
+import { SubjectService } from '../../../services/servicesUtils/subject.service';
 
 @Component({
   selector: 'app-add-question',
