@@ -18,6 +18,7 @@ const reservationModel_1 = require("./reservationModel");
 const examGroupModel_1 = require("./examGroupModel");
 const groupModel_1 = require("./groupModel");
 const teacherModel_1 = require("./teacherModel");
+const answerModel_1 = require("./answerModel");
 let Exam = class Exam extends sequelize_typescript_1.Model {
 };
 exports.Exam = Exam;
@@ -76,6 +77,10 @@ __decorate([
     (0, sequelize_typescript_1.BelongsToMany)(() => groupModel_1.Group, () => examGroupModel_1.ExamGroup),
     __metadata("design:type", Array)
 ], Exam.prototype, "groups", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => answerModel_1.Answer),
+    __metadata("design:type", Array)
+], Exam.prototype, "answers", void 0);
 exports.Exam = Exam = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

@@ -9,6 +9,8 @@ import { Group } from "../models/groupModel";
 import { Student } from "../models/studentModel";
 import { updateQuestionsWithExam } from "./questionController";
 import uploadFileMiddleware from "../utils/upload";
+import { Answer } from "../models/answerModel";
+import { Op } from "sequelize";
 
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
@@ -274,5 +276,32 @@ export const deleteExam = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error deleting exam", error);
     res.status(500).send("Error deleting exam");
+  }
+};
+// where: {
+//   ans__result: {
+//     [Op.ne]: null,
+//   },
+// },
+// required: true,
+export const getFilteredExams = async (req: Request, res: Response) => {
+  try {
+    const exams = await Exam.findAll({
+      where: {
+        obligatoire: false,
+      },
+      include: [
+        {
+          model: Answer,
+         
+         
+        },
+      ],
+    });
+
+    res.status(200).json(exams);
+  } catch (error) {
+    console.error("Error fetching exams:", error);
+    res.status(500).json({ error: "An error occurred while fetching exams." });
   }
 };

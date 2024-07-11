@@ -6,6 +6,7 @@ import { Reservation } from "./reservationModel";
 import { ExamGroup } from "./examGroupModel";
 import { Group } from "./groupModel";
 import { Teacher } from "./teacherModel";
+import { Answer } from "./answerModel";
 
 @Table({
   timestamps: true,
@@ -52,6 +53,9 @@ export class Exam extends Model<Exam> {
 
   @BelongsToMany(() => Group, () => ExamGroup)
   groups!: Group[];
+
+  @HasMany(() => Answer)
+  answers!: Answer[];
 }
 
 

@@ -48,5 +48,6 @@ __decorate([
 exports.Student = Student = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: "Student",
+        timestamps: true
     })
 ], Student);

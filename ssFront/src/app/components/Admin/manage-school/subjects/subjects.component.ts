@@ -81,6 +81,9 @@ align-items: center !important;
         display: flex !important;
         color: black !important;
       }
+      :host ::ng-deep .p-datatable .p-datatable-header {
+        border: none !important;
+      }
     `,
   ],
 })

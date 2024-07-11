@@ -1,1 +1,62 @@
-<p>admin-dash works!</p>
+<div class="cardStatic">
+  <div class="borderDivDone active" (click)="showCharts()">
+    <div class="boxIcon"><i class="fa-solid fa-award"></i></div>
+    <div class="textStatic">
+      <span style="font-size: 40px">{{ completed }}</span> Exams done.
+    </div>
+  </div>
+  <div class="borderDivSoon inactive">
+    <div class="boxIcon"><i class="fa-solid fa-hourglass-start"></i></div>
+    <div class="textStatic">
+      <span style="font-size: 40px">{{ soon }}</span> Future exams.
+    </div>
+  </div>
+  <div class="mega-box" *ngIf="ChartPlus">
+    <div class="closeChart" (click)="showCharts()">
+      <i class="fa-solid fa-times"></i>
+    </div>
+    <div class="legendChart">
+      <div class="legendbox" style="background: #100d6a"></div>
+      <div class="">high Result</div>
+      <div class="legendbox" style="background: #f97316"></div>
+      <div class="">Low Result</div>
+    </div>
+    <div
+      style="
+        display: flex;
+        animation: toBottom 1s cubic-bezier(0, 0.21, 0.58, 1);
+      "
+    >
+      <div
+        *ngFor="let chart of doughnutCharts"
+        class="flex justify-content-center"
+        style="width: 15rem; margin: 10px"
+      >
+        <h1>{{ chart.title }}</h1>
+        <p-chart
+          type="doughnut"
+          [data]="chart.doughnut"
+          [options]="chart.doughnutOptions"
+        ></p-chart>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card cardCourb" >
+    <div  class="flex justify-content-center" style="width: 40rem; margin: 10px" >
+    <div class="titleLegend">Registered students</div>
+    <p-chart type="line" [data]="data" [options]="options" />
+  </div>
+  <div  class="flex justify-content-center" style="width: 15rem; margin: 10px" >
+   
+    <p-chart
+      type="pie"
+      [data]="dataStudent"
+      [options]="StudentOptions"
+    ></p-chart>
+  </div>
+</div>
+<!-- <div class="card flex justify-content-center" style="width: 20rem">
+  <p-chart type="doughnut" [data]="doughnut" [options]="doughnutoptions" />
+</div> -->

@@ -15,6 +15,8 @@ export class StudentService {
   getStudents(): Observable<Student[]>{
     return this.httpClient.get<Student[]>(this.url + "/students");
   }
+
+
   updateStudent(data: any, id: number) {
     
     return this.httpClient.put(`${this.url}/student/${id}`, data, {
@@ -27,4 +29,9 @@ export class StudentService {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+  AnalyseStudents(){
+    return this.httpClient.get(this.url + "/studentMonthly");
+  }
+
+
 }

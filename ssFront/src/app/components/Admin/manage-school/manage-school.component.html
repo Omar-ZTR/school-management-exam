@@ -1,2 +1,29 @@
 
-<app-subjects></app-subjects>
+
+
+<div style="display: flex; gap: 10px;">
+<div style="width: max-content;">
+
+    <button class="button-35 " (click)="ShowGroups()" role="button" [ngClass]="ManageGroup ? 'active' : 'inactive'"  >Manage Groups</button>
+        <div  *ngIf="ManageGroup" class="buttonshape"></div>
+</div>
+<div style="width: max-content; ">
+
+    <button class="button-35 " (click)="ShowSubjects()" role="button"  [ngClass]="ManageSubject ? 'active' : 'inactive'">Manage Subjects</button>
+    <div *ngIf="ManageSubject" class="buttonshape"></div>
+</div>
+
+</div>
+
+<div  style="width: 50rem; height: 50rem;  position: relative;
+  overflow: hidden;"  >
+
+    <app-groups  class="  right-in" *ngIf="ManageGroup" ></app-groups>
+   
+
+
+    <app-subjects  class="left-in" *ngIf="ManageSubject"></app-subjects>
+</div>
+
+
+

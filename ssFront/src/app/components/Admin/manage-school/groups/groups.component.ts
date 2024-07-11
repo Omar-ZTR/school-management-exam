@@ -60,6 +60,9 @@ export interface Group {
       :host ::ng-deep .p-datatable-striped {
         background-color: rgba(87, 4, 4, 0.749) !important;
       }
+      :host ::ng-deep .p-datatable .p-datatable-header {
+        border: none !important;
+      }
     `,
   ],
 })

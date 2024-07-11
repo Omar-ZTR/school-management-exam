@@ -64,6 +64,10 @@ if (data.files && data.files.length > 0) {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
   }
+
+  getcertifExam():Observable<any>{
+    return this.httpClient.get<any[]>(this.url + "/examCertif");
+  }
 }
 
 

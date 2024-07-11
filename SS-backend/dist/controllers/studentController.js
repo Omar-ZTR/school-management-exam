@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStudent = exports.deleteStudent = exports.getAllStudents = void 0;
+exports.updateStudent = exports.deleteStudent = exports.getDaysStudentCount = exports.getChartStudentCount = exports.getMonthlyStudentCount = exports.getAllStudents = void 0;
 const studentModel_1 = require("../models/studentModel");
+const sequelize_typescript_1 = require("sequelize-typescript");
+const sequelize_1 = require("sequelize");
 const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const students = yield studentModel_1.Student.findAll();
@@ -24,6 +26,135 @@ const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function*
     ;
 });
 exports.getAllStudents = getAllStudents;
+const getMonthlyStudentCount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const currentYear = new Date().getFullYear();
+        const monthNames = {
+            1: 'January',
+            2: 'February',
+            3: 'March',
+            4: 'April',
+            5: 'May',
+            6: 'June',
+            7: 'July',
+            8: 'August',
+            9: 'September',
+            10: 'October',
+            11: 'November',
+            12: 'December'
+        };
+        const studentCounts = yield studentModel_1.Student.findAll({
+            attributes: [
+                [sequelize_typescript_1.Sequelize.fn('MONTH', sequelize_typescript_1.Sequelize.col('createdAt')), 'month'],
+                [sequelize_typescript_1.Sequelize.fn('COUNT', sequelize_typescript_1.Sequelize.col('user__id')), 'count']
+            ],
+            where: {
+                createdAt: {
+                    [sequelize_1.Op.between]: [`${currentYear}-01-01`, `${currentYear}-12-31`]
+                }
+            },
+            group: [sequelize_typescript_1.Sequelize.fn('MONTH', sequelize_typescript_1.Sequelize.col('createdAt'))],
+            order: [[sequelize_typescript_1.Sequelize.fn('MONTH', sequelize_typescript_1.Sequelize.col('createdAt')), 'ASC']]
+        });
+        const formattedCounts = studentCounts.map((item) => ({
+            month: monthNames[item.getDataValue('month')],
+            count: item.getDataValue('count')
+        }));
+        res.status(200).json(formattedCounts);
+    }
+    catch (error) {
+        console.error("Error fetching monthly student count:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getMonthlyStudentCount = getMonthlyStudentCount;
+const getChartStudentCount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { firstDate, endDate } = req.body;
+        const monthNames = {
+            1: 'January',
+            2: 'February',
+            3: 'March',
+            4: 'April',
+            5: 'May',
+            6: 'June',
+            7: 'July',
+            8: 'August',
+            9: 'September',
+            10: 'October',
+            11: 'November',
+            12: 'December'
+        };
+        const studentCounts = yield studentModel_1.Student.findAll({
+            attributes: [
+                [sequelize_typescript_1.Sequelize.fn('MONTH', sequelize_typescript_1.Sequelize.col('createdAt')), 'month'],
+                [sequelize_typescript_1.Sequelize.fn('COUNT', sequelize_typescript_1.Sequelize.col('user__id')), 'count']
+            ],
+            where: {
+                createdAt: {
+                    [sequelize_1.Op.between]: [firstDate, endDate]
+                }
+            },
+            group: [sequelize_typescript_1.Sequelize.fn('MONTH', sequelize_typescript_1.Sequelize.col('createdAt'))],
+            order: [[sequelize_typescript_1.Sequelize.fn('MONTH', sequelize_typescript_1.Sequelize.col('createdAt')), 'ASC']]
+        });
+        const formattedCounts = studentCounts.map((item) => ({
+            month: monthNames[item.getDataValue('month')],
+            count: item.getDataValue('count')
+        }));
+        res.status(200).json(formattedCounts);
+    }
+    catch (error) {
+        console.error("Error fetching monthly student count:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getChartStudentCount = getChartStudentCount;
+const getDaysStudentCount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { firstDate, endDate } = req.body;
+        const startDate = new Date(firstDate);
+        const endDateObj = new Date(endDate);
+        endDateObj.setDate(endDateObj.getDate() + 1); // Increment by one day to include the end date
+        const monthNames = {
+            0: 'janvier',
+            1: 'février',
+            2: 'mars',
+            3: 'avril',
+            4: 'mai',
+            5: 'juin',
+            6: 'juillet',
+            7: 'août',
+            8: 'septembre',
+            9: 'octobre',
+            10: 'novembre',
+            11: 'décembre'
+        };
+        const studentCounts = yield studentModel_1.Student.findAll({
+            attributes: [
+                [sequelize_typescript_1.Sequelize.fn('DATE', sequelize_typescript_1.Sequelize.col('createdAt')), 'date'],
+                [sequelize_typescript_1.Sequelize.fn('COUNT', sequelize_typescript_1.Sequelize.col('user__id')), 'count']
+            ],
+            where: {
+                createdAt: {
+                    [sequelize_1.Op.between]: [startDate, endDateObj]
+                }
+            },
+            group: [sequelize_typescript_1.Sequelize.fn('DATE', sequelize_typescript_1.Sequelize.col('createdAt'))],
+            order: [[sequelize_typescript_1.Sequelize.fn('DATE', sequelize_typescript_1.Sequelize.col('createdAt')), 'ASC']]
+        });
+        const formattedCounts = studentCounts.map((item) => ({
+            date: item.getDataValue('date'),
+            count: item.getDataValue('count')
+        }));
+        res.status(200).json(formattedCounts);
+    }
+    catch (error) {
+        console.error("Error fetching monthly student count:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getDaysStudentCount = getDaysStudentCount;
 const deleteStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

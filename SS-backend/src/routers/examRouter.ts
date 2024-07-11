@@ -7,6 +7,7 @@ import {
   deleteExam,
   getTeacherExams,
   getExamsGroupsStutents,
+  getFilteredExams,
 } from '../controllers/examController';
 import { createAnswers, getAnswers } from '../controllers/answerStudentController';
 
@@ -14,6 +15,8 @@ const routerExam= express.Router();
 
 routerExam.get('/allexams', getAllExams);
 
+
+routerExam.get('/examCertif', getFilteredExams);
 
 routerExam.get('/examsGS', getExamsGroupsStutents);
 

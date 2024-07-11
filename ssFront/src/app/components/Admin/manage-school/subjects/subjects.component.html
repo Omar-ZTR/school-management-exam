@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" style="border: none !important;">
   <p-table
     #dt2
     [value]="subjects"
@@ -7,13 +7,7 @@
     [rowsPerPageOptions]="[10, 25, 50]"
     [loading]="loading"
     [paginator]="true"
-    [globalFilterFields]="[
-      'last__name',
-      'first__name',
-      'representative.name',
-      'status'
-    ]"
-    [tableStyle]="{ 'min-width': '50vw' }"
+  
   >
     <ng-template pTemplate="caption">
       <p-button

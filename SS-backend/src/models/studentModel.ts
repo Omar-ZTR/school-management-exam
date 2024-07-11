@@ -4,6 +4,7 @@ import { Group } from "./groupModel";
 
 @Table({
   tableName: "Student",
+  timestamps: true
 })
 export class Student extends users<Student> {
 

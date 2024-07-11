@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.getFilteredExams = exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
@@ -22,6 +22,7 @@ const groupModel_1 = require("../models/groupModel");
 const studentModel_1 = require("../models/studentModel");
 const questionController_1 = require("./questionController");
 const upload_1 = __importDefault(require("../utils/upload"));
+const answerModel_1 = require("../models/answerModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -259,3 +260,29 @@ const deleteExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteExam = deleteExam;
+// where: {
+//   ans__result: {
+//     [Op.ne]: null,
+//   },
+// },
+// required: true,
+const getFilteredExams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const exams = yield examModel_1.Exam.findAll({
+            where: {
+                obligatoire: false,
+            },
+            include: [
+                {
+                    model: answerModel_1.Answer,
+                },
+            ],
+        });
+        res.status(200).json(exams);
+    }
+    catch (error) {
+        console.error("Error fetching exams:", error);
+        res.status(500).json({ error: "An error occurred while fetching exams." });
+    }
+});
+exports.getFilteredExams = getFilteredExams;
