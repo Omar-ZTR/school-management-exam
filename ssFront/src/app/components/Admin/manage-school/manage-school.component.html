@@ -12,15 +12,20 @@
     <button class="button-35 " (click)="ShowSubjects()" role="button"  [ngClass]="ManageSubject ? 'active' : 'inactive'">Manage Subjects</button>
     <div *ngIf="ManageSubject" class="buttonshape"></div>
 </div>
+<div style="width: max-content; ">
+
+    <button class="button-35 " (click)="ShowSalles()" role="button"  [ngClass]="ManageSalle ? 'active' : 'inactive'">Manage Subjects</button>
+    <div *ngIf="ManageSalle" class="buttonshape"></div>
+</div>
 
 </div>
 
-<div  style="width: 50rem; height: 50rem;  position: relative;
+<div  style="width: 50rem; height: 35rem;  position: relative;
   overflow: hidden;"  >
 
-    <app-groups  class="  right-in" *ngIf="ManageGroup" ></app-groups>
+    <app-groups  class="  right-in" *ngIf="ManageGroup " ></app-groups>
    
-
+    <app-salles  class="left-in"  *ngIf="ManageSalle" ></app-salles>
 
     <app-subjects  class="left-in" *ngIf="ManageSubject"></app-subjects>
 </div>

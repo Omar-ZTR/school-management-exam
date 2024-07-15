@@ -1,22 +1,44 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { PasswordModule } from 'primeng/password';
+import { InputTextModule } from 'primeng/inputtext';
+import { CalendarModule } from 'primeng/calendar';
+
 import {
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
+  
 } from '@angular/forms';
 import { GlobalConstants } from '../../shared/global-constants';
 import { UserService } from '../../services/servicesUser/user.service';
 import { SnackbarService } from '../../services/servicesUser/snackbar.service';
-
+import { FileUploadModule } from 'primeng/fileupload';
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule,FileUploadModule, ReactiveFormsModule,CalendarModule, PasswordModule, InputTextModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css',
+  styles: [
+    `
+      :host ::ng-deep .p-calendar , .p-inputtext {
+        width:100% !important;
+        background-color: rgba(255, 255, 255, 0.07) !important;
+        color:white !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(5px) !important;
+        min-height:45px !important;
+      }
+      :host ::ng-deep .p-icon-wrapper {
+      
+        color:white !important;
+      }
+     
+    `,
+  ],
 })
 export class SignUpComponent {
   signupform: FormGroup;
@@ -27,7 +49,16 @@ export class SignUpComponent {
   ];
 
   responseMessage: any;
+  selectedFileName: string | null = null;
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFileName = input.files[0].name;
+      this.signupform.patchValue({ CV: input.files[0] });
+    }
+    console.log("dafgHJGJHGJGajhah",this.signupform.value)
+  }
   
   constructor(private userService: UserService, private snackbarService:SnackbarService) {
     this.signupform = new FormGroup({
@@ -35,19 +66,17 @@ export class SignUpComponent {
       last__name: new FormControl('', [Validators.required,Validators.pattern(GlobalConstants.nameRegex)]),
       role: new FormControl('', [Validators.required]),
       user__email: new FormControl('', [Validators.required,Validators.pattern(GlobalConstants.emailRegex)]),
-      date__diploma: new FormControl('', [Validators.required]),
-      Locations: new FormControl('', [Validators.required,Validators.pattern(GlobalConstants.nameRegex)]),
-      diploma: new FormControl('', [Validators.required,Validators.pattern(GlobalConstants.nameRegex)]),
+      description: new FormControl('', [Validators.required,Validators.pattern(GlobalConstants.nameRegex)]),
       Password: new FormControl('', [Validators.required]),
-      experience: new FormControl('', [Validators.required]),
-      date: new FormControl('', [Validators.required]),
-      specialty: new FormControl('', [Validators.required]),
-      checkbox: new FormControl('', [Validators.required]),
+      rePassword: new FormControl('', [Validators.required]),
+      CV: new FormControl('', [Validators.required]),
+      birthday : new FormControl('', [Validators.required]),
+      // checkbox: new FormControl('', [Validators.required]),
      
     });
   }
   radioo(){
-    console.log(this.userObj.role);
+    // console.log(this.userObj.role);
   }
   activeStep: any = this.stepslist[0];
   progwidthvalue: number = 8;
@@ -55,60 +84,111 @@ export class SignUpComponent {
   setActiveStep(activeStep: any) {
     this.activeStep = activeStep;
   }
+  gotoStep1() {
+    const currentStep = this.stepslist.find(
+      (m) => m.stepName == this.activeStep.stepName
+    );
+    currentStep.iscomplate = true;
+    this.activeStep = this.stepslist[0];
+    this.progwidthvalue = 8;
+  }
   gotoStep2() {
+    const FirstNameControl = this.signupform.get('first__name');
+  const LastNameControl = this.signupform.get('last__name');
+  const BirthdayControl = this.signupform.get('birthday');
+  
+  // Check validity and mark controls as touched to display errors if necessary
+  FirstNameControl?.markAsTouched();
+  LastNameControl?.markAsTouched();
+  BirthdayControl?.markAsTouched();
+  
+  if (FirstNameControl?.valid && LastNameControl?.valid && BirthdayControl?.valid) {
     const currentStep = this.stepslist.find(
       (m) => m.stepName == this.activeStep.stepName
     );
     currentStep.iscomplate = true;
     this.activeStep = this.stepslist[1];
-    this.progwidthvalue = 50;
+    this.progwidthvalue = 50;}
   }
 
   gotoStep3() {
+  
+    const EmailControl = this.signupform.get('user__email');
+    const PasswordControl = this.signupform.get('Password');
+    const rePasswordControl = this.signupform.get('rePassword');
+    
+    // Check validity and mark controls as touched to display errors if necessary
+    EmailControl?.markAsTouched();
+    PasswordControl?.markAsTouched();
+    rePasswordControl?.markAsTouched();
+    
+    if (EmailControl?.valid && PasswordControl?.valid && rePasswordControl?.valid) {
     const currentStep = this.stepslist.find(
       (m) => m.stepName == this.activeStep.stepName
     );
     currentStep.iscomplate = true;
     this.activeStep = this.stepslist[2];
     this.progwidthvalue = 100;
-  }
-  rad:string='';
-  userObj: any = {
-    user__id: 0,
-    first__name: '',
-    last__name: '',
-    user__email: '',
-    password: '',
-    role: this.rad,
-    diploma: '',
-    Locations: '',
-    date__diploma: '',
-    experience: '',
-    specialty: '',
-    date: '',
-  };
+  }}
+  // rad:string='';
+  // // userObj: any = {
+  // //   user__id: 0,
+  // //   first__name: '',
+  // //   last__name: '',
+  // //   user__email: '',
+  // //   password: '',
+  // //   repassword: '',
+  // //   role: this.rad,
+  // //   diploma: '',
+  // //   Locations: '',
+  // //   date__diploma: '',
+  // //   experience: '',
+  // //   specialty: '',
+  // //   date: '',
+  // // };
 
-  signup() {
+ signup() {
 
-    console.log(this.userObj);
-    this.userService.signup(this.userObj).subscribe(
-      (response: any) => {
-       
-        alert('Successfully signup');
-        console.log('seccess', response);
-      },
-      (error: { error: { message: any; }; })=>{
-        //this.ngxService.stop();
-        if(error.error?.message){
-          this.responseMessage = error.error?.message;
-        }else{
-          this.responseMessage = GlobalConstants.genericError;
-        }
-        // alert(this.responseMessage +" " +GlobalConstants.error);
-        this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
-      })
+    // Mark all form controls as touched to trigger validation messages
+    Object.values(this.signupform.controls).forEach(control => {
+      control.markAsTouched();
+    });
   
+    // Check if the form is valid
+    if (this.signupform.valid) {
+      console.log(this.signupform.value);
+  
+      const dataUser = {
+        User: this.signupform.value,
+        files: this.signupform.get('CV')?.value, // Assuming 'CV' is the form control for files
+      };
+  
+      console.log("dataUser", dataUser);
+  
+      // Proceed with further logic (e.g., API call, data processing)
+    } else {
+      // Form is invalid, handle error or display messages
+      console.error("Form is invalid. Please check the fields.");
+      // Optionally, you can display error messages in the UI
     }
+  //   this.userService.signup(this.userObj).subscribe(
+  //     (response: any) => {
+       
+  //       alert('Successfully signup');
+  //       console.log('seccess', response);
+  //     },
+  //     (error: { error: { message: any; }; })=>{
+  //       //this.ngxService.stop();
+  //       if(error.error?.message){
+  //         this.responseMessage = error.error?.message;
+  //       }else{
+  //         this.responseMessage = GlobalConstants.genericError;
+  //       }
+  //       // alert(this.responseMessage +" " +GlobalConstants.error);
+  //       this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+  //     })
+  
+   }
 
 
 

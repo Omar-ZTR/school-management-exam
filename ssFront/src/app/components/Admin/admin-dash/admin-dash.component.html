@@ -1,55 +1,71 @@
-<div class="cardStatic">
-  <div class="borderDivDone active" (click)="showCharts()">
-    <div class="boxIcon"><i class="fa-solid fa-award"></i></div>
-    <div class="textStatic">
-      <span style="font-size: 40px">{{ completed }}</span> Exams done.
+<div class="RowCard">
+  <div class="cardStatic"  style="background-color:  #100d6ae3;">
+    <div class="borderDiv Done active" (click)="showCharts()">
+      <div class="boxIcon"><span style="font-size: 40px ; color: #f97316;">{{ completed }}</span></div>
+      <div class="textStatic">
+         Exams done.
+      </div>
     </div>
-  </div>
-  <div class="borderDivSoon inactive">
-    <div class="boxIcon"><i class="fa-solid fa-hourglass-start"></i></div>
-    <div class="textStatic">
-      <span style="font-size: 40px">{{ soon }}</span> Future exams.
+    <div class="borderDiv Soon inactive">
+      <div class="boxIcon"> <span style="font-size: 40px; ; color: #f97316;" >{{ soon }}</span></div>
+      <div class="textStatic">
+        Future exams.
+      </div>
     </div>
-  </div>
-  <div class="mega-box" *ngIf="ChartPlus">
-    <div class="closeChart" (click)="showCharts()">
-      <i class="fa-solid fa-times"></i>
-    </div>
-    <div class="legendChart">
-      <div class="legendbox" style="background: #100d6a"></div>
-      <div class="">high Result</div>
-      <div class="legendbox" style="background: #f97316"></div>
-      <div class="">Low Result</div>
-    </div>
-    <div
-      style="
-        display: flex;
-        animation: toBottom 1s cubic-bezier(0, 0.21, 0.58, 1);
-      "
-    >
+    <div class="mega-box" *ngIf="ChartPlus">
+      <div class="closeChart" (click)="showCharts()">
+        <i class="fa-solid fa-times"></i>
+      </div>
+      <div class="legendChart">
+        <div class="legendbox" style="background: #100d6a"></div>
+        <div class="">high Result</div>
+        <div class="legendbox" style="background: #f97316"></div>
+        <div class="">Low Result</div>
+      </div>
       <div
-        *ngFor="let chart of doughnutCharts"
-        class="flex justify-content-center"
-        style="width: 15rem; margin: 10px"
+        style="
+          display: flex;
+          animation: toBottom 1s cubic-bezier(0, 0.21, 0.58, 1);
+        "
       >
-        <h1>{{ chart.title }}</h1>
-        <p-chart
-          type="doughnut"
-          [data]="chart.doughnut"
-          [options]="chart.doughnutOptions"
-        ></p-chart>
+        <div
+          *ngFor="let chart of doughnutCharts"
+          class="flex justify-content-center"
+          style="width: 15rem; margin: 10px"
+        >
+          <h1>{{ chart.title }}</h1>
+          <p-chart
+            type="doughnut"
+            [data]="chart.doughnut"
+            [options]="chart.doughnutOptions"
+          ></p-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cardStatic" style="background-color: #f97316;">
+    <div class="borderDiv Done active" (click)="showCharts()">
+      <div class="boxIcon"><span style="font-size: 40px; color: #100d6ae3;">{{ TeacherCount }}</span></div>
+      <div class="textStatic">
+        
+        teachersAccept.
+      </div>
+    </div>
+    <div class="borderDiv Soon inactive">
+      <div class="boxIcon"> <span style="font-size: 40px ;color: #100d6ae3;">{{ GroupCount }}</span></div>
+      <div class="textStatic">
+        groups.
       </div>
     </div>
   </div>
 </div>
 
-<div class="card cardCourb" >
-    <div  class="flex justify-content-center" style="width: 40rem; margin: 10px" >
+<div class="card cardCourb">
+  <div class="flex justify-content-center" style="width: 40rem; margin: 10px">
     <div class="titleLegend">Registered students</div>
     <p-chart type="line" [data]="data" [options]="options" />
   </div>
-  <div  class="flex justify-content-center" style="width: 15rem; margin: 10px" >
-   
+  <div class="flex justify-content-center" style="width: 15rem; margin: 10px">
     <p-chart
       type="pie"
       [data]="dataStudent"

@@ -7,7 +7,10 @@ import { Request, Response } from "express";
 export const createSalle = async (req: Request, res: Response) => {
   try {
     const salle = await Salle.create(req.body);
-    res.status(201).json(salle);
+    const newSalle = await Salle.findOne({
+      where: { salle__id: salle.salle__id },
+    });
+    res.status(201).json(newSalle);
   } catch (error) {
     console.error("Error creation salle", error);
     res.status(500).json({ error: "Internal server error" });
@@ -226,6 +229,7 @@ export const updateSalle = async (req: Request, res: Response) => {
     });
     if (updated) {
       const updatedSalle = await Salle.findOne({ where: { salle__id: id } });
+      
       res.status(200).json(updatedSalle);
     } else {
       throw new Error("Salle not found");

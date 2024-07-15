@@ -104,40 +104,41 @@
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
           <li routerLink="/admin/dash" routerLinkActive="actives">
-            <i class="fas fa-home fa-xs icon"></i>
+            <i  pTooltip="Dashboard"  class="fas fa-chart-pie fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
 
   
 
           <li routerLink="/admin/manageTeacher" routerLinkActive="actives">
-            <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
-            <div class="title">manage Teacher</div>
+            
+            <i pTooltip="Manage Teacher" class="fa-solid fa-briefcase fa-xs icon"></i>
+            <div class="title">Manage Teacher</div>
           </li>
           <li routerLink="/admin/manageStudent" routerLinkActive="actives">
-            <i class="fa-solid fa-table-list fa-xs icon"></i>
-            <div class="title">manage Student</div>
+            <i pTooltip="Manage Student" class="fa-solid fa-graduation-cap fa-xs icon"></i>
+            <div class="title">Manage Student</div>
           </li>
 
           <li routerLink="/admin/manageSchool" routerLinkActive="actives">
-            <i class="fa-solid fa-calendar-days fa-xs icon"></i>
-            <div class="title">manage School</div>
+            <i pTooltip="Manage School" class="fa-solid fa-home fa-xs icon"></i>
+            <div class="title">Manage School</div>
           </li>
           <li routerLink="/admin/addQuestion" routerLinkActive="actives">
-            <i class="fas fa-user-edit fa-xs icon"></i>
+            <i pTooltip="Add question" class="fas fa-user-edit fa-xs icon"></i>
             <div class="title">Add question</div>
           </li>
           <li routerLink="/admin/Result" routerLinkActive="actives">
-            <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
+            <i pTooltip="Result" class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
             <div class="title">Result</div>
           </li>
           <li routerLink="/admin/Correction" routerLinkActive="actives">
-            <i class="fa-solid fa-message fa-xs icon"></i>
+            <i pTooltip="Correction" class="fa-solid fa-message fa-xs icon"></i>
             <div class="title">Correction</div>
           </li>
           <hr />
           <li (click)="logout()">
-            <i class="fa-solid fa-right-from-bracket fa-xs icon"></i>
+            <i pTooltip="Logout" class="fa-solid fa-right-from-bracket fa-xs icon"></i>
             <div class="title">Logout</div>
           </li>
         </ul>

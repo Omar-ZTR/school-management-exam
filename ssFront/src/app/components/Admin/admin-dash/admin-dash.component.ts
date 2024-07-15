@@ -5,6 +5,11 @@ import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { CommonModule } from '@angular/common';
 import { title } from 'process';
 import { Student } from '../manage-student/manage-student.component';
+import {  Teacher } from '../manage-teacher/manage-teacher.component';
+import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
+import { GroupService } from '../../../services/servicesUtils/group.service';
+import { Group } from '../manage-school/groups/groups.component';
+import { SalleService } from '../../../services/servicesUtils/salle.service';
 
 @Component({
   selector: 'app-admin-dash',
@@ -28,9 +33,19 @@ export class AdminDashComponent implements OnInit {
   studentsAccept!: Student[];
   studentsRefused!: Student[];
   studentsWait!: Student[];
+  teachersAccept: any=[];
+ 
+  teachers!: Teacher[];
+  groups!: Group[];
+  salles: any;
+  TeacherCount: number = 0;
+  GroupCount: number = 0;
   constructor(
     private StudentService: StudentService,
-    private ExamService: ExamService
+    private ExamService: ExamService,
+    private teacherService: TeacherService,
+    private groupService: GroupService,
+    private salleService: SalleService
   ) {}
   data: any;
   doughnut: any;
@@ -57,20 +72,49 @@ export class AdminDashComponent implements OnInit {
     'November',
     'December',
   ];
-
-  countUp() {
-    for (let i = 0; i < this.examsWithAnswers.length; i++) {
+ ngOnInit() {
+    this.getCountStudents();
+    this.getCountExamCertif();
+    this.fetchStudents();
+    this.fetchTeachers()
+    this.fetchGroups() 
+    this.fetchsalles()
+   
+  }
+  countUp(counter:string) {
+    if(counter==='exam'){
+      const WA= this.examsWithAnswers.length
+      const WOA= this.examsWithoutAnswers.length
+    for (let i = 0; i < WA; i++) {
       setTimeout(() => {
         this.completed = i + 1;
-      }, (i / this.examsWithAnswers.length) * 1000); // i * 1000 milliseconds delay
+        }, (i / WA) * 800);
     }
 
-    for (let i = 0; i < this.examsWithoutAnswers.length; i++) {
+    for (let i = 0; i < WOA; i++) {
       setTimeout(() => {
         this.soon = i + 1;
-      }, (i / this.examsWithoutAnswers.length) * 1000); // i * 1000 milliseconds delay
+        }, (i / WOA) * 800);
     }
   }
+  if(counter==='teacher'){
+    const c= this.teachersAccept.length
+    for (let i = 0; i < c; i++) {
+      setTimeout(() => {
+        this.TeacherCount = i + 1;
+      }, (i / c) * 800); 
+    }
+  }
+  if(counter==='group'){
+    const c= this.groups.length
+    for (let i = 0; i < c; i++) {
+      setTimeout(() => {
+        this.GroupCount = i + 1;
+      }, (i / c) * 800); 
+    }
+  }}
+
+  
   getLabelsForCurrentMonth() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -111,75 +155,7 @@ export class AdminDashComponent implements OnInit {
   }
   doughnutCharts: any[] = [];
 
-  ngOnInit() {
-    this.getCountStudents();
-    this.getCountExamCertif();
-    this.fetchStudents()
-    // const documentStyle = getComputedStyle(document.documentElement);
-    // const textColor = documentStyle.getPropertyValue('--text-color');
-    // const textColorSecondary = documentStyle.getPropertyValue(
-    //   '--text-color-secondary'
-    // );
-    // const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-    // const currentMonth = new Date().getMonth(); // 0-indexed, January is 0
-
-    // // Generate month names
-
-    // // Create labels from January to the current month
-    // const labels = this.monthNames.slice(0, currentMonth);
-
-    // this.data = {
-    //   labels: this.labels,
-    //   datasets: [
-    //     {
-    //       label: 'First Dataset',
-    //       data: this.count,
-    //       fill: false,
-    //       borderColor: documentStyle.getPropertyValue('--blue-500'),
-    //       tension: 0.4,
-    //     },
-    //     {
-    //       label: 'Second Dataset',
-    //       data: [28, 48, 40, 19, 86, 27, 90],
-    //       fill: false,
-    //       borderColor: documentStyle.getPropertyValue('--pink-500'),
-    //       tension: 0.4,
-    //     },
-    //   ],
-    // };
-
-    // this.options = {
-    //   maintainAspectRatio: false,
-    //   aspectRatio: 0.6,
-    //   plugins: {
-    //     legend: {
-    //       display: false,
-    //     },
-    //   },
-    //   scales: {
-    //     x: {
-    //       ticks: {
-    //         color: textColorSecondary,
-    //       },
-    //       grid: {
-    //         color: surfaceBorder,
-    //         drawBorder: false,
-    //       },
-    //     },
-    //     y: {
-    //       ticks: {
-    //         color: textColorSecondary,
-    //       },
-    //       grid: {
-    //         color: surfaceBorder,
-    //         drawBorder: false,
-    //       },
-    //     },
-    //   },
-    // };
-
-    // console.log('analyse tra nguiiss', this.Analyse);
-  }
+ 
   generateDoughnutCharts() {
     this.examsWithAnswers.forEach((exam) => {
       const doughnut = {
@@ -209,50 +185,44 @@ export class AdminDashComponent implements OnInit {
     });
   }
 
-  dataStudent:any;
-  StudentOptions:any;
-  
+  dataStudent: any;
+  StudentOptions: any;
+
   generateAcceptationCharts() {
-    
-        const accept=this.studentsAccept.length
-        const refused=this.studentsRefused.length
-        const wait=this.studentsWait.length
+    const accept = this.studentsAccept.length;
+    const refused = this.studentsRefused.length;
+    const wait = this.studentsWait.length;
 
-      this.dataStudent = {
-        labels: [`Accepted ${accept}`, `Refused ${refused}`, `waiting ${wait}`],
-        datasets: [
-          {
-            data: [
-           accept,refused,wait
-            ],
-            backgroundColor: ['#039e31' ,'#ff0000', '#f97316'],
-            hoverBackgroundColor: ['#039e31' ,'#ff0000', '#f97316'],
-          },
-        ],
-      };
+    this.dataStudent = {
+      labels: [`Accepted ${accept}`, `Refused ${refused}`, `waiting ${wait}`],
+      datasets: [
+        {
+          data: [accept, refused, wait],
+          backgroundColor: ['#039e31', '#ff0000', '#f97316'],
+          hoverBackgroundColor: ['#039e31', '#ff0000', '#f97316'],
+        },
+      ],
+    };
 
-      this.StudentOptions = {
-        cutout: '60%',
-        plugins: {
-          legend: {
-            labels: {
-                usePointStyle: true,
-                color: '#09782c',
-                font: {
-                  size: 14, // Set the font size
-                  style: 'italic', // Set the font style
-                  family: 'Arial', // Set the font family
-                },
-                padding: 20, // Set padding between legend items
-                boxWidth: 20, // Set the box width
-              },
+    this.StudentOptions = {
+      cutout: '60%',
+      plugins: {
+        legend: {
+          labels: {
+            usePointStyle: true,
+            color: '#09782c',
+            font: {
+              size: 14, // Set the font size
+              style: 'italic', // Set the font style
+              family: 'Arial', // Set the font family
+            },
+            padding: 20, // Set padding between legend items
+            boxWidth: 20, // Set the box width
           },
         },
-      };
-    
-   
+      },
+    };
   }
-
 
   getCountStudents() {
     this.StudentService.AnalyseStudents().subscribe(
@@ -308,7 +278,7 @@ export class AdminDashComponent implements OnInit {
           (exam: { answers: string | any[] }) => exam.answers.length === 0
         );
         console.log('Exams without answers:', this.examsWithoutAnswers);
-        this.countUp();
+        this.countUp('exam')
       },
       (error) => {
         console.error('Error fetching subjects', error);
@@ -379,7 +349,7 @@ export class AdminDashComponent implements OnInit {
       aspectRatio: 0.9,
       plugins: {
         legend: {
-         display:false
+          display: false,
         },
       },
       scales: {
@@ -429,13 +399,61 @@ export class AdminDashComponent implements OnInit {
           (student) => student.active === null
         );
 
-        this.generateAcceptationCharts() 
+        this.generateAcceptationCharts();
         console.log('Accepted students:', this.studentsAccept);
         console.log('Waiting students:', this.studentsWait);
         console.log('Refused students:', this.studentsRefused);
       },
       (error) => {
         console.error('Error fetching students', error);
+      }
+    );
+  }
+  fetchTeachers() {
+    this.teacherService.getTeachers().subscribe(
+      (data: Teacher[]) => {
+        this.teachers = data;
+        console.log('All teachers:', this.teachers);
+
+        this.teachersAccept = this.teachers.filter(
+          (teacher) => teacher.active == true
+        );
+        // this.teachersRefused = this.teachers.filter(
+        //   (teacher) => teacher.active == false
+        // );
+        // this.teachersWait = this.teachers.filter(
+        //   (teacher) => teacher.active === null
+        // );
+        this.countUp('teacher')
+        console.log('Accepted teachers:', this.teachersAccept);
+      },
+      (error) => {
+        console.error('Error fetching teachers', error);
+      }
+    );
+  }
+
+  fetchGroups() {
+    this.groupService.getGroups().subscribe(
+      (data: Group[]) => {
+        this.groups = data;
+        console.log('Groups data:', this.groups);
+        this.countUp('group');
+      },
+      (error) => {
+        console.error('Error fetching groups', error);
+      }
+    );
+  }
+  fetchsalles() {
+    this.salleService.getSalles().subscribe(
+      (data) => {
+        this.salles = data;
+        console.log('salles data:', this.salles);
+     
+      },
+      (error) => {
+        console.error('Error fetching salles', error);
       }
     );
   }

@@ -1,0 +1,199 @@
+<div class="" style="box-shadow: 0 4px 30px rgb(0 0 0 / 30%);
+backdrop-filter: blur(15px);
+-webkit-backdrop-filter: blur(5px);border: none !important;">
+    <p-table
+      #dt2
+      [value]="salles"
+      dataKey="id"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [loading]="loading"
+      [paginator]="true"
+    
+    >
+      <ng-template pTemplate="caption">
+        <p-button
+          label="Add"
+          (click)="showDialog()"
+          [text]="true"
+          [raised]="true"
+          [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+          icon="pi pi-plus"
+          severity="warning"
+        />
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10%">Salle Name</th>
+  
+          <!-- <th style="width:max-content">specialty</th> -->
+  
+          <th style="width: 25%">Place</th>
+  
+          <th style="width: 10%">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-salle>
+        <tr>
+          <td>
+            <input
+              type="text"
+              class="no-border"
+              pInputText
+              (input)="
+                changeName($any($event.target)?.value, salle.salle__id)
+              "
+              [value]="salleName[salle.salle__id].salle__name"
+            />
+            <div
+              for="salleName"
+              *ngIf="salleName[salle.salle__id].Msg != ''"
+              style="color: red"
+            >
+              {{ salleName[salle.salle__id].Msg }}
+            </div>
+          </td>
+  
+          <td>
+            <!-- <input
+              type="number"
+              class="no-border"
+              pInputNumber
+              (input)="
+                changeCoeff($any($event.target)?.value, salle.salle__id)
+              "
+              [value]="salleplace[salle.salle__id].coeff"
+            /> -->
+          
+              <p-inputNumber
+                mode="decimal"
+                [showButtons]="true"
+                pInputNumber
+                buttonLayout="horizontal"
+                spinnerMode="horizontal"
+                decrementButtonClass="p-button-danger RR"
+                incrementButtonClass="p-button-success"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                [style]="{ width: '60px' }"
+                [step]="0.25"
+                (onInput)="changeplace($event.value, salle.salle__id)"
+                id="coefficient"
+                class="flex-auto "
+                [(ngModel)]="salleplace[salle.salle__id].place"
+              />
+           
+            <div
+              for="coefficient"
+              *ngIf="salleplace[salle.salle__id].Msg != ''"
+              style="color: red"
+            >
+              {{ salleplace[salle.salle__id].Msg }}
+            </div>
+          </td>
+  
+          <td>
+            <div class="inlineflex">
+              <p-button
+                *ngIf="salleIds.includes(salle.salle__id)"
+                label="save"
+                (click)="Updatesalle(salle.salle__id)"
+                [text]="true"
+                [raised]="true"
+                [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+                icon="pi pi-upload"
+                severity="warning"
+              />
+              <p-button
+                label="delete"
+                (click)="deletesalle(salle.salle__id)"
+                [text]="true"
+                [raised]="true"
+                [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"
+                icon="pi pi-trash"
+                severity="warning"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">No salle found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  
+  <p-dialog
+    header="Add salle"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '25rem' }"
+  >
+    <div class="inputForm mb-3">
+      <label for="salleName" class="font-semibold w-6rem">salle Name</label>
+      <div>
+        <input
+          pInputText
+          (input)="controllerName($any($event.target)?.value, null)"
+          id="salleName"
+          class="flex-auto"
+          [(ngModel)]="NameNew" 
+        />
+        <div for="salleName" *ngIf="NameErrMsg != ''" style="color: red">
+          {{ NameErrMsg }}
+        </div>
+      </div>
+    </div>
+    <div class="inputForm mb-3">
+      <span class="font-semibold w-6rem">Number of seats</span>
+      <div>
+        <p-inputNumber
+          mode="decimal"
+          [showButtons]="true"
+          pInputNumber
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-danger RR"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          [style]="{ width: '60px' }"
+          [step]="0.25"
+          (onInput)="controllerplace($event.value, null)"
+          inputId="coeff"
+          styleClass="input-styling"
+          class="flex-auto"
+          [(ngModel)]="placeNew"
+        />
+        <div for="coeff" *ngIf="placeErrMsg != ''" style="color: red">
+          {{ placeErrMsg }}
+        </div>
+      </div>
+    </div>
+  
+    <div class="flex justify-content-end gap-2">
+      <p-button
+        label="Cancel"
+        (click)="closeDialog()"
+        severity="secondary"
+        [style]="{
+          'border-radius': '15px',
+          margin: '7px',
+          'text-wrap': 'nowrap'
+        }"
+        (click)="visible = false"
+      />
+      <p-button
+        label="Save"
+        (click)="createsalle()"
+        [style]="{
+          'border-radius': '15px',
+          margin: '7px',
+          'text-wrap': 'nowrap'
+        }"
+      />
+    </div>
+  </p-dialog>
+  

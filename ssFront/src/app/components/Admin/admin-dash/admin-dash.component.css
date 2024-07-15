@@ -85,6 +85,13 @@
   color: #283478;
   margin: 20px;
 }
+
+.RowCard{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
 .cardCourb{
   border-radius: 10px; 
 margin: 50px 0;
@@ -112,16 +119,7 @@ align-items: center;
   gap: 20px;
   align-items: center;
 }
-.borderDivDone {
-  position: relative;
-  padding: 20px;
-  border-radius: 10px 20px 0;
-  display: flex;
-  gap: 30px;
-  align-items: first baseline;
-  justify-content: center;
 
-}
 
 .boxIcon{
   width: 50px;
@@ -134,19 +132,16 @@ align-items: center;
   text-align: center;
   justify-content: center;
   align-items: center;
-  color: #42427d;
+ 
 }
 
 
 
 .textStatic{
-  display: flex;
-  gap: 5px;
-  align-items: first baseline;
-  flex-direction: column;
-  margin-bottom: -5px;
 
-  animation: slideIn 1s forwards; /* Apply the animation */
+
+  animation: slideIn 1s forwards;
+  
 }
 
 @keyframes slideIn {
@@ -159,15 +154,31 @@ align-items: center;
     opacity: 1; /* Optional: end with opacity 1 */
   }
 }
-
-
-.borderDivSoon{
-  margin-right: -39px;
+.borderDiv {
+  min-width: 260px;
+  width: max-content;
   position: relative;
-  padding: 20px;
+  padding: 10px 20px;
   border-radius: 10px 20px 0;
   display: flex;
-  gap: 30px;
-  align-items: first baseline;
-  justify-content: center;
+  gap: 20px;
+  color: white;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 30px rgb(0 0 0 / 30%);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: slideIn 1s ease-in;
+ 
+  margin: 10px 0 0 -50px;
+}
+.borderDiv.Done {
+
+  margin: 10px 0 0 -60px;
+}
+.borderDiv.Soon{
+  
+    margin: 10px;
+    margin-left: 40%;
+    
 }
