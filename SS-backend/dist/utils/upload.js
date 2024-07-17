@@ -50,7 +50,7 @@ const storage = multer_1.default.diskStorage({
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        console.log(file.originalname);
+        console.log("file name is like that bro : ", file.originalname);
         cb(null, file.originalname);
     },
 });
@@ -58,6 +58,7 @@ const uploadFile = (0, multer_1.default)({
     storage: storage,
 }).array("files");
 const uploadFileMiddleware = util.promisify(uploadFile);
+console.log("hshshshshshshshshshshhshshs");
 exports.default = uploadFileMiddleware;
 const downloadFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filename = req.params.filename;

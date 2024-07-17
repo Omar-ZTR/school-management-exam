@@ -19,7 +19,7 @@ export class SubjectService {
   getSubjects() {
     return this.httpClient.get(`${this.url}/subjects`);
   }
-
+ 
   updateSubject(data: any, id: number) {
     
     return this.httpClient.put(`${this.url}/subject/${id}`, data, {

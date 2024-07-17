@@ -20,53 +20,73 @@ const teacherModel_1 = require("../models/teacherModel");
 const tokenModel_1 = require("../models/tokenModel");
 const token_1 = __importDefault(require("../utils/token"));
 const adminModel_1 = require("../models/adminModel");
+const upload_1 = __importDefault(require("../utils/upload"));
+const baseUrl = "http://localhost:3000/files/";
 // Signup function
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let userData = req.body;
+        // console.log("Incoming request:", req);
+        yield (0, upload_1.default)(req, res); // Handle file upload
+        console.log("File uploaded:", req.files);
+        if (!req.body.user) {
+            return res.status(400).json({ message: "User data is missing" });
+        }
+        let userData;
+        try {
+            userData = JSON.parse(req.body.user); // Assuming user data is in req.body.user as a JSON string
+        }
+        catch (parseError) {
+            console.error("Error parsing user data:", parseError);
+            return res.status(400).json({ message: "Invalid user data format" });
+        }
+        console.log("Parsed user data:", userData);
         userData.resetPasswordToken = "";
         userData.status = false;
-        if (userData.role == "Student") {
-            const existingUser = yield studentModel_1.Student.findOne({
+        let existingUser;
+        let newUser;
+        const hashedPassword = yield bcryptjs_1.default.hash(userData.Password, 10);
+        userData.password = hashedPassword; // Update userData.Password with hashed password
+        if (req.files && req.files.length > 0) {
+            console.log("files 7", req.files);
+            for (const file of req.files) {
+                userData.CV__path = baseUrl + file.filename;
+            }
+        }
+        if (userData.role === "Student") {
+            existingUser = yield studentModel_1.Student.findOne({
                 where: { user__email: userData.user__email },
             });
             if (existingUser) {
                 return res.status(400).json({ message: "Student already exists" });
             }
-            const hashedPassword = yield bcryptjs_1.default.hash(userData.password, 10);
-            userData.password = hashedPassword; // Update userData.password with hashedPassword
-            const newUser = yield studentModel_1.Student.create(userData);
+            newUser = yield studentModel_1.Student.create(userData);
             res
                 .status(201)
                 .json({ message: "Student registered successfully", user: newUser });
         }
-        else if (userData.role == "Teacher") {
-            const existingUser = yield teacherModel_1.Teacher.findOne({
+        else if (userData.role === "Teacher") {
+            existingUser = yield teacherModel_1.Teacher.findOne({
                 where: { user__email: userData.user__email },
             });
             if (existingUser) {
                 return res.status(400).json({ message: "Teacher already exists" });
             }
-            const hashedPassword = yield bcryptjs_1.default.hash(userData.password, 10);
-            userData.password = hashedPassword; // Update userData.password with hashedPassword
-            const newUser = yield teacherModel_1.Teacher.create(userData);
+            newUser = yield teacherModel_1.Teacher.create(userData);
             res
                 .status(201)
                 .json({ message: "Teacher registered successfully", user: newUser });
         }
         else {
-            const existingUser = yield User__model_1.User.findOne({
+            existingUser = yield User__model_1.User.findOne({
                 where: { user__email: userData.user__email },
             });
             if (existingUser) {
-                return res.status(400).json({ message: "user already exists" });
+                return res.status(400).json({ message: "User already exists" });
             }
-            const hashedPassword = yield bcryptjs_1.default.hash(userData.password, 10);
-            userData.password = hashedPassword; // Update userData.password with hashedPassword
-            const newUser = yield User__model_1.User.create(userData);
+            newUser = yield User__model_1.User.create(userData);
             res
                 .status(201)
-                .json({ message: "user registered successfully", user: newUser });
+                .json({ message: "User registered successfully", user: newUser });
         }
     }
     catch (error) {
@@ -123,8 +143,8 @@ const ssignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
-        const hashedPassword = yield bcryptjs_1.default.hash(userData.password, 10);
-        userData.password = hashedPassword; // Update userData.password with hashedPassword
+        const hashedPassword = yield bcryptjs_1.default.hash(userData.Password, 10);
+        userData.password = hashedPassword; // Update userData.Password with hashedPassword
         const newUser = yield User__model_1.User.create(userData);
         res
             .status(201)

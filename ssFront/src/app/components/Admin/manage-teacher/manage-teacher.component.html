@@ -3,15 +3,15 @@
     #dt2
     [value]="currentTableData"
     dataKey="id"
-    [rows]="10"
-    [rowsPerPageOptions]="[10, 25, 50]"
+    [rows]="5"
+    [rowsPerPageOptions]="[5,10, 25, 50]"
     [loading]="loading"
     [paginator]="true"
     [globalFilterFields]="[
-      'last__name',
+    'last__name',
       'first__name',
-      'representative.name',
-      'status'
+      'description',
+      'user__email'
     ]"
     [tableStyle]="{ 'min-width': '50rem' }"
   >
@@ -88,7 +88,8 @@
         <th style="width: 10%">first Name</th>
         <th style="width: 10%">last Name</th>
         <th style="width: 10%">Email</th>
-
+        <th style="width: 25%">Description</th>
+        <th style="width: 25%">CV</th>
         <!-- <th style="width:max-content">specialty</th> -->
         <th style="width: 25%">Domain</th>
         <th style="width: 25%">Groups</th>
@@ -106,6 +107,21 @@
         </td>
         <td>
           {{ teacher.user__email }}
+        </td>
+        <td >
+          <div class="textDesc">{{ teacher.description }}</div>
+          
+        </td>
+        <td>
+          <div class="previewimg" *ngIf="teacher.CV__path">
+           
+            <i
+              
+              class="fa-solid  fa-file-pdf fa"
+              (click)="openFile(teacher.CV__path)"
+            ></i>
+           
+          </div>
         </td>
         <!-- <td>
                 {{ teacher.specialty }}

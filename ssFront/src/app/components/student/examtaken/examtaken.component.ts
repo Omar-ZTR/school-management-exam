@@ -72,7 +72,7 @@ export class ExamtakenComponent {
     private examService: ExamService, 
     private examAnswers: ExamAnswersService, 
     private fb: FormBuilder,  
-    private tokenService: TokenServiceService
+    private tokenService: TokenServiceService 
   ) {
     this.AnswersForm = this.fb.group({
       exam__id: '',

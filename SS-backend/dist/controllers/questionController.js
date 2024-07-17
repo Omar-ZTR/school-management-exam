@@ -25,7 +25,7 @@ const baseUrl = "http://localhost:3000/files/";
 //     console.log("exam 2", req.files);
 //     await uploadFile(req, res); // Handle file upload
 //     console.log("exam 3", req.file);
-//     const questDatas = { ...req.body }; 
+//     const questDatas = { ...req.body };
 // console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>",questDatas)
 //     // Assuming exam data is in req.body
 //     console.log("exam 4", questDatas[0]);
@@ -102,13 +102,15 @@ const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (questionData.exam__id) {
             const exam = yield examModel_1.Exam.findByPk(questionData.exam__id);
             if (exam) {
-                yield exam.$add('questions', question);
+                yield exam.$add("questions", question);
                 console.log(`Associated question ${question.question__id} with exam ${questionData.exam__id}`);
             }
         }
         console.log(",,,,,,,,,,,,,,,,,,,,3332,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", questionData.reponses);
         // Create the responses for the question
-        if (questionData.reponses && Array.isArray(questionData.reponses) && questionData.reponses.length > 0) {
+        if (questionData.reponses &&
+            Array.isArray(questionData.reponses) &&
+            questionData.reponses.length > 0) {
             console.log("if ethanya fotnaha");
             const responsesData = questionData.reponses;
             for (const responseData of responsesData) {
@@ -117,7 +119,20 @@ const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 yield reponseModel_1.Reponse.create(responseData);
             }
         }
-        res.status(201).json(question);
+        const NewQuestion = yield questionModel_1.Question.findOne({
+            include: [
+                {
+                    model: reponseModel_1.Reponse,
+                    as: "reponses",
+                },
+                {
+                    model: fileModel_1.FileQuestion,
+                    as: "file",
+                },
+            ],
+            where: { question__id: question.question__id },
+        });
+        res.status(201).json(NewQuestion);
     }
     catch (error) {
         console.error("Error creating question", error);
@@ -143,7 +158,9 @@ const updateQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Update question data
         yield question.update(questionData);
         // Fetch existing responses and files
-        const existingResponses = yield reponseModel_1.Reponse.findAll({ where: { question__id: questionId } });
+        const existingResponses = yield reponseModel_1.Reponse.findAll({
+            where: { question__id: questionId },
+        });
         // const existingFiles = await FileQuestion.findAll({ where: { question__id: questionId } });
         // Update or create new responses
         if (questionData.reponses && Array.isArray(questionData.reponses)) {
@@ -190,7 +207,20 @@ const updateQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
             //   }
             // }
         }
-        res.status(200).json(question);
+        const NewQuestion = yield questionModel_1.Question.findOne({
+            include: [
+                {
+                    model: reponseModel_1.Reponse,
+                    as: "reponses",
+                },
+                {
+                    model: fileModel_1.FileQuestion,
+                    as: "files",
+                },
+            ],
+            where: { question__id: question.question__id },
+        });
+        res.status(200).json(NewQuestion);
     }
     catch (error) {
         console.error("Error updating question", error);
@@ -209,11 +239,11 @@ const QuestionById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             include: [
                 {
                     model: reponseModel_1.Reponse,
-                    as: 'reponses',
+                    as: "reponses",
                 },
                 {
                     model: fileModel_1.FileQuestion,
-                    as: 'file',
+                    as: "file",
                 },
             ],
         });
@@ -226,7 +256,7 @@ const QuestionById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.QuestionById = QuestionById;
-// Get fake Question 
+// Get fake Question
 const getFakeQuestions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const examId = -1;
@@ -234,13 +264,13 @@ const getFakeQuestions = (req, res) => __awaiter(void 0, void 0, void 0, functio
             include: [
                 {
                     model: examModel_1.Exam,
-                    as: 'exams',
+                    as: "exams",
                     where: { exam__id: examId },
-                    through: { attributes: [] } // Exclude join table attributes
+                    through: { attributes: [] }, // Exclude join table attributes
                 },
                 {
                     model: fileModel_1.FileQuestion,
-                    as: 'file',
+                    as: "file",
                     required: false,
                 },
             ],
@@ -272,7 +302,7 @@ const updateQuestionsWithExam = (req, res) => __awaiter(void 0, void 0, void 0, 
         if (questions.length !== questionIds.length) {
             return res.status(404).json({ error: "One or more questions not found" });
         }
-        yield exam.$add('questions', questions);
+        yield exam.$add("questions", questions);
         return questions;
     }
     catch (error) {
@@ -318,7 +348,7 @@ const deleteQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.log("hay bb");
         const deleteData = req.body.model;
         console.log("hay req", deleteData);
-        if (deleteData.action === 'delete') {
+        if (deleteData.action === "delete") {
             const question = yield questionModel_1.Question.findByPk(id);
             if (question) {
                 yield question.destroy();
@@ -330,7 +360,7 @@ const deleteQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 throw new Error("Question not found");
             }
         }
-        if (deleteData.action !== 'delete') {
+        if (deleteData.action !== "delete") {
             const message = unassociateQuestionFromExam(deleteData.exam__id, id);
             res.status(204).send(message);
         }
@@ -349,15 +379,15 @@ function unassociateQuestionFromExam(examId, questionId) {
             const question = yield questionModel_1.Question.findByPk(questionId);
             if (exam && question) {
                 // Unassociate the question from the exam
-                yield exam.$remove('questions', question);
-                return (`Unassociated question ${question.question__id} from exam ${exam.exam__id}`);
+                yield exam.$remove("questions", question);
+                return `Unassociated question ${question.question__id} from exam ${exam.exam__id}`;
             }
             else {
-                return ('Exam or Question not found');
+                return "Exam or Question not found";
             }
         }
         catch (error) {
-            console.error('Error unassociating question from exam:', error);
+            console.error("Error unassociating question from exam:", error);
         }
     });
 }

@@ -13,20 +13,7 @@ export class Student extends users<Student> {
   )
   role!: string;
 
-   @Column({type:DataType.STRING,
-    allowNull: false,}
-  )
-  diploma!: string;
 
-   @Column({type:DataType.STRING,
-    allowNull: false,}
-  )
-  Locations!: string;
-
-  @Column({type:DataType.DATE,
-    allowNull: false,}
-  )
-  date__diploma!: Date;
 
   @ForeignKey(() => Group)
   @Column({type: DataType.INTEGER, allowNull: true})

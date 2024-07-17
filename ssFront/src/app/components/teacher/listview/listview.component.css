@@ -1,23 +1,33 @@
-section {
+
+  section{
+    border-radius: 15px;
     width: 400px;
-    /* height: 100vh; */
-    background-color: #fff;
-    box-shadow: 0 30px 30px 0 rgba(0, 0, 0, 0.1);
-     display: flex;
+    background-color: rgb(0 0 0 / 0%);
+    /* box-shadow: 0 30px 30px 0 rgba(0, 0, 0, 0.1); */
+    display: flex;
+    /* gap: 10px; */
     align-items: center;
-   justify-content: center;
-   flex-direction: column;
-    padding: 2px;
-    /* border: blue solid 6px; */
+    justify-content: center;
+    flex-direction: column;
+    /* padding: 2px; */
   }
+a{
+  color: #100d6a !important;
+}
   
   .container{
     width: 100%;
-    /* max-width: 80rem; */
-    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+  
    
   }
-  
+  .textDesc{
+    max-height: 100px !important;
+    max-width: 230px;
+    overflow: auto;
+  }
   .listView-item{
   
     border-radius: .4rem;
@@ -49,17 +59,24 @@ section {
   }
   
   .Question ul{
-    display:flex;
+    display: flex;
+    margin-left: -40px;
     align-items: flex-start;
     list-style-type: none;
-    margin-left: 15px;
     gap: 5%;
+    justify-content: flex-start;
+    flex-direction: row;
   }
   
   .Question li , span{
-    font-size: 16px;
+    
     color: #101010;
-    padding: 0 0 1px 5px;
+   
+  
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+ 
+  font-size: 17px;
   }
   
   .listView-link div{

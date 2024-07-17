@@ -7,6 +7,8 @@ import { Request, Response } from "express";
 const maxSize = 2 * 1024 * 1024;
 
 const storage = multer.diskStorage({
+
+  
   destination: (req: any, file: any, cb: (arg0: null, arg1: string) => void) => {
     const uploadDir = path.join(__dirname, '/filesUpload');
     if (!fs.existsSync(uploadDir)) {
@@ -15,7 +17,7 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req: any, file: { originalname: any; }, cb: (arg0: null, arg1: any) => void) => {
-    console.log(file.originalname);
+    console.log("file name is like that bro : ",file.originalname);
     cb(null, file.originalname);
   },
 });
@@ -26,7 +28,7 @@ const uploadFile = multer({
 }).array("files");
 
 const uploadFileMiddleware = util.promisify(uploadFile);
-
+console.log("hshshshshshshshshshshhshshs");
 export default uploadFileMiddleware;
 
 

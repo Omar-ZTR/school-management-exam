@@ -34,15 +34,18 @@
           <input
             type="number"
             id="number"
+            pInputText
             formControlName="note"
             min="1"
-            max="5"
+            max="20"
           />
         </div>
       </div>
       <div class="Row radio-group">
         <input
           type="radio"
+          
+          class="QuestionRadio"
           id="QCM_Q"
           name="question__type"
           formControlName="question__type"
@@ -51,6 +54,8 @@
         <label for="QCM_Q">QCM</label>
         <input
           type="radio"
+          
+          class="QuestionRadio"
           id="NormalQ"
           name="question__type"
           formControlName="question__type"
@@ -60,6 +65,8 @@
         <label for="NormalQ">Normal</label>
         <input
           type="radio"
+          
+          class="QuestionRadio"
           id="Problem_Q"
           name="question__type"
           formControlName="question__type"
@@ -110,7 +117,7 @@
     </div>
     <div>
       <label for="text">Question</label>
-      <textarea id="text" formControlName="question__text"></textarea>
+      <textarea class="TextArea" id="text" formControlName="question__text"></textarea>
       <div
         *ngIf="
           questionsForm.get('question__text')?.invalid &&
@@ -173,40 +180,68 @@
       *ngIf="questionsForm.get('question__type')?.value !== ''"
       class="repQuiz"
     >
-      <div formArrayName="reponses">
-        <div
-          *ngFor="
-            let answer of $any(questionsForm.get('reponses')).controls;
-            let j = index
-          "
-          formGroupName="{{ j }}"
-        >
-          <div class="answer-container">
-            <div class="rmAns" (click)="removeAnswer(j)">
-              <i
-                class="fa-solid fa-eraser fa-lg"
-                style="color: #d50707; margin-top: 20px"
-              ></i>
-            </div>
-            <div class="answer">
-              <label for="text">Answer</label>
-              <textarea id="text" formControlName="reponse__text"></textarea>
-            </div>
-            <label class="label">
-              <input
-                class="label__checkbox"
-                type="checkbox"
-                formControlName="reponse__statut"
-              />
-              <span class="label__text">
-                <span class="label__check">
-                  <i class="fa fa-check icon"></i>
-                </span>
-              </span>
-            </label>
-          </div>
-        </div>
+    <div formArrayName="reponses">
+  <div
+    *ngFor="let answer of reponses.controls; let j = index"
+    [formGroupName]="j"
+  >
+    <div class="answer-container">
+      <div 
+        class="rmAns" 
+        (click)="removeAnswer(j)"
+        [ngClass]="{
+          'disabled': questionsForm.get('question__type')?.value === 'QCM' &&  $any(questionsForm.get('reponses')).length <= 2
+        }"
+        [ngStyle]="{
+          'pointer-events': (questionsForm.get('question__type')?.value === 'QCM' &&  $any(questionsForm.get('reponses')).length <= 2) ? 'none' : 'auto'
+        }"
+      >
+        <i
+          class="fa-solid fa-eraser fa-lg"
+          [ngStyle]="{
+            'color': (questionsForm.get('question__type')?.value === 'QCM' &&  $any(questionsForm.get('reponses')).length <= 2) ? '#999' : '#d50707',
+            'margin-top': '20px'
+          }"
+        ></i>
       </div>
+      <div class="answer">
+        <label for="text">Answer</label>
+        <textarea class="TextAreaAnswer" id="text" formControlName="reponse__text"></textarea>
+      </div>
+      <label class="label">
+        <input
+          class="label__checkbox"
+          type="checkbox"
+          formControlName="reponse__statut"
+        />
+        <span class="label__text">
+          <span class="label__check">
+            <i class="fa fa-check icon"></i>
+          </span>
+        </span>
+      </label>
+    </div>
+    <div
+      *ngIf="
+        answer.get('reponse__text')?.invalid &&
+        (answer.get('reponse__text')?.dirty || answer.get('reponse__text')?.touched)
+      "
+    >
+      <span
+        class="error"
+        *ngIf="answer.get('reponse__text')?.errors?.['required']"
+        >This field is mandatory.</span
+      >
+      <span
+        class="error"
+        *ngIf="answer.get('reponse__text')?.errors?.['pattern']"
+        >This field is invalid.</span
+      >
+    </div>
+  </div>
+</div>
+
+    
     </div>
 
     <span class="border_btm"></span>

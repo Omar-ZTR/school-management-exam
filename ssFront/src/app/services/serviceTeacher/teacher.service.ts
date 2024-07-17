@@ -13,6 +13,14 @@ export class TeacherService {
   getTeachers(): Observable<Teacher[]>{
     return this.httpClient.get<Teacher[]>(this.url + "/teachers");
   }
+
+
+  getTecher(id: any): Observable<Teacher[]>{
+    return this.httpClient.get<Teacher[]>(`${this.url}/teacher/${id}`, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
+
   updateTeacher(data: any, id: number) {
     
     return this.httpClient.put(`${this.url}/teacher/${id}`, data, {

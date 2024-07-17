@@ -1,5 +1,6 @@
 import { Subject } from "../models/subjectModel";
 import { Request, Response } from "express";
+import { TeacherSubject } from "../models/teacherSubjectsModel";
 
 export const CreateSubject = async (req: Request, res: Response) => {
   try {

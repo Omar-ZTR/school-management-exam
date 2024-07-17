@@ -55,6 +55,21 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], users.prototype, "password", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false, }),
+    __metadata("design:type", String)
+], users.prototype, "description", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE,
+        allowNull: false, }),
+    __metadata("design:type", Date)
+], users.prototype, "birthday", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true, }),
+    __metadata("design:type", String)
+], users.prototype, "CV__path", void 0);
 exports.users = users = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: false,

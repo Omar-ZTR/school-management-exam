@@ -20,19 +20,12 @@ export class Teacher extends users<Teacher> {
   groups!: Group[];
 
       @Column({type:DataType.STRING,
-    allowNull: false,}
+    allowNull: true,}
   )
     specialty!: string;
 
-      @Column({type:DataType.STRING,
-    allowNull: false,}
-  )
-    experience!: string;
 
-      @Column({type:DataType.DATE,
-    allowNull: false,}
-  )
-    date!: Date;
+
 
       @Column({type:DataType.STRING,
     allowNull: false,}

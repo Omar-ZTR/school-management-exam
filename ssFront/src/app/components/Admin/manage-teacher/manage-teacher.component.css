@@ -31,7 +31,33 @@
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
   }
-
+  .previewimg {
+    margin-top: 5px;
+    width: 30px;
+    height: 40px;
+    border-radius: 5px;
+    padding: 5px;
+    background: #ffffff;
+    box-shadow: rgb(100 100 111 / 29%) 0px 7px 29px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  
+  
+  }
+  
+  .textDesc{
+    width: 300px!important;
+    
+    max-height: 100px !important;
+    overflow: auto;
+  }
+  
+  .previewimg .fa {
+    font-size: 1.3rem;
+    color: #00159a;
+  }
 .list .ribbon {
   font-size: 28px;
   font-weight: bold;

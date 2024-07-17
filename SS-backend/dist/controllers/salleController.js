@@ -17,7 +17,10 @@ const salleModel_1 = require("../models/salleModel"); // Import your Salle model
 const createSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const salle = yield salleModel_1.Salle.create(req.body);
-        res.status(201).json(salle);
+        const newSalle = yield salleModel_1.Salle.findOne({
+            where: { salle__id: salle.salle__id },
+        });
+        res.status(201).json(newSalle);
     }
     catch (error) {
         console.error("Error creation salle", error);

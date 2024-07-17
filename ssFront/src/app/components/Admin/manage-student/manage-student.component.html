@@ -3,18 +3,18 @@
     #dt2
     [value]="currentTableData"
     dataKey="id"
-    [rows]="10"
-    [rowsPerPageOptions]="[10, 25, 50]"
+    [rows]="5"
+    [rowsPerPageOptions]="[5,10, 25, 50]"
     [loading]="loading"
     [paginator]="true"
     [globalFilterFields]="[
       'last__name',
       'first__name',
-      'representative.name',
-      'status'
+      'description',
+      'user__email'
     ]"
     [tableStyle]="{ 'min-width': '50rem' }"
-    styleClass="p-datatable-striped" 
+    styleClass="p-datatable-striped"
   >
     <ng-template pTemplate="caption">
       <div class="flex">
@@ -85,15 +85,15 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 10%">first Name</th>
-        <th style="width: 10%">last Name</th>
-        <th style="width: 10%">Email</th>
-
+        <th style="width: 10%" >first Name</th>
+        <th style="width: 10%" >last Name</th>
+        <th style="width: 10%" >Email</th>
+        <th style="width: 25%">Descreption</th>
         <!-- <th style="width:max-content">specialty</th> -->
-        <th style="width: 25%">Domain</th>
+        <th style="width: 25%">CV</th>
         <th style="width: 25%">Groups</th>
-        <th style="width: 10%">Status</th>
-        <th style="width: 10%">Action</th>
+        <th style="width: 10%" >Status</th>
+        <th style="width: 10%" >Action</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-student>
@@ -107,13 +107,21 @@
         <td>
           {{ student.user__email }}
         </td>
-        <!-- <td>
-                  {{ student.specialty }}
-              </td> -->
-        <td>s</td>
+        <td >
+          <div class="textDesc">{{ student.description }}</div>
+          
+        </td>
+        <td>
+          <div class="previewimg" *ngIf="student.CV__path">
+            <i
+              class="fa-solid fa-file-pdf fa"
+              (click)="openFile(student.CV__path)"
+            ></i>
+          </div>
+        </td>
         <td>
           <div class="inlineflex">
-            <div class="groupd" *ngIf=" group[student.user__id].group__name">
+            <div class="groupd" *ngIf="group[student.user__id].group__name">
               <div class="groupname">
                 {{ group[student.user__id].group__name }}
               </div>
@@ -129,8 +137,8 @@
                 <i class="pi pi-trash"></i>
               </div>
             </div>
-            <div class="groupd" *ngIf=" !group[student.user__id].group__name">
-                -
+            <div class="groupd" *ngIf="!group[student.user__id].group__name">
+              -
             </div>
             <p-button
               (click)="selectgroup(op1, student)"

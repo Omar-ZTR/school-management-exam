@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn } from "@angular/forms";
+import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 
 export class GlobalConstants {
     // Meesage
@@ -11,7 +11,7 @@ export class GlobalConstants {
 
     public static productExistError: string = "Product already exists";
     
-    public static productAdded: string = "Product added successfully";
+  
 
     public static contactNumberRegex: string = "^[e0-9]{10,10}$";
 
@@ -19,7 +19,36 @@ export class GlobalConstants {
     public static unauthroized: string = "You are not authorized person to access this page.";
     //Variable
     public static error: string = "error";
-
+    public static passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+        if (!control || !control.parent) {
+          return null;
+        }
+    
+        const password = control.parent.get('Password');
+        const rePassword = control;
+    
+        if (!password || !rePassword) {
+          return null;
+        }
+    
+        return password.value === rePassword.value ? null : { mismatch: true };
+      }
+      // Validator to check if the date is at least 18 years ago
+      public static minimumAgeValidator(minAge: number): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+          const birthday = new Date(control.value);
+          const today = new Date();
+          let age = today.getFullYear() - birthday.getFullYear();
+          const monthDifference = today.getMonth() - birthday.getMonth();
+    
+          if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthday.getDate())) {
+            age--;
+          }
+    
+          return age >= minAge ? null : { 'underage': true };
+        };
+      }
+    
 }
 
 export function rangeNumber(a: number, b: number): ValidatorFn {
@@ -31,3 +60,4 @@ export function rangeNumber(a: number, b: number): ValidatorFn {
         return null;
     };
 }
+

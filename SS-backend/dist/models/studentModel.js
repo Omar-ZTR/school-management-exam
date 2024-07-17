@@ -22,21 +22,6 @@ __decorate([
     __metadata("design:type", String)
 ], Student.prototype, "role", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
-        allowNull: false, }),
-    __metadata("design:type", String)
-], Student.prototype, "diploma", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
-        allowNull: false, }),
-    __metadata("design:type", String)
-], Student.prototype, "Locations", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE,
-        allowNull: false, }),
-    __metadata("design:type", Date)
-], Student.prototype, "date__diploma", void 0);
-__decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => groupModel_1.Group),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true }),
     __metadata("design:type", Number)

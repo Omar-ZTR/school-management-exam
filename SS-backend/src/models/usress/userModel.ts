@@ -41,4 +41,20 @@ export class users<T extends users<T>> extends Model<T> {
   })
   password!: string;
 
+  @Column({type:DataType.STRING,
+    allowNull: false,}
+  )
+  description!: string;
+
+
+      @Column({type:DataType.DATE,
+    allowNull: false,}
+  )
+  birthday!: Date;
+  
+  @Column({type:DataType.STRING,
+    allowNull: true,}
+  )
+  CV__path!: string;
+
 }

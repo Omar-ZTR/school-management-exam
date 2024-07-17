@@ -1,14 +1,13 @@
-<div *ngIf="showAlert" class="custom-alert">Successfully created</div>
+<!-- <div *ngIf="showAlert" class="custom-alert">Successfully created</div> -->
 
 <div class="containerExam">
-  <form [formGroup]="examForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="examForm">
     <div class="containerForm">
-      <legend>Add Exam</legend>
       <!--Text -->
       <div class="inputs">
-        <div class="Row">
+        <!-- <div class="Row">
           <label for="text">Title</label>
-          <input type="text" id="exam" formControlName="exam__title" />
+          <input type="text" pInputText id="exam" formControlName="exam__title" />
         </div>
         <div
           *ngIf="
@@ -27,83 +26,203 @@
             *ngIf="examForm.controls['exam__title'].errors?.['pattern']"
             >This field is invalid.</span
           >
-        </div>
-        <div class="Row">
-          <div [formGroup]="subjectForm">
-            <p-dropdown
-              [options]="subjects"
-              formControlName="selectedSubject"
-              optionLabel="subject__name"
-              [filter]="true"
-              filterBy="subject__name"
-              [showClear]="true"
-              placeholder="Select a Subject"
+        </div> -->
+        <div class="form-group col-md-12">
+          <label>Title Exam :</label>
+          <input
+            type="text"
+            pInputText
+            placeholder="Enter First Name"
+            class="form-control"
+            formControlName="exam__title"
+          />
+
+          <div
+            class="text-danger"
+            *ngIf="
+              examForm.controls['exam__title'].touched &&
+              examForm.controls['exam__title'].invalid
+            "
+          >
+            <span *ngIf="examForm.controls['exam__title'].errors?.['required']"
+              >This field is mandatory.</span
             >
-              <ng-template pTemplate="selectedItem" let-selectedOption>
-                <div class="flex align-items-center gap-2">
-                  <div>{{ selectedOption.subject__name }}</div>
-                </div>
-              </ng-template>
-              <ng-template let-subject pTemplate="item">
-                <div class="flex align-items-center gap-2">
-                  <div>{{ subject.subject__name }}</div>
-                </div>
-              </ng-template>
-            </p-dropdown>
+            <span *ngIf="examForm.controls['exam__title'].errors?.['pattern']"
+              >This field is invalid.</span
+            >
           </div>
+        </div>
+        <div
+          style="
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+          "
+        >
           <div>
+            <div [formGroup]="subjectForm">
+              <p-dropdown
+                [options]="subjects"
+                formControlName="selectedSubject"
+                optionLabel="subject__name"
+                [filter]="true"
+                filterBy="subject__name"
+                [showClear]="true"
+                placeholder="Select a Subject"
+              >
+                <ng-template pTemplate="selectedItem" let-selectedOption>
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ selectedOption.subject__name }}</div>
+                  </div>
+                </ng-template>
+                <ng-template let-subject pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ subject.subject__name }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+              <div
+                class="text-danger"
+                *ngIf="
+                  subjectForm.controls['selectedSubject'].touched &&
+                  subjectForm.controls['selectedSubject'].invalid
+                "
+              >
+                <span
+                  *ngIf="subjectForm.controls['selectedSubject'].errors?.['required']"
+                  >This field is mandatory.</span
+                >
+                <span
+                  *ngIf="subjectForm.controls['selectedSubject'].errors?.['pattern']"
+                  >This field is invalid.</span
+                >
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center">
             <label for="">Statut</label>
-            <div class="isStatut" (click)="toggleStatut()">
+            <div pInputText class="buttonStatus" (click)="toggleStatut()">
               {{ statutExam }}
             </div>
           </div>
         </div>
 
-        <div>
+        <div class="form-group col-md-12">
           <label for="examType">Type Exam</label>
-          <div class="Row">
-            <div class="online">
-              online
-              <i
-                *ngIf="
-                  examForm.get('exam__type')?.value !== '' &&
-                  examForm.get('exam__type')?.value !== 'offline'
-                "
-                class="fa-solid fa-check fa-bounce fa-xl"
-                style="color: #ffbd2e"
-              ></i>
-            </div>
+          <div id="examType" class="rowRol">
+            <label
+              class="roleName check"
+              for="radio2"
+              (click)="changeTypeGlobal('online')"
+            >
+              <div class="btnradio">
+                <div class="cRadioBtn">
+                  <div *ngIf="typeGlobal === 'online'">
+                    <div class="overlay"></div>
+                    <div class="drops xsDrop"></div>
+                    <div class="drops mdDrop"></div>
+                    <div class="drops lgDrop"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="roleName_h2">Online</div>
+            </label>
 
-            <div id="examType" class="Row radio-group">
-              <input
+            <label
+              class="roleName check"
+              for="radio1"
+              (click)="changeTypeGlobal('offline')"
+            >
+              <div class="btnradio">
+                <div class="cRadioBtn">
+                  <div *ngIf="typeGlobal === 'offline'">
+                    <div class="overlay"></div>
+                    <div class="drops xsDrop"></div>
+                    <div class="drops mdDrop"></div>
+                    <div class="drops lgDrop"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="roleName_h2">Offline</div>
+            </label>
+          </div>
+          <div *ngIf="typeGlobal === 'online'" class="Row">
+            <div class="Row radio-group">
+              <!-- <input
                 type="radio"
+                class="QuestionRadio"
                 id="QCM"
                 name="exam__type"
                 value="QCM"
                 formControlName="exam__type"
-              /><label for="QCM">QCM</label>
+              />
+              <label for="QCM">QCM</label> -->
               <input
                 type="radio"
+                class="QuestionRadio"
                 id="Normal"
                 name="exam__type"
                 value="Normal"
                 formControlName="exam__type"
-              /><label for="Normal">Normal</label>
-
+              />
+              <label for="Normal">Add Questions</label>
               <input
                 type="radio"
+                class="QuestionRadio"
                 id="File"
                 name="exam__type"
                 value="File"
                 formControlName="exam__type"
-              /><label for="File">File</label>
+              />
+              <label for="File">Add File</label>
             </div>
           </div>
-          <div class="offline">
+          <div *ngIf="typeGlobal === 'offline'" class="Row">
+            <div class="Row radio-group">
+              <input
+                type="radio"
+                class="QuestionRadio"
+                id="Empty"
+                name="exam__type"
+                value="offline"
+                formControlName="exam__type"
+              />
+              <label for="Empty">Empty</label>
+              <input
+                type="radio"
+                class="QuestionRadio"
+                id="FileOff"
+                name="exam__type"
+                value="FileOff"
+                formControlName="exam__type"
+              />
+              <label for="FileOff">Add File</label>
+            </div>
+          </div>
+          <div class="Row">
+            <div
+              *ngIf="
+                examForm.get('exam__type')?.invalid &&
+                (examForm.get('exam__type')?.dirty ||
+                  examForm.get('exam__type')?.touched)
+              "
+            >
+              <span
+                class="error"
+                *ngIf="examForm.controls['exam__type'].errors?.['required']"
+                >This field is mandatory.</span
+              >
+            </div>
+          </div>
+
+          <!-- <div class="offline">
             <div class="online">OR</div>
             <div id="examType" class="radio-group" style="margin: 10px 5px">
               <input
                 type="radio"
+                class="QuestionRadio"
                 id="offline"
                 name="exam__type"
                 value="offline"
@@ -119,65 +238,53 @@
               class="fa-solid fa-check fa-bounce fa-xl"
               style="color: #ffbd2e"
             ></i>
-          </div>
+          </div> -->
         </div>
-        <div
-          *ngIf="
-            examForm.get('exam__type')?.invalid &&
-            (examForm.get('exam__type')?.dirty ||
-              examForm.get('exam__type')?.touched)
-          "
-        >
-          <span
-            class="error"
-            *ngIf="examForm.controls['exam__type'].errors?.['required']"
-            >This field is mandatory.</span
-          >
-          <span
-            class="error"
-            *ngIf="examForm.controls['exam__type'].errors?.['pattern']"
-            >This field is invalid.</span
-          >
-        </div>
+
         <!-- files exam -->
         <div
-          *ngIf="examForm.get('exam__type')?.value === 'File'"
-          class="fileTestForm box"
+          class="form-group col-md-12"
+          *ngIf="
+            examForm.get('exam__type')?.value === 'File' ||
+            examForm.get('exam__type')?.value === 'FileOff'
+          "
         >
-          <legend>files exam</legend>
-          <ul class="boxpreview" *ngIf="urls != []">
-            <div *ngFor="let url of urls; let i = index">
-              <li>
-                <div class="filepreview" [matTooltip]="url.name">
-                  <div class="removeFile" (click)="removeFile(i)">
-                    <i class="fa-solid fa-xmark fa-xl"></i>
-                  </div>
-                  <div class="previewimg">
-                    <img *ngIf="url.type === 'image'" [src]="url.url" />
-                    <i
-                      *ngIf="url.type !== 'image'"
-                      class="fa-solid  fa-file-{{ url.type }} fa"
-                    ></i>
-                  </div>
+          <label for="UpFile">Import Files</label>
+          <div id="UpFile" class="fileTestForm box">
+            <ul class="boxpreview" *ngIf="urls != []">
+              <div *ngFor="let url of urls; let i = index">
+                <li>
+                  <div class="filepreview" [matTooltip]="url.name">
+                    <div class="removeFile" (click)="removeFile(i)">
+                      <i class="fa-solid fa-xmark fa-xl"></i>
+                    </div>
+                    <div class="previewimg">
+                      <img *ngIf="url.type === 'image'" [src]="url.url" />
+                      <i
+                        *ngIf="url.type !== 'image'"
+                        class="fa-solid  fa-file-{{ url.type }} fa"
+                      ></i>
+                    </div>
 
-                  <div class="fileTitle">{{ url.name }}</div>
-                </div>
-              </li>
+                    <div class="fileTitle">{{ url.name }}</div>
+                  </div>
+                </li>
+              </div>
+            </ul>
+            <div class="custome-file">
+              <span>
+                <img
+                  src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
+                  alt=""
+                />Attach File
+              </span>
+              <input
+                type="file"
+                accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+                multiple
+                (change)="detectFiles($event)"
+              />
             </div>
-          </ul>
-          <div class="custome-file">
-            <span>
-              <img
-                src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
-                alt=""
-              />Attach File
-            </span>
-            <input
-              type="file"
-              accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
-              multiple
-              (change)="detectFiles($event)"
-            />
           </div>
         </div>
         <div
@@ -208,11 +315,10 @@
       </div>
     </div>
   </form>
-  <div *ngIf="showCalendar" >
+  <div *ngIf="showCalendar">
     <button class="button-62" (click)="toggleCalendar()" role="button">
       <i class="fa-solid fa-xmark"></i>
-    Cancel
-  
+      Cancel
     </button>
   </div>
   <div *ngIf="showCalendar" class="planingPop visible">
@@ -226,9 +332,16 @@
       ></app-calandarfull>
     </div>
   </div>
-  <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
-    <h3>list question</h3>
-    <app-listview [data]="questarr"></app-listview>
+  <div class="ListsQuestion">
+    <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
+      <div class="TitelForm">Questions</div>
+      <app-listview [data]="questarr"></app-listview>
+    </div>
+
+    <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
+      <div class="TitelForm">Suggestive questions</div>
+      <app-listview [data]="questarr"></app-listview>
+    </div>
   </div>
 </div>
 

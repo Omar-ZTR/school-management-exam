@@ -1,5 +1,7 @@
+
 .progress-wrapper {
   width: 390px;
+
   margin: 0 -30px;
 }
 
@@ -197,7 +199,7 @@ label {
 .custom-file-button {
   display: flex;
 
-  background-color: #1c086c;
+  background-color: #1c086c13;
   color: white;
   border: none;
   border-radius: 5px;
@@ -212,7 +214,8 @@ label {
 }
 
 .custom-file-button:hover {
-  background-color: #240b88;
+  background-color: #ffffff;
+  color: #f68e3b;
 }
 
 .fileName {
@@ -371,10 +374,10 @@ input[type="radio"] {
 
 
 .title {
+  max-width: 200px;
   font-family: "Poppins", sans-serif;
-  font-weight: 900;
+  font-weight: 800;
   font-style: italic;
   font-size: 30px;
   color: #f68f39;
-
 }

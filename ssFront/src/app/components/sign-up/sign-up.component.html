@@ -1,5 +1,6 @@
-<div class="title">Sign Up</div>
-<small>Hi </small>
+<div class="title">Get an account</div>
+<small>
+  Welcome! Please enter your details</small>
 <svg
   width="26"
   height="26"
@@ -59,7 +60,6 @@
     <ul>
       <li
         class="step step01"
-      
         [ngClass]="step.stepName == activeStep.stepName ? 'active' : ''"
         *ngFor="let step of stepslist"
       >
@@ -136,15 +136,23 @@
                 this required</span
               > -->
             </div>
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-12" style="position: relative">
               <label>Birthday :</label>
+
               <p-calendar
                 placeholder="Birthday"
                 [iconDisplay]="'input'"
                 [showIcon]="true"
+             
                 inputId="icondisplay"
                 formControlName="birthday"
-              />
+              >
+                <ng-template pTemplate="date" let-date >
+                  <span>
+                    {{ date.day }}
+                  </span>
+                </ng-template>
+              </p-calendar>
               <div
                 class="text-danger"
                 *ngIf="
@@ -152,22 +160,28 @@
                   signupform.controls['birthday'].invalid
                 "
               >
-                <span *ngIf="signupform.controls['birthday'].errors?.['required']"
+                <span
+                  *ngIf="signupform.controls['birthday'].errors?.['required']"
                   >This field is mandatory.</span
                 >
-                <span *ngIf="signupform.controls['birthday'].errors?.['pattern']"
-                  >This field is invalid.</span
+                <span *ngIf="signupform.get('birthday')?.errors?.['underage']"
+                  >You must be at least 18 years old.</span
                 >
               </div>
             </div>
-
-            
           </div>
           <div class="RowBtn">
-              <button class="btn-primary" style="pointer-events: none;opacity: 0;" (click)="signup()"><i class="fa-solid fa-paper-plane"></i>Send</button>
-              <button class="btn-primary" (click)="gotoStep2()">Next<i class="fa-solid fa-arrow-right "></i></button>
-             
-            </div>
+            <button
+              class="btn-primary"
+              style="pointer-events: none; opacity: 0"
+              (click)="signup()"
+            >
+              <i class="fa-solid fa-paper-plane"></i>Send
+            </button>
+            <button class="btn-primary" (click)="gotoStep2()">
+              Next<i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
         </div>
       </div>
       <div
@@ -213,21 +227,24 @@
                 formControlName="Password"
                 name="password"
               />
-            
-            <div
-              class="text-danger"
-              *ngIf="
-                signupform.controls['Password'].touched &&
-                signupform.controls['Password'].invalid
-              "
-            >
-              <span *ngIf="signupform.controls['Password'].errors?.['required']"
-                >This field is mandatory.</span
+
+              <div
+                class="text-danger"
+                *ngIf="
+                  signupform.controls['Password'].touched &&
+                  signupform.controls['Password'].invalid
+                "
               >
-              <span *ngIf="signupform.controls['Password'].errors?.['pattern']"
-                >This field is invalid.</span
-              >
-            </div></div>
+                <span
+                  *ngIf="signupform.controls['Password'].errors?.['required']"
+                  >This field is mandatory.</span
+                >
+                <span
+                  *ngIf="signupform.controls['Password'].errors?.['pattern']"
+                  >This field is invalid.</span
+                >
+              </div>
+            </div>
             <div class="form-group col-md-12">
               <label>re-Password :</label>
 
@@ -251,17 +268,21 @@
                   >This field is mandatory.</span
                 >
                 <span
-                  *ngIf="signupform.controls['rePassword'].errors?.['pattern']"
-                  >This field is invalid.</span
+                *ngIf="signupform.get('rePassword')?.hasError('mismatch') && signupform.get('rePassword')?.touched"
                 >
+                  Passwords do not match.
+                </span>
               </div>
             </div>
           </div>
           <div class="RowBtn">
-            <button class="btn-primary" (click)="gotoStep1()"><i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>Prev</button>
-            <button class="btn-primary" (click)="gotoStep3()">Next<i class="fa-solid fa-arrow-right "></i></button>
+            <button class="btn-primary" (click)="gotoStep1()">
+              <i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>Prev
+            </button>
+            <button class="btn-primary" (click)="gotoStep3()">
+              Next<i class="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
-         
         </div>
       </div>
       <div
@@ -270,16 +291,12 @@
       >
         <div class="container-fluid" [formGroup]="signupform">
           <div class="row" style="justify-content: center">
-           
-
             <div class="form-group col-md-12">
-              <label  
-              > Upload Your CV</label
-            >
-              <div class="rowRol" pInputText style="padding: 0 !important;">
-                <label for="fileInput" class="custom-file-button"
-                  > <i class="fa-solid fa-file-arrow-up fa-xl"></i></label
-                >
+              <label> Upload Your CV</label>
+              <div class="rowRol" pInputText style="padding: 0 !important">
+                <label for="fileInput" class="custom-file-button">
+                  <i class="fa-solid fa-file-arrow-up fa-xl"></i
+                ></label>
                 <input
                   type="file"
                   id="fileInput"
@@ -287,7 +304,7 @@
                   hidden
                   accept="application/pdf"
                 />
-                <p class="fileName"  *ngIf="selectedFileName">
+                <p class="fileName" *ngIf="selectedFileName">
                   {{ selectedFileName }}
                 </p>
               </div>
@@ -298,8 +315,7 @@
                   signupform.controls['CV'].invalid
                 "
               >
-                <span
-                  *ngIf="signupform.controls['CV'].errors?.['required']"
+                <span *ngIf="signupform.controls['CV'].errors?.['required']"
                   >This field is mandatory.</span
                 >
                 <span *ngIf="signupform.controls['CV'].errors?.['pattern']"
@@ -435,10 +451,13 @@
             </div> 
           </div> -->
           <div class="RowBtn">
-            <button class="btn-primary" (click)="gotoStep2()"><i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>Prev</button>
-            <button class="btn-primary" (click)="signup()"><i class="fa-solid fa-paper-plane"></i>Send</button>
+            <button class="btn-primary" (click)="gotoStep2()">
+              <i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>Prev
+            </button>
+            <button class="btn-primary" (click)="signup()">
+              <i class="fa-solid fa-paper-plane"></i>Send
+            </button>
           </div>
-         
         </div>
       </div>
     </div>

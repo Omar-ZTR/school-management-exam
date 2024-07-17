@@ -30,19 +30,9 @@ __decorate([
 ], Teacher.prototype, "groups", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
-        allowNull: false, }),
+        allowNull: true, }),
     __metadata("design:type", String)
 ], Teacher.prototype, "specialty", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
-        allowNull: false, }),
-    __metadata("design:type", String)
-], Teacher.prototype, "experience", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE,
-        allowNull: false, }),
-    __metadata("design:type", Date)
-], Teacher.prototype, "date", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
         allowNull: false, }),

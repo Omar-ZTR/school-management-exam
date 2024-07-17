@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteTeacher, getAllTeacher, updateTeacher } from '../controllers/teacherController';
+import { deleteTeacher, getAllTeacher, TeacherByid, updateTeacher } from '../controllers/teacherController';
 
 
 const routerTeacher = express.Router();
@@ -7,7 +7,7 @@ const routerTeacher = express.Router();
 routerTeacher.get('/teachers', getAllTeacher);
 
 
-
+routerTeacher.get('/teacher/:id', TeacherByid);
 
 routerTeacher.put('/teacher/:id', updateTeacher);
 

@@ -9,76 +9,86 @@ import { Token } from "../models/tokenModel";
 import generateToken from "../utils/token";
 import { users } from "../models/usress/userModel";
 import { Admin } from "../models/adminModel";
+import uploadFileMiddleware from "../utils/upload";
 
-
+const baseUrl = "http://localhost:3000/files/";
 
 
 
 // Signup function
 export const signup = async (req: Request, res: Response) => {
   try {
-    let userData = req.body;
+    // console.log("Incoming request:", req);
+
+    await uploadFileMiddleware(req, res); // Handle file upload
+    console.log("File uploaded:", req.files);
+
+    if (!req.body.user) {
+      return res.status(400).json({ message: "User data is missing" });
+    }
+
+    let userData;
+    try {
+      userData = JSON.parse(req.body.user); // Assuming user data is in req.body.user as a JSON string
+    } catch (parseError) {
+      console.error("Error parsing user data:", parseError);
+      return res.status(400).json({ message: "Invalid user data format" });
+    }
+    
+    console.log("Parsed user data:", userData);
 
     userData.resetPasswordToken = "";
-
     userData.status = false;
 
-    if (userData.role == "Student") {
-      const existingUser = await Student.findOne({
+    let existingUser;
+    let newUser;
+    const hashedPassword = await bcrypt.hash(userData.Password, 10);
+    userData.password = hashedPassword; // Update userData.Password with hashed password
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+      console.log("files 7", req.files);
+      for (const file of req.files as Express.Multer.File[]) {
+        userData.CV__path= baseUrl + file.filename
+      }
+    }
+    if (userData.role === "Student") {
+      existingUser = await Student.findOne({
         where: { user__email: userData.user__email },
       });
       if (existingUser) {
         return res.status(400).json({ message: "Student already exists" });
       }
-
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      userData.password = hashedPassword; // Update userData.password with hashedPassword
-
-      const newUser = await Student.create(userData);
-
+      newUser = await Student.create(userData);
       res
         .status(201)
         .json({ message: "Student registered successfully", user: newUser });
-    } else if (userData.role == "Teacher"){
-      const existingUser = await Teacher.findOne({
+    } else if (userData.role === "Teacher") {
+      existingUser = await Teacher.findOne({
         where: { user__email: userData.user__email },
       });
       if (existingUser) {
         return res.status(400).json({ message: "Teacher already exists" });
       }
-
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      userData.password = hashedPassword; // Update userData.password with hashedPassword
-
-      const newUser = await Teacher.create(userData);
-
+      newUser = await Teacher.create(userData);
       res
         .status(201)
         .json({ message: "Teacher registered successfully", user: newUser });
-    }
-    else {
-      const existingUser = await User.findOne({
+    } else {
+      existingUser = await User.findOne({
         where: { user__email: userData.user__email },
       });
       if (existingUser) {
-        return res.status(400).json({ message: "user already exists" });
+        return res.status(400).json({ message: "User already exists" });
       }
-
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      userData.password = hashedPassword; // Update userData.password with hashedPassword
-
-      const newUser = await User.create(userData);
-
+      newUser = await User.create(userData);
       res
         .status(201)
-        .json({ message: "user registered successfully", user: newUser });
+        .json({ message: "User registered successfully", user: newUser });
     }
   } catch (error) {
     console.error("Error signing up:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 type UserType = Student | Teacher | Admin; 
 // Login function
@@ -141,8 +151,8 @@ export const ssignup = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    userData.password = hashedPassword; // Update userData.password with hashedPassword
+    const hashedPassword = await bcrypt.hash(userData.Password, 10);
+    userData.password = hashedPassword; // Update userData.Password with hashedPassword
 
     const newUser = await User.create(userData);
 

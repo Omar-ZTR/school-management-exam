@@ -2,7 +2,7 @@ import { Question } from "../models/questionModel"; // Import your Question mode
 import { Request, Response } from "express";
 import uploadFile from "../utils/upload";
 import { Reponse } from "../models/reponseModel";
-import {FileQuestion } from "../models/fileModel";
+import { FileQuestion } from "../models/fileModel";
 import { Exam } from "../models/examModel";
 import uploadFileMiddleware from "../utils/upload";
 const baseUrl = "http://localhost:3000/files/";
@@ -13,7 +13,7 @@ const baseUrl = "http://localhost:3000/files/";
 
 //     await uploadFile(req, res); // Handle file upload
 //     console.log("exam 3", req.file);
-//     const questDatas = { ...req.body }; 
+//     const questDatas = { ...req.body };
 // console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>",questDatas)
 //     // Assuming exam data is in req.body
 //     console.log("exam 4", questDatas[0]);
@@ -64,17 +64,15 @@ const baseUrl = "http://localhost:3000/files/";
 //   }
 // };
 
-
-
 export const createQuestion = async (req: Request, res: Response) => {
   try {
     console.log("exam 2", req.files);
 
-    await uploadFileMiddleware(req, res)
+    await uploadFileMiddleware(req, res);
     console.log("exam 3", req.file);
     const questDatas = { ...req.body };
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>", questDatas);
-    
+
     // Assuming exam data is in req.body
     console.log("exam 4", questDatas[0]);
     const questionData = JSON.parse(questDatas.question);
@@ -82,7 +80,7 @@ export const createQuestion = async (req: Request, res: Response) => {
 
     const question = await Question.create(questionData);
     console.log("exam 6");
-    
+
     if (req.files && (req.files as Express.Multer.File[]).length > 0) {
       console.log("files 7", req.files);
 
@@ -104,23 +102,50 @@ export const createQuestion = async (req: Request, res: Response) => {
     if (questionData.exam__id) {
       const exam = await Exam.findByPk(questionData.exam__id);
       if (exam) {
-        await exam.$add('questions', question);
-        console.log(`Associated question ${question.question__id} with exam ${questionData.exam__id}`);
+        await exam.$add("questions", question);
+        console.log(
+          `Associated question ${question.question__id} with exam ${questionData.exam__id}`
+        );
       }
     }
-    console.log(",,,,,,,,,,,,,,,,,,,,3332,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",questionData.reponses)
+    console.log(
+      ",,,,,,,,,,,,,,,,,,,,3332,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+      questionData.reponses
+    );
     // Create the responses for the question
-    if (questionData.reponses && Array.isArray(questionData.reponses) && questionData.reponses.length > 0) {
+    if (
+      questionData.reponses &&
+      Array.isArray(questionData.reponses) &&
+      questionData.reponses.length > 0
+    ) {
       console.log("if ethanya fotnaha");
       const responsesData = questionData.reponses;
       for (const responseData of responsesData) {
-        console.log(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",responseData)
+        console.log(
+          ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+          responseData
+        );
         responseData.question__id = question.question__id;
         await Reponse.create(responseData);
       }
     }
+    const NewQuestion = await Question.findOne({
+      include: [
+        {
+          model: Reponse,
+          as: "reponses",
+        },
+        {
+          model: FileQuestion,
+          as: "file",
+        },
+      ],
+      where: { question__id: question.question__id },
+    });
 
-    res.status(201).json(question);
+   
+
+    res.status(201).json(NewQuestion);
   } catch (error) {
     console.error("Error creating question", error);
     res.status(500).json({ error: "Internal server error" });
@@ -128,16 +153,16 @@ export const createQuestion = async (req: Request, res: Response) => {
 };
 
 export const updateQuestion = async (req: Request, res: Response) => {
-  console.log("Hello to update question >>>>>>>>>>>>>>>>>",req.body);
+  console.log("Hello to update question >>>>>>>>>>>>>>>>>", req.body);
   try {
     const questionId = req.params.id;
-     await uploadFileMiddleware(req, res) 
+    await uploadFileMiddleware(req, res);
     // Handle the form data parsing
-    const questDatas = {...req.body};
-    console.log("Hddddddd>",questDatas);
-  
+    const questDatas = { ...req.body };
+    console.log("Hddddddd>", questDatas);
+
     const questionData = JSON.parse(questDatas.question);
-    console.log("ssssssss>",questionData);
+    console.log("ssssssss>", questionData);
     // Find the existing question
     const question = await Question.findByPk(questionId);
     if (!question) {
@@ -148,12 +173,16 @@ export const updateQuestion = async (req: Request, res: Response) => {
     await question.update(questionData);
 
     // Fetch existing responses and files
-    const existingResponses = await Reponse.findAll({ where: { question__id: questionId } });
+    const existingResponses = await Reponse.findAll({
+      where: { question__id: questionId },
+    });
     // const existingFiles = await FileQuestion.findAll({ where: { question__id: questionId } });
 
     // Update or create new responses
     if (questionData.reponses && Array.isArray(questionData.reponses)) {
-      const responseIds = questionData.reponses.map((response: any) => response.reponse__id);
+      const responseIds = questionData.reponses.map(
+        (response: any) => response.reponse__id
+      );
 
       for (const responseData of questionData.reponses) {
         if (responseData.reponse__id) {
@@ -200,7 +229,21 @@ export const updateQuestion = async (req: Request, res: Response) => {
       // }
     }
 
-    res.status(200).json(question);
+    const NewQuestion = await Question.findOne({
+      include: [
+        {
+          model: Reponse,
+          as: "reponses",
+        },
+        {
+          model: FileQuestion,
+          as: "files",
+        },
+      ],
+      where: { question__id: question.question__id },
+    });
+
+    res.status(200).json(NewQuestion);
   } catch (error) {
     console.error("Error updating question", error);
     res.status(500).json({ error: "Internal server error" });
@@ -212,66 +255,59 @@ export const updateQuestion = async (req: Request, res: Response) => {
 export const QuestionById = async (req: Request, res: Response) => {
   try {
     const id = req.params;
-  
-   
+
     const questions = await Question.findOne({
       where: {
         question__id: id,
       },
-      
+
       include: [
         {
           model: Reponse,
-          as: 'reponses',
+          as: "reponses",
         },
         {
           model: FileQuestion,
-          as: 'file',
+          as: "file",
         },
       ],
     });
-  console.log("<><<<>>",questions)
+    console.log("<><<<>>", questions);
     res.status(200).json(questions);
   } catch (error) {
     console.error("Error fetching questions with files", error);
     res.status(500).json({ error: "Internal server error" });
   }
-  };
-
-
-
-
-// Get fake Question 
-
-export const getFakeQuestions = async (req: Request, res: Response) => {
-try {
-  const examId = -1;
-
- 
-  const questions = await Question.findAll({
-    include: [
-      {
-        model: Exam,
-        as: 'exams',
-        where: { exam__id: examId },
-        through: { attributes: [] } // Exclude join table attributes
-      },
-      {
-        model: FileQuestion,
-        as: 'file',
-        required: false,
-      },
-    ],
-  });
-console.log("<><<<>>",questions)
-  res.status(200).json(questions);
-} catch (error) {
-  console.error("Error fetching questions with files", error);
-  res.status(500).json({ error: "Internal server error" });
-}
 };
 
+// Get fake Question
 
+export const getFakeQuestions = async (req: Request, res: Response) => {
+  try {
+    const examId = -1;
+
+    const questions = await Question.findAll({
+      include: [
+        {
+          model: Exam,
+          as: "exams",
+          where: { exam__id: examId },
+          through: { attributes: [] }, // Exclude join table attributes
+        },
+        {
+          model: FileQuestion,
+          as: "file",
+          required: false,
+        },
+      ],
+    });
+    console.log("<><<<>>", questions);
+    res.status(200).json(questions);
+  } catch (error) {
+    console.error("Error fetching questions with files", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 export const updateQuestionsWithExam = async (req: Request, res: Response) => {
   try {
@@ -297,7 +333,7 @@ export const updateQuestionsWithExam = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "One or more questions not found" });
     }
 
-    await exam.$add('questions', questions);
+    await exam.$add("questions", questions);
 
     return questions;
   } catch (error) {
@@ -305,16 +341,6 @@ export const updateQuestionsWithExam = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
-
-
-
-
-
-
-
 
 export const getQuestionById = async (req: Request, res: Response) => {
   try {
@@ -344,16 +370,15 @@ export const getAllQuestions = async (req: Request, res: Response) => {
 
 // Update operation
 
-
 // Delete operation
 export const deleteQuestion = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    console.log("hay bb")
+    console.log("hay bb");
 
-    const deleteData = req.body.model
-    console.log("hay req",deleteData)
-    if(deleteData.action==='delete'){
+    const deleteData = req.body.model;
+    console.log("hay req", deleteData);
+    if (deleteData.action === "delete") {
       const question = await Question.findByPk(id);
       if (question) {
         await question.destroy();
@@ -363,18 +388,16 @@ export const deleteQuestion = async (req: Request, res: Response) => {
         console.log(`Question with ID ${id} not found`);
         throw new Error("Question not found");
       }
-   
-  }
-  if(deleteData.action !=='delete'){
-    const message=unassociateQuestionFromExam(deleteData.exam__id,id)
-    res.status(204).send(message);
-  }
+    }
+    if (deleteData.action !== "delete") {
+      const message = unassociateQuestionFromExam(deleteData.exam__id, id);
+      res.status(204).send(message);
+    }
   } catch (error) {
     console.error("Error deleting question", error);
     res.status(500).send("Error deleting question");
   }
 };
-
 
 async function unassociateQuestionFromExam(examId: number, questionId: any) {
   try {
@@ -384,12 +407,12 @@ async function unassociateQuestionFromExam(examId: number, questionId: any) {
 
     if (exam && question) {
       // Unassociate the question from the exam
-      await exam.$remove('questions', question);
-     return(`Unassociated question ${question.question__id} from exam ${exam.exam__id}`);
+      await exam.$remove("questions", question);
+      return `Unassociated question ${question.question__id} from exam ${exam.exam__id}`;
     } else {
-      return('Exam or Question not found');
+      return "Exam or Question not found";
     }
   } catch (error) {
-    console.error('Error unassociating question from exam:', error);
+    console.error("Error unassociating question from exam:", error);
   }
 }

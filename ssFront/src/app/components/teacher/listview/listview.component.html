@@ -3,20 +3,35 @@
     <div class="listView" *ngFor="let question of data; let k = index">
       <div class="card flex justify-content-center">
         <p-accordion [activeIndex]="0">
-          <p-accordionTab header="Question: {{ k + 1 }}">
+          <p-accordionTab header="Question:{{ question.question__text }}">
             <div class="Question">
               <ul>
                 <li><span class="font-bold white-space-nowrap"> Type:</span> {{ question.question__type }}</li>
                 <li><span class="lab">Note:</span> {{ question.note }}</li>
               </ul>
-              <p>
-                {{ question.question__text }}
-              </p>
-              <div *ngFor="let answer of question.reponses">
-                <span class="lab">rep:</span>
+             
+              <div *ngIf="question.reponses.length >0">
+                <!-- <span class="lab">rep:</span>
                 <p>
                   {{ answer.reponse__text }} <span>{{ answer.reponse__statut }}</span>
-                </p>
+                </p> -->
+
+                <p-table [value]="question.reponses" [tableStyle]="{'max-width': '300px'}" >
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th colspan="2">Answers:</th>
+                          
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rep>
+                      <tr style="    max-width: 300px;">
+                          <td> <div class="textDesc">{{ rep.reponse__text }}</div> </td>
+                          <td>{{ rep.reponse__statut }}</td>
+                          
+                      </tr>
+                  </ng-template>
+              </p-table>
+
               </div>
             </div>
           </p-accordionTab>

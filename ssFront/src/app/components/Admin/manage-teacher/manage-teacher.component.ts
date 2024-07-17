@@ -29,9 +29,9 @@ export interface Teacher {
   user__email: string;
   active: boolean | null;
   password: string;
-  specialty: string;
-  experience: string;
-  date: string;
+  description:string;
+  Cv__path: string;
+  birthday: Date;
   role: string;
   subjects: Subject[];
   groups: Group[];
@@ -113,7 +113,9 @@ export class ManageTeacherComponent implements OnInit {
   groups!: any;
 
   activate: { [key: number]: { active?: any } } = {};
-
+  openFile(filePath: string): void {
+    window.open(filePath, '_blank');
+  }
   switchTable(tableName: string) {
     this.loading = true; // Example: Set loading state
 
@@ -145,7 +147,13 @@ export class ManageTeacherComponent implements OnInit {
     this.fetchGroups();
     this.fetchSubjects();
     this.fetchTeachers();
-
+    setTimeout(() => {
+      if (this.loading) {
+        this.fetchGroups();
+        this.fetchSubjects();
+        this.fetchTeachers();
+      }
+    }, 30000);
     console.log('hhdhshs ids', this.teacherIds);
   }
 

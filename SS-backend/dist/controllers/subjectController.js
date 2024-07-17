@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSubject = exports.UpdateSubject = exports.getSubjects = exports.CreateSubject = void 0;
+exports.deleteSubject = exports.getTeacherSubject = exports.UpdateSubject = exports.getSubjects = exports.CreateSubject = void 0;
 const subjectModel_1 = require("../models/subjectModel");
+const teacherSubjectsModel_1 = require("../models/teacherSubjectsModel");
 const CreateSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newSubject = yield subjectModel_1.Subject.create(req.body);
@@ -55,6 +56,28 @@ const UpdateSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.UpdateSubject = UpdateSubject;
+const getTeacherSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const subjects = yield teacherSubjectsModel_1.TeacherSubject.findAll({
+            where: { user__id: id },
+            include: [{
+                    model: subjectModel_1.Subject,
+                    as: 'subjects', // Alias to access the Subject model
+                    through: { attributes: [] } // This ensures that only the Subject models are fetched, excluding the join table attributes
+                }]
+        });
+        // Extracting just the subjects from the subjects array
+        const subjectTecher = subjects.map(subject => subject);
+        console.log("Subjects:", subjectTecher);
+        res.status(200).json(subjectTecher);
+    }
+    catch (error) {
+        console.error("Error Fetching Subject", error);
+        res.status(500).send("Error Fetching Subject");
+    }
+});
+exports.getTeacherSubject = getTeacherSubject;
 const deleteSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

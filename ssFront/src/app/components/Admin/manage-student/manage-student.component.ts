@@ -25,9 +25,9 @@ export interface Student {
   user__email: string;
   active: boolean | null;
   password: string;
-  specialty: string;
-  experience: string;
-  date: string;
+  description: string;
+  CV__path: string;
+  birthday: string;
   role: string;
 
   group__id: string;
@@ -83,7 +83,9 @@ export class ManageStudentComponent implements OnInit {
   activate: { [key: number]: { active?: any } } = {};
   group: { [key: number]: { group__id?: any; group__name?: any } } = {};
   groups!: any;
-
+  openFile(filePath: string): void {
+    window.open(filePath, '_blank');
+  }
   constructor(
     private studentService: StudentService,
     private groupService: GroupService
@@ -120,7 +122,13 @@ export class ManageStudentComponent implements OnInit {
     this.fetchGroups();
 
     this.fetchStudents();
+    setTimeout(() => {
+      if (this.loading) {
+        this.fetchGroups();
 
+    this.fetchStudents();
+      }
+    }, 30000);
     console.log('hhdhshs ids', this.studentsIds);
   }
 

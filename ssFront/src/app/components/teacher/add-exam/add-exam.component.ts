@@ -18,9 +18,11 @@ import { ListviewComponent } from '../listview/listview.component';
 import { QuestionService } from '../../../services/serviceTeacher/question.service';
 import { AddQuestionComponent } from '../add-question/add-question.component';
 import { CalandarfullComponent } from '../../calandarfull/calandarfull.component';
-import { SubjectService } from '../../../services/servicesUtils/subject.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
+import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
 @Component({
   selector: 'app-add-exam',
   standalone: true,
@@ -31,10 +33,11 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
     MatTooltipModule,
     ReactiveFormsModule,
     FormsModule,
-    ListviewComponent,
+    ListviewComponent, 
     AddQuestionComponent,
     CalandarfullComponent,
     DropdownModule,
+    InputTextModule,
   ],
 })
 export class AddExamComponent {
@@ -60,19 +63,31 @@ export class AddExamComponent {
   selectedSubject: any;
   subjects: any;
   user__id = this.tokenService.getUserIdFromToken();
+  typeGlobal: string = 'offline';
+
+  changeTypeGlobal(value: string) {
+    this.typeGlobal = value;
+    if (value == 'offline') {
+      this.examForm.patchValue({ exam__type: '' });
+    } else {
+      this.examForm.patchValue({ exam__type: '' });
+    }
+    console.log('ssssss', this.typeGlobal);
+  }
+
   constructor(
-    private subjectService: SubjectService,
+    private teacherService: TeacherService,
     private elementRef: ElementRef,
     private examService: ExamService,
     private questService: QuestionService,
     private fb: FormBuilder,
-    private tokenService: TokenServiceService,
+    private tokenService: TokenServiceService
   ) {
     this.examForm = this.fb.group({
       subject: ['', Validators.required], // Required validator for exam name
-      exam__type: ['offline', Validators.required],
+      exam__type: ['', Validators.required],
       obligatoire: ['false', Validators.required],
-      user__id:[this.user__id,Validators.required],
+      user__id: [this.user__id, Validators.required],
       exam__title: [
         '',
         [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
@@ -80,7 +95,7 @@ export class AddExamComponent {
       questions: {},
     });
     this.subjectForm = this.fb.group({
-      selectedSubject: new FormControl<any | null>(null),
+      selectedSubject: new FormControl<any | null>(null,[Validators.required]),
     });
   }
 
@@ -98,9 +113,11 @@ export class AddExamComponent {
     this.examForm.get('exam__type')?.valueChanges.subscribe((value) => {
       this.examType = value;
     });
-    this.subjectService.getSubjects().subscribe(
-      (data) => {
-        this.subjects = data;
+    this.teacherService.getTecher(this.user__id).subscribe(
+      (data: Teacher[]) => {
+       const teacher = data;
+       this.subjects=teacher[0].subjects
+        console.log("subjectshhhhhhsss is is sis",teacher[0].subjects)
       },
       (error) => {
         console.error('Error fetching subjects', error);
@@ -131,18 +148,19 @@ export class AddExamComponent {
       });
     }
   }
-  statutExam: boolean = false;
-
+  statutExam: string = 'Course';
+  Status: boolean = true;
   toggleStatut(): void {
-    
-      this.statutExam = !this.statutExam;
-      this.examForm.patchValue({
-        obligatoire: this.statutExam,
-      });
-
+    this.Status = !this.Status;
+    if (this.Status) {
+      this.statutExam = 'Course';
+    } else {
+      this.statutExam = 'Certificate';
+    }
+    this.examForm.patchValue({
+      obligatoire: this.Status,
+    });
   }
-
-
 
   onIsMonthViewChange(value: boolean) {
     this.isMonthView = value;
@@ -224,6 +242,11 @@ export class AddExamComponent {
   }
 
   savePlan() {
+    Object.values(this.examForm.controls).forEach((control) => {
+      control.markAsTouched();
+    });
+    if (this.examForm.valid) {
+    
     this.examForm.patchValue({
       questions: this.questarr,
     });
@@ -259,9 +282,14 @@ export class AddExamComponent {
         // // alert(this.responseMessage +" " +GlobalConstants.error);
         // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
       }
-    );
+    );}
   }
   save() {
+
+    Object.values(this.examForm.controls).forEach((control) => {
+      control.markAsTouched();
+    });
+    if (this.examForm.valid) {
     this.examForm.patchValue({
       questions: this.questarr,
     });
@@ -295,8 +323,8 @@ export class AddExamComponent {
         // // alert(this.responseMessage +" " +GlobalConstants.error);
         // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
       }
-    );
+    );}
   }
 
-  onSubmit() {}
+ 
 }
