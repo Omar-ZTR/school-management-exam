@@ -22,9 +22,9 @@
       </div>
       <div
         class="calendar-day"
-        *ngFor="let day of daysInMonth"
+        *ngFor="let day of daysMonth"
         (click)="openWeekView(day)"
-        [ngClass]="{ 'dayhas-event': hasEvents(day) }"
+        [ngClass]="{ 'dayhas-event': day !== ' '&& hasEvents(extractDayNumber(day)) }"
       >
         <div class="day-number">
           {{ day }}
@@ -53,10 +53,13 @@
             <div
               class="hour-cell"
               (click)="
-                !isEvent(date, hour) &&
+                
                   openEventForm(date, hour, eventFormModal)
               "
             >
+
+            <!-- !isEvent(date, hour) && -->
+
               <div
                 *ngIf="isEvent(date, hour)"
                 [ngStyle]="getEventStyles(date, hour)"

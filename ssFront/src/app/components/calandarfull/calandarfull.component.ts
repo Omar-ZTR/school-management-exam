@@ -70,6 +70,7 @@ export class CalandarfullComponent implements OnInit {
   examType: any;
   state: boolean = false;
   MsgError: string = '';
+  daysMonth!: string[];
 
   constructor(
     private fb: FormBuilder,
@@ -286,8 +287,17 @@ inisiallLists(){
   //   });
   //   return groupedEvents;
   // }
-  openWeekView(day: number) {
-    console.log('day is <<<<<<<', day);
+
+
+ extractDayNumber(dayString: string): number {
+    const match = dayString.match(/\d+/);
+    return match ? parseInt(match[0], 10) : NaN;
+  }
+
+  openWeekView(dayString: string) {
+    const day = this.extractDayNumber(dayString);
+console.log(day);
+    console.log('day is <<<<<<<', dayString);
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
     console.log('selectedDate is <<<<<<<', selectedDate);
     const startOfWeek = new Date(selectedDate);
@@ -378,7 +388,52 @@ inisiallLists(){
       0
     ).getDate();
     this.daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    
+    this.daysMonth = Array.from({ length: daysInMonth }, (_, i) => {
+      const dayDate = new Date(this.currentYear, this.currentMonth, i + 1);
+      const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
+      return `${dayName} ${i + 1}`;
+    });
+  
+    // Define the type for the keys of dayOffsets
+    type DayName = 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat';
+  
+    // Define the dayOffsets object
+    const dayOffsets: { [key in DayName]: number } = {
+      'Sun': 0,
+      'Mon': 1,
+      'Tue': 2,
+      'Wed': 3,
+      'Thu': 4,
+      'Fri': 5,
+      'Sat': 6,
+    };
+  
+    // Determine the number of leading empty strings based on the first day of the month
+    const firstDayName = this.daysMonth[0].split(' ')[0] as DayName;
+    const offset = dayOffsets[firstDayName] || 0;
+  
+    // Prepend empty strings to the beginning of the daysMonth array
+    for (let i = 0; i < offset; i++) {
+      this.daysMonth.unshift(' ');
+    }
+  
+   
   }
+
+  genersateCalendar() {
+    const date = new Date(this.currentYear, this.currentMonth, 1);
+    const monthName = date.toLocaleString('default', { month: 'long' });
+    this.monthName = `${monthName} ${this.currentYear}`;
+    const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+    
+    this.daysMonth = Array.from({ length: daysInMonth }, (_, i) => {
+      const dayDate = new Date(this.currentYear, this.currentMonth, i + 1);
+      const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
+      return `${dayName} ${i + 1}`;
+    });
+  }
+
   formatDateToLocal(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
@@ -386,7 +441,13 @@ inisiallLists(){
 
     return `${year}-${month}-${day}`;
   }
+formatDateLocal(Y: number, M: number, d: number) {
+    const year = String(Y);
+    const month = String(M+1).padStart(2, '0'); // Ensure month is zero-padded
+    const day = String(d).padStart(2, '0'); // Ensure day is zero-padded
 
+    return `${year}-${month}-${day}`;
+}
   openEventForm(kdate: Date, hour: string, modal: any): void {
     console.log(
       'kdate>>>>>>....',
@@ -477,9 +538,11 @@ inisiallLists(){
   // Update the hasEvents function to work with examlist
   hasEvents(day: number): boolean {
     if (this.examlist) {
-      const date = new Date(this.currentYear, this.currentMonth, day)
-        .toISOString()
-        .split('T')[0];
+      const date =  this.formatDateLocal(this.currentYear, this.currentMonth, day);
+      // new Date(this.currentYear, this.currentMonth, day)
+      // .toISOString()
+      // .split('T')[0];
+     
       return this.examlist.some(
         (event: { startDate: string | number | Date }) => {
           const eventDate = new Date(event.startDate)
