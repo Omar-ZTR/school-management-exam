@@ -1,4 +1,4 @@
-<div class="calendar-container" >
+<div class="calendar-container">
   <div class="calendar-header">
     <div class="content-header">
       <button class="button-34" (click)="toggleView()">
@@ -9,7 +9,6 @@
         >{{ getWeekDates()[0] | date : "MMM d" }} -
         {{ getWeekDates()[6] | date : "MMM d, yyyy" }}</span
       >
-      
     </div>
   </div>
   <div class="content-Calendar">
@@ -39,11 +38,13 @@
     <div *ngIf="!isMonthView" class="week-view">
       <div class="week-header">
         <div class="week-day" *ngFor="let date of getWeekDates()">
+          <div style="position: relative;">
           <div>{{ weekDays[date.getDay()] }}</div>
           <div>{{ date | date : "MMM d" }}</div>
+          <div *ngIf="weekDays[date.getDay()]=== 'Saturday'|| weekDays[date.getDay()]=== 'Sunday' " class="noop"></div></div>
         </div>
       </div>
-      <div >
+      <div>
         <div class="week-grid" *ngFor="let hour of getHoursOfDay()">
           <div class="hour-label">
             {{ hour }}
@@ -56,19 +57,24 @@
                   openEventForm(date, hour, eventFormModal)
               "
             >
-            <div  *ngIf="isEvent(date, hour)" [ngStyle]="getEventStyles(date, hour)" class=" has-event event-container">
-              <ng-container *ngFor="let event of examlist">
-                <div *ngIf="isEventForDateAndHour(event, date, hour)" >
-                 
-                  <span class="tooltip-text">
-                    <strong>{{ event.exam__title }}</strong><br />
-                    <small>
-                      {{ event.startDate | date: 'shortTime' }} - {{ event.endDate | date: 'shortTime' }}
-                    </small>
-                  </span>
-                </div>
-              </ng-container>
-            </div>
+              <div
+                *ngIf="isEvent(date, hour)"
+                [ngStyle]="getEventStyles(date, hour)"
+                class="has-event event-container"
+              >
+                <ng-container *ngFor="let event of examlist">
+                  <div *ngIf="isEventForDateAndHour(event, date, hour)">
+                    <span class="tooltip-text">
+                      <strong>{{ event.exam__title }}</strong
+                      ><br />
+                      <small>
+                        {{ event.startDate | date : "shortTime" }} -
+                        {{ event.endDate | date : "shortTime" }}
+                      </small>
+                    </span>
+                  </div>
+                </ng-container>
+              </div>
               <!-- Add event content here -->
             </div>
           </div>
@@ -82,7 +88,7 @@
 </div>
 
 <!-- Event Form Modal -->
-<ng-template style="z-index: 99999;" #eventFormModal let-modal>
+<ng-template style="z-index: 99999" #eventFormModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Add Event</h4>
     <button
@@ -169,7 +175,7 @@
           End time is required.
         </div>
       </div>
-      <div class="form-group d-flex justify-content-center align-items-center">
+      <!-- <div class="form-group d-flex justify-content-center align-items-center">
         <div class="mr-2">
           <label for="salle">Salle</label>
           <select id="salle" class="form-control" formControlName="salle" (click)="onSalleSelect()">
@@ -208,8 +214,126 @@
           </div>
         </div>
       </div>
-     
-      <button type="submit" class="btn btn-primary">Save Exam plan</button>
+      -->
+
+      <!-- oblig  -->
+      <div class="text-danger">{{ MsgError }}</div>
+
+      <div *ngIf="examType">
+        <div class="mb-3">
+          <label for="">Exam mode</label>
+          <button type="button" class="btnAdd" (click)="statePlan()">
+            <i class="fa-solid fa-arrows-rotate fa-xl"></i>
+            {{ state ? "Presence" : "Remotely" }}
+          </button>
+        </div>
+        <form [formGroup]="formSG" *ngIf="state">
+          <div
+            formArrayName="salleGroupList"
+            *ngFor="let group of salleGroupList.controls; let i = index"
+            class="form-group salleGroupList"
+          >
+            <div class="inputSelect" [formGroupName]="i">
+              <label>Salle</label>
+              <p-dropdown
+                [options]="salles"
+                formControlName="salle__id"
+                optionLabel="salle__name"
+                placeholder="Select a Salle"
+              ></p-dropdown>
+            </div>
+            <div class="inputSelect" [formGroupName]="i">
+              <label for="group">Group</label>
+              <p-dropdown
+                [options]="groups"
+                formControlName="group__id"
+                optionLabel="group__name"
+                placeholder="Select a Group"
+              ></p-dropdown>
+            </div>
+            <button
+              type="button"
+              class="btnRmove"
+              (click)="removeSalleGroup(i)"
+            >
+              <i class="fa-solid fa-eraser fa-xl"></i>
+            </button>
+          </div>
+          <div class="mb-3">
+            <button type="button" class="btnAdd" (click)="addSalleGroup()">
+              <i class="fa-solid fa-plus fa-xl"></i> Add More
+            </button>
+          </div>
+        </form>
+
+        <form [formGroup]="formG" *ngIf="!state">
+          <div
+            formArrayName="GroupList"
+            *ngFor="let group of GroupList.controls; let i = index"
+            class="form-group salleGroupList"
+          >
+            <div class="inputSelect" [formGroupName]="i">
+              <label for="group">Group</label>
+              <p-dropdown
+                [options]="groups"
+                formControlName="group__id"
+                optionLabel="group__name"
+                placeholder="Select a Group"
+              ></p-dropdown>
+            </div>
+            <button type="button" class="btnRmove" (click)="removeGroup(i)">
+              <i class="fa-solid fa-eraser fa-xl"></i>
+            </button>
+          </div>
+          <div class="mb-3">
+            <button type="button" class="btnAdd" (click)="addGroup()">
+              <i class="fa-solid fa-plus fa-xl"></i> Add More
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- fin oblig  -->
+
+      <div *ngIf="!examType">
+        <div class="mb-3">
+          <label for=""> Exam mode</label>
+          <button type="button" class="btnAdd" (click)="statePlan()">
+            <i class="fa-solid fa-arrows-rotate fa-xl"></i>
+            {{ state ? "Presence" : "Remotely" }}
+          </button>
+        </div>
+
+        <form [formGroup]="formS" *ngIf="state">
+          <div
+            formArrayName="SalleList"
+            *ngFor="let group of SalleList.controls; let i = index"
+            class="form-group salleGroupList"
+          >
+            <div class="inputSelect" [formGroupName]="i">
+              <label for="group">Salle</label>
+              <p-dropdown
+                [options]="salles"
+                formControlName="salle__id"
+                optionLabel="salle__name"
+                placeholder="Select a Salle"
+              ></p-dropdown>
+            </div>
+            <button type="button" class="btnRmove" (click)="removeSalle(i)">
+              <i class="fa-solid fa-eraser fa-xl"></i>
+            </button>
+          </div>
+          <div class="mb-3">
+            <button type="button" class="btnAdd" (click)="addSalle()">
+              <i class="fa-solid fa-plus fa-xl"></i> Add More
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <button type="submit" class="btnsave">
+        <i class="fa-solid fa-calendar-check"></i>Save
+      </button>
     </form>
   </div>
 </ng-template>

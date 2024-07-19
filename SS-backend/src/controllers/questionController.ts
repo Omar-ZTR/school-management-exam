@@ -5,6 +5,7 @@ import { Reponse } from "../models/reponseModel";
 import { FileQuestion } from "../models/fileModel";
 import { Exam } from "../models/examModel";
 import uploadFileMiddleware from "../utils/upload";
+import { ExamQuestion } from "../models/examQuestionModel";
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 // export const createQuestion = async (req: Request, res: Response) => {
@@ -369,6 +370,27 @@ export const getAllQuestions = async (req: Request, res: Response) => {
 };
 
 // Update operation
+
+
+export const CheckAssociation = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+let check= false
+    const Count = await ExamQuestion.count({
+      where: { question__id: id },
+    });
+if(Count == 0){
+  check = true
+}
+
+    res.status(200).json(check);
+  } catch (error) {
+    console.error("Error fetch questions:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 // Delete operation
 export const deleteQuestion = async (req: Request, res: Response) => {

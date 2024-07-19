@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { Teacher } from "../models/teacherModel";
 import { Subject } from "../models/subjectModel";
 import { Group } from "../models/groupModel";
+import { Question } from "../models/questionModel";
+import { FileQuestion } from "../models/fileModel";
+import { Reponse } from "../models/reponseModel";
 
 export const getAllTeacher = async (req: Request, res: Response) => {
   try {
@@ -120,6 +123,11 @@ export const TeacherByid = async (req: Request, res: Response) => {
         {
           model: Group,
           as: "groups",
+        },
+        {
+          model: Question,
+          as: "questions",
+          include: [FileQuestion,Reponse],
         },
       ],
     });

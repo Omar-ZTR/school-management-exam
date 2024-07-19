@@ -15,6 +15,7 @@ const examModel_1 = require("./examModel");
 const reponseModel_1 = require("./reponseModel");
 const fileModel_1 = require("./fileModel");
 const examQuestionModel_1 = require("./examQuestionModel");
+const teacherModel_1 = require("./teacherModel");
 let Question = class Question extends sequelize_typescript_1.Model {
 };
 exports.Question = Question;
@@ -58,6 +59,11 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.INTEGER),
     __metadata("design:type", Number)
 ], Question.prototype, "question__result", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => teacherModel_1.Teacher),
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Number)
+], Question.prototype, "user__id", void 0);
 exports.Question = Question = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

@@ -33,7 +33,7 @@ import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
     MatTooltipModule,
     ReactiveFormsModule,
     FormsModule,
-    ListviewComponent, 
+    ListviewComponent,
     AddQuestionComponent,
     CalandarfullComponent,
     DropdownModule,
@@ -47,7 +47,7 @@ export class AddExamComponent {
 
   subjectValue = '';
   examType: string = '';
-  listFile: any = {};
+  listFile: any = [];
   urls: any[] = [];
   dataexam: any = {};
   dataPLan: any;
@@ -55,15 +55,20 @@ export class AddExamComponent {
   ext: any;
   questarr: any[] = [];
 
-  showCalendar: boolean = false;
+  showCalendar: boolean = true;
   showAlert: boolean = false;
-
+  questions: any;
   showQuestionField: any;
   sub: any;
   selectedSubject: any;
   subjects: any;
   user__id = this.tokenService.getUserIdFromToken();
   typeGlobal: string = 'offline';
+  Allquestions!: any[];
+  group!: any[];
+
+  errQuestion: boolean=false
+  errFile: boolean=false
 
   changeTypeGlobal(value: string) {
     this.typeGlobal = value;
@@ -86,7 +91,7 @@ export class AddExamComponent {
     this.examForm = this.fb.group({
       subject: ['', Validators.required], // Required validator for exam name
       exam__type: ['', Validators.required],
-      obligatoire: ['false', Validators.required],
+      obligatoire: ['true', Validators.required],
       user__id: [this.user__id, Validators.required],
       exam__title: [
         '',
@@ -95,7 +100,7 @@ export class AddExamComponent {
       questions: {},
     });
     this.subjectForm = this.fb.group({
-      selectedSubject: new FormControl<any | null>(null,[Validators.required]),
+      selectedSubject: new FormControl<any | null>(null, [Validators.required]),
     });
   }
 
@@ -115,9 +120,13 @@ export class AddExamComponent {
     });
     this.teacherService.getTecher(this.user__id).subscribe(
       (data: Teacher[]) => {
-       const teacher = data;
-       this.subjects=teacher[0].subjects
-        console.log("subjectshhhhhhsss is is sis",teacher[0].subjects)
+        const teacher = data;
+        this.subjects = teacher[0].subjects;
+        this.Allquestions = teacher[0].questions;
+        this.group=teacher[0].groups
+        this.filterQuestions();
+        console.log('subjectshhhhhhsss is is sis', teacher[0].subjects);
+        console.log('subjectshhhhhhsss is is sis', teacher[0].questions);
       },
       (error) => {
         console.error('Error fetching subjects', error);
@@ -140,6 +149,7 @@ export class AddExamComponent {
             subject: this.sub,
           });
         }
+        this.filterQuestions();
       });
 
     if (!this.selectedSubject && this.subjectValue) {
@@ -148,15 +158,19 @@ export class AddExamComponent {
       });
     }
   }
+
+  filterQuestions() {
+    console.log('ddddd)))))))))))))))))))))))))))');
+    this.questions = this.Allquestions.filter(
+      (Q: { question__subject: any }) => Q.question__subject == this.sub
+    );
+  }
+
   statutExam: string = 'Course';
   Status: boolean = true;
   toggleStatut(): void {
     this.Status = !this.Status;
-    if (this.Status) {
-      this.statutExam = 'Course';
-    } else {
-      this.statutExam = 'Certificate';
-    }
+
     this.examForm.patchValue({
       obligatoire: this.Status,
     });
@@ -170,6 +184,21 @@ export class AddExamComponent {
   loadQuestions(response: any): void {
     console.log('Question added with response:', response);
     this.questarr.push(response);
+    this.errQuestion=false
+    const index = this.questions.indexOf(response);
+    if (index > -1) {
+      this.questions.splice(index, 1);
+    }
+  }
+
+  removeQuestions(response: any): void {
+    console.log('Question removed with response:', response);
+    this.questions.push(response);
+
+    const index = this.questarr.indexOf(response);
+    if (index > -1) {
+      this.questarr.splice(index, 1);
+    }
   }
 
   async detectFiles(event: any) {
@@ -180,6 +209,7 @@ export class AddExamComponent {
     if (files) {
       for (let file of files) {
         this.listFile.push(file);
+        this.errFile =false;
         const extension = getFileExtension(file.name);
         const fileType = getFileType(extension);
 
@@ -218,8 +248,11 @@ export class AddExamComponent {
   }
 
   resetForm() {
+    this.typeGlobal = 'offline';
     this.examForm.reset({
-      subject: '',
+      user__id: this.user__id,
+      obligatoire: true,
+      subject: this.sub,
       exam__type: 'offline',
       questions: {},
     });
@@ -234,7 +267,7 @@ export class AddExamComponent {
       if (callback) {
         callback();
       }
-    }, 3000); // Hide the alert after 3 seconds
+    }, 1000); // Hide the alert after 3 seconds
   }
 
   closeAlert(): void {
@@ -245,86 +278,118 @@ export class AddExamComponent {
     Object.values(this.examForm.controls).forEach((control) => {
       control.markAsTouched();
     });
+    console.log('s........', this.examForm.valid);
+    console.log('s...sss....', this.user__id);
+    console.log('s...sss....', this.examForm.value);
     if (this.examForm.valid) {
-    
-    this.examForm.patchValue({
-      questions: this.questarr,
-    });
-    if (this.examForm.invalid) {
-      this.examForm.markAllAsTouched();
 
-      return;
-    }
-    this.dataexam = {
-      exam: this.examForm.value,
-      files: this.listFile,
-    };
-
-    console.log(this.dataexam);
-    this.examService.createExam(this.dataexam).subscribe(
-      (response: any) => {
-        this.showSuccessAlert(() => {
-          this.showCalendar = true;
-        });
-        console.log('seccess', response);
-
-        this.dataPLan = response.exam__id;
-        this.resetForm();
-      },
-      (error: { error: { message: any } }) => {
-        //this.ngxService.stop();
-        console.log('errrr', error);
-        // if(error.error?.message){
-        //   this.responseMessage = error.error?.message;
-        // }else{
-        //   this.responseMessage = GlobalConstants.genericError;
-        // }
-        // // alert(this.responseMessage +" " +GlobalConstants.error);
-        // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+      if(this.examForm.value.exam__type ==='Normal' && this.questarr.length ==0){
+        console.log("gggggGGGggggGGGGGGgggggGGG")
+        this.errQuestion =true
+        return;
       }
-    );}
+
+
+      this.examForm.patchValue({
+        questions: this.questarr,
+      });
+      if (this.examForm.invalid) {
+        this.examForm.markAllAsTouched();
+
+        return;
+      }
+      console.log("listfile",this.listFile)
+      if((this.examForm.value.exam__type ==='FileOff'||this.examForm.value.exam__type ==='File')&&(!this.listFile||this.listFile.length==0) ){
+        console.log("gggggGGGggggGGGGGGgggggGGG")
+        this.errFile =true
+        return;
+      }
+
+      this.dataexam = {
+        exam: this.examForm.value,
+        files: this.listFile,
+      };
+
+      console.log(this.dataexam);
+      this.examService.createExam(this.dataexam).subscribe(
+        (response: any) => {
+          this.showSuccessAlert(() => {
+            this.showCalendar = true;
+          });
+          console.log('seccess', response);
+
+          this.dataPLan = response.exam__id;
+          this.resetForm();
+        },
+        (error: { error: { message: any } }) => {
+          //this.ngxService.stop();
+          console.log('errrr', error);
+          // if(error.error?.message){
+          //   this.responseMessage = error.error?.message;
+          // }else{
+          //   this.responseMessage = GlobalConstants.genericError;
+          // }
+          // // alert(this.responseMessage +" " +GlobalConstants.error);
+          // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+        }
+      );
+    }
   }
   save() {
-
     Object.values(this.examForm.controls).forEach((control) => {
       control.markAsTouched();
     });
     if (this.examForm.valid) {
-    this.examForm.patchValue({
-      questions: this.questarr,
-    });
-    if (this.examForm.invalid) {
-      this.examForm.markAllAsTouched();
 
-      return;
-    }
-    this.dataexam = {
-      exam: this.examForm.value,
-      files: this.listFile,
-    };
-
-    console.log(this.dataexam);
-    this.examService.createExam(this.dataexam).subscribe(
-      (response: any) => {
-        this.showSuccessAlert(() => {});
-        console.log('seccess', response);
-
-        this.dataPLan = response.exam__id;
-        this.resetForm();
-      },
-      (error: { error: { message: any } }) => {
-        //this.ngxService.stop();
-        console.log('errrr', error);
-        // if(error.error?.message){
-        //   this.responseMessage = error.error?.message;
-        // }else{
-        //   this.responseMessage = GlobalConstants.genericError;
-        // }
-        // // alert(this.responseMessage +" " +GlobalConstants.error);
-        // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+      if(this.examForm.value.exam__type ==='Normal' && this.questarr.length ==0){
+        console.log("gggggGGGggggGGGGGGgggggGGG")
+        this.errQuestion =true
+        return;
       }
-    );}
-  }
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+      this.examForm.patchValue({
+        questions: this.questarr,
+      });
+      if (this.examForm.invalid) {
+        this.examForm.markAllAsTouched();
 
- 
+        return;
+      }
+
+
+      if((this.examForm.value.exam__type ==='FileOff'||this.examForm.value.exam__type ==='File')&&(!this.listFile||this.listFile.length==0) ){
+        console.log("gggggGGGggggGGGGGGgggggGGG")
+        this.errFile =true
+        return;
+      }
+
+
+      this.dataexam = {
+        exam: this.examForm.value,
+        files: this.listFile,
+      };
+
+      console.log(this.dataexam);
+      this.examService.createExam(this.dataexam).subscribe(
+        (response: any) => {
+          this.showSuccessAlert(() => {});
+          console.log('seccess', response);
+
+          this.dataPLan = response.exam__id;
+          this.resetForm();
+        },
+        (error: { error: { message: any } }) => {
+          //this.ngxService.stop();
+          console.log('errrr', error);
+          // if(error.error?.message){
+          //   this.responseMessage = error.error?.message;
+          // }else{
+          //   this.responseMessage = GlobalConstants.genericError;
+          // }
+          // // alert(this.responseMessage +" " +GlobalConstants.error);
+          // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+        }
+      );
+    }
+  }
 }

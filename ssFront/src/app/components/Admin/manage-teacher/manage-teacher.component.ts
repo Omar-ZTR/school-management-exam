@@ -35,6 +35,7 @@ export interface Teacher {
   role: string;
   subjects: Subject[];
   groups: Group[];
+  questions: any[];
 }
 
 export interface Subject {

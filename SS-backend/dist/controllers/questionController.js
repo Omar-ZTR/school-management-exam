@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteQuestion = exports.getAllQuestions = exports.getQuestionById = exports.updateQuestionsWithExam = exports.getFakeQuestions = exports.QuestionById = exports.updateQuestion = exports.createQuestion = void 0;
+exports.deleteQuestion = exports.CheckAssociation = exports.getAllQuestions = exports.getQuestionById = exports.updateQuestionsWithExam = exports.getFakeQuestions = exports.QuestionById = exports.updateQuestion = exports.createQuestion = void 0;
 const questionModel_1 = require("../models/questionModel"); // Import your Question model
 const reponseModel_1 = require("../models/reponseModel");
 const fileModel_1 = require("../models/fileModel");
 const examModel_1 = require("../models/examModel");
 const upload_1 = __importDefault(require("../utils/upload"));
+const examQuestionModel_1 = require("../models/examQuestionModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 // export const createQuestion = async (req: Request, res: Response) => {
@@ -341,6 +342,24 @@ const getAllQuestions = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.getAllQuestions = getAllQuestions;
 // Update operation
+const CheckAssociation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        let check = false;
+        const Count = yield examQuestionModel_1.ExamQuestion.count({
+            where: { question__id: id },
+        });
+        if (Count == 0) {
+            check = true;
+        }
+        res.status(200).json(check);
+    }
+    catch (error) {
+        console.error("Error fetch questions:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.CheckAssociation = CheckAssociation;
 // Delete operation
 const deleteQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

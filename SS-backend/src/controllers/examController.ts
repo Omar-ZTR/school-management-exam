@@ -147,6 +147,7 @@ function   formatExamData(exam: any): any {
     subject: exam.subject,
     exam__title: exam.exam__title,
     exam__type: exam.exam__type,
+    obligatoire: exam.obligatoire,
     fileExam: exam.file.map((f: any) => ({
       file__id: f.file__id,
       file__name: f.file__name,

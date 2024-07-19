@@ -1,8 +1,9 @@
-import { Table, Model, Column, DataType, BelongsToMany, HasMany } from "sequelize-typescript";
+import { Table, Model, Column, DataType, BelongsToMany, HasMany, ForeignKey } from "sequelize-typescript";
 import { Exam } from "./examModel";
 import { Reponse } from "./reponseModel";
 import { FileQuestion } from "./fileModel";
 import { ExamQuestion } from "./examQuestionModel";
+import { Teacher } from "./teacherModel";
 
 @Table({
   timestamps: true,
@@ -39,6 +40,11 @@ export class Question extends Model<Question> {
 
   @Column(DataType.INTEGER)
 question__result!: number;
+
+
+@ForeignKey(() => Teacher)
+@Column
+user__id!: number;
 
 }
 

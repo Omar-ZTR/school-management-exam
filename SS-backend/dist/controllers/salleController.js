@@ -117,7 +117,7 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
             const salleNames = reservations.map(reservation => reservation.salle);
             salles = yield salleModel_1.Salle.findAll({
                 where: {
-                    salle__name: {
+                    salle__id: {
                         [sequelize_1.Op.notIn]: salleNames,
                     },
                 },

@@ -7,6 +7,7 @@ import {
   deleteQuestion,
   getFakeQuestions,
   QuestionById,
+  CheckAssociation,
 } from '../controllers/questionController';
 
 const routerQuestion = express.Router();
@@ -19,6 +20,7 @@ routerQuestion.get('/question/:id', getQuestionById);
 
 routerQuestion.post('/question', createQuestion);
 
+routerQuestion.get('/checkAssociation/:id', CheckAssociation);
 
 routerQuestion.put('/question/:id', updateQuestion);
 

@@ -13,6 +13,9 @@ exports.TeacherByid = exports.deleteTeacher = exports.updateTeacher = exports.ge
 const teacherModel_1 = require("../models/teacherModel");
 const subjectModel_1 = require("../models/subjectModel");
 const groupModel_1 = require("../models/groupModel");
+const questionModel_1 = require("../models/questionModel");
+const fileModel_1 = require("../models/fileModel");
+const reponseModel_1 = require("../models/reponseModel");
 const getAllTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const Teachers = yield teacherModel_1.Teacher.findAll({
@@ -125,6 +128,11 @@ const TeacherByid = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 {
                     model: groupModel_1.Group,
                     as: "groups",
+                },
+                {
+                    model: questionModel_1.Question,
+                    as: "questions",
+                    include: [fileModel_1.FileQuestion, reponseModel_1.Reponse],
                 },
             ],
         });

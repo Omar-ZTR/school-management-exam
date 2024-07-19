@@ -10,7 +10,7 @@ export class CalandarService {
   constructor(private httpClient:HttpClient) {}
   
   createReserv(data:any){
-    console.log("datatatatat", data)
+    console.log("fifi aywaaaa ahaooo", data)
     return this.httpClient.post(this.url + "/reservation" , data , {
       headers:new HttpHeaders().set('Content-Type' , 'application/json')
     })

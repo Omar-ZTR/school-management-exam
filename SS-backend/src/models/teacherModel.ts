@@ -5,6 +5,7 @@ import { Subject } from "./subjectModel";
 import { TeacherSubject } from "./teacherSubjectsModel";
 import { Group } from "./groupModel";
 import { TeacherGroup } from "./teacherGroupsModel";
+import { Question } from "./questionModel";
 
 
 @Table({
@@ -37,5 +38,6 @@ export class Teacher extends users<Teacher> {
     })
   exam!: Exam[];
 
-
+  @HasMany(() => Question)
+  questions!: Question[];
 }

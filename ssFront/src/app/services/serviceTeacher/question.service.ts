@@ -78,4 +78,8 @@ export class QuestionService {
   getfakeQuestion() {
     return this.httpClient.get(this.url + '/fake');
   }
+  CheckAssoci(id:any) {
+    return this.httpClient.get(`${this.url}/checkAssociation/${id}`);
+  }
+
 }

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -12,6 +14,7 @@ import { CalandarService } from '../../services/serviceTeacher/calandar.service'
 import { GroupService } from '../../services/servicesUtils/group.service';
 import { SalleService } from '../../services/servicesUtils/salle.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
 
 export interface GroupResponse {
   groupsSubject: any[];
@@ -20,14 +23,20 @@ export interface GroupResponse {
 @Component({
   selector: 'app-calandarfull',
   standalone: true,
-  imports: [ReactiveFormsModule,TooltipModule, NgbModalModule, CommonModule],
+  imports: [
+    ReactiveFormsModule,
+    DropdownModule,
+    FormsModule,
+    TooltipModule,
+    NgbModalModule,
+    CommonModule,
+  ],
   templateUrl: './calandarfull.component.html',
   styleUrls: ['./calandarfull.component.css'],
 })
 export class CalandarfullComponent implements OnInit {
-  groupsub: any[] = [];
-  grouprnk: any[] = [];
   @Input() data: any;
+  @Input() groups: any;
   @Input() firstDate: any;
   @Output() isMonthViewChange = new EventEmitter<boolean>();
 
@@ -50,10 +59,17 @@ export class CalandarfullComponent implements OnInit {
   isMonthView: boolean = true; // Toggle between month view and week view
   currentWeekStart: Date = new Date();
 
-  groupSub: any;
-  groupRank: any;
+  // groupSub: any;
+  // groupRank: any;
   salles: any;
   Exam: any;
+  formSG: FormGroup;
+  formG: FormGroup;
+  formS: FormGroup;
+
+  examType: any;
+  state: boolean = false;
+  MsgError: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -63,23 +79,40 @@ export class CalandarfullComponent implements OnInit {
     private groupService: GroupService,
     private salleService: SalleService
   ) {
+    this.formSG = this.fb.group({
+      salleGroupList: this.fb.array([]),
+    });
+    this.formG = this.fb.group({
+      GroupList: this.fb.array([]),
+    });
+
+    this.formS = this.fb.group({
+      SalleList: this.fb.array([]),
+    });
+
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       startDate: ['', Validators.required],
       startTime: ['', Validators.required],
       endDate: ['', Validators.required],
       endTime: ['', Validators.required],
-      salle: ['', Validators.required],
-      group: ['', Validators.required],
     });
   }
 
+  statePlan() {
+    this.state = !this.state;
+    this.onSalleSelect();
+  }
+
   ngOnInit(): void {
-    if(this.firstDate){
-      this.currentWeekStart= this.firstDate
-      this.isMonthView=false
+    this.inisiallLists()
+
+    if (this.firstDate) {
+      this.currentWeekStart = this.firstDate;
+      this.isMonthView = false;
     }
     this.isMonthViewChange.emit(this.isMonthView);
+
     this.generateCalendar();
     this.generateCurrentWeek();
     this.eventForm = this.fb.group({
@@ -87,24 +120,100 @@ export class CalandarfullComponent implements OnInit {
       startDate: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      salle: ['', Validators.required],
-      group: ['', Validators.required],
     });
     this.fetchEvents();
-    this.fetchGroups()
-    this.fetchExam()
-   
+    // this.fetchGroups();
+    this.fetchExam();
   }
+  get salleGroupList(): FormArray {
+    return this.formSG.get('salleGroupList') as FormArray;
+  }
+  addSalleGroup(): void {
+    this.salleGroupList.push(this.createSalleGroup());
+
+    console.log('ssss list salle group ', this.salleGroupList);
+  }
+  removeSalleGroup(index: number): void {
+    this.salleGroupList.removeAt(index);
+  }
+
+  createSalleGroup(): FormGroup {
+    return this.fb.group({
+      salle__id: [null, Validators.required],
+      group__id: [null, Validators.required],
+    });
+  }
+inisiallLists(){
+  this.addSalleGroup();
+  this.addGroup();
+  this.addSalle();
+}
+  resetSalleGroupList(): void {
+    while (this.salleGroupList.length !== 0) {
+      this.salleGroupList.removeAt(0);
+    }
+    while (this.GroupList.length !== 0) {
+      this.GroupList.removeAt(0);
+    }
+    while (this.SalleList.length !== 0) {
+      this.SalleList.removeAt(0);
+    }
+  }
+
+  get GroupList(): FormArray {
+    return this.formG.get('GroupList') as FormArray;
+  }
+  addGroup(): void {
+    this.GroupList.push(this.createGroup());
+
+    console.log('ssss list salle group ', this.GroupList);
+  }
+  removeGroup(index: number): void {
+    this.GroupList.removeAt(index);
+  }
+
+  createGroup(): FormGroup {
+    return this.fb.group({
+      group__id: [null, Validators.required],
+    });
+  }
+  
+  get SalleList(): FormArray {
+    return this.formS.get('SalleList') as FormArray;
+  }
+  addSalle(): void {
+    this.SalleList.push(this.createSalle());
+
+    console.log('ssss list salle Salle ', this.SalleList);
+  }
+  removeSalle(index: number): void {
+    this.SalleList.removeAt(index);
+  }
+
+  createSalle(): FormGroup {
+    return this.fb.group({
+      salle__id: [null, Validators.required],
+    });
+  }
+ 
   fetchExam(): void {
-    console.log("kjljlklsddshdshkdskldkdshkdshkldskhldshkldslkhdskldshkd",this.data)
+    console.log(
+      'kjljlklsddshdshkdskldkdshkdshkldskhldshkldslkhdskldshkd',
+      this.data
+    );
     this.examService.getExamByid(this.data).subscribe(
       (data) => {
         this.Exam = data;
+
+        this.examType = this.Exam.obligatoire;
         this.eventForm.patchValue({
-          title: this.Exam.exam__title
-        })
-        console.log("aaaaaaa2>>>>>", this.Exam);
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", this.Exam.exam__title);
+          title: this.Exam.exam__title,
+        });
+        console.log('aaaaaaa2>>>>>', this.Exam);
+        console.log(
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+          this.Exam.exam__title
+        );
       },
       (error: any) => {
         console.error('Error fetching exam', error);
@@ -123,35 +232,33 @@ export class CalandarfullComponent implements OnInit {
     );
   }
 
-  fetchGroups(): void {
-    this.groupService.getGroupSubject(this.data).subscribe(
-      (data) => {
-        console.log('Response from backend:', data);
-        this.groupSub = data.groupsSubject;
-        this.groupRank = data.groupsRank;
-      
-      },
-      (error: any) => {
-        console.error('Error fetching groups', error);
-      }
-    );
-  }
+  // fetchGroups(): void {
+  //   this.groupService.getGroups().subscribe(
+  //     (data) => {
+  //       console.log('Response from backend:', data);
+  //       this.groupSub = data;
+  //     },
+  //     (error: any) => {
+  //       console.error('Error fetching groups', error);
+  //     }
+  //   );
+  // }
 
   onSalleSelect(): void {
     const startDate = this.eventForm.get('startDate')?.value;
     const startHour = this.eventForm.get('startTime')?.value;
     const endHour = this.eventForm.get('endTime')?.value;
     // const nb__place = this.eventForm.get('nb')?.value;
-  
+
     const fetchSalleData = {
       starthour: new Date(`${startDate}T${startHour}`),
       endhour: new Date(`${startDate}T${endHour}`),
       exam__id: this.data,
     };
-    console.log("<>><<>><><><><<>", fetchSalleData)
+    console.log('<>><<>><><><><<>', fetchSalleData);
     this.fetchSalles(fetchSalleData);
   }
-  
+
   fetchSalles(fetchSalleData: {
     starthour: Date;
     endhour: Date;
@@ -160,14 +267,14 @@ export class CalandarfullComponent implements OnInit {
     this.salleService.getSalleSpecific(fetchSalleData).subscribe(
       (data) => {
         this.salles = data;
-        console.log("<>><<>><><><><<>", data)
+        console.log('<>><<>><><><><<>', data);
       },
       (error) => {
         console.error('Error fetching salles', error);
       }
     );
   }
-  
+
   // groupEventsByDate(events: CalendarEvent[]): { [key: string]: CalendarEvent[] } {
   //   const groupedEvents: { [key: string]: CalendarEvent[] } = {};
   //   events.forEach(event => {
@@ -180,17 +287,17 @@ export class CalandarfullComponent implements OnInit {
   //   return groupedEvents;
   // }
   openWeekView(day: number) {
-    console.log("day is <<<<<<<", day)
+    console.log('day is <<<<<<<', day);
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
-    console.log("selectedDate is <<<<<<<", selectedDate)
+    console.log('selectedDate is <<<<<<<', selectedDate);
     const startOfWeek = new Date(selectedDate);
-   
+
     const dayOfWeek = selectedDate.getDay();
- 
+
     startOfWeek.setDate(selectedDate.getDate() - dayOfWeek);
 
     this.currentWeekStart = startOfWeek;
-    console.log("WeekStart is wwww", this.currentWeekStart)
+    console.log('WeekStart is wwww', this.currentWeekStart);
     this.isMonthView = false;
     this.isMonthViewChange.emit(this.isMonthView);
     this.generateCurrentWeek();
@@ -204,7 +311,6 @@ export class CalandarfullComponent implements OnInit {
       this.currentMonth + 1,
       0
     ).getDate();
-   
   }
 
   toggleView() {
@@ -222,13 +328,11 @@ export class CalandarfullComponent implements OnInit {
   generateCurrentWeek() {
     const startOfWeek = new Date(this.currentWeekStart);
     const starwwtOfWeek = new Date(this.firstDate);
-    console.log("hassss11111111 is <<<<<<<", this.firstDate)
-    console.log("hassss22222222222 is <<<<<<<",starwwtOfWeek)
-    console.log("eee333333333333 is <<<<<<<", startOfWeek)
+
     this.currentWeekStart = new Date(
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
     );
-    console.log("3currentWeekStart is <<<<<<<", this.currentWeekStart)
+    console.log('3currentWeekStart is <<<<<<<', this.currentWeekStart);
   }
 
   getWeekDates(): Date[] {
@@ -275,11 +379,33 @@ export class CalandarfullComponent implements OnInit {
     ).getDate();
     this.daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   }
+  formatDateToLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
 
-  openEventForm(date: Date, hour: string, modal: any): void {
-    const formattedDate = date.toISOString().split('T')[0];
-    const formattedTime = `${hour}:00`;
+    return `${year}-${month}-${day}`;
+  }
 
+  openEventForm(kdate: Date, hour: string, modal: any): void {
+    console.log(
+      'kdate>>>>>>....',
+      kdate
+    );
+    console.log(
+      'hour>>>>>>....',
+      hour
+    );
+    const formattedDate = this.formatDateToLocal(kdate);
+    let formattedTime = `${hour}:00`;
+    if(hour.length==4){
+      formattedTime = `0${hour}:00`;
+    }
+   
+    console.log(
+      'formattedDate>>>>>>....',
+      formattedTime
+    );
     this.eventForm.patchValue({
       startDate: formattedDate,
       startTime: formattedTime,
@@ -287,7 +413,9 @@ export class CalandarfullComponent implements OnInit {
       salle: '',
     });
 
-
+    this.resetSalleGroupList()
+    this.inisiallLists()
+    this.state = false;
     this.modalService.open(modal);
   }
 
@@ -307,7 +435,7 @@ export class CalandarfullComponent implements OnInit {
   }
 
   isEvent(date: Date, hour: string): boolean {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = this.formatDateToLocal(date);
     const hourValue = parseInt(hour.split(':')[0], 10);
     const minuteValue = parseInt(hour.split(':')[1], 10);
 
@@ -340,7 +468,7 @@ export class CalandarfullComponent implements OnInit {
     const eventStartHour = new Date(event.startDate).getHours();
     const eventStartMinute = new Date(event.startDate).getMinutes();
 
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = this.formatDateToLocal(date);
     const hourValue = parseInt(hour.split(':')[0], 10);
 
     return eventStartDate === dateString && eventStartHour === hourValue;
@@ -404,7 +532,7 @@ export class CalandarfullComponent implements OnInit {
   //   return false;
   // }
   getEventStyles(date: Date, hour: string): { [key: string]: string } {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = this.formatDateToLocal(date);
     const hourValue = parseInt(hour.split(':')[0], 10);
     const minuteValue = parseInt(hour.split(':')[1], 10);
     const colors = [
@@ -427,8 +555,6 @@ export class CalandarfullComponent implements OnInit {
       'z-index': '99',
       'background-color': `${defaultColor}33`,
     };
-
-   
 
     if (this.examlist) {
       const eventsOnSameDay = this.examlist.filter(
@@ -468,8 +594,6 @@ export class CalandarfullComponent implements OnInit {
           'background-color':
             colorIndex !== -1 ? `${colors[colorIndex]}33` : `${defaultColor}33`,
         };
-
-       
       }
     }
 
@@ -479,52 +603,199 @@ export class CalandarfullComponent implements OnInit {
   getHoursOfDay(): string[] {
     return Array.from({ length: 11 }, (_, i) => `${i + 8}:00`);
   }
-
+  formatDate(date: string, time: string): string {
+    const dateTimeString = `${date}T${time}`;
+    const dateTime = new Date(dateTimeString);
+    console.log('ooooooooooooooooooooooo>>>', dateTime);
+    return dateTime.toISOString();
+  }
   saveEvent() {
- 
+    console.log(this.eventForm.value);
     if (this.eventForm.valid) {
       const formValues = this.eventForm.value;
       // For debugging purposes
-      this.modalService.dismissAll();
 
       const calandarData = {
         exam__id: this.data,
 
-        startDate: new Date(`${formValues.startDate}T${formValues.startTime}`),
-        endDate: new Date(`${formValues.startDate}T${formValues.endTime}`),
-      
-  group__name: formValues.group.group__name,
-        salle: formValues.salle,
+        startDate: `${formValues.startDate}T${formValues.startTime}`,
+        endDate: this.formatDate(formValues.startDate, formValues.endTime),
+
+        group__name: '',
+        salle: '',
         exam__title: formValues.title,
       };
-      console.log('beforzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzze', calandarData);
+      console.log(
+        'beforzzzzzzzzzzzzzzzzz?????zdssssszzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzze',
+        calandarData
+      );
 
-      this.calandarService.createReserv(calandarData).subscribe(
-        (response: any) => {
-          alert('Successfully create');
-          console.log('seccess create', response);
-          this.fetchEvents();
-          const examData = {
-            exam__id: this.data,
-            operation: 1,
-            group__id: formValues.group.group__id,
-          };
+      if (this.examType) {
+        if (this.state) {
+          if (
+            this.salleGroupList &&
+            this.salleGroupList.value &&
+            this.salleGroupList.value.length > 0
+          ) {
+            for (const row of this.salleGroupList.value) {
+              if (
+                row.group__id &&
+                row.group__id.group__name &&
+                row.salle__id &&
+                row.salle__id.salle__id
+              ) {
+                calandarData.group__name = row.group__id.group__name;
+                calandarData.salle = row.salle__id.salle__id;
+                this.calandarService.createReserv(calandarData).subscribe(
+                  (response: any) => {
+                    alert('Successfully created');
+                    console.log('success create', response);
+                    this.fetchEvents();
+                    const examData = {
+                      exam__id: this.data,
+                      operation: 1,
+                      group__id: row.group__id.group__id,
+                    };
 
-          this.examService.updateExam(examData).subscribe(
+                    this.examService.updateExam(examData).subscribe(
+                      (response: any) => {
+                        alert('Successfully updated');
+                        console.log('success update', response);
+                      },
+                      (error: { error: { message: any } }) => {
+                        console.log('error', error);
+                      }
+                    );
+                  },
+                  (error: { error: { message: any } }) => {
+                    console.log('error', error);
+                  }
+                );
+              } else {
+                console.log('Invalid salleGroupList data');
+              }
+            }
+            this.modalService.dismissAll();
+          } else {
+            console.log('salleGroupList is empty or invalid');
+            this.MsgError = 'salleGroupList is empty or invalid';
+          }
+        } else {
+          if (
+            this.GroupList &&
+            this.GroupList.value &&
+            this.GroupList.value.length > 0
+          ) {
+            for (const row of this.GroupList.value) {
+              if (row.group__id && row.group__id.group__name) {
+                calandarData.group__name = row.group__id.group__name;
+                this.calandarService.createReserv(calandarData).subscribe(
+                  (response: any) => {
+                    alert('Successfully created');
+                    console.log('success create', response);
+                    this.fetchEvents();
+                    const examData = {
+                      exam__id: this.data,
+                      operation: 1,
+                      group__id: row.group__id.group__id,
+                    };
+
+                    this.examService.updateExam(examData).subscribe(
+                      (response: any) => {
+                        alert('Successfully updated');
+                        console.log('success update', response);
+                      },
+                      (error: { error: { message: any } }) => {
+                        console.log('error', error);
+                      }
+                    );
+                  },
+                  (error: { error: { message: any } }) => {
+                    console.log('error', error);
+                  }
+                );
+              } else {
+                console.log('Invalid GroupList data');
+              }
+            }
+            this.modalService.dismissAll();
+          } else {
+            console.log('GroupList is empty or invalid');
+            this.MsgError = 'GroupList is empty or invalid';
+          }
+        }
+      }
+
+      if (!this.examType) {
+        if (this.state) {
+          if (
+            this.SalleList &&
+            this.SalleList.valid &&
+            this.SalleList.value.length > 0
+          ) {
+            for (const row of this.SalleList.value) {
+              calandarData.salle = row.salle__id.salle__id;
+              this.calandarService.createReserv(calandarData).subscribe(
+                (response: any) => {
+                  alert('Successfully create');
+                  console.log('seccess create', response);
+                  this.fetchEvents();
+                  const examData = {
+                    exam__id: this.data,
+                    operation: 1,
+                  };
+
+                  this.examService.updateExam(examData).subscribe(
+                    (response: any) => {
+                      alert('Successfully create');
+                      console.log('seccess update', response);
+                    },
+                    (error: { error: { message: any } }) => {
+                      console.log('errrr', error);
+                    }
+                  );
+                  // window.location.reload();
+                },
+                (error: { error: { message: any } }) => {
+                  console.log('errrr', error);
+                }
+              );
+            }
+            this.modalService.dismissAll();
+          } else {
+            console.log('SalleList is empty or invalid', this.SalleList.value);
+            this.MsgError = 'SalleList is empty or invalid';
+          }
+        } else {
+          this.calandarService.createReserv(calandarData).subscribe(
             (response: any) => {
               alert('Successfully create');
-              console.log('seccess update', response);
+              console.log('seccess create', response);
+              this.fetchEvents();
+              const examData = {
+                exam__id: this.data,
+                operation: 1,
+              };
+
+              this.examService.updateExam(examData).subscribe(
+                (response: any) => {
+                  alert('Successfully create');
+                  console.log('seccess update', response);
+                },
+                (error: { error: { message: any } }) => {
+                  console.log('errrr', error);
+                }
+              );
+              // window.location.reload();
             },
             (error: { error: { message: any } }) => {
               console.log('errrr', error);
             }
           );
-          // window.location.reload();
-        },
-        (error: { error: { message: any } }) => {
-          console.log('errrr', error);
+          this.modalService.dismissAll();
         }
-      );
+      }
+      console.log('dddd te7cheee', this.examType);
     } else {
       console.log('Invalid form controls:');
       this.logInvalidControls(this.eventForm);

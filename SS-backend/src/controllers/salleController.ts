@@ -115,7 +115,7 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
       const salleNames = reservations.map(reservation => reservation.salle);
       salles = await Salle.findAll({
         where: {
-          salle__name: {
+          salle__id: {
             [Op.notIn]: salleNames,
           },
         },

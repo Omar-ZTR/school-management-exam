@@ -1,6 +1,39 @@
 <!-- <div *ngIf="showAlert" class="custom-alert">Successfully created</div> -->
 
-<div class="containerExam">
+<div
+  class="basicDetailsExam"
+  *ngIf="examForm.get('exam__type')?.value === 'Normal'"
+>
+  <div class="DetailsExam">
+    <div
+      class="textBasic"
+      style="max-width: 200px; text-wrap: balance; word-wrap: break-word"
+    >
+      TITLE:{{ examForm.get("exam__title")?.value }}
+    </div>
+    <div class="textBasic">
+      Subject:{{ subjectForm.get("selectedSubject")?.value.subject__name }}
+    </div>
+    <div class="textBasic">Status:{{ examForm.get("obligatoire")?.value }}</div>
+    <div class="textBasic">Type:{{ examForm.get("exam__type")?.value }}</div>
+  </div>
+
+  <div class="Row">
+    <button (click)="save()" style="background: #1935a3; color: #ffffff;">
+      <i class="fa-solid fa-folder-plus"></i>Save
+    </button>
+    <button (click)="save()">
+      <i class="fa-solid fa-folder-plus"></i>Save
+    </button>
+    <button (click)="savePlan()">
+      <i class="fa-solid fa-calendar-days"></i> Save & Planing
+    </button>
+  </div>
+</div>
+<div
+  *ngIf="examForm.get('exam__type')?.value !== 'Normal'"
+  class="containerExam"
+>
   <form [formGroup]="examForm">
     <div class="containerForm">
       <!--Text -->
@@ -62,6 +95,7 @@
           "
         >
           <div>
+            <label for="">subject :</label>
             <div [formGroup]="subjectForm">
               <p-dropdown
                 [options]="subjects"
@@ -102,15 +136,28 @@
             </div>
           </div>
           <div style="display: flex; gap: 10px; align-items: center">
-            <label for="">Statut</label>
-            <div pInputText class="buttonStatus" (click)="toggleStatut()">
-              {{ statutExam }}
+            <label for="">Statut :</label>
+            <div pInputText class="buttonStatus" [ngClass]="Status ? 'course': 'certif'" (click)="toggleStatut()">
+              
+              <div *ngIf="Status"  style="display: flex; gap: 5px;"><i class="fa-solid fa-book-open"></i>Course</div>
+              <div *ngIf="!Status"  style="display: flex; gap: 5px;"><i class="fa-solid fa-bookmark"></i>Certificate</div>
             </div>
           </div>
         </div>
 
-        <div class="form-group col-md-12">
-          <label for="examType">Type Exam</label>
+        <div
+          class="form-group col-md-12"
+          [ngClass]="{
+            ErorInput:
+              subjectForm.controls['selectedSubject'].invalid ||
+              examForm.controls['exam__title'].invalid
+          }"
+        >
+          <div class="typeExamGlobal">
+            <i class="fa-solid fa-triangle-exclamation fa-xl"></i>Enter the
+            title and subject firstly
+          </div>
+          <label for="examType">Type Exam :</label>
           <div id="examType" class="rowRol">
             <label
               class="roleName check"
@@ -249,9 +296,17 @@
             examForm.get('exam__type')?.value === 'FileOff'
           "
         >
-          <label for="UpFile">Import Files</label>
+          <label for="UpFile">Import Files :</label>
           <div id="UpFile" class="fileTestForm box">
             <ul class="boxpreview" *ngIf="urls != []">
+              <div [ngClass]="errFile ? 'alert' : ''" *ngIf="errFile">
+                <i
+                  class="fa-solid fa-circle-exclamation fa-beat-fade fa-xl flex"
+                >Add file
+                </i>
+               
+              
+              </div>
               <div *ngFor="let url of urls; let i = index">
                 <li>
                   <div class="filepreview" [matTooltip]="url.name">
@@ -273,10 +328,7 @@
             </ul>
             <div class="custome-file">
               <span>
-                <img
-                  src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
-                  alt=""
-                />Attach File
+                <i class="fa-solid fa-paperclip fa-lg"></i>Attach File
               </span>
               <input
                 type="file"
@@ -287,19 +339,7 @@
             </div>
           </div>
         </div>
-        <div
-          *ngIf="
-            examForm.get('exam__type')?.value === 'QCM' ||
-            examForm.get('exam__type')?.value === 'Normal'
-          "
-          class="quistionForm box"
-        >
-          <app-add-question
-            (questionAdded)="loadQuestions($event)"
-            [subjectValue]="subjectValue"
-            [examType]="examType"
-          ></app-add-question>
-        </div>
+
         <!-- add question  -->
 
         <!-- Button -->
@@ -328,19 +368,61 @@
     >
       <app-calandarfull
         [data]="dataPLan"
+        [groups]="group"
         (isMonthViewChange)="onIsMonthViewChange($event)"
       ></app-calandarfull>
     </div>
   </div>
+</div>
+<div
+  *ngIf="examForm.get('exam__type')?.value === 'Normal'"
+  class="containerExam"
+>
+  <div
+    *ngIf="
+      examForm.get('exam__type')?.value === 'QCM' ||
+      examForm.get('exam__type')?.value === 'Normal'
+    "
+    class="quistionForm"
+  >
+    <app-add-question
+      (questionAdded)="loadQuestions($event)"
+      [subjectValue]="subjectValue"
+      [examType]="examType"
+    ></app-add-question>
+  </div>
   <div class="ListsQuestion">
-    <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
+    <div class="Questions">
       <div class="TitelForm">Questions</div>
-      <app-listview [data]="questarr"></app-listview>
+      <app-listview
+        *ngIf="questarr && questarr.length > 0"
+        [data]="questarr"
+        [TypeArray]="false"
+        (questionremoved)="removeQuestions($event)"
+      ></app-listview>
+
+      <div
+        class="empty"
+        [ngClass]="errQuestion ? 'alert' : ''"
+        *ngIf="questarr && questarr.length == 0"
+      >
+        <i
+          *ngIf="errQuestion"
+          class="fa-solid fa-circle-exclamation fa-beat-fade fa-xl flex"
+        >
+          Questions</i
+        >
+        <div *ngIf="!errQuestion">No Questions</div>
+      </div>
     </div>
 
-    <div class="listQuestions" *ngIf="questarr && questarr.length > 0">
+    <div class="Questions" *ngIf="questions && questions.length > 0">
       <div class="TitelForm">Suggestive questions</div>
-      <app-listview [data]="questarr"></app-listview>
+      <app-listview
+        [data]="questions"
+        [TypeArray]="true"
+        (questionAdded)="loadQuestions($event)"
+      ></app-listview>
     </div>
   </div>
 </div>
