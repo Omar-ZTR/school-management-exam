@@ -24,7 +24,9 @@
         class="calendar-day"
         *ngFor="let day of daysMonth"
         (click)="openWeekView(day)"
-        [ngClass]="{ 'dayhas-event': day !== ' '&& hasEvents(extractDayNumber(day)) }"
+        [ngClass]="{
+          'dayhas-event': day !== ' ' && hasEvents(extractDayNumber(day))
+        }"
       >
         <div class="day-number">
           {{ day }}
@@ -38,10 +40,17 @@
     <div *ngIf="!isMonthView" class="week-view">
       <div class="week-header">
         <div class="week-day" *ngFor="let date of getWeekDates()">
-          <div style="position: relative;">
-          <div>{{ weekDays[date.getDay()] }}</div>
-          <div>{{ date | date : "MMM d" }}</div>
-          <div *ngIf="weekDays[date.getDay()]=== 'Saturday'|| weekDays[date.getDay()]=== 'Sunday' " class="noop"></div></div>
+          <div style="position: relative">
+            <div>{{ weekDays[date.getDay()] }}</div>
+            <div>{{ date | date : "MMM d" }}</div>
+            <div
+              *ngIf="
+                weekDays[date.getDay()] === 'Saturday' ||
+                weekDays[date.getDay()] === 'Sunday'
+              "
+              class="noop"
+            ></div>
+          </div>
         </div>
       </div>
       <div>
@@ -52,13 +61,9 @@
           <div class="week-day" *ngFor="let date of getWeekDates()">
             <div
               class="hour-cell"
-              (click)="
-                
-                  openEventForm(date, hour, eventFormModal)
-              "
+              (click)="openEventForm(date, hour, eventFormModal)"
             >
-
-            <!-- !isEvent(date, hour) && -->
+              <!-- !isEvent(date, hour) &&f -->
 
               <div
                 *ngIf="isEvent(date, hour)"
@@ -93,7 +98,7 @@
 <!-- Event Form Modal -->
 <ng-template style="z-index: 99999" #eventFormModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title">Add Event</h4>
+    <h4 class="modal-title">Exam timing</h4>
     <button
       type="button"
       class="close"
@@ -104,7 +109,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="eventForm" (ngSubmit)="saveEvent()">
+    <form *ngIf="groups.length > 0  " [formGroup]="eventForm" (ngSubmit)="saveEvent()">
       <div class="form-group">
         <label for="title">Title</label>
         <input
@@ -166,6 +171,8 @@
           id="endTime"
           type="time"
           class="form-control"
+          min="12:00:00"
+          max="15:00:00"
           formControlName="endTime"
         />
         <div
@@ -178,49 +185,8 @@
           End time is required.
         </div>
       </div>
-      <!-- <div class="form-group d-flex justify-content-center align-items-center">
-        <div class="mr-2">
-          <label for="salle">Salle</label>
-          <select id="salle" class="form-control" formControlName="salle" (click)="onSalleSelect()">
-            <option *ngFor="let salle of salles" [value]="salle.salle__id">
-              {{ salle.salle__name }}
-            </option>
-          </select>
-          <div
-            *ngIf="
-              eventForm.controls['salle'].invalid &&
-              eventForm.controls['salle'].touched
-            "
-            class="text-danger"
-          >
-            Salle is required.
-          </div>
-        </div>
-        <div class="ml-2">
-          <label for="group">Group</label>
-          <select id="group" class="form-control" formControlName="group" >
-            <option *ngFor="let groupS of groupSub" value="groupS">
-              {{ groupS.group__name }}
-            </option>
-            <option *ngFor="let groupR of groupRank" [ngValue]="{group__id: groupR.group__id, group__name: groupR.group__name}">
-              {{ groupR.group__name }}
-            </option>
-          </select>
-          <div
-            *ngIf="
-              eventForm.controls['group'].invalid &&
-              eventForm.controls['group'].touched
-            "
-            class="text-danger"
-          >
-            Group is required.
-          </div>
-        </div>
-      </div>
-      -->
 
       <!-- oblig  -->
-      <div class="text-danger">{{ MsgError }}</div>
 
       <div *ngIf="examType">
         <div class="mb-3">
@@ -243,7 +209,23 @@
                 formControlName="salle__id"
                 optionLabel="salle__name"
                 placeholder="Select a Salle"
-              ></p-dropdown>
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div
+                    class="flex align-items-center gap-2"
+                    *ngIf="salleGroupList"
+                  >
+                    <div>
+                      {{ salleGroupList.value[i].salle__id.salle__name }}
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template let-S pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ S.salle__name }}</div>
+                  </div>
+                </ng-template></p-dropdown
+              >
             </div>
             <div class="inputSelect" [formGroupName]="i">
               <label for="group">Group</label>
@@ -252,19 +234,44 @@
                 formControlName="group__id"
                 optionLabel="group__name"
                 placeholder="Select a Group"
-              ></p-dropdown>
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div
+                    class="flex align-items-center gap-2"
+                    *ngIf="salleGroupList"
+                  >
+                    <div>
+                      {{ salleGroupList.value[i].group__id.group__name }}
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template let-G pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ G.group__name }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
             </div>
             <button
               type="button"
               class="btnRmove"
               (click)="removeSalleGroup(i)"
+              [ngClass]="{
+                nonclickable: state && this.salleGroupList.value.length == 1
+              }"
             >
               <i class="fa-solid fa-eraser fa-xl"></i>
             </button>
           </div>
           <div class="mb-3">
-            <button type="button" class="btnAdd" (click)="addSalleGroup()">
-              <i class="fa-solid fa-plus fa-xl"></i> Add More
+            <button
+              type="button"
+              class="btnAdd"
+              (click)="addSalleGroup()"
+              [ngClass]="{ nonclickable: !checkListSG() }"
+            >
+              <i class="fa-solid fa-plus fa-xl"></i>
+              {{ ErrValid ? ErrValid : "Add More" }}
             </button>
           </div>
         </form>
@@ -282,15 +289,39 @@
                 formControlName="group__id"
                 optionLabel="group__name"
                 placeholder="Select a Group"
-              ></p-dropdown>
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div class="flex align-items-center gap-2" *ngIf="GroupList">
+                    <div>{{ GroupList.value[i].group__id.group__name }}</div>
+                  </div>
+                </ng-template>
+                <ng-template let-G pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ G.group__name }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
             </div>
-            <button type="button" class="btnRmove" (click)="removeGroup(i)">
+            <button
+              type="button"
+              class="btnRmove"
+              (click)="removeGroup(i)"
+              [ngClass]="{
+                nonclickable: !state && this.GroupList.value.length == 1
+              }"
+            >
               <i class="fa-solid fa-eraser fa-xl"></i>
             </button>
           </div>
           <div class="mb-3">
-            <button type="button" class="btnAdd" (click)="addGroup()">
-              <i class="fa-solid fa-plus fa-xl"></i> Add More
+            <button
+              type="button"
+              class="btnAdd"
+              (click)="addGroup()"
+              [ngClass]="{ nonclickable: !checkListG() }"
+            >
+              <i class="fa-solid fa-plus fa-xl"></i>
+              {{ ErrValid ? ErrValid : "Add More" }}
             </button>
           </div>
         </form>
@@ -319,24 +350,58 @@
                 [options]="salles"
                 formControlName="salle__id"
                 optionLabel="salle__name"
-                placeholder="Select a Salle"
-              ></p-dropdown>
+                placeholder="Select a Salxle"
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div class="flex align-items-center gap-2" *ngIf="SalleList">
+                    <div>{{ SalleList.value[i].salle__id.salle__name }}</div>
+                  </div>
+                </ng-template>
+                <ng-template let-S pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ S.salle__name }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
             </div>
-            <button type="button" class="btnRmove" (click)="removeSalle(i)">
+            <button
+              type="button"
+              class="btnRmove"
+              (click)="removeSalle(i)"
+              [ngClass]="{
+                nonclickable: state && this.SalleList.value.length == 1
+              }"
+            >
               <i class="fa-solid fa-eraser fa-xl"></i>
             </button>
           </div>
           <div class="mb-3">
-            <button type="button" class="btnAdd" (click)="addSalle()">
-              <i class="fa-solid fa-plus fa-xl"></i> Add More
+            <button
+              type="button"
+              class="btnAdd"
+              (click)="addSalle()"
+              [ngClass]="{ nonclickable: !checkList() }"
+            >
+              <i class="fa-solid fa-plus fa-xl"></i>
+              {{ ErrValid ? ErrValid : "Add More" }}
             </button>
           </div>
         </form>
       </div>
-
+      <div
+        class="text-danger"
+        style="position: absolute; right: 130px; bottom: 50px"
+      >
+        {{ MsgError }}
+      </div>
+      <!-- IDs.length == salles.length-1, 'clickable': IDs.length !== salles.length-1  -->
       <button type="submit" class="btnsave">
         <i class="fa-solid fa-calendar-check"></i>Save
       </button>
     </form>
+
+<div class="nogroup" *ngIf="groups.length == 0  "> all groups has this Exam </div>
+
+
   </div>
 </ng-template>

@@ -77,3 +77,46 @@ describe('CalandarfullComponent', () => {
   //     return date;
   //   });
   // }
+
+
+
+//   <!-- <div class="form-group d-flex justify-content-center align-items-center">
+//   <div class="mr-2">
+//     <label for="salle">Salle</label>
+//     <select id="salle" class="form-control" formControlName="salle" (click)="onSalleSelect()">
+//       <option *ngFor="let salle of salles" [value]="salle.salle__id">
+//         {{ salle.salle__name }}
+//       </option>
+//     </select>
+//     <div
+//       *ngIf="
+//         eventForm.controls['salle'].invalid &&
+//         eventForm.controls['salle'].touched
+//       "
+//       class="text-danger"
+//     >
+//       Salle is required.
+//     </div>
+//   </div>
+//   <div class="ml-2">
+//     <label for="group">Group</label>
+//     <select id="group" class="form-control" formControlName="group" >
+//       <option *ngFor="let groupS of groupSub" value="groupS">
+//         {{ groupS.group__name }}
+//       </option>
+//       <option *ngFor="let groupR of groupRank" [ngValue]="{group__id: groupR.group__id, group__name: groupR.group__name}">
+//         {{ groupR.group__name }}
+//       </option>
+//     </select>
+//     <div
+//       *ngIf="
+//         eventForm.controls['group'].invalid &&
+//         eventForm.controls['group'].touched
+//       "
+//       class="text-danger"
+//     >
+//       Group is required.
+//     </div>
+//   </div>
+// </div>
+// -->

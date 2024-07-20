@@ -55,7 +55,7 @@ export class AddExamComponent {
   ext: any;
   questarr: any[] = [];
 
-  showCalendar: boolean = true;
+  showCalendar: boolean = false;
   showAlert: boolean = false;
   questions: any;
   showQuestionField: any;

@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
@@ -61,7 +64,7 @@ export class CalandarfullComponent implements OnInit {
 
   // groupSub: any;
   // groupRank: any;
-  salles: any;
+  salles: any = [];
   Exam: any;
   formSG: FormGroup;
   formG: FormGroup;
@@ -71,6 +74,9 @@ export class CalandarfullComponent implements OnInit {
   state: boolean = false;
   MsgError: string = '';
   daysMonth!: string[];
+  salle: any;
+  ErrValid: string = '';
+  examId: any;
 
   constructor(
     private fb: FormBuilder,
@@ -91,22 +97,46 @@ export class CalandarfullComponent implements OnInit {
       SalleList: this.fb.array([]),
     });
 
-    this.eventForm = this.fb.group({
-      title: ['', Validators.required],
-      startDate: ['', Validators.required],
-      startTime: ['', Validators.required],
-      endDate: ['', Validators.required],
-      endTime: ['', Validators.required],
-    });
+    this.eventForm = this.fb.group(
+      {
+        title: ['', Validators.required],
+        startDate: ['', Validators.required],
+        startTime: ['', Validators.required],
+        endDate: ['', Validators.required],
+        endTime: ['', Validators.required],
+      },
+      { validators: endTimeValidator('startTime', 'endTime') }
+    );
   }
-
+  checkGroups() {
+    let Allgroups = this.groups;
+    for (const e of this.examlist) {
+      for (const g of this.groups) {
+        if (e.group__name === g.group__name && e.exam__id == this.examId) {
+          Allgroups = this.groups.filter(
+            (G: { group__id: any }) => G.group__id !== g.group__id
+          );
+          console.log("e.group__name  e.group__name ",e.group__name )
+          console.log("g.group__name g.group__name",g.group__name)
+          console.log("e.exam__id e.exam__id",e.exam__id)
+          console.log("g.group__id g.group__id",g.group__id)
+        }
+      }
+    }
+    this.groups = Allgroups;
+  }
   statePlan() {
     this.state = !this.state;
     this.onSalleSelect();
+    // this.inisiallLists()
   }
-
+  inisiallLists() {
+    this.salleGroupList.push(this.createSalleGroup());
+    this.GroupList.push(this.createGroup());
+    this.SalleList.push(this.createSalle());
+  }
   ngOnInit(): void {
-    this.inisiallLists()
+    this.inisiallLists();
 
     if (this.firstDate) {
       this.currentWeekStart = this.firstDate;
@@ -126,15 +156,106 @@ export class CalandarfullComponent implements OnInit {
     // this.fetchGroups();
     this.fetchExam();
   }
+
+  checkListSG(): boolean {
+    let ok = true;
+    const i = this.salleGroupList.value.length;
+    const S = this.salles.length;
+    const G = this.groups.length;
+    if (S == i || G == i) {
+      ok = false;
+    }
+
+    return ok;
+  }
+
   get salleGroupList(): FormArray {
     return this.formSG.get('salleGroupList') as FormArray;
   }
   addSalleGroup(): void {
-    this.salleGroupList.push(this.createSalleGroup());
-
+    const i = this.salleGroupList.value.length;
+    if (
+      this.salleGroupList.value[i - 1].group__id !== null &&
+      this.salleGroupList.value[i - 1].salle__id !== null
+    ) {
+      this.salleGroupList.push(this.createSalleGroup());
+      this.AvailableSalles();
+      this.AvailableGroups();
+      this.ErrValid = '';
+    } else {
+      this.ErrValid = 'fill all the field';
+      console.log(
+        'The last item has a Group__id of null, so no action is taken.'
+      );
+    }
     console.log('ssss list salle group ', this.salleGroupList);
   }
+
+  GIDsg: any = [];
+  AvailableGroups(): void {
+    const selectedSalleIds = this.salleGroupList.controls
+      .map((control) => control.value.group__id)
+      .filter((id: any) => id != null);
+
+    console.log('dddd', selectedSalleIds);
+    if (selectedSalleIds.length > 0) {
+      for (const SID of selectedSalleIds) {
+        if (!this.GIDsg.includes(SID.group__id)) {
+          this.GIDsg.push(SID.group__id);
+        }
+      }
+      this.groups.forEach((item: { disabled: boolean; group__id: any }) => {
+        item.disabled = this.GIDsg.includes(item.group__id);
+      });
+    }
+    console.log('sasaasll  IDsg', this.GIDsg);
+    console.log('salles  salles salles salles', this.salles);
+  }
+
+  SIDsg: any = [];
+  AvailableSalles(): void {
+    const selectedSalleIds = this.salleGroupList.controls
+      .map((control) => control.value.salle__id)
+      .filter((id: any) => id != null);
+
+    console.log('dddd', selectedSalleIds);
+    if (selectedSalleIds.length > 0) {
+      for (const SID of selectedSalleIds) {
+        if (!this.SIDsg.includes(SID.salle__id)) {
+          this.SIDsg.push(SID.salle__id);
+        }
+      }
+      this.salles.forEach((item: { disabled: boolean; salle__id: any }) => {
+        item.disabled = this.SIDsg.includes(item.salle__id);
+      });
+    }
+    console.log('sasaasll  IDsg', this.SIDsg);
+    console.log('salles  salles salles salles', this.salles);
+  }
+
   removeSalleGroup(index: number): void {
+    if (
+      this.salleGroupList.value[index] &&
+      this.salleGroupList.value[index].salle__id
+    ) {
+      const idToRemove = this.salleGroupList.value[index].salle__id.salle__id;
+      this.SIDsg = this.SIDsg.filter((id: any) => id !== idToRemove);
+      this.salles.forEach((item: { disabled: boolean; salle__id: any }) => {
+        item.disabled = this.SIDsg.includes(item.salle__id);
+      });
+    }
+
+    if (
+      this.salleGroupList.value[index] &&
+      this.salleGroupList.value[index].group__id
+    ) {
+      const idToRemove = this.salleGroupList.value[index].group__id.group__id;
+      this.GIDsg = this.GIDsg.filter((id: any) => id !== idToRemove);
+      this.groups.forEach((item: { disabled: boolean; group__id: any }) => {
+        item.disabled = this.GIDsg.includes(item.group__id);
+      });
+    }
+
     this.salleGroupList.removeAt(index);
   }
 
@@ -144,11 +265,7 @@ export class CalandarfullComponent implements OnInit {
       group__id: [null, Validators.required],
     });
   }
-inisiallLists(){
-  this.addSalleGroup();
-  this.addGroup();
-  this.addSalle();
-}
+
   resetSalleGroupList(): void {
     while (this.salleGroupList.length !== 0) {
       this.salleGroupList.removeAt(0);
@@ -161,15 +278,64 @@ inisiallLists(){
     }
   }
 
+  checkListG(): boolean {
+    let ok = true;
+    const i = this.GroupList.value.length;
+    const G = this.groups.length;
+
+    if (G == i) {
+      ok = false;
+    }
+
+    return ok;
+  }
   get GroupList(): FormArray {
     return this.formG.get('GroupList') as FormArray;
   }
   addGroup(): void {
-    this.GroupList.push(this.createGroup());
-
+    const i = this.GroupList.value.length;
+    if (this.GroupList.value[i - 1].group__id !== null) {
+      this.GroupList.push(this.createGroup());
+      this.updateAvailableGroups();
+      this.ErrValid = '';
+    } else {
+      this.ErrValid = 'select Group';
+      console.log(
+        'The last item has a Group__id of null, so no action is taken.'
+      );
+    }
     console.log('ssss list salle group ', this.GroupList);
   }
+
+  IDg: any = [];
+  updateAvailableGroups(): void {
+    const selectedgroupIds = this.GroupList.controls
+      .map((control) => control.value.group__id)
+      .filter((id: any) => id != null);
+
+    console.log('dddd', selectedgroupIds);
+    if (selectedgroupIds.length > 0) {
+      for (const SID of selectedgroupIds) {
+        if (!this.IDg.includes(SID.group__id)) {
+          this.IDg.push(SID.group__id);
+        }
+      }
+      this.salles.forEach((item: { disabled: boolean; group__id: any }) => {
+        item.disabled = this.IDg.includes(item.group__id);
+      });
+    }
+    console.log('sasaasll  IDg', this.IDg);
+    console.log('groups  groups groups groups', this.groups);
+  }
+
   removeGroup(index: number): void {
+    if (this.GroupList.value[index] && this.GroupList.value[index].group__id) {
+      const idToRemove = this.GroupList.value[index].group__id.group__id;
+      this.IDg = this.IDg.filter((id: any) => id !== idToRemove);
+      this.groups.forEach((item: { disabled: boolean; group__id: any }) => {
+        item.disabled = this.IDg.includes(item.group__id);
+      });
+    }
     this.GroupList.removeAt(index);
   }
 
@@ -178,17 +344,67 @@ inisiallLists(){
       group__id: [null, Validators.required],
     });
   }
-  
+
+  checkList(): boolean {
+    let ok = true;
+    const i = this.SalleList.value.length;
+    const S = this.salles.length;
+
+    if (S == i) {
+      ok = false;
+    }
+
+    return ok;
+  }
   get SalleList(): FormArray {
     return this.formS.get('SalleList') as FormArray;
   }
   addSalle(): void {
-    this.SalleList.push(this.createSalle());
-
-    console.log('ssss list salle Salle ', this.SalleList);
+    console.log('SalleList1 salle Salle ', this.SalleList);
+    console.log('Salles1 salle Salle ', this.SalleList.value.length);
+    const i = this.SalleList.value.length;
+    if (this.SalleList.value[i - 1].salle__id !== null) {
+      this.SalleList.push(this.createSalle());
+      this.updateAvailableSalles();
+      this.ErrValid = '';
+    } else {
+      this.ErrValid = 'select Salle';
+      console.log(
+        'The last item has a salle__id of null, so no action is taken.'
+      );
+    }
   }
+  IDs: any = [];
+  updateAvailableSalles(): void {
+    const selectedSalleIds = this.SalleList.controls
+      .map((control) => control.value.salle__id)
+      .filter((id: any) => id != null);
+
+    console.log('dddd', selectedSalleIds);
+    if (selectedSalleIds.length > 0) {
+      for (const SID of selectedSalleIds) {
+        if (!this.IDs.includes(SID.salle__id)) {
+          this.IDs.push(SID.salle__id);
+        }
+      }
+      this.salles.forEach((item: { disabled: boolean; salle__id: any }) => {
+        item.disabled = this.IDs.includes(item.salle__id);
+      });
+    }
+    console.log('sasaasll  IDS', this.IDs);
+    console.log('salles  salles salles salles', this.salles);
+  }
+
   removeSalle(index: number): void {
+    if (this.SalleList.value[index] && this.SalleList.value[index].salle__id) {
+      const idToRemove = this.SalleList.value[index].salle__id.salle__id;
+      this.IDs = this.IDs.filter((id: any) => id !== idToRemove);
+      this.salles.forEach((item: { disabled: boolean; salle__id: any }) => {
+        item.disabled = this.IDs.includes(item.salle__id);
+      });
+    }
     this.SalleList.removeAt(index);
+    // Remove the ID from the IDs array
   }
 
   createSalle(): FormGroup {
@@ -196,7 +412,7 @@ inisiallLists(){
       salle__id: [null, Validators.required],
     });
   }
- 
+
   fetchExam(): void {
     console.log(
       'kjljlklsddshdshkdskldkdshkdshkldskhldshkldslkhdskldshkd',
@@ -205,7 +421,7 @@ inisiallLists(){
     this.examService.getExamByid(this.data).subscribe(
       (data) => {
         this.Exam = data;
-
+        this.examId = this.Exam.exam__id;
         this.examType = this.Exam.obligatoire;
         this.eventForm.patchValue({
           title: this.Exam.exam__title,
@@ -225,6 +441,7 @@ inisiallLists(){
     this.calandarService.getEvents().subscribe(
       (data) => {
         this.examlist = data;
+        this.checkGroups();
         console.log('nnddd', this.examlist);
       },
       (error) => {
@@ -288,15 +505,14 @@ inisiallLists(){
   //   return groupedEvents;
   // }
 
-
- extractDayNumber(dayString: string): number {
+  extractDayNumber(dayString: string): number {
     const match = dayString.match(/\d+/);
     return match ? parseInt(match[0], 10) : NaN;
   }
 
   openWeekView(dayString: string) {
     const day = this.extractDayNumber(dayString);
-console.log(day);
+    console.log(day);
     console.log('day is <<<<<<<', dayString);
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
     console.log('selectedDate is <<<<<<<', selectedDate);
@@ -388,45 +604,47 @@ console.log(day);
       0
     ).getDate();
     this.daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-    
+
     this.daysMonth = Array.from({ length: daysInMonth }, (_, i) => {
       const dayDate = new Date(this.currentYear, this.currentMonth, i + 1);
       const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
       return `${dayName} ${i + 1}`;
     });
-  
+
     // Define the type for the keys of dayOffsets
     type DayName = 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat';
-  
+
     // Define the dayOffsets object
     const dayOffsets: { [key in DayName]: number } = {
-      'Sun': 0,
-      'Mon': 1,
-      'Tue': 2,
-      'Wed': 3,
-      'Thu': 4,
-      'Fri': 5,
-      'Sat': 6,
+      Sun: 0,
+      Mon: 1,
+      Tue: 2,
+      Wed: 3,
+      Thu: 4,
+      Fri: 5,
+      Sat: 6,
     };
-  
+
     // Determine the number of leading empty strings based on the first day of the month
     const firstDayName = this.daysMonth[0].split(' ')[0] as DayName;
     const offset = dayOffsets[firstDayName] || 0;
-  
+
     // Prepend empty strings to the beginning of the daysMonth array
     for (let i = 0; i < offset; i++) {
       this.daysMonth.unshift(' ');
     }
-  
-   
   }
 
   genersateCalendar() {
     const date = new Date(this.currentYear, this.currentMonth, 1);
     const monthName = date.toLocaleString('default', { month: 'long' });
     this.monthName = `${monthName} ${this.currentYear}`;
-    const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-    
+    const daysInMonth = new Date(
+      this.currentYear,
+      this.currentMonth + 1,
+      0
+    ).getDate();
+
     this.daysMonth = Array.from({ length: daysInMonth }, (_, i) => {
       const dayDate = new Date(this.currentYear, this.currentMonth, i + 1);
       const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
@@ -441,32 +659,26 @@ console.log(day);
 
     return `${year}-${month}-${day}`;
   }
-formatDateLocal(Y: number, M: number, d: number) {
+  formatDateLocal(Y: number, M: number, d: number) {
     const year = String(Y);
-    const month = String(M+1).padStart(2, '0'); // Ensure month is zero-padded
+    const month = String(M + 1).padStart(2, '0'); // Ensure month is zero-padded
     const day = String(d).padStart(2, '0'); // Ensure day is zero-padded
 
     return `${year}-${month}-${day}`;
-}
+  }
   openEventForm(kdate: Date, hour: string, modal: any): void {
-    console.log(
-      'kdate>>>>>>....',
-      kdate
-    );
-    console.log(
-      'hour>>>>>>....',
-      hour
-    );
+    console.log('kdate>..', kdate);
+    console.log('hour>>>>>>....', hour);
+
+
+    
     const formattedDate = this.formatDateToLocal(kdate);
     let formattedTime = `${hour}:00`;
-    if(hour.length==4){
+    if (hour.length == 4) {
       formattedTime = `0${hour}:00`;
     }
-   
-    console.log(
-      'formattedDate>>>>>>....',
-      formattedTime
-    );
+
+    console.log('formattedDate>>>>>>....', formattedTime);
     this.eventForm.patchValue({
       startDate: formattedDate,
       startTime: formattedTime,
@@ -474,8 +686,8 @@ formatDateLocal(Y: number, M: number, d: number) {
       salle: '',
     });
 
-    this.resetSalleGroupList()
-    this.inisiallLists()
+    this.resetSalleGroupList();
+    this.inisiallLists();
     this.state = false;
     this.modalService.open(modal);
   }
@@ -538,11 +750,15 @@ formatDateLocal(Y: number, M: number, d: number) {
   // Update the hasEvents function to work with examlist
   hasEvents(day: number): boolean {
     if (this.examlist) {
-      const date =  this.formatDateLocal(this.currentYear, this.currentMonth, day);
+      const date = this.formatDateLocal(
+        this.currentYear,
+        this.currentMonth,
+        day
+      );
       // new Date(this.currentYear, this.currentMonth, day)
       // .toISOString()
       // .split('T')[0];
-     
+
       return this.examlist.some(
         (event: { startDate: string | number | Date }) => {
           const eventDate = new Date(event.startDate)
@@ -724,6 +940,7 @@ formatDateLocal(Y: number, M: number, d: number) {
                       (response: any) => {
                         alert('Successfully updated');
                         console.log('success update', response);
+                        this.modalService.dismissAll();
                       },
                       (error: { error: { message: any } }) => {
                         console.log('error', error);
@@ -736,12 +953,12 @@ formatDateLocal(Y: number, M: number, d: number) {
                 );
               } else {
                 console.log('Invalid salleGroupList data');
+                this.MsgError = 'salle/Group is empty';
               }
             }
-            this.modalService.dismissAll();
           } else {
             console.log('salleGroupList is empty or invalid');
-            this.MsgError = 'salleGroupList is empty or invalid';
+            this.MsgError = 'salle/Group is empty';
           }
         } else {
           if (
@@ -767,6 +984,7 @@ formatDateLocal(Y: number, M: number, d: number) {
                       (response: any) => {
                         alert('Successfully updated');
                         console.log('success update', response);
+                        this.modalService.dismissAll();
                       },
                       (error: { error: { message: any } }) => {
                         console.log('error', error);
@@ -779,12 +997,12 @@ formatDateLocal(Y: number, M: number, d: number) {
                 );
               } else {
                 console.log('Invalid GroupList data');
+                this.MsgError = 'Group is empty ';
               }
             }
-            this.modalService.dismissAll();
           } else {
             console.log('GroupList is empty or invalid');
-            this.MsgError = 'GroupList is empty or invalid';
+            this.MsgError = 'Group is empty ';
           }
         }
       }
@@ -812,6 +1030,7 @@ formatDateLocal(Y: number, M: number, d: number) {
                     (response: any) => {
                       alert('Successfully create');
                       console.log('seccess update', response);
+                      this.modalService.dismissAll();
                     },
                     (error: { error: { message: any } }) => {
                       console.log('errrr', error);
@@ -824,10 +1043,9 @@ formatDateLocal(Y: number, M: number, d: number) {
                 }
               );
             }
-            this.modalService.dismissAll();
           } else {
             console.log('SalleList is empty or invalid', this.SalleList.value);
-            this.MsgError = 'SalleList is empty or invalid';
+            this.MsgError = 'Salle is empty ';
           }
         } else {
           this.calandarService.createReserv(calandarData).subscribe(
@@ -843,6 +1061,7 @@ formatDateLocal(Y: number, M: number, d: number) {
               this.examService.updateExam(examData).subscribe(
                 (response: any) => {
                   alert('Successfully create');
+                  this.modalService.dismissAll();
                   console.log('seccess update', response);
                 },
                 (error: { error: { message: any } }) => {
@@ -855,7 +1074,6 @@ formatDateLocal(Y: number, M: number, d: number) {
               console.log('errrr', error);
             }
           );
-          this.modalService.dismissAll();
         }
       }
       console.log('dddd te7cheee', this.examType);
@@ -864,4 +1082,19 @@ formatDateLocal(Y: number, M: number, d: number) {
       this.logInvalidControls(this.eventForm);
     }
   }
+}
+export function endTimeValidator(
+  startControlName: string,
+  endControlName: string
+): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    const startTime = formGroup.get(startControlName)?.value;
+    const endTime = formGroup.get(endControlName)?.value;
+
+    if (!startTime || !endTime) {
+      return null; // return if either time is not set
+    }
+
+    return endTime > startTime ? null : { endTimeInvalid: true };
+  };
 }

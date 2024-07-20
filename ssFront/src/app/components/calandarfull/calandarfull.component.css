@@ -113,9 +113,10 @@
 }
 .btnAdd {
   background: white;
+   color: #dd9912;
   border: 0;
   border-radius: 10px;
-  color: #dd9912;
+ 
   cursor: pointer;
   display: flex;
   gap: 15px;
@@ -150,9 +151,9 @@
 
 .btnsave{
   position: absolute;
-  background: #1935a3;
-  box-shadow: #1935a3 0 10px 20px -10px;
-  color: #ffffff !important;
+  background: #ffffff;
+  box-shadow: #1935a3 2px 5px 20px -7px;
+  color: #1935a3;
   padding: 15px 20px;
   font-size: 18px;
   font-weight: 600;
@@ -162,12 +163,22 @@
   display: flex;
   justify-content: center;
   column-gap: 5px;
-  bottom: 0;
-  right: 10px;
+  bottom: 10px;
+  right: 15px;
   margin-bottom: 10px;
   align-items: center;
-}
+  
 
+ 
+}
+.nogroup{
+  text-align: center;
+  margin: 200px 0;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  color: #1935a3;
+}
 
 .btnAdd:not([disabled]):hover {
   width: max-content;
@@ -204,11 +215,11 @@
   background: transparent;
   /* text-shadow: -1px 3px 10px rgba(62, 62, 62, 0.62); */
   background: transparent;
-  font-family: "Poppins", sans-serif;
+ 
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
-
+  font-family: "Poppins", sans-serif;
   text-align: center;
 }
 
@@ -275,7 +286,7 @@
 
 .readonly-input {
   border: none;
-  background-color: transparent;
+  background: transparent;
   pointer-events: none;
   padding: 0 auto !important;
   max-width: 90%;
@@ -294,5 +305,11 @@
   z-index: 99;
 }
 
+
+.nonclickable {
+  pointer-events: none;
+  color: gray;
+  
+}
 
 
