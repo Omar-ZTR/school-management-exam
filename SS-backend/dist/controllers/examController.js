@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredExams = exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.getFilteredExams = exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
@@ -167,7 +167,7 @@ const getAllExams = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getAllExams = getAllExams;
-const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getFullExams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const exams = yield examModel_1.Exam.findAll({
             include: [
@@ -175,6 +175,25 @@ const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function
                 { model: reservationModel_1.Reservation },
                 { model: fileModel_1.FileExam },
             ],
+        });
+        res.status(200).json(exams);
+    }
+    catch (error) {
+        console.error("Error fetching exams:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getFullExams = getFullExams;
+const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const exams = yield examModel_1.Exam.findAll({
+            include: [
+                { model: questionModel_1.Question },
+                { model: reservationModel_1.Reservation },
+                { model: fileModel_1.FileExam },
+            ],
+            where: { user__id: id },
         });
         res.status(200).json(exams);
     }

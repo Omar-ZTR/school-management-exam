@@ -5,9 +5,11 @@ import {
   createExam,
   updateExam,
   deleteExam,
-  getTeacherExams,
+
   getExamsGroupsStutents,
   getFilteredExams,
+  getFullExams,
+  getTeacherExams,
 } from '../controllers/examController';
 import { createAnswers, getAnswers } from '../controllers/answerStudentController';
 
@@ -20,7 +22,9 @@ routerExam.get('/examCertif', getFilteredExams);
 
 routerExam.get('/examsGS', getExamsGroupsStutents);
 
-routerExam.get('/exams', getTeacherExams);
+routerExam.get('/exams', getFullExams);
+
+routerExam.get('/examsTeach/:id', getTeacherExams);
 
 routerExam.get('/exams/:id', getExamById);
 

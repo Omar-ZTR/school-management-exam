@@ -2,17 +2,48 @@
   background-color: black !important;
 }
 
+
 .readonly-input {
   border: none;
-  background-color: transparent;
+  background: transparent;
   pointer-events: none;
   padding: 0 auto !important;
-  max-width: max-content;
+  max-width: 90%;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+}
+.btnsave{
+  position: absolute;
+  background: #ffffff;
+  box-shadow: #1935a3 2px 5px 20px -7px;
+  color: #1935a3;
+  padding: 15px 20px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  border: none !important;
+  display: flex;
+  justify-content: center;
+  column-gap: 5px;
+  bottom: 10px;
+  right: 15px;
+  margin-bottom: 10px;
+  align-items: center;
+  
+
+ 
+}
+label {
+  resize: none;
+  display: block;
+  margin-bottom: 5px !important;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 17px;
 }
 
-label {
-  margin-bottom: 0 !important;
-}
 .planingPop{
   position: absolute;
   width: 100%;
@@ -48,6 +79,58 @@ label {
 }
 .planingPop.visible {
   opacity: 1; /* Visible when showCalendar is true */
+}
+
+.inputTimes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  max-width: max-content;
+}
+.inputTimes input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+ 
+  box-shadow: 4px 4px 8px #d9d9d9, -4px -4px 8px #ffffff;
+}
+
+/* Hover and focus states for the input */
+.inputTimes input:hover,
+.inputTimes input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+}
+
+/* Styles for the input in a valid state */
+
+
+/* Styles for the input in an invalid state */
+
+
+/* Placeholder styles */
+.inputTimes input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+/* Specific styles for the time input type */
+.inputTimes input[type="time"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+}
+
+/* Remove the native browser styles */
+.inputTimes input[type="time"]::-webkit-inner-spin-button,
+.inputTimes input[type="time"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .button-62 {

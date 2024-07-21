@@ -18,6 +18,8 @@ import { GroupService } from '../../services/servicesUtils/group.service';
 import { SalleService } from '../../services/servicesUtils/salle.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
 
 export interface GroupResponse {
   groupsSubject: any[];
@@ -28,11 +30,13 @@ export interface GroupResponse {
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    InputTextModule,
     DropdownModule,
     FormsModule,
     TooltipModule,
     NgbModalModule,
     CommonModule,
+    CalendarModule,
   ],
   templateUrl: './calandarfull.component.html',
   styleUrls: ['./calandarfull.component.css'],
@@ -97,16 +101,17 @@ export class CalandarfullComponent implements OnInit {
       SalleList: this.fb.array([]),
     });
 
-    this.eventForm = this.fb.group(
-      {
-        title: ['', Validators.required],
-        startDate: ['', Validators.required],
-        startTime: ['', Validators.required],
-        endDate: ['', Validators.required],
-        endTime: ['', Validators.required],
-      },
-      { validators: endTimeValidator('startTime', 'endTime') }
-    );
+    this.eventForm = this.fb.group({
+      title: ['', Validators.required],
+      startDate: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endDate: ['', Validators.required],
+      endTime: [
+        '',
+        Validators.required,
+        endTimeValidator('startTime', 'endTime'),
+      ],
+    });
   }
   checkGroups() {
     let Allgroups = this.groups;
@@ -116,10 +121,10 @@ export class CalandarfullComponent implements OnInit {
           Allgroups = this.groups.filter(
             (G: { group__id: any }) => G.group__id !== g.group__id
           );
-          console.log("e.group__name  e.group__name ",e.group__name )
-          console.log("g.group__name g.group__name",g.group__name)
-          console.log("e.exam__id e.exam__id",e.exam__id)
-          console.log("g.group__id g.group__id",g.group__id)
+          console.log('e.group__name  e.group__name ', e.group__name);
+          console.log('g.group__name g.group__name', g.group__name);
+          console.log('e.exam__id e.exam__id', e.exam__id);
+          console.log('g.group__id g.group__id', g.group__id);
         }
       }
     }
@@ -128,7 +133,8 @@ export class CalandarfullComponent implements OnInit {
   statePlan() {
     this.state = !this.state;
     this.onSalleSelect();
-    // this.inisiallLists()
+    this.resetSalleGroupList();
+    this.inisiallLists();
   }
   inisiallLists() {
     this.salleGroupList.push(this.createSalleGroup());
@@ -150,12 +156,40 @@ export class CalandarfullComponent implements OnInit {
       title: ['', Validators.required],
       startDate: ['', Validators.required],
       startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
+      endTime: [
+        '',
+        Validators.required,
+        endTimeValidator('startTime', 'endTime'),
+      ],
     });
     this.fetchEvents();
     // this.fetchGroups();
     this.fetchExam();
   }
+
+  resetSalleGroupList(): void {
+    while (this.salleGroupList.length !== 0) {
+      this.salleGroupList.removeAt(0);
+    }
+    while (this.GroupList.length !== 0) {
+      this.GroupList.removeAt(0);
+    }
+    while (this.SalleList.length !== 0) {
+      this.SalleList.removeAt(0);
+    }
+    this.IDs = [];
+    this.IDg = [];
+    this.GIDsg = [];
+    this.SIDsg = [];
+    this.salles.forEach((item: { disabled: boolean }) => {
+      item.disabled = false;
+    });
+    this.groups.forEach((item: { disabled: boolean }) => {
+      item.disabled = false;
+    });
+  }
+
+  // for Salle and group
 
   checkListSG(): boolean {
     let ok = true;
@@ -266,17 +300,7 @@ export class CalandarfullComponent implements OnInit {
     });
   }
 
-  resetSalleGroupList(): void {
-    while (this.salleGroupList.length !== 0) {
-      this.salleGroupList.removeAt(0);
-    }
-    while (this.GroupList.length !== 0) {
-      this.GroupList.removeAt(0);
-    }
-    while (this.SalleList.length !== 0) {
-      this.SalleList.removeAt(0);
-    }
-  }
+  // for group
 
   checkListG(): boolean {
     let ok = true;
@@ -320,7 +344,7 @@ export class CalandarfullComponent implements OnInit {
           this.IDg.push(SID.group__id);
         }
       }
-      this.salles.forEach((item: { disabled: boolean; group__id: any }) => {
+      this.groups.forEach((item: { disabled: boolean; group__id: any }) => {
         item.disabled = this.IDg.includes(item.group__id);
       });
     }
@@ -344,6 +368,8 @@ export class CalandarfullComponent implements OnInit {
       group__id: [null, Validators.required],
     });
   }
+
+  // for Salle
 
   checkList(): boolean {
     let ok = true;
@@ -450,23 +476,10 @@ export class CalandarfullComponent implements OnInit {
     );
   }
 
-  // fetchGroups(): void {
-  //   this.groupService.getGroups().subscribe(
-  //     (data) => {
-  //       console.log('Response from backend:', data);
-  //       this.groupSub = data;
-  //     },
-  //     (error: any) => {
-  //       console.error('Error fetching groups', error);
-  //     }
-  //   );
-  // }
-
   onSalleSelect(): void {
     const startDate = this.eventForm.get('startDate')?.value;
     const startHour = this.eventForm.get('startTime')?.value;
     const endHour = this.eventForm.get('endTime')?.value;
-    // const nb__place = this.eventForm.get('nb')?.value;
 
     const fetchSalleData = {
       starthour: new Date(`${startDate}T${startHour}`),
@@ -492,18 +505,6 @@ export class CalandarfullComponent implements OnInit {
       }
     );
   }
-
-  // groupEventsByDate(events: CalendarEvent[]): { [key: string]: CalendarEvent[] } {
-  //   const groupedEvents: { [key: string]: CalendarEvent[] } = {};
-  //   events.forEach(event => {
-  //     const date = event.start.split('T')[0];
-  //     if (!groupedEvents[date]) {
-  //       groupedEvents[date] = [];
-  //     }
-  //     groupedEvents[date].push(event);
-  //   });
-  //   return groupedEvents;
-  // }
 
   extractDayNumber(dayString: string): number {
     const match = dayString.match(/\d+/);
@@ -670,8 +671,6 @@ export class CalandarfullComponent implements OnInit {
     console.log('kdate>..', kdate);
     console.log('hour>>>>>>....', hour);
 
-
-    
     const formattedDate = this.formatDateToLocal(kdate);
     let formattedTime = `${hour}:00`;
     if (hour.length == 4) {
@@ -689,7 +688,7 @@ export class CalandarfullComponent implements OnInit {
     this.resetSalleGroupList();
     this.inisiallLists();
     this.state = false;
-    this.modalService.open(modal);
+    this.modalService.open(modal, { centered: true  });
   }
 
   logInvalidControls(formGroup: FormGroup) {
@@ -815,16 +814,16 @@ export class CalandarfullComponent implements OnInit {
     const hourValue = parseInt(hour.split(':')[0], 10);
     const minuteValue = parseInt(hour.split(':')[1], 10);
     const colors = [
-      '#615EFC',
-      '#7E8EF1',
-      '#68D2E8',
-      '#121481',
-      '#FEEFAD',
-      '#FFC55A',
-      '#1D24CA',
+    
+  '#ff00e8',
+  '#00ff56',
+  
+  '#f44336',
+  '#19287b',
+  '#feac32',
     ];
-
-    const defaultColor = '#5e83fc'; // Default color if only one event on the same day
+   
+    const defaultColor = '#feac32'; // Default color if only one event on the same day
 
     let styles = {
       width: '10%',
@@ -832,7 +831,7 @@ export class CalandarfullComponent implements OnInit {
       transform: `translateY(0px)`,
       'box-shadow': `0 4px 30px ${defaultColor}`,
       'z-index': '99',
-      'background-color': `${defaultColor}33`,
+      'background-color': `${defaultColor}c2`,
     };
 
     if (this.examlist) {
@@ -871,7 +870,7 @@ export class CalandarfullComponent implements OnInit {
           'box-shadow': `0 4px 30px ${defaultColor}1A`,
           'z-index': '99',
           'background-color':
-            colorIndex !== -1 ? `${colors[colorIndex]}33` : `${defaultColor}33`,
+            colorIndex !== -1 ? `${colors[colorIndex]}c2` : `${defaultColor}c2`,
         };
       }
     }
@@ -890,6 +889,7 @@ export class CalandarfullComponent implements OnInit {
   }
   saveEvent() {
     console.log(this.eventForm.value);
+    this.controlTime();
     if (this.eventForm.valid) {
       const formValues = this.eventForm.value;
       // For debugging purposes
@@ -1082,12 +1082,52 @@ export class CalandarfullComponent implements OnInit {
       this.logInvalidControls(this.eventForm);
     }
   }
+
+  controlTime(): void {
+    const start = this.eventForm.get('startTime')?.value;
+    let end = this.eventForm.get('endTime')?.value;
+
+    if (!start || !end) {
+      console.log('Start time or End time is not set');
+      return;
+    }
+
+    // Parse start time and add 15 minutes
+    const [startHours, startMinutes] = start.split(':').map(Number);
+    const startDate = new Date();
+    startDate.setHours(startHours, startMinutes + 15, 0, 0);
+
+    // Parse end time
+    const [endHours, endMinutes] = end.split(':').map(Number);
+    const endDate = new Date();
+    endDate.setHours(endHours, endMinutes, 0, 0);
+
+    console.log('Start time + 15 minutes:', startDate);
+    console.log('End time:', endDate);
+
+    if (startDate < endDate) {
+      console.log('End time is valid.');
+    } else {
+      console.log(
+        'End time must be at least 15 minutes after start time.',
+        this.eventForm.controls['endTime']
+      );
+      this.eventForm
+        .get('endTime')
+        ?.setErrors({
+          endTimeInvalid:
+            'The end time must be at least 15 minutes greater than the start time',
+        });
+    }
+  }
 }
+
 export function endTimeValidator(
   startControlName: string,
   endControlName: string
 ): ValidatorFn {
-  return (formGroup: AbstractControl): ValidationErrors | null => {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const formGroup = control as FormGroup;
     const startTime = formGroup.get(startControlName)?.value;
     const endTime = formGroup.get(endControlName)?.value;
 
@@ -1095,6 +1135,8 @@ export function endTimeValidator(
       return null; // return if either time is not set
     }
 
-    return endTime > startTime ? null : { endTimeInvalid: true };
+    return endTime > startTime
+      ? null
+      : { endTimeInvalid: 'End time must be greater than start time' };
   };
 }

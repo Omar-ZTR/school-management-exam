@@ -105,7 +105,9 @@ export class AddExamComponent {
   }
 
   toggleCalendar() {
+    this.isMonthView=true
     this.showCalendar = !this.showCalendar;
+    
   }
 
   isMonthView: boolean = true;

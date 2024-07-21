@@ -30,7 +30,7 @@ export const getAllSalles = async (req: Request, res: Response) => {
 
 export const getSallesSpecific = async (req: Request, res: Response) => {
   try {
-    const { starthour, endhour,exam__id } = req.body;
+    const { starthour, endhour,reserv__id } = req.body;
    
     console.log("start", starthour, "end", endhour);
     
@@ -59,8 +59,8 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
             endDate: {
               [Op.gte]: end,
             },
-            exam__id: {
-              [Op.ne]: exam__id,
+            reserv__id: {
+              [Op.ne]: reserv__id,
             },
           },
           {
@@ -75,8 +75,8 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
             startDate: {
               [Op.lte]: start,
             },
-            exam__id: {
-              [Op.ne]: exam__id,
+            reserv__id: {
+              [Op.ne]: reserv__id,
             },
           },
           {
@@ -86,8 +86,8 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
             startDate: {
               [Op.lt]: start,
             },
-            exam__id: {
-              [Op.ne]: exam__id,
+            reserv__id: {
+              [Op.ne]: reserv__id,
             },
           },
           {
@@ -97,8 +97,8 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
             startDate: {
               [Op.gte]: start,
             },
-            exam__id: {
-              [Op.ne]: exam__id,
+            reserv__id: {
+              [Op.ne]: reserv__id,
             },
           },
         ],
@@ -142,7 +142,7 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
     //           [Op.eq]: start,
     //         },
           
-    //         exam__id: {
+    //         reserv__id: {
     //           [Op.eq]: nb,
     //         },
     //       },

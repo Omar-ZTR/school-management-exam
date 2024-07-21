@@ -13,23 +13,33 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { PanelModule } from 'primeng/panel';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
 } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { QuestionService } from '../../../services/serviceTeacher/question.service';
 export interface Exam {
+  exam__id: any;
   subject: string;
   exam__type: string;
+  reservation: any[];
   // Add other properties if needed
 }
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { CalandarService } from '../../../services/serviceTeacher/calandar.service';
 import { SalleService } from '../../../services/servicesUtils/salle.service';
-import { CalandarfullComponent } from '../../calandarfull/calandarfull.component';
+import {
+  CalandarfullComponent,
+  endTimeValidator,
+} from '../../calandarfull/calandarfull.component';
+import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
+import { DropdownModule } from 'primeng/dropdown';
 @Component({
   selector: 'app-teacher-exam',
   standalone: true,
@@ -52,6 +62,22 @@ import { CalandarfullComponent } from '../../calandarfull/calandarfull.component
     OverlayPanelModule,
     InputTextModule,
     CalandarfullComponent,
+
+    DropdownModule,
+  ],
+  styles: [
+    `
+      :host ::ng-deep .p-dialog-content {
+        flex-grow: 0 !important;
+        overflow-y: visible !important;
+      }
+      :host ::ng-deep .p-dialog-header {
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 800 !important;
+        font-style: italic !important;
+        font-size: 30px !important;
+      }
+    `,
   ],
 })
 export class TeacherExamComponent {
@@ -78,17 +104,20 @@ export class TeacherExamComponent {
   updatecalendar: boolean = false;
   eventForm!: FormGroup;
   salles: any;
+  AllSalles: any;
   reservdata: any;
   deleteid: any;
   deleteform: any;
   deletexam: boolean = false;
   showCalendar: boolean = false;
+  user__id = this.tokenService.getUserIdFromToken();
   constructor(
     private examService: ExamService,
     private salleService: SalleService,
     private questService: QuestionService,
     private fb: FormBuilder,
-    private calandarService: CalandarService
+    private calandarService: CalandarService,
+    private tokenService: TokenServiceService
   ) {
     this.questionForms = this.fb.group({
       note: [''],
@@ -127,11 +156,11 @@ export class TeacherExamComponent {
     const startHour = this.eventForm.get('startTime')?.value;
     const endHour = this.eventForm.get('endTime')?.value;
     // const nb__place = this.eventForm.get('nb')?.value;
-
+    console.log('<>>sssseeevnt', this.eventForm.value);
     const fetchSalleData = {
       starthour: new Date(`${startDate}T${startHour}`),
       endhour: new Date(`${startDate}T${endHour}`),
-      exam__id: this.reservdata.exam__id,
+      reserv__id: this.reservdata.reserv__id,
     };
     console.log('<>><<>><><><><<>', fetchSalleData);
     this.fetchSalles(fetchSalleData);
@@ -140,7 +169,7 @@ export class TeacherExamComponent {
   fetchSalles(fetchSalleData: {
     starthour: Date;
     endhour: Date;
-    exam__id: any;
+    reserv__id: any;
   }): void {
     this.salleService.getSalleSpecific(fetchSalleData).subscribe(
       (data) => {
@@ -151,6 +180,91 @@ export class TeacherExamComponent {
         console.error('Error fetching salles', error);
       }
     );
+  }
+  GetAllSalles(): void {
+    this.salleService.getSalles().subscribe(
+      (data) => {
+        this.AllSalles = data;
+        console.log('GetAllSalles', data);
+      },
+      (error) => {
+        console.error('Error fetching salles', error);
+      }
+    );
+  }
+  getNamesalle(salle__id: any) {
+    const selectedSalle = this.AllSalles.find(
+      (salle: { salle__id: any }) => salle.salle__id == salle__id
+    );
+    return selectedSalle ? selectedSalle.salle__name : '';
+  }
+
+  futureDateValidator() {
+    const selectedDate = this.eventForm.get('startDate')?.value;
+
+    const selectedDateObj = new Date(selectedDate);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set the current date to midnight for comparison
+    console.log('selectedDateObj', selectedDateObj);
+    console.log('currentDate', currentDate);
+
+    const year = currentDate.getFullYear();
+    const month = Number(currentDate.getMonth() + 1);
+    const day = Number(currentDate.getDate());
+
+    const year1 = selectedDateObj.getFullYear();
+    const month1 = Number(selectedDateObj.getMonth() + 1);
+    const day1 = Number(selectedDateObj.getDate());
+    const c = year + month + day;
+    const S = year1 + month1 + day1;
+    // console.log('selectedDateObj', S , year == year1 ,  month == month1 , day < day1 );
+    // console.log('currentDate', c,year > year1 ,  month < month1 , day == day1);
+    if (year > year1) {
+      console.log('true year');
+      return true; // Return an error object if the selected date is not in the future
+    } else if (year == year1 && month > month1) {
+      console.log('true month');
+      return true; // Return an error object if the selected date is not in the future
+    } else if (year == year1 && month == month1 && day > day1) {
+      console.log('true day');
+      return true;
+    }
+    return false;
+  }
+  controlTime(): void {
+    const start = this.eventForm.get('startTime')?.value;
+    let end = this.eventForm.get('endTime')?.value;
+
+    if (!start || !end) {
+      console.log('Start time or End time is not set');
+      return;
+    }
+
+    // Parse start time and add 15 minutes
+    const [startHours, startMinutes] = start.split(':').map(Number);
+    const startDate = new Date();
+    startDate.setHours(startHours, startMinutes + 15, 0, 0);
+
+    // Parse end time
+    const [endHours, endMinutes] = end.split(':').map(Number);
+    const endDate = new Date();
+    endDate.setHours(endHours, endMinutes, 0, 0);
+
+    console.log('Start time + 15 minutes:', startDate);
+    console.log('End time:', endDate);
+
+    if (startDate < endDate) {
+      console.log('End time is valid.');
+    } else {
+      console.log(
+        'End time must be at least 15 minutes after start time.',
+        this.eventForm.controls['endTime']
+      );
+      this.eventForm.get('endTime')?.setErrors({
+        endTimeInvalid:
+          'The end time must be at least 15 minutes greater than the start time',
+      });
+    }
   }
 
   updatePlan(rowData: any) {
@@ -176,9 +290,8 @@ export class TeacherExamComponent {
 
     this.reservdata = rowData;
   }
-  saveplan() {
-    console.log('event form is ', this.eventForm);
 
+  isUpdate() {
     const formValues = this.eventForm.value;
     const calandarData = {
       startDate: new Date(`${formValues.startDate}T${formValues.startTime}`),
@@ -188,22 +301,70 @@ export class TeacherExamComponent {
       salle: formValues.salle,
       exam__title: formValues.title,
     };
-    console.log(
-      'beforzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzze',
-      calandarData
-    );
 
-    this.calandarService.updatereservation(calandarData).subscribe(
-      (response: any) => {
-        alert('Successfully create');
-        console.log('seccess create', response);
+    if (
+      calandarData.startDate === this.reservdata.startDate &&
+      calandarData.endDate === this.reservdata.endDate &&
+      calandarData.salle == this.reservdata.salle
+    ) {
+      return false
+    }
 
-        // window.location.reload();
-      },
-      (error: { error: { message: any } }) => {
-        console.log('errrr', error);
+    return true
+  }
+
+  saveplan() {
+    console.log('event form is ', this.eventForm);
+    this.controlTime();
+    if (this.futureDateValidator()) {
+      return;
+    } else {
+      if (this.eventForm.valid) {
+        console.log('987654', this.futureDateValidator());
+        const formValues = this.eventForm.value;
+        const calandarData = {
+          startDate: new Date(
+            `${formValues.startDate}T${formValues.startTime}`
+          ),
+          endDate: new Date(`${formValues.startDate}T${formValues.endTime}`),
+          id: this.reservdata.reserv__id,
+          group__name: formValues.group.group__name,
+          salle: formValues.salle,
+          exam__title: formValues.title,
+        };
+
+        this.calandarService.updatereservation(calandarData).subscribe(
+          (response: any) => {
+            const index = this.Exams.findIndex(
+              (exam) => exam.exam__id === response.exam__id
+            );
+            // this.Exams.reservation.findIndex(exam => exam.exam__id === response.exam__id);
+            const indexR = this.Exams[index].reservation.findIndex(
+              (reserv) => reserv.reserv__id === response.reserv__id
+            );
+
+            console.log(
+              ' this.Exams[index].reservation[indexR]',
+              this.Exams[index].reservation[indexR]
+            );
+
+            this.Exams[index].reservation[indexR] = response;
+            console.log(
+              ' this.Exams[index].reservation[indexR]',
+              this.Exams[index].reservation[indexR]
+            );
+            this.updatecalendar = false;
+            alert('Successfully update');
+            console.log('seccess update', response);
+
+            // window.location.reload();
+          },
+          (error: { error: { message: any } }) => {
+            console.log('errrr', error);
+          }
+        );
       }
-    );
+    }
   }
 
   showDialog(id: any) {
@@ -216,13 +377,19 @@ export class TeacherExamComponent {
       this.fetchExam(id);
     }
   }
+
   ngOnInit() {
+    this.GetAllSalles();
     this.eventForm = this.fb.group({
       title: [''],
 
       startDate: [''],
       startTime: [''],
-      endTime: [''],
+      endTime: [
+        '',
+        Validators.required,
+        endTimeValidator('startTime', 'endTime'),
+      ],
       salle: [''],
       group: [''],
     });
@@ -232,7 +399,7 @@ export class TeacherExamComponent {
       type: '',
     };
 
-    this.fetchGroups();
+    this.fetchExams();
     console.log('><><><><><><><><><><><', this.Exams);
   }
   listPlan(exam: any, op: OverlayPanel) {
@@ -525,8 +692,8 @@ export class TeacherExamComponent {
     return Object.keys(this.groupedQuestions);
   }
 
-  fetchGroups(): void {
-    this.examService.getTeacherExam().subscribe(
+  fetchExams(): void {
+    this.examService.getTeacherExam(this.user__id).subscribe(
       (data: Exam[]) => {
         console.log('Response from backend:', data);
         this.Exams = data;
@@ -567,7 +734,7 @@ export class TeacherExamComponent {
       console.log('delete ', this.deleteform.type);
       console.log('delete ', this.deleteid);
     }
-    this.deletexam =false
+    this.deletexam = false;
   }
 
   next() {

@@ -182,7 +182,7 @@ export const getAllExams = async (req: Request, res: Response) => {
   }
 };
 
-export const getTeacherExams = async (req: Request, res: Response) => {
+export const getFullExams = async (req: Request, res: Response) => {
   try {
     const exams = await Exam.findAll({
       include: [
@@ -198,6 +198,23 @@ export const getTeacherExams = async (req: Request, res: Response) => {
   }
 };
 
+export const getTeacherExams = async (req: Request, res: Response) => {
+  try {
+    const {id} = req.params;
+    const exams = await Exam.findAll({
+      include: [
+        { model: Question },
+        { model: Reservation },
+        { model: FileExam },
+      ],
+      where: { user__id: id },
+    });
+    res.status(200).json(exams);
+  } catch (error) {
+    console.error("Error fetching exams:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 export const getExamsGroupsStutents = async (req: Request, res: Response) => {
   try {
     const exams = await Exam.findAll({

@@ -24,7 +24,6 @@
 <!-- table  -->
 <div class="card">
   <p-table
-  
     [value]="Exams"
     [paginator]="true"
     [rows]="5"
@@ -126,7 +125,7 @@
 <p-overlayPanel #op [style]="{ maxwidth: '450px', maxheight: '250px' }">
   <p-button
     class="overpanelClose"
-    (click)="overpanelClose( op)"
+    (click)="overpanelClose(op)"
     icon="pi pi-times"
     [rounded]="true"
     severity="danger"
@@ -137,7 +136,7 @@
       [value]="examShudeled.reservation"
       selectionMode="single"
       [paginator]="examShudeled.reservation.length > 4"
-      [rows]="4" 
+      [rows]="4"
       responsiveLayout="scroll"
     >
       <ng-template pTemplate="header">
@@ -155,37 +154,36 @@
           <td>
             {{ product.group__name }}
           </td>
-          <td>{{ product.salle }}</td>
+          <td>{{ getNamesalle(product.salle) }}</td>
         </tr>
       </ng-template>
     </p-table>
     <p-button
-   
-    label=" Add plan"
-    (click)="toggleCalendar(examShudeled, op)"
-    [text]="true"
-    [raised]="true"
-    [style]="{ 'border-radius': '15px','margin-top':'8px'}"
-    icon="pi pi-plus"
-    severity="success"
-  />
+      label=" Add plan"
+      (click)="toggleCalendar(examShudeled, op)"
+      [text]="true"
+      [raised]="true"
+      [style]="{ 'border-radius': '15px', 'margin-top': '8px' }"
+      icon="pi pi-plus"
+      severity="success"
+    />
   </ng-template>
 </p-overlayPanel>
 
 <!-- planification -->
-<div *ngIf="showCalendar" >
-  <button class="button-62" (click)="toggleCalendar([],op)" >
+<div *ngIf="showCalendar">
+  <button class="button-62" (click)="toggleCalendar([], op)">
     <i class="fa-solid fa-xmark"></i>
     Cancel
   </button>
-  </div>
+</div>
 <div *ngIf="showCalendar" class="planingPop visible">
   <!-- <button class="button-62" (click)="toggleCalendar([],op)" >
     Button 62
   </button> -->
   <div
     class="calendar-popup"
-    [ngStyle]="{ 'margin-top': !isMonthView ? '20%' : '0'}"
+    [ngStyle]="{ 'margin-top': !isMonthView ? '20%' : '0' }"
   >
     <app-calandarfull
       [data]="examPlan.exam__id"
@@ -202,81 +200,110 @@
   [(visible)]="deletexam"
   [style]="{ width: '25rem' }"
 >
-  <p>Do you want to delete this {{deleteform.type}}?</p>
+  <p>Do you want to delete this {{ deleteform.type }}?</p>
 
   <p-button
-  *ngIf="deleteform.type ==='question'"
-  label="Remove "
-  (click)=" deleteObj(deleteid,'unassociate')"
- 
-  [raised]="true"
-  [style]="{ 'border-radius': '15px','background':'#ff8e00','margin':'8px'}"
-  icon="pi pi-times"
-
-/>
+    *ngIf="deleteform.type === 'question'"
+    label="Remove "
+    (click)="deleteObj(deleteid, 'unassociate')"
+    [raised]="true"
+    [style]="{ 'border-radius': '15px', background: '#ff8e00', margin: '8px' }"
+    icon="pi pi-times"
+  />
 
   <p-button
-   
-  label="Delete  "
-  (click)="deleteObj(deleteid,'delete')"
- 
-  [raised]="true"
-  [style]="{ 'border-radius': '15px','background':'red','margin':'8px'}"
-  icon="pi pi-trash"
-
-/>
+    label="Delete  "
+    (click)="deleteObj(deleteid, 'delete')"
+    [raised]="true"
+    [style]="{ 'border-radius': '15px', background: 'red', margin: '8px' }"
+    icon="pi pi-trash"
+  />
 </p-dialog>
 
 <!-- update planification  -->
 
 <p-dialog
+  *ngIf="updatecalendar"
   [modal]="true"
-  header="update planification "
+  
+  [draggable]="false"
+  [resizable]="false"
+  header="update Exam Timing "
   [(visible)]="updatecalendar"
-  [style]="{ width: '25rem' }"
+  [style]="{ maxwidth: '30rem' }"
 >
   <form [formGroup]="eventForm">
-    <div class="marginleft d-flex justify-content-center align-items-center">
-      <label for="title">Title</label>
-      <input
-        id="title"
-        type="text"
-        class="marginleft form-control"
-        formControlName="title"
-      />
+    <div class="d-flex align-items-center">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          pInputText
+          class="form-control readonly-input"
+          formControlName="title"
+          readonly
+        />
+      </div>
     </div>
-    <div class="marginleft form-group">
-      <label for="startDate">Date</label>
-      <input
-        id="startDate"
-        type="date"
-        class="marginleft form-control"
-        formControlName="startDate"
-      />
-    </div>
-    <div
-      class="marginleft ml-2 d-flex justify-content-center align-items-center"
-    >
-      <label for="startTime">Start Time</label>
-      <input
-        id="startTime"
-        type="time"
-        class="marginleft form-control"
-        formControlName="startTime"
-      />
+   
 
-      <label for="endTime">End Time</label>
-      <input
-        id="endTime"
-        type="time"
-        class="marginleft form-control"
-        formControlName="endTime"
-      />
+    <div style="display: flex; gap: 20px">
+      <div class="form-group inputTimes">
+        <label for="startDate">Date</label>
+        <input
+          id="startDate"
+          type="date"
+          class="form-control"
+          formControlName="startDate"
+        />
+        <div
+          *ngIf="
+            eventForm.controls['startDate'].invalid &&
+            eventForm.controls['startDate'].touched
+          "
+          class="text-danger"
+        >
+          Start date is required.
+        </div>
+      </div>
+      <div class="form-group inputTimes">
+        <label for="startTime">Start Time</label>
+        <input
+          id="startTime"
+          type="time"
+          class="form-control"
+          formControlName="startTime"
+        />
+        <div
+          *ngIf="
+            eventForm.controls['startTime'].invalid &&
+            eventForm.controls['startTime'].touched
+          "
+          class="text-danger"
+        >
+          Start time is required.
+        </div>
+      </div>
+      <div class="form-group inputTimes">
+        <label for="endTime">End Time</label>
+        <input
+          pInputText
+          id="endTime"
+          type="time"
+          class="form-control"
+          formControlName="endTime"
+        />
+      </div>
     </div>
-    <div
-      class="marginleft form-group d-flex justify-content-center align-items-center"
-    >
-      <div
+    <div *ngIf="eventForm.controls['endTime'].invalid" class="text-danger">
+      {{ eventForm.controls['endTime'].errors?.['endTimeInvalid']}}
+    </div>
+    <div *ngIf="futureDateValidator()" class="text-danger">
+      date must be in the future.
+    </div>
+    <div class="form-group" style="display: flex; gap: 20px; align-items: flex-end; ">
+      <!-- <div
         class="marginleft mr-2 d-flex justify-content-center align-items-center"
       >
         <label for="salle">Salle</label>
@@ -296,10 +323,30 @@
             {{ salle.salle__name }}
           </option>
         </select>
+      </div> -->
+      <div class="inputSelect">
+        <label>Salle</label>
+        <p-dropdown
+          [options]="salles"
+          formControlName="salle"
+          optionLabel="salle__name"
+          optionValue="salle__id"
+          placeholder="{{ getNamesalle(eventForm.value.salle) }}"
+          (click)="onSalleSelect()"
+        >
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2">
+              <div>{{ getNamesalle(eventForm.value.salle) }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-salle pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ salle.salle__name }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
       </div>
-      <div
-        class="marginleft ml-2 d-flex justify-content-center align-items-center"
-      >
+      <div class="ml-2" style="display: flex; align-items: baseline">
         <label for="group">Group</label>
         <input
           id="group"
@@ -310,12 +357,11 @@
         />
       </div>
     </div>
-    <button type="submit" class="btn btn-primary" (click)="saveplan()">
+    <button *ngIf=" isUpdate()"  type="submit" class="btnsave" (click)="saveplan()">
       Save update
     </button>
   </form>
 </p-dialog>
-
 
 <!-- edit Exam -->
 <p-dialog
@@ -370,11 +416,11 @@
                 <span class="pi pi-pencil"></span>
               </button>
               <button
-              class="p-panel-header-icon p-link mr-2"
-              (click)="toggleDelete(question,Exam.exam__id,'question')"
-            >
-              <span class="pi pi-times"></span>
-            </button>
+                class="p-panel-header-icon p-link mr-2"
+                (click)="toggleDelete(question, Exam.exam__id, 'question')"
+              >
+                <span class="pi pi-times"></span>
+              </button>
             </ng-template>
             <!-- <button (click)="editQuestion(question)">edit</button> -->
 

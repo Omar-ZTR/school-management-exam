@@ -42,7 +42,7 @@ const getAllSalles = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getAllSalles = getAllSalles;
 const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { starthour, endhour, exam__id } = req.body;
+        const { starthour, endhour, reserv__id } = req.body;
         console.log("start", starthour, "end", endhour);
         if (!starthour || !endhour) {
             return res.status(400).json({ error: "Hours are required" });
@@ -65,8 +65,8 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
                         endDate: {
                             [sequelize_1.Op.gte]: end,
                         },
-                        exam__id: {
-                            [sequelize_1.Op.ne]: exam__id,
+                        reserv__id: {
+                            [sequelize_1.Op.ne]: reserv__id,
                         },
                     },
                     {
@@ -81,8 +81,8 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
                         startDate: {
                             [sequelize_1.Op.lte]: start,
                         },
-                        exam__id: {
-                            [sequelize_1.Op.ne]: exam__id,
+                        reserv__id: {
+                            [sequelize_1.Op.ne]: reserv__id,
                         },
                     },
                     {
@@ -92,8 +92,8 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
                         startDate: {
                             [sequelize_1.Op.lt]: start,
                         },
-                        exam__id: {
-                            [sequelize_1.Op.ne]: exam__id,
+                        reserv__id: {
+                            [sequelize_1.Op.ne]: reserv__id,
                         },
                     },
                     {
@@ -103,8 +103,8 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
                         startDate: {
                             [sequelize_1.Op.gte]: start,
                         },
-                        exam__id: {
-                            [sequelize_1.Op.ne]: exam__id,
+                        reserv__id: {
+                            [sequelize_1.Op.ne]: reserv__id,
                         },
                     },
                 ],
@@ -142,7 +142,7 @@ exports.getSallesSpecific = getSallesSpecific;
 //         startDate: {
 //           [Op.eq]: start,
 //         },
-//         exam__id: {
+//         reserv__id: {
 //           [Op.eq]: nb,
 //         },
 //       },

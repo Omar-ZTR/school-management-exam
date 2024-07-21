@@ -311,5 +311,101 @@
   color: gray;
   
 }
+.nonclickableDay{
+  pointer-events: none;
+  color: gray;
+  background: white;
+}
+.Mclose{
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  border: none !important;
+  color: #ffffff;
+  text-shadow: 0 1px 19px #f44336    ;
+  background: transparent;
+}
+label {
+  display: block;
+  margin-bottom: 5px !important;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+}
 
+.modalhead{
+  display: -ms-flexbox;
+  display: flex;
+  background: #11215f;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 1rem 1rem;
+  /* border-bottom: 1px solid #dee2e6; */
+  border-top-left-radius: .3rem;
+  border-top-right-radius: .3rem;
+ 
+}
+
+.TitelForm {
+  margin-bottom: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 30px;
+  color: #f68f39;
+}
+
+.inputTimes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  max-width: max-content;
+}
+.inputTimes input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+ 
+  box-shadow: 4px 4px 8px #d9d9d9, -4px -4px 8px #ffffff;
+}
+
+/* Hover and focus states for the input */
+.inputTimes input:hover,
+.inputTimes input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+}
+
+/* Styles for the input in a valid state */
+
+
+/* Styles for the input in an invalid state */
+
+
+/* Placeholder styles */
+.inputTimes input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+/* Specific styles for the time input type */
+.inputTimes input[type="time"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+}
+
+/* Remove the native browser styles */
+.inputTimes input[type="time"]::-webkit-inner-spin-button,
+.inputTimes input[type="time"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 

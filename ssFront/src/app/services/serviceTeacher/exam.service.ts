@@ -42,8 +42,11 @@ export class ExamService {
     });
   }
 
-  getTeacherExam(): Observable<Exam[]> {
+  getFullExam(): Observable<Exam[]> {
     return this.httpClient.get<Exam[]>(`${this.url}/exams`);
+  }
+  getTeacherExam(id: any): Observable<Exam[]> {
+    return this.httpClient.get<Exam[]>(`${this.url}/examsTeach/${id}`);
   }
 
   getTeacherExamGS(): Observable<ExamGS[]> {
