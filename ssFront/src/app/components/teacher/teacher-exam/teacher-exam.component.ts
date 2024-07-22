@@ -40,6 +40,8 @@ import {
 } from '../../calandarfull/calandarfull.component';
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 import { DropdownModule } from 'primeng/dropdown';
+import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
+import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
 @Component({
   selector: 'app-teacher-exam',
   standalone: true,
@@ -62,14 +64,41 @@ import { DropdownModule } from 'primeng/dropdown';
     OverlayPanelModule,
     InputTextModule,
     CalandarfullComponent,
-
     DropdownModule,
   ],
   styles: [
     `
-      :host ::ng-deep .p-dialog-content {
-        flex-grow: 0 !important;
-        overflow-y: visible !important;
+      :host ::ng-deep .p-dropdown {
+        position: unset !important ;
+       
+      }
+      :host ::ng-deep .p-dropdown .p-dropdown-clear-icon{
+   right: 0 !important;
+
+      }
+
+      :host ::ng-deep  .p-dropdown-clear-icon{
+       position: relative !important;
+
+      }
+
+      :host ::ng-deep .p-panel .p-panel-header {
+        border: 2px solid #e5e7eb !important;
+  
+    background: #ffffff !important;
+    color: #374151;
+   
+      }
+
+      :host ::ng-deep .p-fieldset .p-fieldset-legend{
+        background: #ffffff !important;
+        border: none !important;
+      }
+ 
+      :host ::ng-deep  .p-fieldset {
+        border: 1px solid #e5e7eb !important;
+    margin-bottom: 20px !important;
+
       }
       :host ::ng-deep .p-dialog-header {
         font-family: 'Poppins', sans-serif !important;
@@ -80,6 +109,8 @@ import { DropdownModule } from 'primeng/dropdown';
     `,
   ],
 })
+
+// overflow-y: visible !important;
 export class TeacherExamComponent {
   [x: string]: any;
   Exams: Exam[] = [];
@@ -110,11 +141,13 @@ export class TeacherExamComponent {
   deleteform: any;
   deletexam: boolean = false;
   showCalendar: boolean = false;
+  group!: any[];
   user__id = this.tokenService.getUserIdFromToken();
   constructor(
     private examService: ExamService,
     private salleService: SalleService,
     private questService: QuestionService,
+    private teacherService: TeacherService,
     private fb: FormBuilder,
     private calandarService: CalandarService,
     private tokenService: TokenServiceService
@@ -205,8 +238,7 @@ export class TeacherExamComponent {
     const selectedDateObj = new Date(selectedDate);
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0); // Set the current date to midnight for comparison
-    console.log('selectedDateObj', selectedDateObj);
-    console.log('currentDate', currentDate);
+
 
     const year = currentDate.getFullYear();
     const month = Number(currentDate.getMonth() + 1);
@@ -217,8 +249,7 @@ export class TeacherExamComponent {
     const day1 = Number(selectedDateObj.getDate());
     const c = year + month + day;
     const S = year1 + month1 + day1;
-    // console.log('selectedDateObj', S , year == year1 ,  month == month1 , day < day1 );
-    // console.log('currentDate', c,year > year1 ,  month < month1 , day == day1);
+   
     if (year > year1) {
       console.log('true year');
       return true; // Return an error object if the selected date is not in the future
@@ -302,17 +333,49 @@ export class TeacherExamComponent {
       exam__title: formValues.title,
     };
 
-    if (
-      calandarData.startDate === this.reservdata.startDate &&
-      calandarData.endDate === this.reservdata.endDate &&
-      calandarData.salle == this.reservdata.salle
-    ) {
-      return false
-    }
 
-    return true
+
+console.log("calandarData",calandarData)
+console.log("reservdata",this.reservdata)
+   const reservStartDate = new Date(this.reservdata.startDate);
+  const reservEndDate = new Date(this.reservdata.endDate);
+
+  if (
+    calandarData.startDate.getTime() === reservStartDate.getTime() &&
+    calandarData.endDate.getTime() === reservEndDate.getTime() &&
+    calandarData.salle === this.reservdata.salle
+  ) {
+    return false;
   }
+  return true
+  }
+deleteplan(id:any,op: OverlayPanel){
+  this.calandarService.deletePlan(id).subscribe(
+    (response: any) => {
 
+      if(this.examShudeled.reservation.length == 1){
+        op.hide();
+
+      } 
+      this.examShudeled.reservation= this.examShudeled.reservation.filter(
+        (Plan: { reserv__id: any; }) => Plan.reserv__id !== id
+      );
+      const index = this.Exams.findIndex(
+        (exam) => exam.exam__id === this.examShudeled.exam__id
+      );
+      this.Exams[index]= this.examShudeled;
+
+ 
+      alert('Successfully update');
+      console.log('seccess update', response);
+
+      // window.location.reload();
+    },
+    (error: { error: { message: any } }) => {
+      console.log('errrr', error);
+    }
+  );
+}
   saveplan() {
     console.log('event form is ', this.eventForm);
     this.controlTime();
@@ -399,8 +462,22 @@ export class TeacherExamComponent {
       type: '',
     };
 
+
+    this.teacherService.getTecher(this.user__id).subscribe(
+      (data: Teacher[]) => {
+        const teacher = data;
+   
+        this.group=teacher[0].groups
+       
+        console.log('subjectshhhhhhsss is is sis',teacher[0]);
+      },
+      (error) => {
+        console.error('Error fetching subjects', error);
+      }
+    );
+
     this.fetchExams();
-    console.log('><><><><><><><><><><><', this.Exams);
+   
   }
   listPlan(exam: any, op: OverlayPanel) {
     op.toggle(event);
@@ -423,11 +500,29 @@ export class TeacherExamComponent {
     }
   }
 
-  isMonthView: boolean = true;
+  isMonthView!: boolean ;
   onIsMonthViewChange(value: boolean) {
     this.isMonthView = value;
-    console.log('vvvvvvvvvvvvvvvvvv: .', this.isMonthView);
+  
   }
+
+
+  onupdatePlan(value: boolean) {
+    
+    this.examShudeled.reservation.push(value)
+    const index = this.Exams.findIndex(
+      (exam) => exam.exam__id === this.examShudeled.exam__id
+    );
+
+    console.log('this.Exams 1this.Exams value this.Exams : .', this.examShudeled);
+    this.Exams[index]= this.examShudeled;
+    console.log('this.Exams this.Exams this.Exams this.Exams 22: .',  this.Exams[index]);
+      console.log(' valuevalue: .', value);
+      
+   
+    
+  }
+
 
   getSpeedDialItems(exam: any) {
     return [
@@ -711,7 +806,8 @@ export class TeacherExamComponent {
     if (this.deleteform.type === 'exam') {
       this.examService.deleteExam(exam__id).subscribe(
         (data) => {
-          console.log('Response from backend:', data);
+          console.log('Response delete Exam :', data);
+          this.Exams=this.Exams.filter((exam) => exam.exam__id !== id)
         },
         (error: any) => {
           console.error('Error fetching groups', error);

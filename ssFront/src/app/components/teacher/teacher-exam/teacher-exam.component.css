@@ -35,6 +35,73 @@
 
  
 }
+
+legend{
+      /* display: block; */
+      width: 100%;
+      max-width: 100%;
+      padding: 0;
+      /* margin-bottom: .5rem; */
+      background: #ffffff !important;
+      font-size: 1.5rem;
+      line-height: inherit;
+      color: inherit;
+      /* display: flex; */
+      white-space: normal;
+      /* justify-content: center; */
+      /* align-items: center; */
+}
+.btnAdd {
+  background: white;
+  border: 0;
+  border-radius: 10px;
+  color: #dd9912;
+  cursor: pointer;
+ 
+  align-items: center;
+  font-family: -apple-system,
+  system-ui,
+  "Segoe UI",
+  Roboto,
+  Helvetica,
+  Arial,
+  sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+ 
+  outline: transparent;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow .2s ease-in-out;
+  overflow: hidden;
+  justify-content: center;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,
+  rgba(0, 0, 0, .14) 0 6px 10px 0,
+  rgba(0, 0, 0, .12) 0 1px 18px 0;
+}
+.deletebtn{
+  position: absolute;
+  background: #f4433630;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  color: red;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  left: -19px;
+  margin-top: -7px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: rgb(13 13 13 / 63%) -2px 4px 20px -7px;
+}
+.nonclickable {
+  pointer-events: none !important;
+  color: gray !important;
+  box-shadow: #f44336 2px 5px 20px -7px;
+}
 label {
   resize: none;
   display: block;
@@ -390,8 +457,8 @@ label {
 }
 
 .custome-file {
-  background-color: #feac32;
-  color: #ffffff;
+  background-color: #eef2ff;
+
   width: 140px;
   height: max-content;
   padding: 8px 14px;

@@ -32,7 +32,7 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
   try {
     const { starthour, endhour,reserv__id } = req.body;
    
-    console.log("start", starthour, "end", endhour);
+    console.log("start", starthour, "end", endhour, "id is ",reserv__id);
     
     if (!starthour || !endhour) {
       return res.status(400).json({ error: "Hours are required" });

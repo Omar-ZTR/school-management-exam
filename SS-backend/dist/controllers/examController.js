@@ -241,10 +241,9 @@ const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         const group = yield groupModel_1.Group.findByPk(group__id);
         console.log("Existing Exam:", exam);
-        if (!group) {
-            return res.status(404).send("group not found");
+        if (group) {
+            yield exam.$add('groups', group);
         }
-        yield exam.$add('groups', group);
         // Update the nb__reserve field
         const nb__reserve = exam.nb__reserve + operation;
         const [updated] = yield examModel_1.Exam.update({ nb__reserve }, { where: { exam__id: id } });

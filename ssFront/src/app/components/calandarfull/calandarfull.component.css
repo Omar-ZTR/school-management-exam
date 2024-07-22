@@ -321,8 +321,9 @@
   font-weight: 700;
   line-height: 1;
   border: none !important;
+  outline: none !important;
   color: #ffffff;
-  text-shadow: 0 1px 19px #f44336    ;
+  text-shadow: 0 1px 19px #f44336;
   background: transparent;
 }
 label {

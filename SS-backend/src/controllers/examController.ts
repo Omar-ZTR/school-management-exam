@@ -255,11 +255,12 @@ export const updateExam = async (req: Request, res: Response) => {
     }
     const group = await Group.findByPk(group__id);
     console.log("Existing Exam:", exam);
-    if (!group) {
-      return res.status(404).send("group not found");
+    if (group) {
+     
+      await exam.$add('groups', group);
     }
 
-    await exam.$add('groups', group);
+   
 
     
     // Update the nb__reserve field

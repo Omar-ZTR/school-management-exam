@@ -36,11 +36,12 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th style="width: max-content">Title</th>
         <th style="width: max-content">Status</th>
         <th style="width: max-content">Subject</th>
         <th style="width: max-content">Type</th>
-        <!-- <th style="width: max-content">Questions</th>
-        <th style="width: max-content">File</th> -->
+        <!-- <th style="width: max-content">Questions</th> -->
+        <th style="width: max-content">Content</th>
         <th style="width: max-content">Create At</th>
         <!-- <th style="width: max-content">update At</th> -->
         <th style="width: max-content">scheduled</th>
@@ -49,20 +50,20 @@
     </ng-template>
     <ng-template pTemplate="body" let-exam>
       <tr>
-        <td>{{ exam.obligatoire ? "certification" : "Course" }}</td>
+        <td>{{ exam.exam__title }}</td>
+        <td>{{ exam.obligatoire ? "Course" : "Certificate" }}</td>
         <td>{{ exam.subject }}</td>
         <td>{{ exam.exam__type }}</td>
-        <!-- <td>{{ exam.questions.length }}</td>
-        <td>{{ exam.file.length }}</td> -->
+
+        <td class="TFile" *ngIf="exam.exam__type === 'File'">file</td>
+        <td class="TFile" *ngIf="exam.exam__type === 'FileOff'">file Off</td>
+        <td class="TFile" *ngIf="exam.exam__type === 'Normal'">
+          {{ exam.questions.length }} Question
+        </td>
+        <td class="TFile" *ngIf="exam.exam__type === 'offline'">Empty</td>
+
         <td>{{ exam.createdAt | date : "EEEE dd MMMM  HH:mm" }}</td>
-        <!-- <td>
-          {{
-            (exam.updatedAt | date : "EEEE dd MMMM HH:mm") !==
-            (exam.createdAt | date : "EEEE dd MMMM HH:mm")
-              ? (exam.updatedAt | date : "EEEE dd MMMM HH:mm")
-              : "-"
-          }}
-        </td> -->
+
         <td style="display: flex; justify-content: space-around">
           <div style="display: flex; align-items: center; width: max-content">
             <!-- {{ exam.reservation.length > 0 ? "" : "No" }} -->
@@ -95,7 +96,20 @@
           </div>
         </td>
         <td>
-          <div style="--item-diff-x: 0px !important">
+          <p-button
+            *ngIf="exam.exam__type === 'offline'"
+            (click)="toggleDelete(exam, exam.exam__id, 'exam')"
+            [text]="true"
+            [raised]="true"
+            [style]="{ 'border-radius': '15px' }"
+            icon="pi pi-trash"
+            severity="danger"
+          />
+
+          <div
+            *ngIf="exam.exam__type !== 'offline'"
+            style="--item-diff-x: 0px !important"
+          >
             <p-speedDial
               [model]="getSpeedDialItems(exam)"
               direction="left"
@@ -114,9 +128,6 @@
     </ng-template>
     <ng-template pTemplate="paginatorleft">
       <p-button type="button" icon="pi pi-plus" styleClass="p-button-text" />
-    </ng-template>
-    <ng-template pTemplate="paginatorright">
-      <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text" />
     </ng-template>
   </p-table>
 </div>
@@ -142,19 +153,28 @@
       <ng-template pTemplate="header">
         <tr>
           <th>Name</th>
-          <th>group</th>
-          <th>salle</th>
+          <th>{{ examShudeled.obligatoire ? "Group" : "Certificate" }}</th>
+          <th>Salle</th>
+          <th>Date</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-product>
+      <ng-template pTemplate="body" let-rowData let-plan>
+        <div class="deletebtn" (click)="deleteplan(plan.reserv__id, op)">
+          <i class="fa-solid fa-calendar-xmark fa-lg"></i>
+        </div>
         <tr [pSelectableRow]="rowData" (click)="updatePlan(rowData)">
           <td>
-            {{ product.exam__title }}
+            {{ plan.exam__title }}
           </td>
           <td>
-            {{ product.group__name }}
+            {{ plan.group__name == "" ? " for all " : plan.group__name }}
           </td>
-          <td>{{ getNamesalle(product.salle) }}</td>
+          <td>
+            {{ plan.salle == "" ? "is remotely" : getNamesalle(plan.salle) }}
+          </td>
+          <td>
+            {{ plan.startDate | date : "EEEE dd MMMM  HH:mm" }}
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -188,7 +208,9 @@
     <app-calandarfull
       [data]="examPlan.exam__id"
       [firstDate]="firstDate"
+      [groups]="group"
       (isMonthViewChange)="onIsMonthViewChange($event)"
+      (isAddPlan)="onupdatePlan($event)"
     ></app-calandarfull>
   </div>
 </div>
@@ -225,7 +247,6 @@
 <p-dialog
   *ngIf="updatecalendar"
   [modal]="true"
-  
   [draggable]="false"
   [resizable]="false"
   header="update Exam Timing "
@@ -246,7 +267,6 @@
         />
       </div>
     </div>
-   
 
     <div style="display: flex; gap: 20px">
       <div class="form-group inputTimes">
@@ -302,39 +322,42 @@
     <div *ngIf="futureDateValidator()" class="text-danger">
       date must be in the future.
     </div>
-    <div class="form-group" style="display: flex; gap: 20px; align-items: flex-end; ">
-      <!-- <div
-        class="marginleft mr-2 d-flex justify-content-center align-items-center"
-      >
-        <label for="salle">Salle</label>
-        <select
-          id="salle"
-          class="marginleft form-control styled-select"
-          style="min-width: 100px; max-width: max-content"
-          formControlName="salle"
-          (click)="onSalleSelect()"
-        >
-          <option
-            style="padding: 30px"
-            class="styled-option"
-            *ngFor="let salle of salles"
-            [value]="salle.salle__name"
-          >
-            {{ salle.salle__name }}
-          </option>
-        </select>
-      </div> -->
+    <div
+      class="form-group"
+      style="display: flex; gap: 20px; align-items: flex-end"
+    >
       <div class="inputSelect">
-        <label>Salle</label>
+        <label
+          >Salle :
+          <small>{{
+            eventForm.value.salle !== "" ? "" : "Exam is remotely ,"
+          }}</small>
+        </label>
+        <small style="display: flex; margin-top: -10px">{{
+          eventForm.value.salle !== ""
+            ? ""
+            : " select salle to changed to presence"
+        }}</small>
         <p-dropdown
           [options]="salles"
           formControlName="salle"
+          placeholder="Select A salle"
           optionLabel="salle__name"
           optionValue="salle__id"
-          placeholder="{{ getNamesalle(eventForm.value.salle) }}"
+          [showClear]="true"
           (click)="onSalleSelect()"
         >
-          <ng-template pTemplate="selectedItem">
+          <!-- 
+        placeholder="{{
+          eventForm.value.salle !== ''
+            ? getNamesalle(eventForm.value.salle)
+            : 'select salle'
+        }}" -->
+
+          <ng-template
+            *ngIf="eventForm.value.salle !== ''"
+            pTemplate="selectedItem"
+          >
             <div class="flex align-items-center gap-2">
               <div>{{ getNamesalle(eventForm.value.salle) }}</div>
             </div>
@@ -345,8 +368,15 @@
             </div>
           </ng-template>
         </p-dropdown>
+        <!-- <div  *ngIf="eventForm.value.salle !== ''"  (click)="eventForm.value.salle = ''">
+          <i class="fa-solid fa-calendar-xmark fa-lg"></i>
+        </div> -->
       </div>
-      <div class="ml-2" style="display: flex; align-items: baseline">
+      <div
+        *ngIf="examShudeled.obligatoire"
+        class="ml-2"
+        style="display: flex; align-items: baseline"
+      >
         <label for="group">Group</label>
         <input
           id="group"
@@ -357,7 +387,12 @@
         />
       </div>
     </div>
-    <button *ngIf=" isUpdate()"  type="submit" class="btnsave" (click)="saveplan()">
+    <button
+      [ngClass]="{ nonclickable: !isUpdate() }"
+      type="submit"
+      class="btnsave"
+      (click)="saveplan()"
+    >
       Save update
     </button>
   </form>
@@ -371,7 +406,7 @@
   [style]="{ width: '50rem' }"
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
 >
-  <div class="examFiles" *ngIf="examType == 'file'">
+  <div class="examFiles" *ngIf="examType == 'File' || examType == 'FileOff'">
     <div>
       <div class="titlebox">Exam file</div>
       <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
@@ -383,6 +418,7 @@
             ></i>
             <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
           </div>
+          <label for="">{{f.file__name}}</label>
         </div>
       </div>
     </div>
@@ -391,10 +427,15 @@
     <ng-container *ngFor="let questionType of getQuestionTypes()">
       <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
         <button
-          class="p-panel-header-icon p-link mr-2"
+          class="p-panel-header-icon p-link mr-2 btnAdd"
+          style="
+            background: #026b020a;
+            color: rgb(35, 168, 39);
+            margin-bottom: 10px;
+          "
           (click)="addQuestion(questionType)"
         >
-          <span class="pi pi-plus"></span>
+          <span class="pi pi-plus"></span> Add Question
         </button>
         <ng-container
           *ngFor="let question of groupedQuestions[questionType]; let i = index"
@@ -410,13 +451,14 @@
 
             <ng-template pTemplate="icons">
               <button
-                class="p-panel-header-icon p-link mr-2"
+                class="p-panel-header-icon p-link mr-2 btnAdd"
                 (click)="editQuestion(question)"
               >
                 <span class="pi pi-pencil"></span>
               </button>
               <button
-                class="p-panel-header-icon p-link mr-2"
+                class="p-panel-header-icon p-link mr-2 btnAdd"
+                style="background: red; color: white"
                 (click)="toggleDelete(question, Exam.exam__id, 'question')"
               >
                 <span class="pi pi-times"></span>
@@ -471,33 +513,37 @@
   [modal]="true"
   header="Edit Question"
   [(visible)]="update"
-  [style]="{ width: '25rem' }"
+  [style]="{ width: '35rem' }"
 >
   <span class="p-text-secondary block mb-5">Update your information.</span>
   <form [formGroup]="questionForms">
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="question" class="font-semibold w-6rem">question:</label>
-      <input
-        pInputText
-        id="question"
-        class="flex-auto"
-        formControlName="question__text"
-      />
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="note" class="font-semibold w-6rem">note:</label>
-      <input
-        pInputText
-        id="note"
-        class="flex-auto"
-        type="number"
-        formControlName="note"
-      />
-    </div>
+    <div style="display: flex; gap: 20px">
+      <div class="align-items-center">
+        <label for="question">question:</label>
+        <input
+          pInputText
+          type="text"
+          id="question"
+          class="form-control"
+          formControlName="question__text"
+        />
+      </div>
 
+      <div class="form-group inputTimes">
+        <label for="note">note:</label>
+        <input
+          style="width: 60px"
+          pInputText
+          id="note"
+          class="form-control"
+          type="number"
+          formControlName="note"
+        />
+      </div>
+    </div>
     <div formArrayName="reponses">
-      <div class="flex align-items-center gap-3 mb-5">
-        <label for="Answers" class="font-semibold w-6rem">Answers:</label>
+      <div class="flex align-items-center gap-3">
+        <label for="Answers">Answers:</label>
         <div
           *ngFor="let reponse of reponsesControls; let i = index"
           [formGroupName]="i"
@@ -573,12 +619,11 @@
         </div>
       </div>
 
-      <div class="custome-file">
+      <div class="custome-file btnsave">
         <span>
-          <img
-            src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
-            alt=""
-          />Attach File
+      
+          <i class="fa-solid fa-paperclip fa-lg"></i>
+          Attach File
         </span>
         <input
           type="file"
@@ -588,9 +633,19 @@
         />
       </div>
     </div>
-    <div class="flex justify-content-end gap-2">
-      <p-button label="Cancel" severity="secondary" (click)="closeQuest()" />
-      <p-button label="Save" (click)="saveQuestion()" />
+    <div style="display: flex; justify-content: flex-end">
+      <button
+        type="submit"
+        class="btnsave"
+        (click)="closeQuest()"
+        style="right: 170px; background: #1935a3; color: white"
+      >
+        Cancel
+      </button>
+
+      <button type="submit" class="btnsave" (click)="saveQuestion()">
+        Save update
+      </button>
     </div>
   </form>
 </p-dialog>
@@ -705,10 +760,7 @@
 
       <div class="custome-file">
         <span>
-          <img
-            src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY0IDY0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGlkPSJDbGlwIj48cGF0aCBkPSJtMTIuMDggNTcuNzQ5YTkgOSAwIDAgMCAxMi43MjggMGwzMS4xMTItMzEuMTEzYTEzIDEzIDAgMSAwIC0xOC4zODQtMTguMzg1bC0yMC41MDcgMjAuNTA2IDEuNDE1IDEuNDE1IDIwLjUwNi0yMC41MDZhMTEgMTEgMCAxIDEgMTUuNTU2IDE1LjU1NmwtMzEuMTEyIDMxLjExMmE3IDcgMCAwIDEgLTkuOS05LjlsMjYuODctMjYuODdhMyAzIDAgMCAxIDQuMjQyIDQuMjQzbC0xNi4yNjMgMTYuMjY0IDEuNDE0IDEuNDE0IDE2LjI2NC0xNi4yNjNhNSA1IDAgMCAwIC03LjA3MS03LjA3MWwtMjYuODcgMjYuODdhOSA5IDAgMCAwIDAgMTIuNzI4eiIvPjwvZz48L3N2Zz4="
-            alt=""
-          />Attach File
+        <i class="fa-solid fa-paperclip fa-lg"></i>Attach File
         </span>
         <input
           type="file"

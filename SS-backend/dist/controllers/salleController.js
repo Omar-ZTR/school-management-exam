@@ -43,7 +43,7 @@ exports.getAllSalles = getAllSalles;
 const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { starthour, endhour, reserv__id } = req.body;
-        console.log("start", starthour, "end", endhour);
+        console.log("start", starthour, "end", endhour, "id is ", reserv__id);
         if (!starthour || !endhour) {
             return res.status(400).json({ error: "Hours are required" });
         }

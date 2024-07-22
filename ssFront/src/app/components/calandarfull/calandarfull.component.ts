@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  output,
+  Output,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -46,6 +53,7 @@ export class CalandarfullComponent implements OnInit {
   @Input() groups: any;
   @Input() firstDate: any;
   @Output() isMonthViewChange = new EventEmitter<boolean>();
+  @Output() isAddPlan = new EventEmitter<any>();
 
   daysInMonth: number[] = [];
   currentYear: number = new Date().getFullYear();
@@ -115,16 +123,19 @@ export class CalandarfullComponent implements OnInit {
   }
   checkGroups() {
     let Allgroups = this.groups;
+
     for (const e of this.examlist) {
+ 
       for (const g of this.groups) {
         if (e.group__name === g.group__name && e.exam__id == this.examId) {
+  
           Allgroups = this.groups.filter(
             (G: { group__id: any }) => G.group__id !== g.group__id
           );
           console.log('e.group__name  e.group__name ', e.group__name);
           console.log('g.group__name g.group__name', g.group__name);
           console.log('e.exam__id e.exam__id', e.exam__id);
-          console.log('g.group__id g.group__id', g.group__id);
+          console.log('g.group__id g.group__id', this.examId);
         }
       }
     }
@@ -143,7 +154,7 @@ export class CalandarfullComponent implements OnInit {
   }
   ngOnInit(): void {
     this.inisiallLists();
-
+    this.fetchExam();
     if (this.firstDate) {
       this.currentWeekStart = this.firstDate;
       this.isMonthView = false;
@@ -153,18 +164,15 @@ export class CalandarfullComponent implements OnInit {
     this.generateCalendar();
     this.generateCurrentWeek();
     this.eventForm = this.fb.group({
-      title: ['', Validators.required],
-      startDate: ['', Validators.required],
-      startTime: ['', Validators.required],
-      endTime: [
-        '',
-        Validators.required,
-        endTimeValidator('startTime', 'endTime'),
-      ],
+      title: [''],
+      startDate: [''],
+      startTime: [''],
+      endTime: [''],
     });
+     
     this.fetchEvents();
     // this.fetchGroups();
-    this.fetchExam();
+   
   }
 
   resetSalleGroupList(): void {
@@ -231,7 +239,7 @@ export class CalandarfullComponent implements OnInit {
       .map((control) => control.value.group__id)
       .filter((id: any) => id != null);
 
-    console.log('dddd', selectedSalleIds);
+   
     if (selectedSalleIds.length > 0) {
       for (const SID of selectedSalleIds) {
         if (!this.GIDsg.includes(SID.group__id)) {
@@ -242,8 +250,7 @@ export class CalandarfullComponent implements OnInit {
         item.disabled = this.GIDsg.includes(item.group__id);
       });
     }
-    console.log('sasaasll  IDsg', this.GIDsg);
-    console.log('salles  salles salles salles', this.salles);
+  
   }
 
   SIDsg: any = [];
@@ -252,7 +259,7 @@ export class CalandarfullComponent implements OnInit {
       .map((control) => control.value.salle__id)
       .filter((id: any) => id != null);
 
-    console.log('dddd', selectedSalleIds);
+
     if (selectedSalleIds.length > 0) {
       for (const SID of selectedSalleIds) {
         if (!this.SIDsg.includes(SID.salle__id)) {
@@ -263,8 +270,7 @@ export class CalandarfullComponent implements OnInit {
         item.disabled = this.SIDsg.includes(item.salle__id);
       });
     }
-    console.log('sasaasll  IDsg', this.SIDsg);
-    console.log('salles  salles salles salles', this.salles);
+
   }
 
   removeSalleGroup(index: number): void {
@@ -337,7 +343,7 @@ export class CalandarfullComponent implements OnInit {
       .map((control) => control.value.group__id)
       .filter((id: any) => id != null);
 
-    console.log('dddd', selectedgroupIds);
+
     if (selectedgroupIds.length > 0) {
       for (const SID of selectedgroupIds) {
         if (!this.IDg.includes(SID.group__id)) {
@@ -348,8 +354,7 @@ export class CalandarfullComponent implements OnInit {
         item.disabled = this.IDg.includes(item.group__id);
       });
     }
-    console.log('sasaasll  IDg', this.IDg);
-    console.log('groups  groups groups groups', this.groups);
+ 
   }
 
   removeGroup(index: number): void {
@@ -441,7 +446,7 @@ export class CalandarfullComponent implements OnInit {
 
   fetchExam(): void {
     console.log(
-      'kjljlklsddshdshkdskldkdshkdshkldskhldshkldslkhdskldshkd',
+      'xxx',
       this.data
     );
     this.examService.getExamByid(this.data).subscribe(
@@ -464,11 +469,13 @@ export class CalandarfullComponent implements OnInit {
     );
   }
   fetchEvents(): void {
+    console.log("gg event")
     this.calandarService.getEvents().subscribe(
       (data) => {
         this.examlist = data;
         this.checkGroups();
-        console.log('nnddd', this.examlist);
+        console.log("ffdffddfd")
+       
       },
       (error) => {
         console.error('Error fetching fake questions', error);
@@ -484,21 +491,21 @@ export class CalandarfullComponent implements OnInit {
     const fetchSalleData = {
       starthour: new Date(`${startDate}T${startHour}`),
       endhour: new Date(`${startDate}T${endHour}`),
-      exam__id: this.data,
+      reserv__id: -1,
     };
-    console.log('<>><<>><><><><<>', fetchSalleData);
+   
     this.fetchSalles(fetchSalleData);
   }
 
   fetchSalles(fetchSalleData: {
     starthour: Date;
     endhour: Date;
-    exam__id: any;
+    reserv__id: any;
   }): void {
     this.salleService.getSalleSpecific(fetchSalleData).subscribe(
       (data) => {
         this.salles = data;
-        console.log('<>><<>><><><><<>', data);
+   
       },
       (error) => {
         console.error('Error fetching salles', error);
@@ -513,10 +520,9 @@ export class CalandarfullComponent implements OnInit {
 
   openWeekView(dayString: string) {
     const day = this.extractDayNumber(dayString);
-    console.log(day);
-    console.log('day is <<<<<<<', dayString);
+ 
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
-    console.log('selectedDate is <<<<<<<', selectedDate);
+ 
     const startOfWeek = new Date(selectedDate);
 
     const dayOfWeek = selectedDate.getDay();
@@ -524,7 +530,7 @@ export class CalandarfullComponent implements OnInit {
     startOfWeek.setDate(selectedDate.getDate() - dayOfWeek);
 
     this.currentWeekStart = startOfWeek;
-    console.log('WeekStart is wwww', this.currentWeekStart);
+   
     this.isMonthView = false;
     this.isMonthViewChange.emit(this.isMonthView);
     this.generateCurrentWeek();
@@ -559,7 +565,7 @@ export class CalandarfullComponent implements OnInit {
     this.currentWeekStart = new Date(
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
     );
-    console.log('3currentWeekStart is <<<<<<<', this.currentWeekStart);
+   
   }
 
   getWeekDates(): Date[] {
@@ -668,8 +674,7 @@ export class CalandarfullComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
   openEventForm(kdate: Date, hour: string, modal: any): void {
-    console.log('kdate>..', kdate);
-    console.log('hour>>>>>>....', hour);
+
 
     const formattedDate = this.formatDateToLocal(kdate);
     let formattedTime = `${hour}:00`;
@@ -677,18 +682,18 @@ export class CalandarfullComponent implements OnInit {
       formattedTime = `0${hour}:00`;
     }
 
-    console.log('formattedDate>>>>>>....', formattedTime);
+  
     this.eventForm.patchValue({
       startDate: formattedDate,
       startTime: formattedTime,
       endTime: formattedTime,
       salle: '',
     });
-
+    this.checkGroups()
     this.resetSalleGroupList();
     this.inisiallLists();
     this.state = false;
-    this.modalService.open(modal, { centered: true  });
+    this.modalService.open(modal, { centered: true });
   }
 
   logInvalidControls(formGroup: FormGroup) {
@@ -813,16 +818,8 @@ export class CalandarfullComponent implements OnInit {
     const dateString = this.formatDateToLocal(date);
     const hourValue = parseInt(hour.split(':')[0], 10);
     const minuteValue = parseInt(hour.split(':')[1], 10);
-    const colors = [
-    
-  '#ff00e8',
-  '#00ff56',
-  
-  '#f44336',
-  '#19287b',
-  '#feac32',
-    ];
-   
+    const colors = ['#ff00e8', '#00ff56', '#f44336', '#19287b', '#feac32'];
+
     const defaultColor = '#feac32'; // Default color if only one event on the same day
 
     let styles = {
@@ -884,11 +881,11 @@ export class CalandarfullComponent implements OnInit {
   formatDate(date: string, time: string): string {
     const dateTimeString = `${date}T${time}`;
     const dateTime = new Date(dateTimeString);
-    console.log('ooooooooooooooooooooooo>>>', dateTime);
+ 
     return dateTime.toISOString();
   }
   saveEvent() {
-    console.log(this.eventForm.value);
+ 
     this.controlTime();
     if (this.eventForm.valid) {
       const formValues = this.eventForm.value;
@@ -927,6 +924,7 @@ export class CalandarfullComponent implements OnInit {
                 calandarData.salle = row.salle__id.salle__id;
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
+                    this.isAddPlan.emit(response);
                     alert('Successfully created');
                     console.log('success create', response);
                     this.fetchEvents();
@@ -971,6 +969,7 @@ export class CalandarfullComponent implements OnInit {
                 calandarData.group__name = row.group__id.group__name;
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
+                    this.isAddPlan.emit(response);
                     alert('Successfully created');
                     console.log('success create', response);
                     this.fetchEvents();
@@ -1018,6 +1017,7 @@ export class CalandarfullComponent implements OnInit {
               calandarData.salle = row.salle__id.salle__id;
               this.calandarService.createReserv(calandarData).subscribe(
                 (response: any) => {
+                  this.isAddPlan.emit(response);
                   alert('Successfully create');
                   console.log('seccess create', response);
                   this.fetchEvents();
@@ -1050,6 +1050,8 @@ export class CalandarfullComponent implements OnInit {
         } else {
           this.calandarService.createReserv(calandarData).subscribe(
             (response: any) => {
+              this.isAddPlan.emit(response);
+
               alert('Successfully create');
               console.log('seccess create', response);
               this.fetchEvents();
@@ -1112,12 +1114,10 @@ export class CalandarfullComponent implements OnInit {
         'End time must be at least 15 minutes after start time.',
         this.eventForm.controls['endTime']
       );
-      this.eventForm
-        .get('endTime')
-        ?.setErrors({
-          endTimeInvalid:
-            'The end time must be at least 15 minutes greater than the start time',
-        });
+      this.eventForm.get('endTime')?.setErrors({
+        endTimeInvalid:
+          'The end time must be at least 15 minutes greater than the start time',
+      });
     }
   }
 }

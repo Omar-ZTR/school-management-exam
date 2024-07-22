@@ -32,4 +32,15 @@ export class CalandarService {
   getEvents(){
     return this.httpClient.get(this.url + "/reservation");
   }
+
+
+  deletePlan(id: any) {
+
+    console.log("sssaaaaaaaaaa",id)
+    return this.httpClient.delete(`${this.url}/reservation/${id}`, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json'),
+     
+    });
+  }
+
 }
