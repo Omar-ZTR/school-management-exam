@@ -282,6 +282,47 @@ export const updateExam = async (req: Request, res: Response) => {
   }
 };
 
+
+
+
+export const updateExamFile = async (req: Request, res: Response) => {
+  const {id} = req.params;
+  console.log("id is ",id)
+  try {
+    console.log("exam 2", req.body.files);
+
+    await uploadFileMiddleware(req, res); // Handle file upload
+    console.log("exam 3", req.body.file);
+   
+
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+      console.log("files 7", req.files);
+
+      for (const file of req.files as Express.Multer.File[]) {
+        const support__files = {
+          file__name: file.originalname,
+          file__path: baseUrl + file.filename,
+          file__type: "support",
+          exam__id: id,
+        };
+        console.log("file attribute", support__files);
+        await FileExam.create(support__files);
+      }
+    }
+
+    
+    
+
+
+    res.status(201).json();
+  } catch (error) {
+    console.error("Error creation exam", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+
+  
+}
+
 // Delete operation
 export const deleteExam = async (req: Request, res: Response) => {
   try {

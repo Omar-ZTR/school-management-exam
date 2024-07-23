@@ -409,18 +409,66 @@
   <div class="examFiles" *ngIf="examType == 'File' || examType == 'FileOff'">
     <div>
       <div class="titlebox">Exam file</div>
-      <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
-        <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
-          <div class="previewimg" (click)="openFile(f.file__path)">
-            <i
-              *ngIf="typeFile(f).type !== 'image'"
-              class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
-            ></i>
-            <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+
+      <div style="display: flex; gap: 40px">
+        <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
+          <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
+            <div
+              class="removeFile"
+              *ngIf="Exam.fileExam.length > 1 || Fileupload.length > 0 "
+              (click)="deleteFileExam(f.file__id, index)"
+            >
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+            <div class="previewimg" (click)="openFile(f.file__path)">
+              <i
+                *ngIf="typeFile(f).type !== 'image'"
+                class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+              ></i>
+              <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+            </div>
+            <label for="">{{ f.file__name }}</label>
           </div>
-          <label for="">{{f.file__name}}</label>
+        </div>
+        <div>
+          <div *ngFor="let file of FileAdds; let i = index">
+            <div class="filepreview">
+              <div class="removeFile" (click)="removeFile(i)">
+                <i class="fa-solid fa-xmark fa-xl"></i>
+              </div>
+              <div class="previewimg">
+                <img *ngIf="file.type === 'image'" [src]="file.url" />
+                <i
+                  *ngIf="file.type !== 'image'"
+                  class="fa-solid fa-file-{{ file.type }} fa"
+                ></i>
+              </div>
+              <div class="fileTitle">{{ file.name }}</div>
+            </div>
+          </div>
+          <div class="custome-file btnsave">
+            <span>
+              <i class="fa-solid fa-paperclip fa-lg"></i>
+              Attach File
+            </span>
+            <input
+              type="file"
+              accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+              multiple
+              (change)="detectFiles($event)"
+            />
+          </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        class="btnsave"
+        *ngIf="checkUpdate('exam')"
+        (click)="saveExamUpdate()"
+      >
+        Save update
+      </button>
     </div>
   </div>
   <div *ngIf="examType != 'file'">
@@ -475,8 +523,17 @@
                 *ngFor="let f of question.fileQuestion; let index = index"
                 key="index"
               >
-                <div>
-                  <p-image [src]="f.file__path" [preview]="true"></p-image>
+                <div class="previewimg" (click)="openFile(f.file__path)">
+                  <i
+                    *ngIf="typeFile(f).type !== 'image'"
+                    class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+                  ></i>
+
+                  <p-image
+                    *ngIf="typeFile(f).type === 'image'"
+                    [src]="f.file__path"
+                    [preview]="true"
+                  ></p-image>
                 </div>
               </div>
             </div>
@@ -515,11 +572,10 @@
   [(visible)]="update"
   [style]="{ width: '35rem' }"
 >
-  <span class="p-text-secondary block mb-5">Update your information.</span>
   <form [formGroup]="questionForms">
     <div style="display: flex; gap: 20px">
       <div class="align-items-center">
-        <label for="question">question:</label>
+        <label for="question">Question:</label>
         <input
           pInputText
           type="text"
@@ -527,10 +583,32 @@
           class="form-control"
           formControlName="question__text"
         />
+
+        <div
+          *ngIf="
+            questionForms.get('question__text')?.invalid &&
+            (questionForms.get('question__text')?.dirty ||
+              questionForms.get('question__text')?.touched)
+          "
+          class="text-danger"
+        >
+          <span
+            class="error"
+            *ngIf="questionForms.get('question__text')?.errors?.['required']"
+          >
+            This field is mandatory.
+          </span>
+          <span
+            class="error"
+            *ngIf="questionForms.get('question__text')?.errors?.['pattern']"
+          >
+            This field is invalid.
+          </span>
+        </div>
       </div>
 
       <div class="form-group inputTimes">
-        <label for="note">note:</label>
+        <label for="note">Note:</label>
         <input
           style="width: 60px"
           pInputText
@@ -539,8 +617,30 @@
           type="number"
           formControlName="note"
         />
+        <div
+          *ngIf="
+            questionForms.get('note')?.invalid &&
+            (questionForms.get('note')?.dirty ||
+              questionForms.get('note')?.touched)
+          "
+          class="text-danger"
+        >
+          <span
+            class="error"
+            *ngIf="questionForms.get('note')?.errors?.['required']"
+          >
+            This field is mandatory.
+          </span>
+          <span
+            class="error"
+            *ngIf="questionForms.get('note')?.errors?.['rangeNumber']"
+          >
+            The note must be between 0 and 20.
+          </span>
+        </div>
       </div>
     </div>
+
     <div formArrayName="reponses">
       <div class="flex align-items-center gap-3">
         <label for="Answers">Answers:</label>
@@ -570,6 +670,21 @@
               severity="danger "
             />
           </div>
+          <div
+            *ngIf="
+              reponse.get('reponse__text')?.invalid &&
+              (reponse.get('reponse__text')?.dirty ||
+                reponse.get('reponse__text')?.touched)
+            "
+            class="text-danger"
+          >
+            <span
+              class="error"
+              *ngIf="reponse.get('reponse__text')?.errors?.['required']"
+            >
+              This field is mandatory.
+            </span>
+          </div>
         </div>
         <p-button
           icon="pi pi-plus"
@@ -579,10 +694,9 @@
           (click)="addReponse()"
           severity="info "
         />
-
-        <!-- <button (click)="addReponse()">add reponse</button> -->
       </div>
     </div>
+
     <div class="fileAnswer">
       <div *ngIf="questionFile" class="fleximg" style="margin-bottom: 10px">
         <div *ngFor="let file of questionFile; let i = index">
@@ -594,10 +708,9 @@
               <img *ngIf="file.type === 'image'" [src]="file.url" />
               <i
                 *ngIf="file.type !== 'image'"
-                class="fa-solid  fa-file-{{ file.type }} fa"
+                class="fa-solid fa-file-{{ file.type }} fa"
               ></i>
             </div>
-
             <div class="fileTitle">{{ file.name }}</div>
           </div>
         </div>
@@ -610,10 +723,9 @@
               <img *ngIf="file.type === 'image'" [src]="file.url" />
               <i
                 *ngIf="file.type !== 'image'"
-                class="fa-solid  fa-file-{{ file.type }} fa"
+                class="fa-solid fa-file-{{ file.type }} fa"
               ></i>
             </div>
-
             <div class="fileTitle">{{ file.name }}</div>
           </div>
         </div>
@@ -621,7 +733,6 @@
 
       <div class="custome-file btnsave">
         <span>
-      
           <i class="fa-solid fa-paperclip fa-lg"></i>
           Attach File
         </span>
@@ -635,7 +746,7 @@
     </div>
     <div style="display: flex; justify-content: flex-end">
       <button
-        type="submit"
+        type="button"
         class="btnsave"
         (click)="closeQuest()"
         style="right: 170px; background: #1935a3; color: white"
@@ -643,7 +754,12 @@
         Cancel
       </button>
 
-      <button type="submit" class="btnsave" (click)="saveQuestion()">
+      <button
+        type="button"
+        class="btnsave"
+        *ngIf="checkUpdate('question')"
+        (click)="saveQuestion()"
+      >
         Save update
       </button>
     </div>
@@ -658,31 +774,78 @@
   [(visible)]="add"
   [style]="{ width: '25rem' }"
 >
-  <span class="p-text-secondary block mb-5">Update your information.</span>
   <form [formGroup]="questionForms">
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="question" class="font-semibold w-6rem">question:</label>
-      <input
-        pInputText
-        id="question"
-        class="flex-auto"
-        formControlName="question__text"
-      />
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="note" class="font-semibold w-6rem">note:</label>
-      <input
-        pInputText
-        id="note"
-        class="flex-auto"
-        type="number"
-        formControlName="note"
-      />
+    <div style="display: flex; gap: 20px">
+      <div class="align-items-center">
+        <label for="question">Question:</label>
+        <input
+          pInputText
+          type="text"
+          id="question"
+          class="form-control"
+          formControlName="question__text"
+        />
+
+        <div
+          *ngIf="
+            questionForms.get('question__text')?.invalid &&
+            (questionForms.get('question__text')?.dirty ||
+              questionForms.get('question__text')?.touched)
+          "
+          class="text-danger"
+        >
+          <span
+            class="error"
+            *ngIf="questionForms.get('question__text')?.errors?.['required']"
+          >
+            This field is mandatory.
+          </span>
+          <span
+            class="error"
+            *ngIf="questionForms.get('question__text')?.errors?.['pattern']"
+          >
+            This field is invalid.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group inputTimes">
+        <label for="note">Note:</label>
+        <input
+          style="width: 60px"
+          pInputText
+          id="note"
+          class="form-control"
+          type="number"
+          formControlName="note"
+        />
+        <div
+          *ngIf="
+            questionForms.get('note')?.invalid &&
+            (questionForms.get('note')?.dirty ||
+              questionForms.get('note')?.touched)
+          "
+          class="text-danger"
+        >
+          <span
+            class="error"
+            *ngIf="questionForms.get('note')?.errors?.['required']"
+          >
+            This field is mandatory.
+          </span>
+          <span
+            class="error"
+            *ngIf="questionForms.get('note')?.errors?.['rangeNumber']"
+          >
+            The note must be between 0 and 20.
+          </span>
+        </div>
+      </div>
     </div>
 
     <div formArrayName="reponses">
-      <div class="flex align-items-center gap-3 mb-5">
-        <label for="Answers" class="font-semibold w-6rem">Answers:</label>
+      <div class="flex align-items-center gap-3">
+        <label for="Answers">Answers:</label>
         <div
           *ngFor="let reponse of reponsesControls; let i = index"
           [formGroupName]="i"
@@ -709,6 +872,21 @@
               severity="danger "
             />
           </div>
+          <div
+            *ngIf="
+              reponse.get('reponse__text')?.invalid &&
+              (reponse.get('reponse__text')?.dirty ||
+                reponse.get('reponse__text')?.touched)
+            "
+            class="text-danger"
+          >
+            <span
+              class="error"
+              *ngIf="reponse.get('reponse__text')?.errors?.['required']"
+            >
+              This field is mandatory.
+            </span>
+          </div>
         </div>
         <p-button
           icon="pi pi-plus"
@@ -718,10 +896,9 @@
           (click)="addReponse()"
           severity="info "
         />
-
-        <!-- <button (click)="addReponse()">add reponse</button> -->
       </div>
     </div>
+
     <div class="fileAnswer">
       <div *ngIf="questionFile" class="fleximg" style="margin-bottom: 10px">
         <div *ngFor="let file of questionFile; let i = index">
@@ -733,10 +910,9 @@
               <img *ngIf="file.type === 'image'" [src]="file.url" />
               <i
                 *ngIf="file.type !== 'image'"
-                class="fa-solid  fa-file-{{ file.type }} fa"
+                class="fa-solid fa-file-{{ file.type }} fa"
               ></i>
             </div>
-
             <div class="fileTitle">{{ file.name }}</div>
           </div>
         </div>
@@ -749,18 +925,18 @@
               <img *ngIf="file.type === 'image'" [src]="file.url" />
               <i
                 *ngIf="file.type !== 'image'"
-                class="fa-solid  fa-file-{{ file.type }} fa"
+                class="fa-solid fa-file-{{ file.type }} fa"
               ></i>
             </div>
-
             <div class="fileTitle">{{ file.name }}</div>
           </div>
         </div>
       </div>
 
-      <div class="custome-file">
+      <div class="custome-file btnsave">
         <span>
-        <i class="fa-solid fa-paperclip fa-lg"></i>Attach File
+          <i class="fa-solid fa-paperclip fa-lg"></i>
+          Attach File
         </span>
         <input
           type="file"
@@ -770,9 +946,19 @@
         />
       </div>
     </div>
-    <div class="flex justify-content-end gap-2">
-      <p-button label="Cancel" severity="secondary" (click)="closeQuest()" />
-      <p-button label="Save" (click)="saveQuestion()" />
+    <div style="margin-top: 50px; display: flex; justify-content: flex-end">
+      <button
+        type="button"
+        class="btnsave"
+        (click)="closeQuest()"
+        style="right: 170px; background: #1935a3; color: white"
+      >
+        Cancel
+      </button>
+
+      <button type="button" class="btnsave" (click)="saveQuestion()">
+        Save
+      </button>
     </div>
   </form>
 </p-dialog>

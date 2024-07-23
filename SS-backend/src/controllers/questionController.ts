@@ -238,7 +238,7 @@ export const updateQuestion = async (req: Request, res: Response) => {
         },
         {
           model: FileQuestion,
-          as: "files",
+          as: "file",
         },
       ],
       where: { question__id: question.question__id },

@@ -10,6 +10,7 @@ import {
   getFilteredExams,
   getFullExams,
   getTeacherExams,
+  updateExamFile,
 } from '../controllers/examController';
 import { createAnswers, getAnswers } from '../controllers/answerStudentController';
 
@@ -30,7 +31,7 @@ routerExam.get('/exams/:id', getExamById);
 
 
 routerExam.post('/examc', createExam);
-
+routerExam.post('/examUPfile/:id', updateExamFile);
 routerExam.put('/Exams/:id', updateExam);
 
 

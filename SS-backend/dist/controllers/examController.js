@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredExams = exports.deleteExam = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.getFilteredExams = exports.deleteExam = exports.updateExamFile = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
@@ -261,6 +261,34 @@ const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updateExam = updateExam;
+const updateExamFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    console.log("id is ", id);
+    try {
+        console.log("exam 2", req.body.files);
+        yield (0, upload_1.default)(req, res); // Handle file upload
+        console.log("exam 3", req.body.file);
+        if (req.files && req.files.length > 0) {
+            console.log("files 7", req.files);
+            for (const file of req.files) {
+                const support__files = {
+                    file__name: file.originalname,
+                    file__path: baseUrl + file.filename,
+                    file__type: "support",
+                    exam__id: id,
+                };
+                console.log("file attribute", support__files);
+                yield fileModel_1.FileExam.create(support__files);
+            }
+        }
+        res.status(201).json();
+    }
+    catch (error) {
+        console.error("Error creation exam", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.updateExamFile = updateExamFile;
 // Delete operation
 const deleteExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

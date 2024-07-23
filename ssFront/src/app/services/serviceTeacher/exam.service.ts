@@ -11,14 +11,7 @@ export class ExamService {
   constructor(private httpClient: HttpClient) {}
 
   createExam(data: any) {
-    // const formData = new FormData();
-    // formData.append('exam', JSON.stringify(data.exam));
-    // if (data.files.length > 0) {
-    //   for (let file of data.files) {
-    //     formData.append('files', file);
-    //   }for (const file of files) {
-
-    // }
+ 
     console.log('fffffffffffffffffffffffl', data);
     const formData = new FormData();
     formData.append('exam', JSON.stringify(data.exam));
@@ -34,6 +27,26 @@ export class ExamService {
     });
   }
 
+
+
+  UpdateFileExam(id:any, data: any) {
+ 
+    console.log('fffffffffffffffffffffffl', data);
+    const formData = new FormData();
+  
+    if (data.files && data.files.length > 0) {
+      for (const file of data.files) {
+        // Serialize exam data
+        formData.append('files', file);
+      }
+    }
+
+    return this.httpClient.post(`${this.url}/examUPfile/${id}`, formData, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
+
+  // examUPfile
   updateExam(data: any) {
     const id = data.exam__id;
     console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<./////////', id);

@@ -216,7 +216,7 @@ const updateQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 },
                 {
                     model: fileModel_1.FileQuestion,
-                    as: "files",
+                    as: "file",
                 },
             ],
             where: { question__id: question.question__id },

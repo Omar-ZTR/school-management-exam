@@ -42,6 +42,7 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
 import { DropdownModule } from 'primeng/dropdown';
 import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
 import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
+import { GlobalConstants, rangeNumber } from '../../../shared/global-constants';
 @Component({
   selector: 'app-teacher-exam',
   standalone: true,
@@ -70,35 +71,30 @@ import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
     `
       :host ::ng-deep .p-dropdown {
         position: unset !important ;
-       
       }
-      :host ::ng-deep .p-dropdown .p-dropdown-clear-icon{
-   right: 0 !important;
-
+      :host ::ng-deep .p-dropdown .p-dropdown-clear-icon {
+        right: 0 !important;
       }
 
-      :host ::ng-deep  .p-dropdown-clear-icon{
-       position: relative !important;
-
+      :host ::ng-deep .p-dropdown-clear-icon {
+        position: relative !important;
       }
 
       :host ::ng-deep .p-panel .p-panel-header {
         border: 2px solid #e5e7eb !important;
-  
-    background: #ffffff !important;
-    color: #374151;
-   
+
+        background: #ffffff !important;
+        color: #374151;
       }
 
-      :host ::ng-deep .p-fieldset .p-fieldset-legend{
+      :host ::ng-deep .p-fieldset .p-fieldset-legend {
         background: #ffffff !important;
         border: none !important;
       }
- 
-      :host ::ng-deep  .p-fieldset {
-        border: 1px solid #e5e7eb !important;
-    margin-bottom: 20px !important;
 
+      :host ::ng-deep .p-fieldset {
+        border: 1px solid #e5e7eb !important;
+        margin-bottom: 20px !important;
       }
       :host ::ng-deep .p-dialog-header {
         font-family: 'Poppins', sans-serif !important;
@@ -117,8 +113,11 @@ export class TeacherExamComponent {
   items: MenuItem[] | null = null;
   first = 0;
   id_question!: number;
+  QuestionUpdate: any;
+  NoUpdate: boolean = true;
   rows = 10;
   Exam: any;
+  fileExamInit: any[] = [];
   examType: any;
   groupedQuestions: { [key: string]: any[] } = {};
   examShudeled: any;
@@ -127,7 +126,9 @@ export class TeacherExamComponent {
   questionForms: FormGroup;
   isEditing: boolean = false;
   dataquest!: { question: any; files: any };
+  dataExam!: {files: any };
   questionFile: any = [];
+  QuestFileInitialEdit: any = [];
   FileAdds: any = [];
   Fileupload: any = [];
   examPlan: any;
@@ -153,8 +154,12 @@ export class TeacherExamComponent {
     private tokenService: TokenServiceService
   ) {
     this.questionForms = this.fb.group({
-      note: [''],
-      question__text: '',
+      question__text: [
+        '',
+        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+      ],
+      note: ['', [Validators.required, rangeNumber(0, 20)]],
+
       reponses: this.fb.array([]),
     });
   }
@@ -239,7 +244,6 @@ export class TeacherExamComponent {
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0); // Set the current date to midnight for comparison
 
-
     const year = currentDate.getFullYear();
     const month = Number(currentDate.getMonth() + 1);
     const day = Number(currentDate.getDate());
@@ -249,7 +253,7 @@ export class TeacherExamComponent {
     const day1 = Number(selectedDateObj.getDate());
     const c = year + month + day;
     const S = year1 + month1 + day1;
-   
+
     if (year > year1) {
       console.log('true year');
       return true; // Return an error object if the selected date is not in the future
@@ -333,49 +337,44 @@ export class TeacherExamComponent {
       exam__title: formValues.title,
     };
 
+    console.log('calandarData', calandarData);
+    console.log('reservdata', this.reservdata);
+    const reservStartDate = new Date(this.reservdata.startDate);
+    const reservEndDate = new Date(this.reservdata.endDate);
 
-
-console.log("calandarData",calandarData)
-console.log("reservdata",this.reservdata)
-   const reservStartDate = new Date(this.reservdata.startDate);
-  const reservEndDate = new Date(this.reservdata.endDate);
-
-  if (
-    calandarData.startDate.getTime() === reservStartDate.getTime() &&
-    calandarData.endDate.getTime() === reservEndDate.getTime() &&
-    calandarData.salle === this.reservdata.salle
-  ) {
-    return false;
-  }
-  return true
-  }
-deleteplan(id:any,op: OverlayPanel){
-  this.calandarService.deletePlan(id).subscribe(
-    (response: any) => {
-
-      if(this.examShudeled.reservation.length == 1){
-        op.hide();
-
-      } 
-      this.examShudeled.reservation= this.examShudeled.reservation.filter(
-        (Plan: { reserv__id: any; }) => Plan.reserv__id !== id
-      );
-      const index = this.Exams.findIndex(
-        (exam) => exam.exam__id === this.examShudeled.exam__id
-      );
-      this.Exams[index]= this.examShudeled;
-
- 
-      alert('Successfully update');
-      console.log('seccess update', response);
-
-      // window.location.reload();
-    },
-    (error: { error: { message: any } }) => {
-      console.log('errrr', error);
+    if (
+      calandarData.startDate.getTime() === reservStartDate.getTime() &&
+      calandarData.endDate.getTime() === reservEndDate.getTime() &&
+      calandarData.salle === this.reservdata.salle
+    ) {
+      return false;
     }
-  );
-}
+    return true;
+  }
+  deleteplan(id: any, op: OverlayPanel) {
+    this.calandarService.deletePlan(id).subscribe(
+      (response: any) => {
+        if (this.examShudeled.reservation.length == 1) {
+          op.hide();
+        }
+        this.examShudeled.reservation = this.examShudeled.reservation.filter(
+          (Plan: { reserv__id: any }) => Plan.reserv__id !== id
+        );
+        const index = this.Exams.findIndex(
+          (exam) => exam.exam__id === this.examShudeled.exam__id
+        );
+        this.Exams[index] = this.examShudeled;
+
+        alert('Successfully update');
+        console.log('seccess update', response);
+
+        // window.location.reload();
+      },
+      (error: { error: { message: any } }) => {
+        console.log('errrr', error);
+      }
+    );
+  }
   saveplan() {
     console.log('event form is ', this.eventForm);
     this.controlTime();
@@ -462,14 +461,13 @@ deleteplan(id:any,op: OverlayPanel){
       type: '',
     };
 
-
     this.teacherService.getTecher(this.user__id).subscribe(
       (data: Teacher[]) => {
         const teacher = data;
-   
-        this.group=teacher[0].groups
-       
-        console.log('subjectshhhhhhsss is is sis',teacher[0]);
+
+        this.group = teacher[0].groups;
+
+        console.log('subjectshhhhhhsss is is sis', teacher[0]);
       },
       (error) => {
         console.error('Error fetching subjects', error);
@@ -477,7 +475,6 @@ deleteplan(id:any,op: OverlayPanel){
     );
 
     this.fetchExams();
-   
   }
   listPlan(exam: any, op: OverlayPanel) {
     op.toggle(event);
@@ -500,29 +497,28 @@ deleteplan(id:any,op: OverlayPanel){
     }
   }
 
-  isMonthView!: boolean ;
+  isMonthView!: boolean;
   onIsMonthViewChange(value: boolean) {
     this.isMonthView = value;
-  
   }
 
-
   onupdatePlan(value: boolean) {
-    
-    this.examShudeled.reservation.push(value)
+    this.examShudeled.reservation.push(value);
     const index = this.Exams.findIndex(
       (exam) => exam.exam__id === this.examShudeled.exam__id
     );
 
-    console.log('this.Exams 1this.Exams value this.Exams : .', this.examShudeled);
-    this.Exams[index]= this.examShudeled;
-    console.log('this.Exams this.Exams this.Exams this.Exams 22: .',  this.Exams[index]);
-      console.log(' valuevalue: .', value);
-      
-   
-    
+    console.log(
+      'this.Exams 1this.Exams value this.Exams : .',
+      this.examShudeled
+    );
+    this.Exams[index] = this.examShudeled;
+    console.log(
+      'this.Exams this.Exams this.Exams this.Exams 22: .',
+      this.Exams[index]
+    );
+    console.log(' valuevalue: .', value);
   }
-
 
   getSpeedDialItems(exam: any) {
     return [
@@ -559,29 +555,46 @@ deleteplan(id:any,op: OverlayPanel){
           this.fb.group({
             reponse__id: [reponse.reponse__id],
             reponse__statut: [reponse.reponse__statut],
-            reponse__text: [reponse.reponse__text],
+            reponse__text: [
+              reponse.reponse__text,
+              [
+                Validators.required,
+                Validators.pattern(GlobalConstants.nameRegex),
+              ],
+            ],
           })
       )
     );
 
     this.questionForms = this.fb.group({
-      note: [question.note],
-      question__text: [question.question__text],
+      note: [question.note, [Validators.required, rangeNumber(0, 20)]],
+      question__text: [
+        question.question__text,
+        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+      ],
       reponses: reponsesArray,
     });
+
+    this.QuestionUpdate = this.questionForms.value;
   }
   initializeAddForms(questionType: string): void {
     const reponsesArray = this.fb.array([
       this.fb.group({
         reponse__statut: [false],
-        reponse__text: [''],
+        reponse__text: [
+          '',
+          [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+        ],
       }),
     ]);
 
     this.questionForms = this.fb.group({
       exam__id: [this.Exam.exam__id],
-      note: [''],
-      question__text: [''],
+      note: ['', [Validators.required, rangeNumber(0, 20)]],
+      question__text: [
+        '',
+        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+      ],
       question__subject: [this.Exam.subject],
       question__type: [questionType],
       reponses: reponsesArray,
@@ -592,7 +605,10 @@ deleteplan(id:any,op: OverlayPanel){
     reponses.push(
       this.fb.group({
         reponse__statut: [false],
-        reponse__text: [''],
+        reponse__text: [
+          '',
+          [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+        ],
       })
     );
   }
@@ -602,6 +618,7 @@ deleteplan(id:any,op: OverlayPanel){
   }
   editQuestion(question: any) {
     this.initializeUpdateForms(question);
+    this.questionFile = [];
     console.log('ssssssssssssssss', question.fileQuestion);
     if (question.fileQuestion && Array.isArray(question.fileQuestion)) {
       question.fileQuestion.forEach((file: any) => {
@@ -614,11 +631,19 @@ deleteplan(id:any,op: OverlayPanel){
             url: file.file__path,
             fileId: file.file__id,
           });
+
+          this.QuestFileInitialEdit.push({
+            name: file.file__name,
+            type: fileType,
+            url: file.file__path,
+            fileId: file.file__id,
+          });
         }
       });
     }
-
     console.log('filequestttt', this.questionFile);
+
+    console.log('QuestFileInitialEdit', this.QuestFileInitialEdit);
     this.update = true;
   }
 
@@ -658,7 +683,12 @@ deleteplan(id:any,op: OverlayPanel){
 
     console.log('fileIds is ::::>', this.fileIds);
   }
+  deleteFileExam(fileid: number, index: number) {
+    this.Exam.fileExam.splice(index, 1);
+    this.fileIds.push(fileid);
 
+    console.log('fileIds is ::::>', this.fileIds);
+  }
   addQuestion(questionType: string) {
     this.initializeAddForms(questionType);
     this.add = true;
@@ -667,13 +697,132 @@ deleteplan(id:any,op: OverlayPanel){
     this.add = false;
     this.update = false;
   }
+
+  checkUpdate(Type : string): boolean {
+
+    if(Type === 'exam'){
+      
+    return (
+      this.fileIds.length > 0  ||
+      this.Fileupload.length > 0
+    );
+    }else{
+    return (
+      JSON.stringify(this.QuestionUpdate) !==
+        JSON.stringify(this.questionForms.value) ||
+      JSON.stringify(this.QuestFileInitialEdit) !==
+        JSON.stringify(this.questionFile) ||
+      this.Fileupload.length > 0
+    );
+
+    }
+
+
+
+
+
+
+
+  }
+  saveExamUpdate() {
+    console.log('Fileupload', this.Fileupload);
+    console.log('fileExamInit', this.fileExamInit);
+    console.log('fileIds', this.fileIds);
+    console.log('this.Exam.fileExam)', this.Exam.fileExam);
+
+    this.dataExam = {
+     
+      files: this.Fileupload,
+    };
+
+
+    const model = 'exam';
+this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
+  (response: any) => {
+
+
+    this.fileIds.forEach((id: any) => {
+      if (id) {
+        console.log('fiiiid', id);
+        this.questService.deleteFiles(id, model).subscribe(
+          (response: any) => {},
+          (error: { error: { message: any } }) => {
+            console.log('error', error);
+          }
+        );
+      }
+    });
+
+    this.fetchExam(this.Exam.exam__id);
+    alert('Successfully updated');
+    console.log('success', response);
+
+  },
+  (error: { error: { message: any } }) => {
+    console.log('error', error);
+  }
+);
+   
+
+
+  }
   saveQuestion(): void {
+    Object.values(this.questionForms.controls).forEach((control) => {
+      control.markAsTouched();
+    });
+
+    // Get the reponses FormArray
+    const reponsesArray = this.questionForms.get('reponses') as FormArray;
+
+    // Mark each control within the reponses FormArray as touched
+    reponsesArray.controls.forEach((control: AbstractControl) => {
+      if (control instanceof FormGroup) {
+        Object.values(control.controls).forEach((innerControl) => {
+          innerControl.markAsTouched();
+        });
+      }
+    });
+    if (!this.questionForms.valid || !reponsesArray.valid) {
+      console.log('is not valid ', this.questionForms.value);
+      return;
+    }
+
+    const hasEmptyReponseText = reponsesArray.controls.some(
+      (control: AbstractControl) => {
+        const reponseText = control.get('reponse__text')?.value;
+        return reponseText === '';
+      }
+    );
+
+    if (hasEmptyReponseText) {
+      console.log('There are responses with empty text fields');
+      return;
+    }
     this.dataquest = {
       question: this.questionForms.value,
       files: this.Fileupload,
     };
     if (this.update && !this.add) {
       const model = 'question';
+
+      if (
+        JSON.stringify(this.QuestionUpdate) ===
+          JSON.stringify(this.questionForms.value) &&
+        JSON.stringify(this.QuestFileInitialEdit) ===
+          JSON.stringify(this.questionFile)
+      ) {
+        console.log(
+          'No update, the form values are the same.',
+          JSON.stringify(this.QuestionUpdate) ===
+            JSON.stringify(this.questionForms.value) &&
+            JSON.stringify(this.QuestFileInitialEdit) ===
+              JSON.stringify(this.questionFile)
+        );
+
+       
+        return;
+      }
+
       this.questService
         .updateQuestion(this.dataquest, this.id_question)
         .subscribe(
@@ -689,8 +838,9 @@ deleteplan(id:any,op: OverlayPanel){
                 );
               }
             });
-            this.fetchExam(this.Exam.exam__id);
 
+            this.fetchExam(this.Exam.exam__id);
+            this.closeQuest();
             alert('Successfully updated');
             console.log('success', response);
           },
@@ -701,8 +851,10 @@ deleteplan(id:any,op: OverlayPanel){
     } else if (!this.update && this.add) {
       this.questService.createquestion(this.dataquest).subscribe(
         (response: any) => {
+          this.fetchExam(this.Exam.exam__id);
           alert('Successfully create');
           console.log('seccess', response);
+          this.closeQuest();
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);
@@ -712,7 +864,6 @@ deleteplan(id:any,op: OverlayPanel){
 
     console.log(this.Fileupload);
     console.log(this.dataquest);
-    this.closeQuest();
   }
 
   typeFile(file: any): any {
@@ -755,6 +906,13 @@ deleteplan(id:any,op: OverlayPanel){
         this.groupQuestionsByType();
         console.log('datataken', this.Exam);
         this.examType = this.Exam.exam__type;
+        if (this.Exam.fileExam && this.Exam.fileExam.length > 0) {
+          for (const f of this.Exam.fileExam) {
+            console.log("ffffffff", f);
+            this.fileExamInit.push(f);
+          }
+        }
+        // this.fileExamInit = this.Exam.fileExam
       },
       (error: any) => {
         console.error('Error fetching exam', error);
@@ -807,7 +965,7 @@ deleteplan(id:any,op: OverlayPanel){
       this.examService.deleteExam(exam__id).subscribe(
         (data) => {
           console.log('Response delete Exam :', data);
-          this.Exams=this.Exams.filter((exam) => exam.exam__id !== id)
+          this.Exams = this.Exams.filter((exam) => exam.exam__id !== id);
         },
         (error: any) => {
           console.error('Error fetching groups', error);
