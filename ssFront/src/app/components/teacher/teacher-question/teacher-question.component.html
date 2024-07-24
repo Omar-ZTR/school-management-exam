@@ -1,0 +1,85 @@
+<section>
+  <div *ngIf="edit">
+    <p-dialog
+      [modal]="true"
+      header="Edit Question"
+      [(visible)]="edit"
+      [style]="{ width: '35rem' }"
+    >
+      <app-add-question [questionEdit]="questedit" [subjectValue]="subject"></app-add-question>
+    </p-dialog>
+  </div>
+  <div class="container">
+    <div class="listView" *ngFor="let question of Allquestions; let k = index">
+      <div class="card cardQuest">
+        <div>
+          <span class="flex align-items-center gap-2 w-full headerpanl">
+            <span class="font-bold white-space-nowrap">
+              {{ question.question__text }}
+            </span>
+            <button
+              type="button"
+              class="btnAdd"
+              (click)="EditQuestion(question)"
+            >
+              <i class="fa-solid fa-pencil fa-xl"></i>
+            </button>
+            <button
+              type="button"
+              class="btnAdd"
+              (click)="removeQuestion(question)"
+            >
+              <i class="fa-solid fa-times fa-xl"></i>
+            </button>
+            <!-- <button
+                    [disabled]="!associationStatus[question.question__id]"
+                    [ngClass]="{'btndisabled': !associationStatus[question.question__id]}"
+                    *ngIf="!TypeArray"
+                    type="button"
+                    class="btnAdd"
+                    (click)="deleteQuestion(question)"
+                  >
+                    <i class="fa-solid fa-trash fa-xl"></i>
+                  </button> -->
+          </span>
+        </div>
+
+        <div class="Question">
+          <ul>
+            <li>
+              <span class="font-bold white-space-nowrap"> Type:</span>
+              {{ question.question__type }}
+            </li>
+            <li><span class="lab">Note:</span> {{ question.note }}</li>
+          </ul>
+
+          <div *ngIf="question.reponses.length > 0">
+            <!-- <span class="lab">rep:</span>
+                  <p>
+                    {{ answer.reponse__text }} <span>{{ answer.reponse__statut }}</span>
+                  </p> -->
+
+            <p-table
+              [value]="question.reponses"
+              [tableStyle]="{ 'max-width': '300px' }"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th colspan="2">Answers:</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rep>
+                <tr style="max-width: 300px">
+                  <td>
+                    <div class="textDesc">{{ rep.reponse__text }}</div>
+                  </td>
+                  <td>{{ rep.reponse__statut }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

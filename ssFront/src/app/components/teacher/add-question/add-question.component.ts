@@ -40,7 +40,7 @@ import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
 export class AddQuestionComponent {
   @Input() subjectValue: any;
   @Input() examType: any;
-
+  @Input() questionEdit: any;
   @Output() questionAdded = new EventEmitter<any>();
   questionsForm: FormGroup;
   subjectForm!: FormGroup;
@@ -52,12 +52,12 @@ export class AddQuestionComponent {
 
   dataquest: any = {};
   examid = 1;
-  subjects: any;
+  subjects: any = [];
   sub = 'a';
   selectedSubject: any;
   showrep = false;
   showQuestionField: boolean = true;
-  
+
   checkRoute() {
     const currentRoute = this.router.url;
     const hideRoutes = [
@@ -71,8 +71,6 @@ export class AddQuestionComponent {
   setswitch() {
     this.showrep = !this.showrep;
   }
-
-
 
   user__id = this.tokenService.getUserIdFromToken();
 
@@ -100,39 +98,81 @@ export class AddQuestionComponent {
     });
   }
   createAnswerFormGroup() {
-    this.reponsesForm=this.fb.group({
+    this.reponsesForm = this.fb.group({
       reponse__text: ['', Validators.required],
       reponse__statut: [false],
     });
-    return this.reponsesForm
+    return this.reponsesForm;
+  }
+  initializeForm(questionEdit: any): void {
+    // Set the main form controls' values
+    this.questionsForm.patchValue({
+      question__text: questionEdit.question__text,
+      note: questionEdit.note,
+      question__type: questionEdit.question__type,
+      question__subject: questionEdit.question__subject,
+    });
+
+    // Clear existing reponses
+    this.reponses.clear();
+
+    // Add reponse controls
+    questionEdit.reponses.forEach((reponse: any) => {
+      this.reponses.push(
+        this.fb.group({
+          reponse__id: reponse.reponse__id,
+          reponse__text: reponse.reponse__text,
+          reponse__statut: reponse.reponse__statut,
+          question__id: reponse.question__id,
+        })
+      );
+    });
+  }
+
+  findSubject(subjectName: string): any {
+    console.log('Searching for subject name:', this.subjects);
+    let foundSubject = null;
+    this.subjects.forEach((subject: { subject__name: string }) => {
+      console.log('Checking subject:', subject.subject__name);
+      if (subject.subject__name.trim() === subjectName.trim()) {
+        foundSubject = subject;
+      }
+    });
+
+    if (!foundSubject) {
+      console.error('No subject found for name:', subjectName);
+    } else {
+      console.log('Found subject:', foundSubject);
+    }
+
+    return foundSubject;
   }
 
   ngOnInit(): void {
-    console.log('kkkkkkkkkkkkkkkkkkkkkkinput', this.examType);
-    this.questionsForm
-      .get('question__type')
-      ?.setValue(this.examType || 'Normal');
+    console.log(
+      'questionEditquestionEd questionEdit itquestionEditquestionEdit',
+      this.questionEdit
+    );
+
+    this.questionsForm.get('question__type')?.setValue(this.examType || 'Normal');
     this.checkRoute();
-    this.questionsForm
-      .get('question__type')
-      ?.valueChanges.subscribe((value) => {
+    this.questionsForm.get('question__type')?.valueChanges.subscribe((value) => {
         const reponses = this.questionsForm.get('reponses') as FormArray;
         while (reponses.length) {
           reponses.removeAt(0);
         }
         if (value === 'QCM') {
           for (let i = 0; i < 3; i++) {
-            this.addAnswer()
+            this.addAnswer();
           }
         }
       });
 
-
     this.teacherService.getTecher(this.user__id).subscribe(
       (data: Teacher[]) => {
-       const teacher = data;
-       this.subjects=teacher[0].subjects
-        console.log("subjectshhhhhhsss is is sis",teacher[0].subjects)
+        const teacher = data;
+        this.subjects = teacher[0].subjects;
+        console.log('subjectshhhhhhsss is is sis', teacher[0].subjects);
       },
       (error) => {
         console.error('Error fetching subjects', error);
@@ -162,15 +202,21 @@ export class AddQuestionComponent {
         question__subject: this.subjectValue,
       });
     }
+
+    if (this.questionEdit) {
+      this.initializeForm(this.questionEdit);
+     
+
+        this.subjectForm.get('selectedSubject')?.setValue(this.subjectValue);
+     
+    }
   }
   get reponses(): FormArray {
     return this.questionsForm.get('reponses') as FormArray;
   }
   addAnswer(): void {
-  
     let ctrl = <FormArray>this.questionsForm.controls['reponses'];
-    this.reponses.push(this.createAnswerFormGroup()); 
-     
+    this.reponses.push(this.createAnswerFormGroup());
   }
 
   removeAnswer(index: number): void {
@@ -223,18 +269,19 @@ export class AddQuestionComponent {
       });
   }
   addQuestionAndReset() {
-  
     this.questionsForm.markAllAsTouched();
-    this.reponses.controls.forEach(control => control.markAllAsTouched());
+    this.reponses.controls.forEach((control) => control.markAllAsTouched());
     // this.reponsesArray = this.questionsForm.get('reponses') as FormArray;
     const reponsesArray = this.questionsForm.get('reponses') as FormArray;
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', reponsesArray);
     if (this.questionsForm.valid) {
       const reponsesArray = this.questionsForm.get('reponses') as FormArray;
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', reponsesArray);
-      Object.values(reponsesArray.controls).forEach((control: AbstractControl) => {
-        control.markAsTouched();
-      });
+      Object.values(reponsesArray.controls).forEach(
+        (control: AbstractControl) => {
+          control.markAsTouched();
+        }
+      );
       console.log(this.questarr);
       const quVal = this.questionsForm.value;
 
@@ -243,7 +290,7 @@ export class AddQuestionComponent {
         files: this.questionFile,
       };
       this.questarr.push(this.dataquest);
-      console.log("mmddbdbdbdbdbdbdbdbdb",this.dataquest);
+      console.log('mmddbdbdbdbdbdbdbdbdb', this.dataquest);
 
       this.questService.createquestion(this.dataquest).subscribe(
         (response: any) => {

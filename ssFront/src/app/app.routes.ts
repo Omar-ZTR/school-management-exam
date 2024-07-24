@@ -12,7 +12,6 @@ import { TeacherComponent } from './components/teacher/teacher.component';
 import { RouteGuardService } from './services/servicesUser/route-guard.service';
 import { AddExamComponent } from './components/teacher/add-exam/add-exam.component';
 import { TeacherExamComponent } from './components/teacher/teacher-exam/teacher-exam.component';
-import { AddQuestionComponent } from './components/teacher/add-question/add-question.component';
 import { ResultComponent } from './components/teacher/result/result.component';
 import { ExamtakenComponent } from './components/student/examtaken/examtaken.component';
 import { CorrectionExamsComponent } from './components/teacher/correction-exams/correction-exams.component';
@@ -22,6 +21,7 @@ import { ManageTeacherComponent } from './components/Admin/manage-teacher/manage
 import { ManageStudentComponent } from './components/Admin/manage-student/manage-student.component';
 import { ManageSchoolComponent } from './components/Admin/manage-school/manage-school.component';
 import { AdminComponent } from './components/Admin/admin/admin.component';
+import { TeacherQuestionComponent } from './components/teacher/teacher-question/teacher-question.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -47,7 +47,7 @@ export const routes: Routes = [
       { path: 'dash', component: ExamsComponent },
       { path: 'addExam', component: AddExamComponent },
       { path: 'listExam', component: TeacherExamComponent },
-      { path: 'addQuestion', component: AddQuestionComponent },
+      { path: 'addQuestion', component: TeacherQuestionComponent },
       { path: 'Result', component: ResultComponent },
       { path: 'Correction', component: CorrectionExamsComponent },
     ],

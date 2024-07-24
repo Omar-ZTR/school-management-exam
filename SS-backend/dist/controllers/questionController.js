@@ -380,6 +380,7 @@ const deleteQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
         }
         if (deleteData.action !== "delete") {
+            console.log("action is ", deleteData.action);
             const message = unassociateQuestionFromExam(deleteData.exam__id, id);
             res.status(204).send(message);
         }
@@ -396,9 +397,11 @@ function unassociateQuestionFromExam(examId, questionId) {
             // Find the exam and question instances
             const exam = yield examModel_1.Exam.findByPk(examId);
             const question = yield questionModel_1.Question.findByPk(questionId);
+            console.log(`Unassociated question ${question === null || question === void 0 ? void 0 : question.question__id} from exam ${exam === null || exam === void 0 ? void 0 : exam.exam__id}`);
             if (exam && question) {
                 // Unassociate the question from the exam
                 yield exam.$remove("questions", question);
+                console.log(`Unassociated question ${question.question__id} from exam ${exam.exam__id}`);
                 return `Unassociated question ${question.question__id} from exam ${exam.exam__id}`;
             }
             else {

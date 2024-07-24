@@ -391,6 +391,7 @@
       [ngClass]="{ nonclickable: !isUpdate() }"
       type="submit"
       class="btnsave"
+      style="position: absolute"
       (click)="saveplan()"
     >
       Save update
@@ -400,13 +401,13 @@
 
 <!-- edit Exam -->
 <p-dialog
-  header="exam"
+[header]="Exam ? 'Exam: ' + Exam.exam__title : ''"
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '50rem' }"
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
 >
-  <div class="examFiles" *ngIf="examType == 'File' || examType == 'FileOff'">
+  <div *ngIf="examType == 'File' || examType == 'FileOff'">
     <div>
       <div class="titlebox">Exam file</div>
 
@@ -415,7 +416,7 @@
           <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
             <div
               class="removeFile"
-              *ngIf="Exam.fileExam.length > 1 || Fileupload.length > 0 "
+              *ngIf="Exam.fileExam.length > 1 || Fileupload.length > 0"
               (click)="deleteFileExam(f.file__id, index)"
             >
               <i class="fa-solid fa-xmark fa-xl"></i>
@@ -427,10 +428,9 @@
               ></i>
               <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
             </div>
-            <label for="">{{ f.file__name }}</label>
+            <label class="fileTitle" for="">{{ f.file__name }}</label>
           </div>
-        </div>
-        <div>
+
           <div *ngFor="let file of FileAdds; let i = index">
             <div class="filepreview">
               <div class="removeFile" (click)="removeFile(i)">
@@ -449,13 +449,13 @@
           <div class="custome-file btnsave">
             <span>
               <i class="fa-solid fa-paperclip fa-lg"></i>
-              Attach File
+              Add File
             </span>
             <input
               type="file"
               accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
               multiple
-              (change)="detectFiles($event)"
+              (change)="detectFiles($event, 'exam')"
             />
           </div>
         </div>
@@ -471,7 +471,7 @@
       </button>
     </div>
   </div>
-  <div *ngIf="examType != 'file'">
+  <div *ngIf="examType == 'Normal'">
     <ng-container *ngFor="let questionType of getQuestionTypes()">
       <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
         <button
@@ -516,13 +516,19 @@
 
             <div
               *ngIf="question.fileQuestion"
-              class="fleximg"
-              style="margin-bottom: 10px"
+              style="
+                margin-bottom: 10px;
+                display: flex;
+
+                gap: 10px;
+                flex-wrap: wrap;
+              "
             >
               <div
                 *ngFor="let f of question.fileQuestion; let index = index"
                 key="index"
               >
+                <label class="fileTitle" for="">{{ f.file__name }}</label>
                 <div class="previewimg" (click)="openFile(f.file__path)">
                   <i
                     *ngIf="typeFile(f).type !== 'image'"
@@ -610,10 +616,13 @@
       <div class="form-group inputTimes">
         <label for="note">Note:</label>
         <input
-          style="width: 60px"
+          style="width: 80px"
           pInputText
           id="note"
           class="form-control"
+          min="0.25"
+          max="20"
+          step="0.25"
           type="number"
           formControlName="note"
         />
@@ -740,7 +749,7 @@
           type="file"
           accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
           multiple
-          (change)="detectFiles($event)"
+          (change)="detectFiles($event, 'quest')"
         />
       </div>
     </div>
@@ -772,9 +781,47 @@
   [modal]="true"
   header="Add Question"
   [(visible)]="add"
-  [style]="{ width: '25rem' }"
+  [style]="{ width: '35rem' }"
 >
   <form [formGroup]="questionForms">
+    <div class="radio-group" style="display: flex">
+      <input
+        type="radio"
+        class="QuestionRadio"
+        id="QCM_Q"
+        name="question__type"
+        formControlName="question__type"
+        (input)="changeType('QCM')"
+        value="QCM"
+      />
+      <label for="QCM_Q">QCM</label>
+      <input
+        type="radio"
+        class="QuestionRadio"
+        id="NormalQ"
+        name="question__type"
+        formControlName="question__type"
+        (input)="changeType('Normal')"
+        value="Normal"
+        checked="true"
+      />
+      <label for="NormalQ">Normal</label>
+    </div>
+    <div
+      *ngIf="
+        questionForms.get('question__type')?.invalid &&
+        (questionForms.get('question__type')?.dirty ||
+          questionForms.get('question__type')?.touched)
+      "
+      class="text-danger"
+    >
+      <span
+        class="error"
+        *ngIf="questionForms.get('question__type')?.errors?.['required']"
+      >
+        This field is mandatory.
+      </span>
+    </div>
     <div style="display: flex; gap: 20px">
       <div class="align-items-center">
         <label for="question">Question:</label>
@@ -812,10 +859,13 @@
       <div class="form-group inputTimes">
         <label for="note">Note:</label>
         <input
-          style="width: 60px"
+          style="width: 80px"
           pInputText
           id="note"
           class="form-control"
+          min="0.25"
+          max="20"
+          step="0.25"
           type="number"
           formControlName="note"
         />
@@ -851,7 +901,10 @@
           [formGroupName]="i"
           class="flex align-items-center"
         >
-          <div [ngStyle]="checkAnswer(reponse.value).styles">
+          <div
+            [ngStyle]="checkAnswer(reponse.value).styles"
+            style="display: flex; gap: 10px; align-items: center"
+          >
             <input
               name="chkBox_2"
               type="checkbox"
@@ -863,14 +916,41 @@
               class="flex-auto"
               formControlName="reponse__text"
             />
-            <p-button
-              icon="pi pi-times"
-              [rounded]="true"
-              [text]="true"
-              [raised]="true"
+            <!-- <p-button
+            icon="pi pi-times"
+            [rounded]="true"
+            [text]="true"
+            [raised]="true"
+            (click)="deleteReponse(i)"
+            severity="danger"
+            [ngClass]="{
+              'disabled': questionForms.get('question__type')?.value === 'QCM' && $any(questionForms.get('reponses')).length <= 2
+            }"
+            [ngStyle]="{
+              'pointer-events': (questionForms.get('question__type')?.value === 'QCM' && $any(questionForms.get('reponses')).length <= 2) ? 'none' : 'auto',
+              'color': (questionForms.get('question__type')?.value === 'QCM' && $any(questionForms.get('reponses')).length <= 2) ? '#999' : '#d50707',
+              'margin-top': '20px'
+            }"
+          /> -->
+
+            <div
               (click)="deleteReponse(i)"
-              severity="danger "
-            />
+              [ngStyle]="{
+                'pointer-events':
+                  questionForms.get('question__type')?.value === 'QCM' &&
+                  $any(questionForms.get('reponses')).length <= 2
+                    ? 'none'
+                    : 'auto',
+                color:
+                  questionForms.get('question__type')?.value === 'QCM' &&
+                  $any(questionForms.get('reponses')).length <= 2
+                    ? '#999'
+                    : '#d50707',
+               
+              }"
+            >
+              <i class="fa-solid fa-times fa-lg"></i>
+            </div>
           </div>
           <div
             *ngIf="
@@ -895,27 +975,18 @@
           [raised]="true"
           (click)="addReponse()"
           severity="info "
+          [ngStyle]="{
+            'pointer-events':
+              questionForms.get('question__type')?.value == '' 
+                ? 'none'
+                : 'auto',}"
+
         />
       </div>
     </div>
 
     <div class="fileAnswer">
-      <div *ngIf="questionFile" class="fleximg" style="margin-bottom: 10px">
-        <div *ngFor="let file of questionFile; let i = index">
-          <div class="filepreview">
-            <div class="removeFile" (click)="deleteFile(file.fileId, i)">
-              <i class="fa-solid fa-xmark fa-xl"></i>
-            </div>
-            <div class="previewimg">
-              <img *ngIf="file.type === 'image'" [src]="file.url" />
-              <i
-                *ngIf="file.type !== 'image'"
-                class="fa-solid fa-file-{{ file.type }} fa"
-              ></i>
-            </div>
-            <div class="fileTitle">{{ file.name }}</div>
-          </div>
-        </div>
+      <div *ngIf="FileAdds" class="fleximg" style="margin-bottom: 10px">
         <div *ngFor="let file of FileAdds; let i = index">
           <div class="filepreview">
             <div class="removeFile" (click)="removeFile(i)">
@@ -942,7 +1013,7 @@
           type="file"
           accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
           multiple
-          (change)="detectFiles($event)"
+          (change)="detectFiles($event, 'new')"
         />
       </div>
     </div>

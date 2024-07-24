@@ -13,8 +13,45 @@
   font-weight: 600;
   font-size: 17px;
 }
-.btnsave{
+
+
+
+.radio-group label {
+  color: lighten(#1d18ac, 40%);
+  margin-top: 0 !important;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 5px 15px;
+}
+
+.QuestionRadio:checked+label {
+
+  background: #f2f7fb;
+  color: #ff8b43;
+
+}
+input[type=radio] {
   position: absolute;
+  visibility: hidden;
+  display: none;
+}
+label+.QuestionRadio+label {
+  border-left: solid 3px #120f61;
+}
+
+/* color: lighten(#1d18ac, 60%); */
+.radio-group {
+  border: solid #120f61 1px;
+  /* display: inline-block; */
+  margin: 10px auto;
+  width: max-content;
+  column-gap: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.btnsave{
+
   background: #ffffff;
   box-shadow: #1935a3 2px 5px 20px -7px;
   color: #1935a3;

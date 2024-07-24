@@ -412,6 +412,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
       }
     }
     if (deleteData.action !== "delete") {
+      console.log("action is ",deleteData.action)
       const message = unassociateQuestionFromExam(deleteData.exam__id, id);
       res.status(204).send(message);
     }
@@ -426,10 +427,11 @@ async function unassociateQuestionFromExam(examId: number, questionId: any) {
     // Find the exam and question instances
     const exam = await Exam.findByPk(examId);
     const question = await Question.findByPk(questionId);
-
+console.log(`Unassociated question ${question?.question__id} from exam ${exam?.exam__id}`)
     if (exam && question) {
       // Unassociate the question from the exam
       await exam.$remove("questions", question);
+      console.log(`Unassociated question ${question.question__id} from exam ${exam.exam__id}`)
       return `Unassociated question ${question.question__id} from exam ${exam.exam__id}`;
     } else {
       return "Exam or Question not found";

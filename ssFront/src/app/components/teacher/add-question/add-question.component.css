@@ -1,0 +1,44 @@
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.question {
+    margin-bottom: 20px;
+}
+
+.question__text {
+    margin: 0 0 10px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.question__type, .note {
+    margin: 0;
+    color: #666;
+}
+
+.responses .response {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.responses .response.true {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+.responses .response.false {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+}
+
+.response__id, .response__text, .response__statut {
+    margin: 5px 0;
+}

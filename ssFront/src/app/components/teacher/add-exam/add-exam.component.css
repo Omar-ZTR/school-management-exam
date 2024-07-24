@@ -527,10 +527,8 @@ input,
   width: 25rem;
   background-color: rgba(255, 255, 255, 0.07);
   border-radius: 3px;
-  /* padding: 0 10px; */
-  /* margin-top: 8px; */
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 17px;
+  font-weight: 500;
 }
 
 .TextArea {
@@ -1327,4 +1325,49 @@ hr {
   border-radius: 10px;
   transition: all 0.7s ease;
   box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
+}
+
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.question {
+  margin-bottom: 20px;
+}
+
+.question__text {
+  margin: 0 0 10px;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.question__type, .note {
+  margin: 0;
+  color: #666;
+}
+
+.responses .response {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.responses .response.true {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+.responses .response.false {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+.response__id, .response__text, .response__statut {
+  margin: 5px 0;
 }
