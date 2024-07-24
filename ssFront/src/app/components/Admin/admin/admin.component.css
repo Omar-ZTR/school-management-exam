@@ -50,6 +50,7 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+  overflow: auto;
 }
 
 /* router-outlet {
@@ -63,6 +64,7 @@
   position: relative;
   padding-top: 100px;
   height: 100%;
+
 }
 
 
@@ -220,12 +222,12 @@
 
 li:hover,
 .actives {
-  /* transition: 0s all ease !important; */
   color: #100d6a !important;
   background: linear-gradient(90deg, #ffffff 40%, rgb(236 241 255) 99%);
   border-top-right-radius: 10px 10px;
   border-bottom-right-radius: 10px 10px;
   cursor: pointer;
+
 }
 
 /* .body>li,

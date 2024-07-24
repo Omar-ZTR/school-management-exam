@@ -49,7 +49,7 @@ export class AddQuestionComponent {
   questarr: any[] = [];
 
   questionFile: any = [];
-
+  ExistFile: any = [];
   dataquest: any = {};
   examid = 1;
   subjects: any = [];
@@ -57,6 +57,8 @@ export class AddQuestionComponent {
   selectedSubject: any;
   showrep = false;
   showQuestionField: boolean = true;
+  fileIds: any = [];
+  QuestFileInitialEdit: any = [];
 
   checkRoute() {
     const currentRoute = this.router.url;
@@ -89,11 +91,12 @@ export class AddQuestionComponent {
     this.questionsForm = this.fb.group({
       question__text: [
         '',
-        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+        [Validators.required],
       ],
       note: ['', [Validators.required, rangeNumber(0, 20)]],
       question__type: ['', Validators.required],
       question__subject: '',
+      user__id: [this.user__id, Validators.required],
       reponses: this.fb.array([]),
     });
   }
@@ -154,9 +157,13 @@ export class AddQuestionComponent {
       this.questionEdit
     );
 
-    this.questionsForm.get('question__type')?.setValue(this.examType || 'Normal');
+    this.questionsForm
+      .get('question__type')
+      ?.setValue(this.examType || 'Normal');
     this.checkRoute();
-    this.questionsForm.get('question__type')?.valueChanges.subscribe((value) => {
+    this.questionsForm
+      .get('question__type')
+      ?.valueChanges.subscribe((value) => {
         const reponses = this.questionsForm.get('reponses') as FormArray;
         while (reponses.length) {
           reponses.removeAt(0);
@@ -205,12 +212,44 @@ export class AddQuestionComponent {
 
     if (this.questionEdit) {
       this.initializeForm(this.questionEdit);
-     
+      if (this.questionEdit.file && Array.isArray(this.questionEdit.file)) {
+        this.questionEdit.file.forEach((file: any) => {
+          if (file) {
+            const extension = getFileExtension(file.file__name);
+            const fileType = getFileType(extension);
+            this.ExistFile.push({
+              name: file.file__name,
+              type: fileType,
+              url: file.file__path,
+              fileId: file.file__id,
+            });
 
-        this.subjectForm.get('selectedSubject')?.setValue(this.subjectValue);
-     
+            this.QuestFileInitialEdit.push({
+              name: file.file__name,
+              type: fileType,
+              url: file.file__path,
+              fileId: file.file__id,
+            });
+          }
+        });
+      }
+
+      console.log('file', this.questionEdit.file);
+
+      console.log('ExistFile', this.ExistFile);
+
+      console.log('QuestFileInitialEdit', this.QuestFileInitialEdit);
+      this.subjectForm.get('selectedSubject')?.setValue(this.subjectValue);
     }
   }
+
+  deleteFile(fileid: number, index: number) {
+    this.ExistFile.splice(index, 1);
+    this.fileIds.push(fileid);
+
+    console.log('fileIds is ::::>', this.fileIds);
+  }
+
   get reponses(): FormArray {
     return this.questionsForm.get('reponses') as FormArray;
   }
@@ -269,11 +308,12 @@ export class AddQuestionComponent {
       });
   }
   addQuestionAndReset() {
+
+console.log("hhsjas sallem maman " )
+
     this.questionsForm.markAllAsTouched();
-    this.reponses.controls.forEach((control) => control.markAllAsTouched());
-    // this.reponsesArray = this.questionsForm.get('reponses') as FormArray;
-    const reponsesArray = this.questionsForm.get('reponses') as FormArray;
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', reponsesArray);
+    console.log("hhsjas sallem maman ",this.questionsForm )
+   
     if (this.questionsForm.valid) {
       const reponsesArray = this.questionsForm.get('reponses') as FormArray;
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', reponsesArray);
@@ -298,7 +338,8 @@ export class AddQuestionComponent {
           console.log('seccess', response);
           console.log('ffffilessss', this.dataquest.files);
           this.questionAdded.emit(response);
-          this.questionsForm.reset();
+          this.questionsForm.reset()
+          this.resetForm()
           this.fileQuest = [];
         },
         (error: { error: { message: any } }) => {
@@ -306,6 +347,84 @@ export class AddQuestionComponent {
         }
       );
     }
-    // this.questionsForm.patchValue({ question__type: this.typ });
+  }
+
+
+  resetForm(): void {
+
+    if (!this.selectedSubject && this.subjectValue) {
+      this.questionsForm.patchValue({
+        question__subject: this.subjectValue,
+      });
+    }
+
+
+    this.questionsForm.patchValue({
+      user__id: [this.user__id, Validators.required],
+    
+    });
+ 
+   
+  }
+
+
+
+  checkUpdate(): boolean {
+
+
+    
+      return (
+        this.questionsForm.touched ||  // Check if the form has been touched
+      this.fileIds.length > 0 ||  // Compare initial and current file data
+        this.fileQuest.length > 0  // Check if there are any files in the fileQuest array
+      );
+    }
+  updateQuestion() {
+    this.questionsForm.markAllAsTouched();
+    this.reponses.controls.forEach((control) => control.markAllAsTouched());
+    // this.reponsesArray = this.questionsForm.get('reponses') as FormArray;
+    const reponsesArray = this.questionsForm.get('reponses') as FormArray;
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', reponsesArray);
+    if (this.questionsForm.valid) {
+      const reponsesArray = this.questionsForm.get('reponses') as FormArray;
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', reponsesArray);
+      Object.values(reponsesArray.controls).forEach(
+        (control: AbstractControl) => {
+          control.markAsTouched();
+        }
+      );
+
+      this.dataquest = {
+        question: this.questionsForm.value,
+        files: this.questionFile,
+      };
+
+      this.questService
+        .updateQuestion(this.dataquest, this.questionEdit.question__id)
+        .subscribe(
+          (response: any) => {
+            this.fileIds.forEach((id: any) => {
+              if (id) {
+                console.log('fiiiid', id);
+                this.questService.deleteFiles(id, 'question').subscribe(
+                  (response: any) => {
+                    console.log('hy delete  file bro');
+                  },
+                  (error: { error: { message: any } }) => {
+                    console.log('error', error);
+                  }
+                );
+              }
+            });
+            this.questionAdded.emit(response);
+            
+            alert('Successfully updated');
+            console.log('success', response);
+          },
+          (error: { error: { message: any } }) => {
+            console.log('error', error);
+          }
+        );
+    }
   }
 }

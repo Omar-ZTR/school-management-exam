@@ -346,16 +346,30 @@ const CheckAssociation = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.params;
         let check = false;
-        const Count = yield examQuestionModel_1.ExamQuestion.count({
+        let examNames = [];
+        const count = yield examQuestionModel_1.ExamQuestion.count({
             where: { question__id: id },
         });
-        if (Count == 0) {
+        if (count > 0) {
             check = true;
+            const exams = yield examQuestionModel_1.ExamQuestion.findAll({
+                where: { question__id: id },
+            });
+            const ids = exams.map((examQuestion) => examQuestion.exam__id);
+            for (const examId of ids) {
+                const exam = yield examModel_1.Exam.findOne({
+                    where: { exam__id: examId },
+                });
+                if (exam) {
+                    examNames.push(exam.exam__title);
+                }
+            }
         }
-        res.status(200).json(check);
+        console.log("exam names is here ", examNames);
+        res.status(200).json({ check, examNames });
     }
     catch (error) {
-        console.error("Error fetch questions:", error);
+        console.error("Error fetching questions:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });

@@ -8,19 +8,40 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
 import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
 import { AddQuestionComponent } from '../add-question/add-question.component';
 import { DialogModule } from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-teacher-question',
   standalone: true,
   imports: [
     CommonModule,
+    TooltipModule,
+    FormsModule,
     TableModule,
     DialogModule,
     AccordionModule,
     AddQuestionComponent,
+    DropdownModule ,
+    InputTextModule,
   ],
   templateUrl: './teacher-question.component.html',
   styleUrl: './teacher-question.component.css',
+  styles: [
+    `
+      :host ::ng-deep .p-dialog-header-close  {
+        display : none !important;
+    
+      }
+
+      :host ::ng-deep  .p-tooltip-text{
+        color: red !important
+      }
+    
+    `,
+  ],
 })
 export class TeacherQuestionComponent {
   // @Output() questionToEdit = new EventEmitter<any>();
@@ -28,25 +49,72 @@ export class TeacherQuestionComponent {
   user__id = this.tokenService.getUserIdFromToken();
   Allquestions: any;
   edit: boolean = false;
-  questedit: any = [];
+  questedit: any ;
   subjects: any;
   subject: any;
+  Types!: { name: string; }[];
+  associationStatus: { [key: number]: { check: boolean ; examNames: string[] } } = {};
   constructor(
     private questService: QuestionService,
     private teacherService: TeacherService,
     private tokenService: TokenServiceService
   ) {}
+  subjectFilter!: string ;
+  typeFilter!: string;
+ filteredQuestions() {
+console.log("typeFilter",this.typeFilter)
+console.log("subjectFilter",this.subjectFilter)
 
+
+if(this.subjectFilter || this.typeFilter){
+return this.Allquestions.filter((question: { question__subject: string; question__type: string; }) => {
+
+  let subjectName =''
+let matchesSubject =true
+if(this.subjectFilter){
+    subjectName = question.question__subject ? question.question__subject.toLowerCase() : '';
+
+   matchesSubject = subjectName.includes(this.subjectFilter.toLowerCase());
+
+
+}
+let questionType =''
+let matchesType =true
+if(this.typeFilter){
+
+
+questionType = question.question__type ? question.question__type.toLowerCase() : '';
+
+  
+  matchesType = questionType.includes(this.typeFilter.toLowerCase());
+}
+  
+      return matchesSubject && matchesType;
+    });
+}else{
+
+  return this.Allquestions
+}
+
+    
+  }
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-
+   
+    this.Types = [
+      { name: 'QCM',  },
+      { name: 'Normal',  },
+    
+  ];
+    this.filteredQuestions() 
     this.teacherService.getTecher(this.user__id).subscribe(
       (data: Teacher[]) => {
         const teacher = data;
 
         this.Allquestions = teacher[0].questions;
 this.subjects= teacher[0].subjects
+this.intializeAccociation()
+        this.checkAssociations(this.Allquestions)
+
         console.log('subjectshhhhhhsss is is sis', teacher[0].subjects);
         console.log('questions is is sis', teacher[0].questions);
       },
@@ -54,6 +122,29 @@ this.subjects= teacher[0].subjects
         console.error('Error fetching subjects', error);
       }
     );
+  }
+
+  loadQuestions(response: any): void {
+    console.log('Question added with response:', response);
+
+    const index = this.Allquestions.indexOf(this.questedit);
+  if (index > -1) {
+    // Replace the question at the found index with the new response
+    this.Allquestions[index] = response;
+  } else {
+    // If questedit is not found, push the response to the array
+    this.Allquestions.push(response);
+    this.associationStatus[response.question__id] = {
+      check: false,
+      examNames: ['']
+    };
+
+  }
+ this.edit = false
+  }
+  addQuestion(){
+    this.questedit = null
+    this.edit = true;
   }
   EditQuestion(quest: any) {
     this.questedit = quest;
@@ -82,24 +173,52 @@ this.subjects= teacher[0].subjects
 
 
   removeQuestion(quest: any) {
-    // this.checkAssociations();
-  }
-
-  deleteQuestion(quest: any) {
-    // this.checkAssociations();
-
     const model = {
-      exam__id: '',
+      exam__id: 0,
       action: 'delete',
     };
-
-    this.questService.deleteQuestion(quest.question__id, model).subscribe(
-      (data) => {
-        console.log('deleteQuestion:', data);
+const id = quest.question__id
+    this.questService.deleteQuestion(id, model).subscribe(
+      (response) => {
+        console.log('Response from backend:', response);
+    
+        this.Allquestions = this.Allquestions.filter((quest: { question__id: any; }) => quest.question__id !== id);
+        alert('Successfully Delete');
+            console.log('success', response);
       },
       (error: any) => {
         console.error('Error fetching groups', error);
       }
     );
   }
+  intializeAccociation(){
+    this.Allquestions.forEach((question: { question__id: number; }) => {
+
+      this.associationStatus[question.question__id] = {
+        check: false,
+        examNames:['']
+      };
+
+    })
+
+  }
+  checkAssociations(data:any): void {
+   data.forEach((question: { question__id: number; }) => {
+        this.questService.CheckAssoci(question.question__id).subscribe(
+          (data:any) => {
+            console.log('Response from backend for question ID', question.question__id, ':', data);
+            this.associationStatus[question.question__id] = {
+              check: data.check,
+              examNames: data.examNames
+            };
+            console.log(' question ID', question.question__id, ':',  this.associationStatus[question.question__id]);
+          },
+          (error: any) => {
+            console.error('Error fetching association status for question ID', question.question__id, ':', error);
+            this.associationStatus[question.question__id].check = false; // Set to false in case of an error
+          }
+        );
+      });
+    }
+
 }

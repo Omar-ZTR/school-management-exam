@@ -14,8 +14,30 @@ section{
 a{
   color: #100d6a !important;
 }
+
+label {
+  display: block;
+  margin-bottom: 0 !important;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+
+  font-size: 17px;
+}
+.filtres{
+  display: flex;
+  gap: 30px;
+  align-items: center;
+
+  margin: 10px;
+  background: #ffffff;
+  width: 100%;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 10px;
+}
   .cardQuest{
-    max-height: 250px;
+    height: 250px;
+    max-width: 350px;
     min-width: 350px;
     border-radius: 10px;
     padding: 10px 15px;
@@ -71,11 +93,18 @@ a{
     gap: 5%;
     justify-content: flex-start;
     flex-direction: row;
+    background: #4b5563;
+    /* color: white; */
+    box-shadow: 4px 3px 6px 0 #938fff;
+    border-radius: 30px;
+    padding: 0px 20px;
+    width: fit-content;
+    text-align: center;
   }
   
   .Question li , span{
     
-    color: #101010;
+    color: #ffffff;
    
   
   font-family: "Poppins", sans-serif;
@@ -83,19 +112,31 @@ a{
  
   font-size: 17px;
   }
+  .Question li {
+    color: #ffffff;
+
+  }
   
   .listView-link div{
     display: flex;
   }
  
   
-
+.btnCard{
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end;
+  position: sticky;
+  /* float: right; */
+  right: 0;
+  top: 0px;
+}
   
   
   .Question p{
     color: #101010;
-    font-size: 15px;
-    padding-left:  2rem;
+    font-size: 17px;
+  
     
   }
   .btnAdd {
@@ -127,7 +168,7 @@ a{
     touch-action: manipulation;
     white-space: nowrap;
    
-    width: 40px;
+    min-width: 40px;
     height: 40px;
     overflow: hidden;
     justify-content: flex-start;
@@ -153,3 +194,35 @@ a{
   .btndisabled{
     color: gray;
   }
+.textQuestion{
+  min-height: 100px;
+  margin: 20px 20px;
+  font-size: 17px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.detailsQuetion{
+  font-size: 17px;
+  font-weight: 500;
+}
+
+
+  .responses .response {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.responses .response.true {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+.responses .response.false {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+}

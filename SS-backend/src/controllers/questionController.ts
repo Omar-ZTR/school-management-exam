@@ -371,24 +371,42 @@ export const getAllQuestions = async (req: Request, res: Response) => {
 
 // Update operation
 
-
 export const CheckAssociation = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-let check= false
-    const Count = await ExamQuestion.count({
+    let check = false;
+    let examNames: string[] = [];
+
+    const count = await ExamQuestion.count({
       where: { question__id: id },
     });
-if(Count == 0){
-  check = true
-}
 
-    res.status(200).json(check);
+    if (count > 0) {
+      check = true;
+      const exams = await ExamQuestion.findAll({
+        where: { question__id: id },
+      });
+
+      const ids = exams.map((examQuestion) => examQuestion.exam__id);
+
+      for (const examId of ids) {
+        const exam = await Exam.findOne({
+          where: { exam__id: examId },
+         
+        });
+        if (exam) {
+          examNames.push(exam.exam__title);
+        }
+      }
+    }
+console.log("exam names is here ",examNames)
+    res.status(200).json({ check, examNames });
   } catch (error) {
-    console.error("Error fetch questions:", error);
+    console.error("Error fetching questions:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 
