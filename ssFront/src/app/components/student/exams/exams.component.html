@@ -1,5 +1,7 @@
 <div class="ag-format-container">
   <div class="ag-courses_box">
+
+    Exams
     <div *ngFor="let event of examlist" class="ag-courses_item">
       <a (click)="showDialog(event)" class="ag-courses-item_link">
         <div class="ag-courses-item_bg"></div>
@@ -158,6 +160,7 @@
         <div class="medium-text">Sec</div>
       </div>
       <p-button
+      *ngIf="days === '00' && hours === '00' && minutes <= '10'" 
         (click)="takeExam()"
         [style]="{
           margin: '0 10px',
@@ -170,9 +173,8 @@
         [raised]="true"
         severity="warning"
       />
-      <!-- <div *ngIf="days === '07' && hours === '20' && minutes <= '10'" class="button-container">
-		<button >Time is almost up!</button>
-	  </div> -->
+     
+     
     </div>
     <div class="rowDetail">
       <div class="new-text">Subject: {{ examShow.subject }}</div>

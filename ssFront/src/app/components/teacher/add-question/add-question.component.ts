@@ -77,12 +77,13 @@ export class AddQuestionComponent {
   user__id = this.tokenService.getUserIdFromToken();
 
   constructor(
+    private tokenService: TokenServiceService ,
     private teacherService: TeacherService,
     private questService: QuestionService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private tokenService: TokenServiceService
+    
   ) {
     this.subjectForm = this.fb.group({
       selectedSubject: new FormControl<any | null>(null),

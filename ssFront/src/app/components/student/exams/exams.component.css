@@ -44,7 +44,7 @@
 }
 
 .new-text {
-  margin-top:40px;
+
   margin-left: 0.7pt;
   font-family: Calibri;
   font-size: 22pt;
@@ -86,7 +86,21 @@
 
 .rowDetail{
   display: flex;
-  justify-content:space-around;
+  margin-left: -40px;
+  margin-bottom: 20px;
+  /* list-style-type: none; */
+  gap: 5%;
+  justify-content: flex-end;
+  /* flex-direction: row; */
+  background: #4b5563;
+  color: white;
+  box-shadow: 5px 5px 5px 0px #f16000;
+  border-radius: 30px;
+  padding: 10px 20px;
+  width: 70%;
+  text-align: center;
+  align-content: center;
+  align-items: center;
   
 }
 .examtaken {

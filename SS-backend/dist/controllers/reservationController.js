@@ -13,6 +13,7 @@ exports.deleteReservation = exports.updateReservation = exports.getReservationBy
 const sequelize_1 = require("sequelize");
 const reservationModel_1 = require("../models/reservationModel"); // Import your Reservation model
 const examModel_1 = require("../models/examModel");
+const groupModel_1 = require("../models/groupModel");
 // Create operation
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -38,14 +39,16 @@ const generateCode = () => {
     return code;
 };
 const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const groupName = req.params.groupName;
-    console.log("groupName", groupName);
+    const { groupid } = req.params;
+    console.log("groupName", req.params);
+    const group = yield groupModel_1.Group.findByPk(groupid);
+    console.log("groupgroup group group", group);
     try {
         const reservations = yield reservationModel_1.Reservation.findAll({
             where: {
                 [sequelize_1.Op.or]: [
-                    { group__name: groupName },
-                    { group__name: "all" }
+                    { group__name: group === null || group === void 0 ? void 0 : group.group__name },
+                    { group__name: '' }
                 ]
             }
         });

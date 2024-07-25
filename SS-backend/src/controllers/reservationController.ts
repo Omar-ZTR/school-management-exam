@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import { Reservation } from "../models/reservationModel"; // Import your Reservation model
 import { Request, Response } from "express";
 import { Exam } from "../models/examModel";
+import { Group } from "../models/groupModel";
 
 // Create operation
 export const createReservation = async (req: Request, res: Response) => {
@@ -37,14 +38,18 @@ const generateCode = (): string => {
 
 
 export const getSpecificReservations = async (req: Request, res: Response) => {
-    const groupName= req.params.groupName
-    console.log("groupName",groupName)
+    const {groupid}= req.params
+    console.log("groupName",req.params)
+
+    const group = await Group.findByPk(groupid);
+
+    console.log("groupgroup group group",group)
      try {
          const reservations = await Reservation.findAll({
              where: {
                [Op.or]: [
-                 { group__name: groupName },
-                 { group__name: "all" }
+                 { group__name: group?.group__name },
+                 { group__name: ''}
                ]
              }
            });

@@ -35,7 +35,8 @@ export const routes: Routes = [
     children: [
       { path: 'dash', component: DashStudentComponent },
       { path: 'update', component: UpdateProfileComponent },
-      { path: 'exam', component: SidebarComponent },
+      { path: 'exam', component: ExamsComponent },
+      { path: 'examtaken', component: ExamtakenComponent },
     ],
   },
   {

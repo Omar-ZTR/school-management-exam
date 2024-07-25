@@ -1,31 +1,35 @@
 import { Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from "./sidebar/sidebar.component";
-import { DashStudentComponent } from "./dash-student/dash-student.component";
-import { UpdateProfileComponent } from "./update-profile/update-profile.component";
+
 @Component({
     selector: 'app-student',
     standalone: true,
     templateUrl: './student.component.html',
     styleUrl: './student.component.css',
-    imports: [RouterOutlet,RouterModule,  CommonModule, SidebarComponent, DashStudentComponent, UpdateProfileComponent],
+    imports: [CommonModule, RouterOutlet, RouterModule,],
   
 })
 export class StudentComponent {
 
-    isMenuMobile = true;
+  isMenuMobile = true;
+  showExams = false;
+  constructor(private router: Router) { }
+  toggleExams(): void {
+    this.showExams = !this.showExams;
+  }
+  toggleMenu() {
+    this.isMenuMobile = !this.isMenuMobile;
+  }
+  isSettingsMenuOpen: boolean = false;
 
-    toggleMenu() {
-      this.isMenuMobile = !this.isMenuMobile;
-    }
-    isSettingsMenuOpen: boolean = false;
-  
-    toggleSettingsMenu() {
-      this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
-    }
-  
-    logout() {
-      // Add your logout logic here
-    }
+  toggleSettingsMenu() {
+    this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['/auth']);
+  }
+
 }

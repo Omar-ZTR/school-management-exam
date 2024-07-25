@@ -5,72 +5,91 @@ import { ExamService } from '../../../services/serviceTeacher/exam.service';
 import { DialogModule } from 'primeng/dialog';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 import { ButtonModule } from 'primeng/button';
-import { ExamtakenComponent } from "../examtaken/examtaken.component";
+import { ExamtakenComponent } from '../examtaken/examtaken.component';
 import { InputOtpModule } from 'primeng/inputotp';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 
 @Component({
-    selector: 'app-exams',
-    standalone: true,
-    templateUrl: './exams.component.html',
-    styleUrl: './exams.component.css',
-    imports: [CommonModule,ReactiveFormsModule, DialogModule, ButtonModule,InputOtpModule, ExamtakenComponent]
+  selector: 'app-exams',
+  standalone: true,
+  templateUrl: './exams.component.html',
+  styleUrl: './exams.component.css',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DialogModule,
+    ButtonModule,
+    InputOtpModule,
+    ExamtakenComponent,
+  ],
 })
 export class ExamsComponent {
   examlist: any;
-  plan: any={};
-  ready: boolean=false;
-  accept: boolean=false;
+  plan: any = {};
+  ready: boolean = false;
+  accept: boolean = false;
   otpForm!: FormGroup;
-  
 
+  groupId = this.tokenService.getGroupIdFromToken();
 
-  
-  constructor(private fb: FormBuilder, private calandarService: CalandarService, private examService: ExamService){}
+  constructor(
+    private tokenService: TokenServiceService,
+    private fb: FormBuilder,
+    private calandarService: CalandarService,
+    private examService: ExamService
+  ) {}
 
   examShow: any = {
     exam__id: '',
     subject: '',
     exam__type: '',
     fileExam: [],
-    questions: []
+    questions: [],
   };
   visible: boolean = false;
-  days!:string ;
-  hours!:string ;
-  minutes!:string ;
-  seconds!:string ;
+  days!: string;
+  hours!: string;
+  minutes!: string;
+  seconds!: string;
   countdownInterval!: any;
   ngOnInit(): void {
+
+console.log("sgroupIdgroupIdss", this.groupId)
+
     this.otpForm = this.fb.group({
       otp1: ['', Validators.required],
       otp2: ['', Validators.required],
       otp3: ['', Validators.required],
-      otp4: ['', Validators.required]
+      otp4: ['', Validators.required],
     });
-    this.fetchExams()
-    console.log("exams iss is ",this.examlist)
+    this.fetchExams();
+    console.log('exams iss is ', this.examlist);
+  }
+  acceptcode() {
+    const correctCode = this.plan.code;
+    const otpValues =
+      this.otpForm.get('otp1')?.value +
+      this.otpForm.get('otp2')?.value +
+      this.otpForm.get('otp3')?.value +
+      this.otpForm.get('otp4')?.value;
+    console.log(otpValues);
+    if (otpValues === correctCode) {
+      this.accept = true;
 
-  }
-  acceptcode(){
-    const correctCode= this.plan.code
-    const otpValues = this.otpForm.get('otp1')?.value + 
-                      this.otpForm.get('otp2')?.value + 
-                      this.otpForm.get('otp3')?.value + 
-                      this.otpForm.get('otp4')?.value;
-                      console.log(otpValues)
-    if (otpValues===correctCode){
-       this.accept=true
-     
-       console.log(this.accept)
+      console.log(this.accept);
     }
-   
   }
-  
-  takeExam(){
-    this.visible=false
-    this.ready=true
-    console.log(this.ready)
+
+  takeExam() {
+    this.visible = false;
+    this.ready = true;
+    console.log(this.ready);
   }
 
   // otp1: string = '';
@@ -91,7 +110,6 @@ export class ExamsComponent {
   //   this.otp4=event
   // }
 
-  
   showDialog(reservation: any) {
     this.visible = true;
     this.plan = reservation;
@@ -110,23 +128,35 @@ export class ExamsComponent {
     //   this.updateCountdown(reservation.startDate);
     // }, 1000);
 
-    this.fetchExam(reservation.exam__id).then(exam => {
-      this.examShow = exam;
-      console.log('Exam show: ', this.examShow);
-    }).catch(error => {
-      console.error('Error fetching exam', error);
-    });
+    this.fetchExam(reservation.exam__id)
+      .then((exam) => {
+        this.examShow = exam;
+        console.log('Exam show: ', this.examShow);
+      })
+      .catch((error) => {
+        console.error('Error fetching exam', error);
+      });
   }
 
   updateCountdown(startDate: string) {
     const start = new Date(startDate).getTime();
     const now = new Date().getTime();
     const difference = start - now;
-
-    this.days = Math.floor(difference / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-    this.hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-    this.minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-    this.seconds = Math.floor((difference % (1000 * 60)) / 1000).toString().padStart(2, '0');
+console.log("difference difference difference",difference)
+    this.days = Math.floor(difference / (1000 * 60 * 60 * 24))
+      .toString()
+      .padStart(2, '0');
+    this.hours = Math.floor(
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    )
+      .toString()
+      .padStart(2, '0');
+    this.minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+      .toString()
+      .padStart(2, '0');
+    this.seconds = Math.floor((difference % (1000 * 60)) / 1000)
+      .toString()
+      .padStart(2, '0');
 
     // Check if the countdown is finished
     if (difference <= 0) {
@@ -138,17 +168,17 @@ export class ExamsComponent {
     }
 
     console.log(this.days, this.hours, this.minutes, this.seconds);
-  
-
-    }
+  }
 
   statutExam(id: any): void {
-    this.fetchExam(id).then((exam) => {
-      console.log("Exam status is", exam?.obligatoire);
-      return exam?.obligatoire;
-    }).catch((error) => {
-      console.error('Error fetching exam status', error);
-    });
+    this.fetchExam(id)
+      .then((exam) => {
+        console.log('Exam status is', exam?.obligatoire);
+        return exam?.obligatoire;
+      })
+      .catch((error) => {
+        console.error('Error fetching exam status', error);
+      });
   }
 
   async fetchExam(id: any): Promise<any> {
@@ -163,8 +193,8 @@ export class ExamsComponent {
     }
   }
   fetchExams(): void {
-    const group = 'group D'
-    this.calandarService.getExams(group).subscribe(
+console.log("aksjjjjjjjjjjjjjjjjjjjjj",this.groupId)
+    this.calandarService.getExams(this.groupId).subscribe(
       (data) => {
         this.examlist = data;
         console.log('nnddd', this.examlist);
@@ -174,13 +204,12 @@ export class ExamsComponent {
       }
     );
   }
-  typeFile(file: any):any {
-  
+  typeFile(file: any): any {
     const extension = getFileExtension(file.file__name);
     const fileType = getFileType(extension);
-// console.log("type file is",fileType)
-// console.log("type  is",file.file__type)
-    return { name: file.name, type: fileType }
+    // console.log("type file is",fileType)
+    // console.log("type  is",file.file__type)
+    return { name: file.name, type: fileType };
   }
   openFile(filePath: string): void {
     window.open(filePath, '_blank');

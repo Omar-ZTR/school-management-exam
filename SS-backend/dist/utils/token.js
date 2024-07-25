@@ -10,7 +10,8 @@ const generateToken = (user) => {
         userId: user.user__id,
         email: user.user__email,
         role: user.role,
-        status: user.status,
+        status: user.active,
+        group: user.group__id,
     };
     const options = {
         expiresIn: "8h", // Token expires in 1 hour (adjust as needed)

@@ -337,6 +337,13 @@ export class AddExamComponent {
       );
     }
   }
+
+
+  Cancel(){
+    this.examForm.patchValue({ exam__type: '' });
+    this.questarr = []
+  }
+
   save() {
     Object.values(this.examForm.controls).forEach((control) => {
       control.markAsTouched();

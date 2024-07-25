@@ -891,20 +891,7 @@ export class CalandarfullComponent implements OnInit {
       const formValues = this.eventForm.value;
       // For debugging purposes
 
-      const calandarData = {
-        exam__id: this.data,
-
-        startDate: `${formValues.startDate}T${formValues.startTime}`,
-        endDate: this.formatDate(formValues.startDate, formValues.endTime),
-
-        group__name: '',
-        salle: '',
-        exam__title: formValues.title,
-      };
-      console.log(
-        'beforzzzzzzzzzzzzzzzzz?????zdssssszzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzze',
-        calandarData
-      );
+     
 
       if (this.examType) {
         if (this.state) {
@@ -920,8 +907,21 @@ export class CalandarfullComponent implements OnInit {
                 row.salle__id &&
                 row.salle__id.salle__id
               ) {
-                calandarData.group__name = row.group__id.group__name;
-                calandarData.salle = row.salle__id.salle__id;
+                // calandarData.group__name = row.group__id.group__name;
+                // calandarData.salle = row.salle__id.salle__id;
+
+
+                const calandarData = {
+                  exam__id: this.data,
+          
+                  startDate: `${formValues.startDate}T${formValues.startTime}`,
+                  endDate: this.formatDate(formValues.startDate, formValues.endTime),
+                  group__name :row.group__id.group__name,
+                  salle : row.salle__id.salle__id,
+                  exam__title: formValues.title,
+                };
+
+
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
                     this.isAddPlan.emit(response);
@@ -966,6 +966,18 @@ export class CalandarfullComponent implements OnInit {
           ) {
             for (const row of this.GroupList.value) {
               if (row.group__id && row.group__id.group__name) {
+
+                const calandarData = {
+                  exam__id: this.data,
+          
+                  startDate: `${formValues.startDate}T${formValues.startTime}`,
+                  endDate: this.formatDate(formValues.startDate, formValues.endTime),
+                  group__name :row.group__id.group__name,
+               
+                  exam__title: formValues.title,
+                };
+
+
                 calandarData.group__name = row.group__id.group__name;
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
@@ -1014,7 +1026,19 @@ export class CalandarfullComponent implements OnInit {
             this.SalleList.value.length > 0
           ) {
             for (const row of this.SalleList.value) {
-              calandarData.salle = row.salle__id.salle__id;
+
+              const calandarData = {
+                exam__id: this.data,
+        
+                startDate: `${formValues.startDate}T${formValues.startTime}`,
+                endDate: this.formatDate(formValues.startDate, formValues.endTime),
+            
+                salle : row.salle__id.salle__id,
+                exam__title: formValues.title,
+              };
+
+              
+              // calandarData.salle = row.salle__id.salle__id;
               this.calandarService.createReserv(calandarData).subscribe(
                 (response: any) => {
                   this.isAddPlan.emit(response);
@@ -1048,6 +1072,21 @@ export class CalandarfullComponent implements OnInit {
             this.MsgError = 'Salle is empty ';
           }
         } else {
+
+          const calandarData = {
+            exam__id: this.data,
+    
+            startDate: `${formValues.startDate}T${formValues.startTime}`,
+            endDate: this.formatDate(formValues.startDate, formValues.endTime),
+    
+         
+            exam__title: formValues.title,
+          };
+          console.log(
+            'beforzzzzzzzzzzzzzzzzz?????zdssssszzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzze',
+            calandarData
+          );
+
           this.calandarService.createReserv(calandarData).subscribe(
             (response: any) => {
               this.isAddPlan.emit(response);

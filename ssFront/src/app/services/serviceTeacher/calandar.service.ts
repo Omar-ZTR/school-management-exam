@@ -23,8 +23,9 @@ export class CalandarService {
       headers:new HttpHeaders().set('Content-Type' , 'application/json')
     })
   }
-  getExams(groupName: string) {
-    return this.httpClient.get(`${this.url}/specificreservation/${groupName}`, {
+  getExams(groupid: any) {
+    console.log("aksjjjjjjjjjjjjjjjjjjjjj",groupid)
+    return this.httpClient.get(`${this.url}/specificreservation/${groupid}`, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
      
     });

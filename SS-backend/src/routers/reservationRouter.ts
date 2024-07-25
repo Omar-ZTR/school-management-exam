@@ -12,7 +12,7 @@ const routerReservation = express.Router();
 
 routerReservation.get('/reservation', getAllReservations);
 
-routerReservation.get('/specificreservation/:groupName', getSpecificReservations);
+routerReservation.get('/specificreservation/:groupid', getSpecificReservations);
 
 routerReservation.get('/reservation/:id', getReservationById);
 
