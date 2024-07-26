@@ -11,6 +11,7 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
 
 
 
+
 import { ImageModule } from 'primeng/image';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -31,13 +32,48 @@ import { saveAs } from 'file-saver';
     PanelModule,
     CommonModule,
     ReactiveFormsModule,
-
+  
     ImageModule,
     DialogModule,
     ButtonModule,
   ],
   templateUrl: './examtaken.component.html', 
-  styleUrls: ['./examtaken.component.css']
+  styleUrls: ['./examtaken.component.css'],
+  styles: [
+    `
+     
+
+      :host ::ng-deep .p-panel .p-panel-header {
+        border: 2px solid #e5e7eb !important;
+
+        background: #ffffff !important;
+        color: #374151;
+      }
+
+      :host ::ng-deep .p-fieldset .p-fieldset-legend {
+        background: #ffffff !important;
+        border: none !important;
+      }
+
+      :host ::ng-deep .p-fieldset {
+        border: 1px solid #e5e7eb !important;
+        margin-bottom: 20px !important;
+      }
+      :host ::ng-deep .p-dialog-header {
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 800 !important;
+        font-style: italic !important;
+        font-size: 30px !important;
+      }
+      :host ::ng-deep .p-fieldset-content{
+      padding: 1rem !important ;
+    display: flex !important ;
+    flex-direction: column !important ;
+    gap: 30px !important ;
+
+  }
+    `,
+  ],
 })
 export class ExamtakenComponent {
  
@@ -81,8 +117,12 @@ export class ExamtakenComponent {
       ans__description:''
     });
   }
-
+  rePE!:any;
   ngOnInit(): void {
+
+
+console.log("rep vrep rep rep rep rep rep rep ", this.rePE)
+
     this.fetchExam();
     this.startTimer();
     this.AnswersForm.patchValue({
@@ -254,8 +294,12 @@ export class ExamtakenComponent {
       }));
     }
   }
-
+rep(){
+  console.log("shas basbsagb bsagsba sabgsbsa ",this.rePE)
+}
   answer(value: string, questionId: number) {
+
+    console.log("blur blur blur blur 6666688778",value)
     const existingAnswerIndex = this.answers.controls.findIndex((answer: any) => 
       answer.value.question__id === questionId 
     );

@@ -114,11 +114,11 @@ export const login = async (req: Request, res: Response) => {
 
         tokens = await Token.create(tokenData as any);
       }
-      // const tokenData = {
-      //   user__id: user.user__id,
-      //   token: generateToken(user),
-      // };
-      // tokens = await Token.create(tokenData as any);
+      const tokenData = {
+        user__id: user.user__id,
+        token: generateToken(user),
+      };
+      tokens = await Token.create(tokenData as any);
       res.status(200).json({ token: tokens.token });
     } else {
       res.status(401).json({ message: "Invalid email or password" });

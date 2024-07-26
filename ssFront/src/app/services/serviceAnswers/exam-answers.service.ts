@@ -24,8 +24,9 @@ export class ExamAnswersService {
     });
   }
 
-  getAnswer() {
-    return this.httpClient.get(this.url + '/getanswers');
+  getAnswer(id:any) {
+   
+    return this.httpClient.get(`${this.url}/getanswers/${id}`);
   }
 
 

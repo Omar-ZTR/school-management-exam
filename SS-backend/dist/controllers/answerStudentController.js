@@ -17,10 +17,10 @@ const examModel_1 = require("../models/examModel");
 const answerModel_1 = require("../models/answerModel");
 const answerStudentModel_1 = require("../models/answerStudentModel");
 const questionModel_1 = require("../models/questionModel");
-const reservationModel_1 = require("../models/reservationModel");
 const reponseModel_1 = require("../models/reponseModel");
 const fileModel_1 = require("../models/fileModel");
 const upload_1 = __importDefault(require("../utils/upload"));
+const studentModel_1 = require("../models/studentModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,7 +47,9 @@ const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 yield fileModel_1.FileAnswer.create(support__files);
             }
         }
-        if (answersData.answers && Array.isArray(answersData.answers) && answersData.answers.length > 0) {
+        if (answersData.answers &&
+            Array.isArray(answersData.answers) &&
+            answersData.answers.length > 0) {
             console.log("if  fotnaha");
             const ansDatas = answersData.answers;
             for (const ansData of ansDatas) {
@@ -77,7 +79,7 @@ const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             res.status(200).json(updatedResult);
         }
         else {
-            throw new Error('Result not found');
+            throw new Error("Result not found");
         }
     }
     catch (error) {
@@ -88,42 +90,100 @@ const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.updateResult = updateResult;
 const getAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const answers = yield answerModel_1.Answer.findAll({
+        const { id } = req.params;
+        const exams = yield examModel_1.Exam.findAll({
             include: [
                 {
-                    model: answerStudentModel_1.AnswerStudent,
-                    as: 'answers',
+                    model: answerModel_1.Answer,
+                    include: [
+                        {
+                            model: answerStudentModel_1.AnswerStudent,
+                            as: "answers",
+                        },
+                        {
+                            model: fileModel_1.FileAnswer,
+                        },
+                    ],
                 },
-                {
-                    model: fileModel_1.FileAnswer,
-                }
             ],
+            where: { user__id: id },
         });
-        const formattedAnswers = answers.map((answer) => __awaiter(void 0, void 0, void 0, function* () {
-            const examTitle = yield getTitle(answer.exam__id);
-            return {
-                ans__id: answer.ans__id,
-                exam__id: answer.exam__id,
-                exam__title: examTitle,
-                Student__id: answer.Student__id,
-                fileAnswer: answer.file.map((f) => ({
-                    file__id: f.file__id,
-                    file__name: f.file__name,
-                    file__path: f.file__path,
-                })),
-                createdAt: answer.createdAt,
-                updatedAt: answer.updatedAt,
-                answers: answer.answers,
-                ans__descreption: answer.ans__descreption,
-            };
-        }));
-        // Wait for all exam titles to be fetched
-        const allAnswers = yield Promise.all(formattedAnswers);
-        res.status(200).json(allAnswers);
+        for (const e of exams) {
+            console.log("exams is ", e.answers);
+        }
+        // const answers = await Answer.findAll({
+        //   include: [
+        //     {
+        //       model: AnswerStudent,
+        //       as: 'answers',
+        //     },
+        //     {
+        //       model: FileAnswer,
+        //     }
+        //   ],
+        // });
+        let formattedAnswers = [];
+        let formattedAnswersCertif = [];
+        for (const exam of exams) {
+            for (const answer of exam.answers) {
+                if (exam.obligatoire == false) {
+                    formattedAnswersCertif.push(((answer) => __awaiter(void 0, void 0, void 0, function* () {
+                        const examTitle = yield getTitle(answer.exam__id);
+                        const nameStud = yield getNamestudent(answer.Student__id);
+                        return {
+                            ans__id: answer.ans__id,
+                            exam__id: answer.exam__id,
+                            exam__title: examTitle,
+                            Student__id: answer.Student__id,
+                            Student__name: nameStud,
+                            ans__result: answer.ans__result,
+                            fileAnswer: answer.file.map((f) => ({
+                                file__id: f.file__id,
+                                file__name: f.file__name,
+                                file__path: f.file__path,
+                            })),
+                            createdAt: answer.createdAt,
+                            updatedAt: answer.updatedAt,
+                            answers: answer.answers,
+                            ans__descreption: answer.ans__descreption,
+                        };
+                    }))(answer));
+                }
+                else {
+                    formattedAnswers.push(((answer) => __awaiter(void 0, void 0, void 0, function* () {
+                        const examTitle = yield getTitle(answer.exam__id);
+                        const nameStud = yield getNamestudent(answer.Student__id);
+                        return {
+                            ans__id: answer.ans__id,
+                            exam__id: answer.exam__id,
+                            exam__title: examTitle,
+                            Student__id: answer.Student__id,
+                            Student__name: nameStud,
+                            ans__result: answer.ans__result,
+                            fileAnswer: answer.file.map((f) => ({
+                                file__id: f.file__id,
+                                file__name: f.file__name,
+                                file__path: f.file__path,
+                            })),
+                            createdAt: answer.createdAt,
+                            updatedAt: answer.updatedAt,
+                            answers: answer.answers,
+                            ans__descreption: answer.ans__descreption,
+                        };
+                    }))(answer));
+                }
+            }
+        }
+        const ObliAnswers = yield Promise.all(formattedAnswers);
+        const CertifAnswers = yield Promise.all(formattedAnswersCertif);
+        res.status(200).json({
+            ObliAnswers: ObliAnswers,
+            CertifAnswers: CertifAnswers,
+        });
     }
     catch (error) {
-        console.error('Error fetching answers', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching answers", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getAnswers = getAnswers;
@@ -134,15 +194,15 @@ function GetQuestionById(questionId) {
                 where: {
                     question__id: questionId,
                 },
-                attributes: ['question__id', 'question__text'], // Adjust attributes as needed
+                attributes: ["question__id", "question__text"], // Adjust attributes as needed
                 include: [
                     {
                         model: reponseModel_1.Reponse,
-                        as: 'reponses',
+                        as: "reponses",
                     },
                     {
                         model: fileModel_1.FileQuestion,
-                        as: 'file',
+                        as: "file",
                     },
                 ],
             });
@@ -150,11 +210,11 @@ function GetQuestionById(questionId) {
                 return question;
             }
             else {
-                throw new Error('Question not found');
+                throw new Error("Question not found");
             }
         }
         catch (error) {
-            console.error('Error fetching question by question ID', error);
+            console.error("Error fetching question by question ID", error);
             throw error;
         }
     });
@@ -162,17 +222,48 @@ function GetQuestionById(questionId) {
 function getTitle(examid) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const examTitle = yield reservationModel_1.Reservation.findOne({
+            console.log("................................ exam id fi func", examid);
+            const examTitle = yield examModel_1.Exam.findOne({
                 where: {
                     exam__id: examid,
                 },
-                attributes: ['exam__title'],
+                attributes: ["exam__title"],
             });
-            console.log("kllllllllllllll", examTitle.exam__title);
+            if (!examTitle) {
+                console.log("ssssssssssss");
+            }
+            else {
+                console.log("kllllllllllllll", examTitle);
+            }
             return examTitle.exam__title;
         }
         catch (error) {
-            console.error('Error fetching exam title by exam ID', error);
+            console.error("Error fetching exam title by exam ID", error);
+            throw error;
+        }
+    });
+}
+function getNamestudent(examid) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log("................................ exam id fi func", examid);
+            const student = yield studentModel_1.Student.findOne({
+                where: {
+                    user__id: examid,
+                },
+            });
+            let allname = "";
+            if (!student) {
+                console.log("ssssssssssss");
+            }
+            else {
+                allname = student.first__name + student.last__name;
+                console.log("kllllllllllllll", allname);
+            }
+            return allname;
+        }
+        catch (error) {
+            console.error("Error fetching exam title by exam ID", error);
             throw error;
         }
     });

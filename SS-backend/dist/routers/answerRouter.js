@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const answerStudentController_1 = require("../controllers/answerStudentController");
 const routerAnswer = express_1.default.Router();
 routerAnswer.post('/answers', answerStudentController_1.createAnswers);
-routerAnswer.get('/getanswers', answerStudentController_1.getAnswers);
+routerAnswer.get('/getanswers/:id', answerStudentController_1.getAnswers);
 routerAnswer.put('/result/:id', answerStudentController_1.updateResult);
 exports.default = routerAnswer;

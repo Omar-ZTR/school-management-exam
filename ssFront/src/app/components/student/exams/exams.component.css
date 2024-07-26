@@ -215,7 +215,7 @@ align-items: stretch; */
   .ag-courses_item {
     -ms-flex-preferred-size: calc(33.33333% - 30px);
     flex-basis: calc(33.33333% - 30px);
-  
+    min-width: 20rem;
     margin: 0 15px 30px;
   
     overflow: hidden;
@@ -224,11 +224,11 @@ align-items: stretch; */
   }
   .ag-courses-item_link {
     display: block;
+    width: 30rem;
+    min-width: unset;
     padding: 30px 20px;
     background-color: #121212;
-  
     overflow: hidden;
-  
     position: relative;
   }
   .ag-courses-item_link:hover,
@@ -273,14 +273,11 @@ align-items: stretch; */
     height: 128px;
     width: 128px;
     background-color: #f9b234;
-  
     z-index: 0;
     position: absolute;
     top: -75px;
-    right: -75px;
-  
+    right: 100px;
     border-radius: 50%;
-  
     -webkit-transition: all .5s ease;
     -o-transition: all .5s ease;
     transition: all .5s ease;

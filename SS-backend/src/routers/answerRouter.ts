@@ -6,7 +6,7 @@ const routerAnswer = express.Router();
 
 routerAnswer.post('/answers', createAnswers);
 
-routerAnswer.get('/getanswers', getAnswers);
+routerAnswer.get('/getanswers/:id', getAnswers);
 routerAnswer.put('/result/:id', updateResult);
 
 export default routerAnswer;

@@ -116,11 +116,11 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 };
                 tokens = yield tokenModel_1.Token.create(tokenData);
             }
-            // const tokenData = {
-            //   user__id: user.user__id,
-            //   token: generateToken(user),
-            // };
-            // tokens = await Token.create(tokenData as any);
+            const tokenData = {
+                user__id: user.user__id,
+                token: (0, token_1.default)(user),
+            };
+            tokens = yield tokenModel_1.Token.create(tokenData);
             res.status(200).json({ token: tokens.token });
         }
         else {

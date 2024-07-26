@@ -1,20 +1,26 @@
-<div class="card">
+<div class="containerResult">
+  <div class="">
+    <div class="TitelForm"> Exams Course</div>
   <p-table
-    [value]="Answers"
-    sortField="exam__title"
+    [value]="AnswersObli"
+    sortField="exam__id"
     sortMode="single"
-    dataKey="representative.name"
+    dataKey="exam__id"
     rowGroupMode="subheader"
-    groupRowsBy="representative.name"
-    [tableStyle]="{ 'min-width': '70rem' }"
+    groupRowsBy="exam__id"
+    [tableStyle]="{ 'max-width': '35rem' }"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 20%">Name</th>
-        <th style="width: 20%">Country</th>
-        <th style="width: 20%">Company</th>
-        <th style="width: 20%">Status</th>
-        <th style="width: 20%">Date</th>
+        <th
+          style="background: rgba(0, 0, 0, 0.382); color: white; min-width:15rem"
+        >
+          Exam
+        </th>
+        <th>Name student</th>
+ 
+
+        <th>Note</th>
       </tr>
     </ng-template>
     <ng-template
@@ -46,22 +52,92 @@
             </ng-template> -->
     <ng-template pTemplate="rowexpansion" let-answerStudent>
       <tr (click)="showDialog(answerStudent)">
-        <td></td>
-        <td>hella {{ answerStudent.Student__id }}</td>
+        <td style="background: rgb(0 0 0 / 21%); color: white"></td>
+        <td>{{ answerStudent.Student__name }}</td>
+ 
+
         <td>
-          {{ answerStudent.exam__id }}
-        </td>
-        <td>hello</td>
-        <td>
-          {{ answerStudent.createdAt }}
+          {{ answerStudent.ans__result }}
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
+
+<div class="">
+  <div class="TitelForm"> Exams certified </div>
+
+  <p-table
+    [value]="AnswersCertif"
+    sortField="exam__id"
+    sortMode="single"
+    dataKey="exam__id"
+    rowGroupMode="subheader"
+    groupRowsBy="exam__id"
+    [tableStyle]="{ 'max-width': '35rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th
+          style="background: rgba(0, 0, 0, 0.382); color: white; min-width:15rem"
+        >
+          Exam
+        </th>
+        <th>Name student</th>
+        
+
+        <th>Note</th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="groupheader"
+      let-answerStudent
+      let-rowIndex="rowIndex"
+      let-expanded="expanded"
+    >
+      <tr>
+        <td colspan="5">
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="answerStudent"
+            class="p-button-text p-button-rounded p-button-plain mr-2"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+
+          <span class="font-bold ml-2">{{ answerStudent.exam__title }}</span>
+        </td>
+      </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="groupfooter" let-answerStudent>
+                <tr class="p-rowgroup-footer">
+                    <td colspan="4" style="text-align: right">Total answerStudents</td>
+                    <td>{{calculateanswerStudentTotal(answerStudent.representative.name)}}</td>
+                </tr>
+            </ng-template> -->
+    <ng-template pTemplate="rowexpansion" let-answerStudent>
+      <tr (click)="showDialog(answerStudent)">
+        <td style="background: rgb(0 0 0 / 21%); color: white"></td>
+        <td>{{ answerStudent.Student__name }}</td>
+
+
+        <td>
+          {{ answerStudent.ans__result }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+
+</div>
+
+
+
 <p-dialog
-  header="Check your Answers"
+  [header]="studentAnswer ? 'Answers of ' + studentAnswer.Student__name : ''"
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '50rem' }"
@@ -72,17 +148,17 @@
       <div class="titlebox">Exam file</div>
       <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
         <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
-          <div class="previewimg"   (click)="openFile(f.file__path)">
+          <div class="previewimg" (click)="openFile(f.file__path)">
             <i
               *ngIf="typeFile(f).type !== 'image'"
               class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
             ></i>
-            <img  *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
+            <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
           </div>
         </div>
       </div>
     </div>
-   
+
     <div>
       <div class="titlebox">Answer file</div>
       <div class="fileAnswer">
@@ -94,9 +170,10 @@
           <div
             *ngFor="let f of studentAnswer.fileAnswer; let index = index"
             key="index"
-          > <div class="downloadFile" (click)="downloadFile(f.file__name)">
-            <i class="fa-solid fa-download"></i>
-              </div> 
+          >
+            <div class="downloadFile" (click)="downloadFile(f.file__name)">
+              <i class="fa-solid fa-download"></i>
+            </div>
             <div class="previewimg" (click)="openFile(f.file__path)">
               <i
                 *ngIf="typeFile(f).type !== 'image'"
@@ -107,8 +184,9 @@
           </div>
         </div>
       </div>
-      <button class="buttonSend scale" (click)="downloadAllFiles()"><i class="fa-solid fa-download"></i> Download</button>
-
+      <button class="buttonSend scale" (click)="downloadAllFiles()">
+        <i class="fa-solid fa-download"></i> Download
+      </button>
     </div>
   </div>
   <div *ngIf="examType != 'file'">
@@ -153,6 +231,7 @@
               </div>
             </div>
             <div *ngIf="question.question__type === 'Normal'">
+              <label for=""> Answer : </label>
               <div>
                 {{ getAnswer(question) }}
               </div>
@@ -168,6 +247,7 @@
                     <input
                       type="number"
                       class="inputNumbe"
+                      pInputText
                       min="0"
                       #myInput
                       [max]="question.note != null ? question.note : 20"
@@ -195,8 +275,9 @@
           <input
             type="number"
             min="0"
-            max="200"
+            max="20"
             #myInput
+            pInputText
             class="inputNumbe"
             [ngModel]="totalNote"
             (ngModelChange)="onTotalNoteChange($event)"

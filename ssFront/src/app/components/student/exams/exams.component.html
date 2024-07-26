@@ -1,6 +1,5 @@
 <div class="ag-format-container">
   <div class="ag-courses_box">
-
     Exams
     <div *ngFor="let event of examlist" class="ag-courses_item">
       <a (click)="showDialog(event)" class="ag-courses-item_link">
@@ -160,7 +159,7 @@
         <div class="medium-text">Sec</div>
       </div>
       <p-button
-      *ngIf="days === '00' && hours === '00' && minutes <= '10'" 
+        *ngIf="days === '00' && hours === '00' && minutes <= '10'"
         (click)="takeExam()"
         [style]="{
           margin: '0 10px',
@@ -173,8 +172,6 @@
         [raised]="true"
         severity="warning"
       />
-     
-     
     </div>
     <div class="rowDetail">
       <div class="new-text">Subject: {{ examShow.subject }}</div>
@@ -213,60 +210,59 @@
 </p-dialog>
 
 <div *ngIf="ready" class="examtaken">
-  <div class="boxstand" *ngIf="minutes !== '00' || seconds !== '00'">
+  <div class="boxstand">
     <div class="time-left">
       time left:
       <div class="medium-text">{{ minutes }}:{{ seconds }}</div>
     </div>
-   
-	<div *ngIf="!accept">
- <form  [formGroup]="otpForm">
-      <input
-        class="otp-input"
-        formControlName="otp1"
-        type="text"
-        maxlength="1"
+
+    <div *ngIf="!accept">
+      <form [formGroup]="otpForm">
+        <input
+          class="otp-input"
+          formControlName="otp1"
+          type="text"
+          maxlength="1"
+        />
+        <input
+          class="otp-input"
+          formControlName="otp2"
+          type="text"
+          maxlength="1"
+        />
+        <input
+          class="otp-input"
+          formControlName="otp3"
+          type="text"
+          maxlength="1"
+        />
+        <input
+          class="otp-input"
+          formControlName="otp4"
+          type="text"
+          maxlength="1"
+        />
+      </form>
+      <p-button
+        *ngIf="
+          otpForm.get('otp1')?.value !== '' &&
+          otpForm.get('otp2')?.value !== '' &&
+          otpForm.get('otp3')?.value !== '' &&
+          otpForm.get('otp4')?.value !== ''
+        "
+        (click)="acceptcode()"
+        label="Valid"
+        [raised]="true"
+        [style]="{
+          margin: '0 10px',
+          color: '#444ae3',
+          borderRadius: '10px',
+          background: '#eef2ff',
+          outline: 'none'
+        }"
       />
-      <input
-        class="otp-input"
-        formControlName="otp2"
-        type="text"
-        maxlength="1"
-      />
-      <input
-        class="otp-input"
-        formControlName="otp3"
-        type="text"
-        maxlength="1"
-      />
-      <input
-        class="otp-input"
-        formControlName="otp4"
-        type="text"
-        maxlength="1"
-      />
-    </form>
-    <p-button
-      *ngIf="
-        otpForm.get('otp1')?.value !== '' &&
-        otpForm.get('otp2')?.value !== '' &&
-        otpForm.get('otp3')?.value !== '' &&
-        otpForm.get('otp4')?.value !== ''
-      "
-      (click)="acceptcode()"
-      label="Valid"
-      [raised]="true"
-      [style]="{
-        margin: '0 10px',
-        color: '#444ae3',
-        borderRadius: '10px',
-        background: '#eef2ff',
-        outline: 'none'
-      }"
-      
-    />
-	</div>
-	<!-- <div *ngIf="!accept">
+    </div>
+    <!-- <div *ngIf="!accept">
 
 	</div> -->
     <!-- <button
@@ -281,7 +277,7 @@
 	Enter
   </button> -->
   </div>
-  <div class="boxExam" *ngIf="accept ">
+  <div class="boxExam" *ngIf="accept">
     <!-- hours === '00' && minutes === '00' && seconds === '00' -->
     <app-examtaken [idExam]="examShow.exam__id"></app-examtaken>
   </div>

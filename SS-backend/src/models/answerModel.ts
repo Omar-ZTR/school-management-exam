@@ -46,4 +46,5 @@ export class Answer extends Model<Answer> {
 
     @Column(DataType.INTEGER)
     ans__result!: number;
+  FileAnswers: any;
 }
