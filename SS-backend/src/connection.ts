@@ -20,12 +20,14 @@ import { AnswerStudent } from "./models/answerStudentModel";
 import { Admin } from "./models/adminModel";
 import { TeacherSubject } from "./models/teacherSubjectsModel";
 import { TeacherGroup } from "./models/teacherGroupsModel";
+import { Subscribe } from "./models/subscribeModel";
 
 const connection = new Sequelize("smartskills", "root", "", {
   host: "localhost",
   dialect: "mysql",
   database: "smartskills",
   models: [
+    Subscribe,
     User,
     Exam,
     Question,

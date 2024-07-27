@@ -19,6 +19,7 @@ const examGroupModel_1 = require("./examGroupModel");
 const groupModel_1 = require("./groupModel");
 const teacherModel_1 = require("./teacherModel");
 const answerModel_1 = require("./answerModel");
+const subscribeModel_1 = require("./subscribeModel");
 let Exam = class Exam extends sequelize_typescript_1.Model {
 };
 exports.Exam = Exam;
@@ -81,6 +82,10 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => answerModel_1.Answer),
     __metadata("design:type", Array)
 ], Exam.prototype, "answers", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => subscribeModel_1.Subscribe),
+    __metadata("design:type", Array)
+], Exam.prototype, "subscribes", void 0);
 exports.Exam = Exam = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

@@ -1,6 +1,7 @@
-import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from "sequelize-typescript";
+import { Table, Model, Column, DataType, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
 import { users } from "./usress/userModel";
 import { Group } from "./groupModel";
+import { Subscribe } from "./subscribeModel";
 
 @Table({
   tableName: "Student",
@@ -22,5 +23,8 @@ export class Student extends users<Student> {
   @BelongsTo(() => Group)
   group?: Group;
 
+
+  @HasMany(() => Subscribe)
+  subscribes!: Subscribe[];
   
 }

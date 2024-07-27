@@ -42,6 +42,7 @@ const fileRouter_1 = __importDefault(require("./routers/fileRouter"));
 const answerRouter_1 = __importDefault(require("./routers/answerRouter"));
 const teacherRouter_1 = __importDefault(require("./routers/teacherRouter"));
 const studentRouter_1 = __importDefault(require("./routers/studentRouter"));
+const subscribeRouter_1 = __importDefault(require("./routers/subscribeRouter"));
 const app = (0, express_1.default)();
 const cors = require("cors");
 app.use((0, body_parser_1.json)());
@@ -53,7 +54,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
-app.use("/", teacherRouter_1.default, authRouter_1.default, examRouter_1.default, questionRouter_1.default, reservationRouter_1.default, groupRouter_1.default, salleRouter_1.default, fileRouter_1.default, answerRouter_1.default, routerSubject_1.default, studentRouter_1.default);
+app.use("/", teacherRouter_1.default, authRouter_1.default, examRouter_1.default, questionRouter_1.default, reservationRouter_1.default, groupRouter_1.default, salleRouter_1.default, fileRouter_1.default, answerRouter_1.default, routerSubject_1.default, studentRouter_1.default, subscribeRouter_1.default);
 const corsOptions = {
     origin: "http://localhost:4200",
     optionsSuccessStatus: 200,

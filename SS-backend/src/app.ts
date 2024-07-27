@@ -14,6 +14,7 @@ import routerFile from "./routers/fileRouter";
 import routerAnswer from "./routers/answerRouter";
 import routerTeacher from "./routers/teacherRouter";
 import routerStudents from "./routers/studentRouter";
+import routerSubscribe from "./routers/subscribeRouter";
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use(
   routerAnswer,
   routersubject,
   routerStudents,
+  routerSubscribe,
 );
 
 const corsOptions = {

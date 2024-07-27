@@ -7,6 +7,7 @@ import { ExamGroup } from "./examGroupModel";
 import { Group } from "./groupModel";
 import { Teacher } from "./teacherModel";
 import { Answer } from "./answerModel";
+import { Subscribe } from "./subscribeModel";
 
 @Table({
   timestamps: true,
@@ -56,6 +57,11 @@ export class Exam extends Model<Exam> {
 
   @HasMany(() => Answer)
   answers!: Answer[];
+
+  @HasMany(() => Subscribe)
+  subscribes!: Subscribe[];
+
+
 }
 
 

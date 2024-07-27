@@ -14,6 +14,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
+import { CarouselModule } from 'primeng/carousel';
+import { SubscribeService } from '../../../services/servicesUtils/subscribe.service';
 
 @Component({
   selector: 'app-exams',
@@ -27,6 +29,7 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
     ButtonModule,
     InputOtpModule,
     ExamtakenComponent,
+    CarouselModule
   ],
 })
 export class ExamsComponent {
@@ -35,15 +38,23 @@ export class ExamsComponent {
   ready: boolean = false;
   accept: boolean = false;
   otpForm!: FormGroup;
-
+  userId = this.tokenService.getUserIdFromToken();
   groupId = this.tokenService.getGroupIdFromToken();
+  CourseExam: any;
+  CertifExam: any;
+  subscribe: { [key: number]: { check?: any; acceptation?: any } } = {};
+  subscribes: any;
+
+  fakesubscribe: { [key: number]: { check?: any; acceptation?: any } } = {};
 
   constructor(
     private tokenService: TokenServiceService,
     private fb: FormBuilder,
     private calandarService: CalandarService,
-    private examService: ExamService
+    private examService: ExamService,
+    private subscribeService: SubscribeService,
   ) {}
+  responsiveOptions: any[] | undefined;
 
   examShow: any = {
     exam__id: '',
@@ -60,6 +71,25 @@ export class ExamsComponent {
   countdownInterval!: any;
   ngOnInit(): void {
 
+
+
+    this.responsiveOptions = [
+      {
+          breakpoint: '1400px',
+          numVisible: 3,
+          numScroll: 3
+      },
+      {
+          breakpoint: '1220px',
+          numVisible: 2,
+          numScroll: 2
+      },
+      {
+          breakpoint: '1100px',
+          numVisible: 1,
+          numScroll: 1
+      }
+  ];
 console.log("sgroupIdgroupIdss", this.groupId)
 
     this.otpForm = this.fb.group({
@@ -197,6 +227,14 @@ console.log("aksjjjjjjjjjjjjjjjjjjjjj",this.groupId)
     this.calandarService.getExams(this.groupId).subscribe(
       (data) => {
         this.examlist = data;
+        this.CourseExam = this.examlist.filter((exam: any) => exam.obligation === true);
+        this.CertifExam = this.examlist.filter((exam: any) => exam.obligation === false);
+        this.getSubscribe();
+        for( const course of this.CourseExam) {
+        
+            this.fakesubscribe[course.exam__id] = { check: true, acceptation: true };
+          }
+        
         console.log('nnddd', this.examlist);
       },
       (error) => {
@@ -214,4 +252,66 @@ console.log("aksjjjjjjjjjjjjjjjjjjjjj",this.groupId)
   openFile(filePath: string): void {
     window.open(filePath, '_blank');
   }
+
+  checkAcceptation(){
+    for( const Certif of this.CertifExam) {
+      if (!this.subscribe[Certif.exam__id]) {
+        this.subscribe[Certif.exam__id] = { check: false, acceptation: null };
+      }
+      for( const subs of this.subscribes) {
+        console.log("examcdrtf",Certif)
+        console.log("subs subs sbus",subs)
+        if(subs.exam__id == Certif.exam__id && subs.user__id == this.userId)
+        this.subscribe[Certif.exam__id] = { check: true, acceptation: subs.acceptation };
+
+      }
+     
+  
+      console.log('Subscription status for', Certif.exam__id, ':', this.subscribe[Certif.exam__id]);
+    };
+  }
+
+  getSubscribe(): void {
+ 
+      this.subscribeService.getSubscribes().subscribe(
+        (data: any) => {
+          console.log('Subscription check data:', data);
+        this.subscribes = data
+        this.checkAcceptation()
+        },
+        (error: { error: { message: any } }) => {
+          console.error('Error checking subscription:', error);
+        }
+      );
+  
+   
+  
+  }
+
+sendSubscribe(){
+  const subscribeData = {
+   exam__id: this.plan.exam__id,
+
+    user__id: this.userId,
+  };
+  console.log('data  subscribeData:', subscribeData);
+
+  this.subscribeService.createSubscribe(subscribeData).subscribe(
+    (data: any) => {
+      alert('Successfully create');
+      console.log('seccess', data);
+
+      
+    },
+    (error: { error: { message: any } }) => {
+      console.log('errrr', error);
+    }
+  );
+
+
+}
+
+
+
+  
 }

@@ -1,7 +1,86 @@
+<p-carousel
+  [value]="CertifExam"
+  [numVisible]="3"
+  [numScroll]="1"
+  [responsiveOptions]="responsiveOptions"
+>
+  <ng-template let-event pTemplate="item">
+    <!-- <div class="border-1 surface-border border-round m-2 p-3">
+            <div class="mb-3">
+                <div class="relative mx-auto">
+                     <img 
+                        src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" 
+                        [alt]="product.name" 
+                        class="w-full border-round" />
+                    <p-tag 
+                        [value]="product.inventoryStatus" 
+                        [severity]="getSeverity(product.inventoryStatus)" 
+                        class="absolute" 
+                        [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+                </div>
+            </div>
+            <div class="mb-3 font-medium">
+                {{ product.name }}
+            </div>
+            <div class="flex justify-content-between align-items-center">
+                <div class="mt-0 font-semibold text-xl">
+                    {{ '$' + product.price }}
+                </div>
+                <span>
+                    <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
+                    <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
+                </span>
+            </div>
+        </div> -->
+
+    <div class="ard" (click)="showDialog(event)">
+      <div class="paperclip">
+        <i class="fa-solid fa-paperclip fa-flip-vertical fa-2xl"></i>
+      </div>
+      <div class="note">
+        <div style="transform: rotate3d(1, 1, 1, -15deg); margin-top: 4px">
+          {{ event.startDate | date : "MMM " }}
+        </div>
+        <div style="transform: rotate3d(1, 1, 1, -15deg)">
+          {{ event.startDate | date : "dd " }}
+        </div>
+      </div>
+
+      <div class="title">{{ event.title }}</div>
+      <div class="description">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </div>
+      <div class="description">
+        {{ event.startDate | date : "shortTime" }} -
+        {{ event.endDate | date : "shortTime" }}
+      </div>
+      <div class="footer"></div>
+    </div>
+    <!-- <div (click)="showDialog(event)" class="CardCarousl">
+          <div class="-item_bg"></div>
+  
+          <div class="titleCarousl">
+            {{ event.title }}
+          
+          </div>
+          <div class="-item_date-box">
+            Start:
+            <span class="-item_date">
+              {{ event.startDate | date : "EEEE dd MMMM" }}
+            </span>
+          </div>
+          <div class="-item_date-box">
+            {{ event.startDate | date : "shortTime" }} -
+            {{ event.endDate | date : "shortTime" }}
+          </div>
+        </div> -->
+  </ng-template>
+</p-carousel>
+
 <div class="ag-format-container">
   <div class="ag-courses_box">
-    Exams
-    <div *ngFor="let event of examlist" class="ag-courses_item">
+    <div *ngFor="let event of CourseExam" class="ag-courses_item">
       <a (click)="showDialog(event)" class="ag-courses-item_link">
         <div class="ag-courses-item_bg"></div>
 
@@ -159,7 +238,13 @@
         <div class="medium-text">Sec</div>
       </div>
       <p-button
-        *ngIf="days === '00' && hours === '00' && minutes <= '10'"
+        *ngIf="
+          days === '00' &&
+          hours === '00' &&
+          minutes <= '10' &&
+          (plan.obligation ||
+            (subscribe[plan.exam__id] && subscribe[plan.exam__id].acceptation))
+        "
         (click)="takeExam()"
         [style]="{
           margin: '0 10px',
@@ -172,12 +257,35 @@
         [raised]="true"
         severity="warning"
       />
+      <p-button
+        *ngIf="
+          !plan.obligation &&
+          subscribe[plan.exam__id] &&
+          !subscribe[plan.exam__id].check
+        "
+        (click)="sendSubscribe()"
+        [style]="{
+        margin: '0 10px',
+          height: '50px',
+          borderRadius: '10px',
+          lineHeight: '0',
+          outline: 'none',
+          border: 'solid 1px #fac4a1',
+          background: '#ffffff',
+          color: '#4b5563',
+          boxshadow: '5px 5px 5px 0px #f16000',
+      }"
+        label="Subscribe"
+        [raised]="true"
+        severity="info"
+      />
     </div>
     <div class="rowDetail">
       <div class="new-text">Subject: {{ examShow.subject }}</div>
-      <div *ngIf="!examShow.obligatoire" class="new-text">course</div>
-      <div *ngIf="examShow.obligatoire" class="new-text">is certified</div>
-      <div class="new-text">Salle: {{ plan.salle }}</div>
+
+      <div class="new-text">
+        {{ plan.salle ? "Salle " + plan.salle : "Remotly" }}
+      </div>
     </div>
     <div class="new-text">Support course:</div>
     <div class="examFiles">

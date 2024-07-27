@@ -26,17 +26,20 @@ export class Reservation extends Model<Reservation> {
       @Column(DataType.STRING)
       exam__title!: string;
     
-      @Column(DataType.STRING)
-      salle!: string;
-    
       @Column({
         type: DataType.STRING,
-    
+       
       })
-      group__name!: string;
+      salle!: string ;
+    
       @Column({
         type: DataType.STRING,
-    
+        allowNull: true,
+      })
+      group__name!: string | null;
+      @Column({
+        type: DataType.STRING,
+        
       })
       code!: string;
     

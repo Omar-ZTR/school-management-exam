@@ -46,12 +46,12 @@ export const getSpecificReservations = async (req: Request, res: Response) => {
     console.log("groupgroup group group",group)
      try {
          const reservations = await Reservation.findAll({
-             where: {
-               [Op.or]: [
-                 { group__name: group?.group__name },
-                 { group__name: ''}
-               ]
-             }
+             where:  {
+                [Op.or]: [
+                  { group__name:  { [Op.eq]: group!.group__name } },
+                  { group__name: { [Op.is]: null } }
+                ]
+              }
            });
 
 

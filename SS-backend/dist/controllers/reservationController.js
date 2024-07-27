@@ -47,8 +47,8 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
         const reservations = yield reservationModel_1.Reservation.findAll({
             where: {
                 [sequelize_1.Op.or]: [
-                    { group__name: group === null || group === void 0 ? void 0 : group.group__name },
-                    { group__name: '' }
+                    { group__name: { [sequelize_1.Op.eq]: group.group__name } },
+                    { group__name: { [sequelize_1.Op.is]: null } }
                 ]
             }
         });

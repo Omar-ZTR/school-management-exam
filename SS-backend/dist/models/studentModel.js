@@ -13,6 +13,7 @@ exports.Student = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const userModel_1 = require("./usress/userModel");
 const groupModel_1 = require("./groupModel");
+const subscribeModel_1 = require("./subscribeModel");
 let Student = class Student extends userModel_1.users {
 };
 exports.Student = Student;
@@ -30,6 +31,10 @@ __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => groupModel_1.Group),
     __metadata("design:type", groupModel_1.Group)
 ], Student.prototype, "group", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => subscribeModel_1.Subscribe),
+    __metadata("design:type", Array)
+], Student.prototype, "subscribes", void 0);
 exports.Student = Student = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: "Student",
