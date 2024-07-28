@@ -12,6 +12,7 @@ routerExam.get('/examsGS', examController_1.getExamsGroupsStutents);
 routerExam.get('/exams', examController_1.getFullExams);
 routerExam.get('/examsTeach/:id', examController_1.getTeacherExams);
 routerExam.get('/exams/:id', examController_1.getExamById);
+routerExam.put('/ExamDesc/:id', examController_1.addDescreptionExam);
 routerExam.post('/examc', examController_1.createExam);
 routerExam.post('/examUPfile/:id', examController_1.updateExamFile);
 routerExam.put('/Exams/:id', examController_1.updateExam);

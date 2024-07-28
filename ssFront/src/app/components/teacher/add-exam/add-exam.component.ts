@@ -23,6 +23,7 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
 import { InputTextModule } from 'primeng/inputtext';
 import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
 import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
+import { DialogModule } from 'primeng/dialog';
 @Component({
   selector: 'app-add-exam',
   standalone: true,
@@ -38,13 +39,14 @@ import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
     CalandarfullComponent,
     DropdownModule,
     InputTextModule,
+    DialogModule,
   ],
 })
 export class AddExamComponent {
   examForm: FormGroup;
   subjectForm!: FormGroup<any>;
   selectedOption: string = '';
-
+  visibleOption = false;
   subjectValue = '';
   examType: string = '';
   listFile: any = [];
@@ -67,8 +69,13 @@ export class AddExamComponent {
   Allquestions!: any[];
   group!: any[];
 
-  errQuestion: boolean=false
-  errFile: boolean=false
+  errQuestion: boolean = false;
+  errFile: boolean = false;
+  examDesc: string ='';
+  urlsSuport: any[] = [];
+  listsuportFile: any[] = [];
+  oblig: any;
+  descErr!: string;
 
   changeTypeGlobal(value: string) {
     this.typeGlobal = value;
@@ -105,9 +112,8 @@ export class AddExamComponent {
   }
 
   toggleCalendar() {
-    this.isMonthView=true
+    this.isMonthView = true;
     this.showCalendar = !this.showCalendar;
-    
   }
 
   isMonthView: boolean = true;
@@ -125,7 +131,7 @@ export class AddExamComponent {
         const teacher = data;
         this.subjects = teacher[0].subjects;
         this.Allquestions = teacher[0].questions;
-        this.group=teacher[0].groups
+        this.group = teacher[0].groups;
         this.filterQuestions();
         console.log('subjectshhhhhhsss is is sis', teacher[0].subjects);
         console.log('subjectshhhhhhsss is is sis', teacher[0].questions);
@@ -186,7 +192,7 @@ export class AddExamComponent {
   loadQuestions(response: any): void {
     console.log('Question added with response:', response);
     this.questarr.push(response);
-    this.errQuestion=false
+    this.errQuestion = false;
     const index = this.questions.indexOf(response);
     if (index > -1) {
       this.questions.splice(index, 1);
@@ -211,12 +217,31 @@ export class AddExamComponent {
     if (files) {
       for (let file of files) {
         this.listFile.push(file);
-        this.errFile =false;
+        this.errFile = false;
         const extension = getFileExtension(file.name);
         const fileType = getFileType(extension);
 
         await this.readFileAsync(file).then((url: any) => {
           this.urls.push({ name: file.name, type: fileType, url: url });
+        });
+      }
+    }
+  }
+
+  async detectFilesSupport(event: any) {
+    let files = event.target.files;
+    this.listsuportFile = [];
+    this.urlsSuport = [];
+
+    if (files) {
+      for (let file of files) {
+        this.listsuportFile.push(file);
+        this.errFile = false;
+        const extension = getFileExtension(file.name);
+        const fileType = getFileType(extension);
+
+        await this.readFileAsync(file).then((url: any) => {
+          this.urlsSuport.push({ name: file.name, type: fileType, url: url });
         });
       }
     }
@@ -277,51 +302,36 @@ export class AddExamComponent {
   }
 
   savePlan() {
-    Object.values(this.examForm.controls).forEach((control) => {
-      control.markAsTouched();
-    });
-    console.log('s........', this.examForm.valid);
-    console.log('s...sss....', this.user__id);
-    console.log('s...sss....', this.examForm.value);
-    if (this.examForm.valid) {
 
-      if(this.examForm.value.exam__type ==='Normal' && this.questarr.length ==0){
-        console.log("gggggGGGggggGGGGGGgggggGGG")
-        this.errQuestion =true
-        return;
-      }
+    if(!this.oblig && this.examDesc ===''){
+
+      this.descErr='This field is mandatory.'
+      return
+    }
 
 
-      this.examForm.patchValue({
-        questions: this.questarr,
-      });
-      if (this.examForm.invalid) {
-        this.examForm.markAllAsTouched();
+    if((!this.oblig && this.examDesc !== '')|| this.listsuportFile.length > 0 ){
 
-        return;
-      }
-      console.log("listfile",this.listFile)
-      if((this.examForm.value.exam__type ==='FileOff'||this.examForm.value.exam__type ==='File')&&(!this.listFile||this.listFile.length==0) ){
-        console.log("gggggGGGggggGGGGGGgggggGGG")
-        this.errFile =true
-        return;
-      }
 
-      this.dataexam = {
-        exam: this.examForm.value,
-        files: this.listFile,
+
+      const data = {
+        exam__desc: this.examDesc,
       };
-
-      console.log(this.dataexam);
-      this.examService.createExam(this.dataexam).subscribe(
+  
+      const datasupport = {
+        exam: data,
+        files: this.listsuportFile,
+      };
+  
+      console.log('datasupportdatasupport datasupport', datasupport);
+      this.examService.AddDescSupport(datasupport, this.dataPLan).subscribe(
         (response: any) => {
-          this.showSuccessAlert(() => {
-            this.showCalendar = true;
-          });
-          console.log('seccess', response);
-
-          this.dataPLan = response.exam__id;
-          this.resetForm();
+          console.log('plan  Desc', response);
+          this.showCalendar = true;
+          this.visibleOption = false;
+          this.examDesc = ''
+          this.listsuportFile = []
+          this.urlsSuport=[]
         },
         (error: { error: { message: any } }) => {
           //this.ngxService.stop();
@@ -335,27 +345,88 @@ export class AddExamComponent {
           // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
         }
       );
-    }
+   }else{
+    console.log('is nos support');
+    this.showCalendar = true;
+    this.visibleOption = false;
+   }
+
+
+
   }
 
-
-  Cancel(){
+  Cancel() {
     this.examForm.patchValue({ exam__type: '' });
-    this.questarr = []
+    this.questarr = [];
   }
+
+  AddSupport() {
+
+    
+if(!this.oblig && this.examDesc ===''){
+
+  this.descErr='This field is mandatory.'
+
+  return
+}
+
+if((!this.oblig && this.examDesc !== '') || this.listsuportFile.length > 0 ){
+
+
+
+    const data = {
+      exam__desc: this.examDesc,
+    };
+
+    const datasupport = {
+      exam: data,
+      files: this.listsuportFile,
+    };
+
+    console.log('datasupportdatasupport datasupport', datasupport);
+    this.examService.AddDescSupport(datasupport, this.dataPLan).subscribe(
+      (response: any) => {
+        console.log('AAAAADDDD Desc', response);
+      
+        this.visibleOption = false;
+        this.examDesc = ''
+        this.listsuportFile = []
+        this.urlsSuport=[]
+      },
+      (error: { error: { message: any } }) => {
+        //this.ngxService.stop();
+        console.log('errrr', error);
+        // if(error.error?.message){
+        //   this.responseMessage = error.error?.message;
+        // }else{
+        //   this.responseMessage = GlobalConstants.genericError;
+        // }
+        // // alert(this.responseMessage +" " +GlobalConstants.error);
+        // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+      }
+    );
+ }else{
+  console.log('is nos support');
+  this.visibleOption = false;
+ }
+ }
 
   save() {
     Object.values(this.examForm.controls).forEach((control) => {
       control.markAsTouched();
     });
     if (this.examForm.valid) {
-
-      if(this.examForm.value.exam__type ==='Normal' && this.questarr.length ==0){
-        console.log("gggggGGGggggGGGGGGgggggGGG")
-        this.errQuestion =true
+      if (
+        this.examForm.value.exam__type === 'Normal' &&
+        this.questarr.length == 0
+      ) {
+        console.log('gggggGGGggggGGGGGGgggggGGG');
+        this.errQuestion = true;
         return;
       }
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+      console.log(
+        'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+      );
       this.examForm.patchValue({
         questions: this.questarr,
       });
@@ -365,13 +436,15 @@ export class AddExamComponent {
         return;
       }
 
-
-      if((this.examForm.value.exam__type ==='FileOff'||this.examForm.value.exam__type ==='File')&&(!this.listFile||this.listFile.length==0) ){
-        console.log("gggggGGGggggGGGGGGgggggGGG")
-        this.errFile =true
+      if (
+        (this.examForm.value.exam__type === 'FileOff' ||
+          this.examForm.value.exam__type === 'File') &&
+        (!this.listFile || this.listFile.length == 0)
+      ) {
+        console.log('gggggGGGggggGGGGGGgggggGGG');
+        this.errFile = true;
         return;
       }
-
 
       this.dataexam = {
         exam: this.examForm.value,
@@ -385,6 +458,8 @@ export class AddExamComponent {
           console.log('seccess', response);
 
           this.dataPLan = response.exam__id;
+          this.oblig = response.obligatoire
+          this.visibleOption = true;
           this.resetForm();
         },
         (error: { error: { message: any } }) => {

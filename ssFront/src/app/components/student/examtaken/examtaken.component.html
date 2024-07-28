@@ -5,9 +5,9 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th rowspan="2" colspan="2">Title Exam</th>
-        <th colspan="2">date exam</th>
-        <th rowspan="2" colspan="2">name Student</th>
+        <th style="width: 30%;" rowspan="2" colspan="2">{{examTitle}}</th>
+        <th style="width: 40%;" colspan="2">   {{ startDate | date : "EEEE MMMM dd " }}</th>
+        <th style="width: 30%;" rowspan="2" colspan="2"></th>
       </tr>
       <tr>
         <th colspan="2">time exam: {{ formattedTime }}</th>

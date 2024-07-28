@@ -31,8 +31,30 @@ import { SubscribeService } from '../../../services/servicesUtils/subscribe.serv
     ExamtakenComponent,
     CarouselModule
   ],
+  
+  styles: [
+    `
+     
+
+      :host ::ng-deep .p-carousel-indicators .p-link {
+       /* border: 2px solid #e5e7eb !important; */
+    background: #f4a21e !important;
+   
+    border-radius: 10px !important;
+      }
+      :host ::ng-deep .p-carousel-items-content{
+        display: flex !important;
+         justify-content:center !important;
+      }
+     
+    `,
+  ],
+  
+  
+
 })
 export class ExamsComponent {
+
   examlist: any;
   plan: any = {};
   ready: boolean = false;
@@ -111,7 +133,7 @@ console.log("sgroupIdgroupIdss", this.groupId)
     console.log(otpValues);
     if (otpValues === correctCode) {
       this.accept = true;
-
+   
       console.log(this.accept);
     }
   }
@@ -139,7 +161,15 @@ console.log("sgroupIdgroupIdss", this.groupId)
   // code4(event:any){
   //   this.otp4=event
   // }
+  loadAnswer(reponses: any) {
+   if(reponses){
+    this.accept= false
+    this.ready= false
+    this.CourseExam = this.CourseExam.filter((exam: any) => exam.exam__id !== reponses.exam__id);
+    this.CertifExam = this.CertifExam.filter((exam: any) => exam.exam__id !== reponses.exam__id);
 
+   }
+    }
   showDialog(reservation: any) {
     this.visible = true;
     this.plan = reservation;

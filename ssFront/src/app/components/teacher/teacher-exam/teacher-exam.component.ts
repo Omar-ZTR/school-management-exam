@@ -43,6 +43,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
 import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
 import { GlobalConstants, rangeNumber } from '../../../shared/global-constants';
+import { disableCursor } from '@fullcalendar/core/internal';
 @Component({
   selector: 'app-teacher-exam',
   standalone: true,
@@ -150,6 +151,15 @@ export class TeacherExamComponent {
   deletexam: boolean = false;
   showCalendar: boolean = false;
   group!: any[];
+  urlsSuport: any[] = [];
+  listsuportFile: any[] = [];
+  existsuportFile: any[] = [];
+  supportUp:boolean = false;
+  IdsSuport: any[] = [];
+  idExamSup!:any;
+  examdesc:string='';
+  oblig!:boolean;
+  supEdit :boolean=false
   user__id = this.tokenService.getUserIdFromToken();
   constructor(
     private examService: ExamService,
@@ -544,6 +554,7 @@ export class TeacherExamComponent {
       },
       {
         icon: 'pi pi-trash',
+        disabled: exam.answers.length > 0,
         command: () => {
           console.log('Refresh exam with id:', exam.exam__id);
           this.toggleDelete(exam, exam.exam__id, 'exam');
@@ -813,7 +824,7 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
     this.Fileupload=[]
     this.fetchExam(this.Exam.exam__id);
     alert('Successfully updated');
-    console.log('success', response);
+    console.log('succ112@@111111111111111113ess', response);
 
   },
   (error: { error: { message: any } }) => {
@@ -968,12 +979,16 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
       (data) => {
         this.Exam = data;
         this.groupQuestionsByType();
-        console.log('datataken', this.Exam);
+        console.log(' <div *ngIf="f.file__type === ', this.Exam);
         this.examType = this.Exam.exam__type;
+        this.examdesc= this.Exam.exam__desc
+        this.oblig=this.Exam.obligatoire
+        this.idExamSup = this.Exam.exam__id
         if (this.Exam.fileExam && this.Exam.fileExam.length > 0) {
           for (const f of this.Exam.fileExam) {
             console.log("ffffffff", f);
             this.fileExamInit.push(f);
+            
           }
         }
         // this.fileExamInit = this.Exam.fileExam
@@ -1087,4 +1102,150 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
   isFirstPage(): boolean {
     return this.Exams ? this.first === 0 : true;
   }
+
+  async openupdateSupport(exam:any){
+    this.supportUp = true
+    this.idExamSup= exam.exam__id
+    this.urlsSuport=[]
+    const files = exam.file .filter( (f: any) =>
+      f.file__type ==='support'
+  );
+  console.log("klsdhbsdgb hdsbd hdbd ",files)
+  this.existsuportFile=[]
+  this.IdsSuport = [];
+if(files){
+  for (let file of files) {
+    // this.listsuportFile.push(file);
+ 
+    const extension = getFileExtension(file.file__name);
+    const fileType = getFileType(extension);
+    this.existsuportFile.push({ name: file.file__name, type: fileType, url: file.file__path ,fileId : file.file__id});
+    // await this.readFileAsync(file).then((url: any) => {
+    //   this.existsuportFile.push({ name: file.file__name, type: fileType, url: url ,fileId : file.file__id});
+    // });
+  }
+  }
+
+
+  }
+
+toggleUpdate(){
+  this.supEdit=true
+}
+  deleteSupFile(index: number, id:any) {
+    this.existsuportFile.splice(index, 1);
+    this.IdsSuport.push(id);
+  }
+
+
+  removeSupFile(index: number) {
+    this.urlsSuport.splice(index, 1);
+    this.listsuportFile.splice(index, 1);
+  }
+
+  async detectFilesSupport(event: any) {
+    let files = event.target.files;
+    this.listsuportFile = [];
+    this.urlsSuport = [];
+
+    if (files) {
+      for (let file of files) {
+        this.listsuportFile.push(file);
+     
+        const extension = getFileExtension(file.name);
+        const fileType = getFileType(extension);
+
+        await this.readFileAsync(file).then((url: any) => {
+          this.urlsSuport.push({ name: file.name, type: fileType, url: url });
+        });
+      }
+    }
+  }
+
+
+  AddSupport() {
+
+    
+   
+    
+    if(this.examdesc!=='' || this.listsuportFile.length > 0 || this.IdsSuport.length > 0 ){
+    
+
+    
+        const data = {
+          exam__desc: this.examdesc,
+        };
+    
+        const datasupport = {
+          exam: data,
+          files: this.listsuportFile,
+        };
+        const model = "exam"
+        console.log('datasupportdatasupport datasupport', datasupport);
+        this.examService.AddDescSupport(datasupport, this.idExamSup).subscribe(
+          (response: any) => {
+            console.log('Exams Desc',this.idExamSup, this.Exams);
+
+            const index = this.Exams.findIndex(
+              
+              (exam) => exam.exam__id === this.idExamSup
+            );
+            console.log('Exams Desc',this.idExamSup,index);
+if (this.IdsSuport.length > 0){
+
+
+            this.IdsSuport.forEach((id: any) => {
+              if (id) {
+                console.log('fiiiid', id);
+                this.questService.deleteFiles(id, model).subscribe(
+                  (response: any) => {
+
+                    console.log("abs",this.Exams[index],"jhlh/n",response)
+                    this.Exams[index] = response;
+
+                  },
+                  (error: { error: { message: any } }) => {
+                    console.log('error', error);
+                  }
+                );
+              }
+            });}else{
+              console.log("abs",this.Exams[index],"lk fals")
+              this.Exams[index] = response;
+            }
+
+
+
+            console.log("this.Exams[index]this.Exams[index]",this.Exams[index])
+            this.supEdit=false
+            this.IdsSuport=[]
+            this.supportUp = false
+            this.listsuportFile = [];
+            this.urlsSuport = [];
+            this.existsuportFile= [];
+          },
+          (error: { error: { message: any } }) => {
+            //this.ngxService.stop();
+            console.log('errrr', error);
+            // if(error.error?.message){
+            //   this.responseMessage = error.error?.message;
+            // }else{
+            //   this.responseMessage = GlobalConstants.genericError;
+            // }
+            // // alert(this.responseMessage +" " +GlobalConstants.error);
+            // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+          }
+        );
+     }else{
+      console.log('is nos support');
+      
+     }
+     }
+    
+
+
+
+
+
+
 }

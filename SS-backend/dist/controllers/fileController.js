@@ -13,9 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteFile = void 0;
+const questionModel_1 = require("../models/questionModel"); // Import your Question model
 const fileModel_1 = require("../models/fileModel");
+const examModel_1 = require("../models/examModel");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const answerModel_1 = require("../models/answerModel");
+const reservationModel_1 = require("../models/reservationModel");
 const baseUrl = "http://localhost:3000/files/";
 const deleteFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fileId = req.params.id; // Assuming file ID is passed as a URL parameter
@@ -38,16 +42,30 @@ const deleteFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!fileRecord) {
             return res.status(404).json({ message: 'File not found' });
         }
+        let objRecord;
+        let exist;
         // Delete the file record from the database
         switch (model) {
             case 'question':
-                yield fileModel_1.FileQuestion.destroy({ where: { file__id: fileId } });
+                objRecord = yield fileModel_1.FileQuestion.destroy({ where: { file__id: fileId } });
+                exist = yield fileModel_1.FileQuestion.findOne({ where: { file__id: fileId } });
                 break;
             case 'exam':
                 yield fileModel_1.FileExam.destroy({ where: { file__id: fileId } });
+                exist = yield fileModel_1.FileExam.findOne({ where: { file__id: fileId } });
+                if (exist) {
+                    objRecord = yield examModel_1.Exam.findOne({ include: [
+                            { model: questionModel_1.Question },
+                            { model: reservationModel_1.Reservation },
+                            { model: fileModel_1.FileExam },
+                            { model: answerModel_1.Answer },
+                        ], where: { exam__id: exist.exam__id } });
+                }
+                console.log("objRecord asza:", objRecord);
                 break;
             case 'answer':
-                yield fileModel_1.FileAnswer.destroy({ where: { file__id: fileId } });
+                objRecord = yield fileModel_1.FileAnswer.destroy({ where: { file__id: fileId } });
+                exist = yield fileModel_1.FileAnswer.findOne({ where: { file__id: fileId } });
                 break;
         }
         // Delete the physical file from the server
@@ -64,7 +82,8 @@ const deleteFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         else {
             return res.status(404).json({ message: 'File not found!' });
         }
-        res.status(200).json({ message: 'File deleted successfully' });
+        console.log("objRecord path:", objRecord);
+        res.status(200).json(objRecord);
     }
     catch (error) {
         console.error('Error deleting file:', error);

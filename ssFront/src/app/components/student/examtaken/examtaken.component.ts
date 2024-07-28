@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
 import { PanelModule } from 'primeng/panel';
@@ -104,6 +104,12 @@ export class ExamtakenComponent {
     return this.answers.controls.every(control => !control.value.Answer__text);
   }
   @Input() idExam: any;
+
+  @Input() startDate: any;
+
+  @Input() endDate: any;
+  @Output() answerSended = new EventEmitter<any>();  
+
   constructor(
     private examService: ExamService, 
     private examAnswers: ExamAnswersService, 
@@ -117,11 +123,17 @@ export class ExamtakenComponent {
       ans__description:''
     });
   }
-  rePE!:any;
+  timeExam!: number; 
+  examTitle!: string;// 2 hours in seconds
+  interval: any;
   ngOnInit(): void {
+    const start = new Date(this.startDate).getTime();
+    const end = new Date(this.endDate).getTime();
+    const difference = end - start; // Difference in milliseconds
+   
+    this.timeExam= Math.floor(difference / 1000);
 
 
-console.log("rep vrep rep rep rep rep rep rep ", this.rePE)
 
     this.fetchExam();
     this.startTimer();
@@ -180,6 +192,7 @@ console.log("rep vrep rep rep rep rep rep rep ", this.rePE)
       (data) => {
         this.Exam = data;
         this.exam__id= this.Exam.exam__id;
+        this.examTitle = this.Exam.exam__title
         this.groupQuestionsByType();
         this.examType= this.Exam.exam__type;
         console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", this.Exam);
@@ -226,8 +239,7 @@ console.log("rep vrep rep rep rep rep rep rep ", this.rePE)
     return Object.keys(this.groupedQuestions);
   }
 
-  timeExam: number = 2 * 60 * 60; // 2 hours in seconds
-  interval: any;
+
 
   ngOnDestroy() {
     this.clearTimer();
@@ -294,9 +306,7 @@ console.log("rep vrep rep rep rep rep rep rep ", this.rePE)
       }));
     }
   }
-rep(){
-  console.log("shas basbsagb bsagsba sabgsbsa ",this.rePE)
-}
+
   answer(value: string, questionId: number) {
 
     console.log("blur blur blur blur 6666688778",value)
@@ -377,6 +387,8 @@ this.checkAnswers()
     console.log(dataAnswers);
     this.examAnswers.createAnswers(dataAnswers).subscribe(
       (response: any) => {
+        this.visible = false
+      this.answerSended.emit(response);
         alert('Successfully created');
         console.log('success', response);
       },

@@ -85,12 +85,13 @@
 }
 
 .rowDetail{
-  display: flex;
+  display: flex; 
+  justify-content:center;
   margin-left: -40px;
   margin-bottom: 20px;
   /* list-style-type: none; */
   gap: 10%;
-  justify-content:center;
+ 
   /* flex-direction: row; */
   background: #4b5563;
   color: white;
@@ -380,7 +381,14 @@ align-items: stretch; */
     text-align: center;
     position: relative;
     margin: 20px;
+    margin-top: 40px;
     font-family: "Poppins", sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ard:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 .ard .note {
   width: 80px;
@@ -452,7 +460,7 @@ align-items: stretch; */
 }
 .ard .footer {
     margin-top: 20px;
-    width: 50px;
+    width: 80%;
     height: 10px;
     background: #f4a21e;
     border-radius: 5px;

@@ -1,7 +1,7 @@
 <p-carousel
   [value]="CertifExam"
   [numVisible]="3"
-  [numScroll]="1"
+  [numScroll]="3"
   [responsiveOptions]="responsiveOptions"
 >
   <ng-template let-event pTemplate="item">
@@ -387,6 +387,11 @@
   </div>
   <div class="boxExam" *ngIf="accept">
     <!-- hours === '00' && minutes === '00' && seconds === '00' -->
-    <app-examtaken [idExam]="examShow.exam__id"></app-examtaken>
+    <app-examtaken
+      [idExam]="examShow.exam__id"
+      [startDate]="plan.startDate"
+      [endDate]="plan.endDate"
+      (answerSended)="loadAnswer($event)"
+    ></app-examtaken>
   </div>
 </div>

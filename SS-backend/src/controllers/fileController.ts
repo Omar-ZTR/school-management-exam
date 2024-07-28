@@ -7,6 +7,8 @@ import { Exam } from "../models/examModel";
 import uploadFileMiddleware from "../utils/upload";
 import  fs from 'fs';
 import path from "path";
+import { Answer } from "../models/answerModel";
+import { Reservation } from "../models/reservationModel";
 const baseUrl = "http://localhost:3000/files/";
 
 
@@ -38,17 +40,29 @@ export const deleteFile = async (req: Request, res: Response) => {
         if (!fileRecord) {
             return res.status(404).json({ message: 'File not found' });
         }
-
+        let objRecord:any;
+        let exist:any;
         // Delete the file record from the database
         switch (model) {
             case 'question':
-                await FileQuestion.destroy({ where: { file__id: fileId } });
+                objRecord= await FileQuestion.destroy({ where: { file__id: fileId } });
+               exist=await FileQuestion.findOne({ where: { file__id: fileId } });
                 break;
             case 'exam':
-                await FileExam.destroy({ where: { file__id: fileId } });
+              await FileExam.destroy({ where: { file__id: fileId } });
+            exist=await FileExam.findOne({ where: { file__id: fileId } });
+            if(exist){
+                objRecord = await Exam.findOne({   include: [
+                    { model: Question },
+                    { model: Reservation },
+                    { model: FileExam },
+                    { model: Answer },
+                  ],where: { exam__id:exist.exam__id } });}
+                  console.log("objRecord asza:", objRecord);
                 break;
             case 'answer':
-                await FileAnswer.destroy({ where: { file__id: fileId } });
+                objRecord= await FileAnswer.destroy({ where: { file__id: fileId } });
+                exist=await FileAnswer.findOne({ where: { file__id: fileId } });
                 break;
         }
 
@@ -66,8 +80,8 @@ export const deleteFile = async (req: Request, res: Response) => {
         } else {
             return res.status(404).json({ message: 'File not found!' });
         }
-
-        res.status(200).json({ message: 'File deleted successfully' });
+        console.log("objRecord path:", objRecord);
+        res.status(200).json(objRecord);
     } catch (error) {
         console.error('Error deleting file:', error);
         res.status(500).json({ message: 'Internal server error' });

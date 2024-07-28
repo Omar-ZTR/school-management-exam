@@ -1,4 +1,13 @@
-import { Table, Model, Column, DataType, BelongsToMany, HasMany, ForeignKey, BelongsTo } from "sequelize-typescript";
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  BelongsToMany,
+  HasMany,
+  ForeignKey,
+  BelongsTo,
+} from "sequelize-typescript";
 import { Question } from "./questionModel";
 import { ExamQuestion } from "./examQuestionModel";
 import { FileExam } from "./fileModel";
@@ -25,8 +34,8 @@ export class Exam extends Model<Exam> {
   nb__reserve!: number;
   @ForeignKey(() => Teacher)
   @Column({
-    onDelete: 'CASCADE' // Enable cascading delete
-})
+    onDelete: "CASCADE", // Enable cascading delete
+  })
   user__id!: number;
 
   @BelongsTo(() => Teacher)
@@ -61,14 +70,9 @@ export class Exam extends Model<Exam> {
   @HasMany(() => Subscribe)
   subscribes!: Subscribe[];
 
-
+  @Column({ type: DataType.STRING })
+  exam__desc!: string;
 }
-
-
-
-
-
-
 
 // import { Table, Model, Column, DataType, HasMany } from "sequelize-typescript";
 // import { Question } from "./questionModel";

@@ -25,9 +25,7 @@
     <button (click)="save()">
       <i class="fa-solid fa-folder-plus"></i>Save
     </button>
-    <button (click)="savePlan()">
-      <i class="fa-solid fa-calendar-days"></i> Save & Planing
-    </button>
+    
   </div>
 </div>
 <div
@@ -347,9 +345,9 @@
           <button (click)="save()">
             <i class="fa-solid fa-folder-plus"></i>Save
           </button>
-          <button (click)="savePlan()">
+          <!-- <button (click)="savePlan()">
             <i class="fa-solid fa-calendar-days"></i> Save & Planing
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
@@ -451,3 +449,90 @@
      
       </div>
     </div> -->
+    <p-dialog
+    header="Add support course"
+    [modal]="true"
+    [(visible)]="visibleOption"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+
+    [draggable]="false"
+  >
+
+  <div class="form-group col-md-12" *ngIf="!oblig">
+    <label>Title Exam :</label>
+    <textarea
+      type="text"
+      pInputText
+      placeholder="Enter First Name"
+      class="form-control"
+      [(ngModel)]="examDesc"
+    >
+  </textarea>
+
+  <span
+  class="error"
+  *ngIf="descErr"
+  >{{descErr}}</span
+>
+    </div>
+
+
+
+  <label for="UpFile">Import Files :</label>
+  <div id="UpFile" class="fileTestForm box">
+    <ul class="boxpreview" *ngIf="urlsSuport != []">
+      <div [ngClass]="errFile ? 'alert' : ''" *ngIf="errFile">
+        <i
+          class="fa-solid fa-circle-exclamation fa-beat-fade fa-xl flex"
+        >Add file
+        </i>
+       
+      
+      </div>
+      <div *ngFor="let url of urlsSuport; let i = index">
+        <li>
+          <div class="filepreview" [matTooltip]="url.name">
+            <div class="removeFile" (click)="removeFile(i)">
+              <i class="fa-solid fa-xmark fa-xl"></i>
+            </div>
+            <div class="previewimg">
+              <img *ngIf="url.type === 'image'" [src]="url.url" />
+              <i
+                *ngIf="url.type !== 'image'"
+                class="fa-solid  fa-file-{{ url.type }} fa"
+              ></i>
+            </div>
+
+            <div class="fileTitle">{{ url.name }}</div>
+          </div>
+        </li>
+      </div>
+    </ul>
+    <div class="custome-file">
+      <span>
+        <i class="fa-solid fa-paperclip fa-lg"></i>Attach File
+      </span>
+      <input
+        type="file"
+        accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+        multiple
+        (change)="detectFilesSupport($event)"
+      />
+    </div>
+  </div>
+  
+    <p-footer>
+    
+
+        <div class="Row">
+          <button (click)="AddSupport()">
+            <i class="fa-solid fa-folder-plus"></i>Save
+          </button>
+          <button (click)="savePlan()">
+            <i class="fa-solid fa-calendar-days"></i> Save & Planing
+          </button>
+       
+      </div>
+    </p-footer>
+  </p-dialog>

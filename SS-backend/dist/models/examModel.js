@@ -38,7 +38,7 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => teacherModel_1.Teacher),
     (0, sequelize_typescript_1.Column)({
-        onDelete: 'CASCADE' // Enable cascading delete
+        onDelete: "CASCADE", // Enable cascading delete
     }),
     __metadata("design:type", Number)
 ], Exam.prototype, "user__id", void 0);
@@ -86,6 +86,10 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => subscribeModel_1.Subscribe),
     __metadata("design:type", Array)
 ], Exam.prototype, "subscribes", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
+    __metadata("design:type", String)
+], Exam.prototype, "exam__desc", void 0);
 exports.Exam = Exam = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

@@ -41,7 +41,7 @@ export class AddQuestionComponent {
   @Input() subjectValue: any;
   @Input() examType: any;
   @Input() questionEdit: any;
-  @Output() questionAdded = new EventEmitter<any>();
+  @Output() questionAdded = new EventEmitter<any>(); 
   questionsForm: FormGroup;
   subjectForm!: FormGroup;
   reponsesForm!: FormGroup;

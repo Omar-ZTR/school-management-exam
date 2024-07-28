@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredExams = exports.deleteExam = exports.updateExamFile = exports.updateExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.getFilteredExams = exports.deleteExam = exports.updateExamFile = exports.updateExam = exports.addDescreptionExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
@@ -30,20 +30,16 @@ const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         console.log("exam 2", req.body.files);
         yield (0, upload_1.default)(req, res); // Handle file upload
-        console.log("exam 3", req.body.file);
         const examDatas = Object.assign({}, req.body); // Assuming exam data is in req.body
-        console.log("exam 4", examDatas);
         const examData = JSON.parse(examDatas.exam);
-        console.log("LLLL 5", examData);
         const exam = yield examModel_1.Exam.create(examData);
-        console.log("exam 6");
         if (req.files && req.files.length > 0) {
             console.log("files 7", req.files);
             for (const file of req.files) {
                 const support__files = {
                     file__name: file.originalname,
                     file__path: baseUrl + file.filename,
-                    file__type: "support",
+                    file__type: "content",
                     exam__id: exam.exam__id,
                 };
                 console.log("file attribute", support__files);
@@ -131,11 +127,13 @@ function formatExamData(exam) {
         subject: exam.subject,
         exam__title: exam.exam__title,
         exam__type: exam.exam__type,
+        exam__desc: exam.exam__desc,
         obligatoire: exam.obligatoire,
         fileExam: exam.file.map((f) => ({
             file__id: f.file__id,
             file__name: f.file__name,
             file__path: f.file__path,
+            file__type: f.file__type,
         })),
         questions: exam.questions.map((question) => ({
             question__id: question.question__id,
@@ -192,6 +190,7 @@ const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function
                 { model: questionModel_1.Question },
                 { model: reservationModel_1.Reservation },
                 { model: fileModel_1.FileExam },
+                { model: answerModel_1.Answer },
             ],
             where: { user__id: id },
         });
@@ -222,6 +221,55 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.getExamsGroupsStutents = getExamsGroupsStutents;
+const addDescreptionExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield (0, upload_1.default)(req, res); // Handle file upload
+        const examDatas = Object.assign({}, req.body); // Assuming exam data is in req.body
+        const examData = JSON.parse(examDatas.exam);
+        if (req.files && req.files.length > 0) {
+            console.log("files 7", req.files);
+            for (const file of req.files) {
+                const support__files = {
+                    file__name: file.originalname,
+                    file__path: baseUrl + file.filename,
+                    file__type: "support",
+                    exam__id: id,
+                };
+                console.log("file attribute", support__files);
+                yield fileModel_1.FileExam.create(support__files);
+            }
+        }
+        const existExam = yield examModel_1.Exam.findOne({ where: { exam__id: id } });
+        console.log("nmbvxczx", examData);
+        if (existExam.exam__desc === examData.exam__desc) {
+            const [updated] = yield examModel_1.Exam.update(examData, {
+                where: { exam__id: id },
+            });
+            const updatedExam = yield examModel_1.Exam.findOne({ include: [
+                    { model: questionModel_1.Question },
+                    { model: reservationModel_1.Reservation },
+                    { model: fileModel_1.FileExam },
+                    { model: answerModel_1.Answer },
+                ], where: { exam__id: id } });
+            res.status(200).json(updatedExam);
+        }
+        else {
+            const updatedExam = yield examModel_1.Exam.findOne({ include: [
+                    { model: questionModel_1.Question },
+                    { model: reservationModel_1.Reservation },
+                    { model: fileModel_1.FileExam },
+                    { model: answerModel_1.Answer },
+                ], where: { exam__id: id } });
+            res.status(200).json(updatedExam);
+        }
+    }
+    catch (error) {
+        console.error("Error updating Exam", error);
+        res.status(500).send("Error updating Exam");
+    }
+});
+exports.addDescreptionExam = addDescreptionExam;
 // Update operation
 const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -274,14 +322,15 @@ const updateExamFile = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 const support__files = {
                     file__name: file.originalname,
                     file__path: baseUrl + file.filename,
-                    file__type: "support",
+                    file__type: "content",
                     exam__id: id,
                 };
                 console.log("file attribute", support__files);
                 yield fileModel_1.FileExam.create(support__files);
             }
         }
-        res.status(201).json();
+        const updatedExam = yield examModel_1.Exam.findOne({ where: { exam__id: id } });
+        res.status(200).json(updatedExam);
     }
     catch (error) {
         console.error("Error creation exam", error);

@@ -27,7 +27,20 @@ export class ExamService {
     });
   }
 
-
+  AddDescSupport(data: any, id: number) {
+    console.log('fffffffffffffffffffffffl', data);
+    const formData = new FormData();
+    formData.append('exam', JSON.stringify(data.exam));
+    if (data.files && data.files.length > 0) {
+      for (const file of data.files) {
+        // Serialize exam data
+        formData.append('files', file);
+      }
+    }
+    return this.httpClient.put(`${this.url}/ExamDesc/${id}`, formData, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
 
   UpdateFileExam(id:any, data: any) {
  

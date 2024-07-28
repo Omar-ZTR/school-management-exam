@@ -21,13 +21,13 @@ export const createExam = async (req: Request, res: Response) => {
     console.log("exam 2", req.body.files);
 
     await uploadFileMiddleware(req, res); // Handle file upload
-    console.log("exam 3", req.body.file);
+
     const examDatas = { ...req.body }; // Assuming exam data is in req.body
-    console.log("exam 4", examDatas);
+
     const examData = JSON.parse(examDatas.exam);
-    console.log("LLLL 5", examData);
+   
     const exam = await Exam.create(examData);
-    console.log("exam 6");
+
 
     if (req.files && (req.files as Express.Multer.File[]).length > 0) {
       console.log("files 7", req.files);
@@ -36,7 +36,7 @@ export const createExam = async (req: Request, res: Response) => {
         const support__files = {
           file__name: file.originalname,
           file__path: baseUrl + file.filename,
-          file__type: "support",
+          file__type: "content",
           exam__id: exam.exam__id,
         };
         console.log("file attribute", support__files);
@@ -147,11 +147,13 @@ function   formatExamData(exam: any): any {
     subject: exam.subject,
     exam__title: exam.exam__title,
     exam__type: exam.exam__type,
+    exam__desc: exam.exam__desc,
     obligatoire: exam.obligatoire,
     fileExam: exam.file.map((f: any) => ({
       file__id: f.file__id,
       file__name: f.file__name,
       file__path: f.file__path,
+      file__type: f.file__type,
     })),
     questions: exam.questions.map((question: any) => ({
       question__id: question.question__id,
@@ -206,6 +208,7 @@ export const getTeacherExams = async (req: Request, res: Response) => {
         { model: Question },
         { model: Reservation },
         { model: FileExam },
+        { model: Answer },
       ],
       where: { user__id: id },
     });
@@ -233,6 +236,64 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+export const addDescreptionExam = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+
+    await uploadFileMiddleware(req, res); // Handle file upload
+
+    const examDatas = { ...req.body }; // Assuming exam data is in req.body
+
+    const examData = JSON.parse(examDatas.exam);
+
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+      console.log("files 7", req.files);
+
+      for (const file of req.files as Express.Multer.File[]) {
+        const support__files = {
+          file__name: file.originalname,
+          file__path: baseUrl + file.filename,
+          file__type: "support",
+          exam__id: id,
+        };
+        console.log("file attribute", support__files);
+        await FileExam.create(support__files);
+      }
+    }
+    const existExam = await Exam.findOne({ where: { exam__id: id } });
+console.log("nmbvxczx",examData)
+ if (existExam!.exam__desc === examData.exam__desc) {
+    const [updated] = await Exam.update(examData, {
+      where: { exam__id: id },
+    });
+   
+      const updatedExam = await Exam.findOne({   include: [
+        { model: Question },
+        { model: Reservation },
+        { model: FileExam },
+        { model: Answer },
+      ],where: { exam__id: id } });
+      
+      res.status(200).json(updatedExam);
+    } else {
+      const updatedExam = await Exam.findOne({   include: [
+        { model: Question },
+        { model: Reservation },
+        { model: FileExam },
+        { model: Answer },
+      ],where: { exam__id: id } });
+      
+      res.status(200).json(updatedExam);
+    }
+  } catch (error) {
+    console.error("Error updating Exam", error);
+    res.status(500).send("Error updating Exam");
+  }
+};
+
 
 // Update operation
 export const updateExam = async (req: Request, res: Response) => {
@@ -302,8 +363,8 @@ export const updateExamFile = async (req: Request, res: Response) => {
         const support__files = {
           file__name: file.originalname,
           file__path: baseUrl + file.filename,
-          file__type: "support",
-          exam__id: id,
+          file__type: "content",
+          exam__id: id, 
         };
         console.log("file attribute", support__files);
         await FileExam.create(support__files);
@@ -313,8 +374,8 @@ export const updateExamFile = async (req: Request, res: Response) => {
     
     
 
-
-    res.status(201).json();
+    const updatedExam = await Exam.findOne({ where: { exam__id: id } });
+    res.status(200).json(updatedExam);
   } catch (error) {
     console.error("Error creation exam", error);
     res.status(500).json({ error: "Internal server error" });

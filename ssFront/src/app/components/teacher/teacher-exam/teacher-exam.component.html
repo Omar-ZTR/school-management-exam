@@ -36,31 +36,55 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: max-content">Title</th>
-        <th style="width: max-content">Status</th>
-        <th style="width: max-content">Subject</th>
-        <th style="width: max-content">Type</th>
-        <!-- <th style="width: max-content">Questions</th> -->
-        <th style="width: max-content">Content</th>
-        <th style="width: max-content">Create At</th>
-        <!-- <th style="width: max-content">update At</th> -->
-        <th style="width: max-content">scheduled</th>
-        <th style="width: max-content"></th>
+        <th style="min-width: 100px">Title</th>
+        <th style="min-width: 100px">Status</th>
+        <th style="min-width: 100px">Subject</th>
+
+        <!-- <th  style="min-width: 100px;">Questions</th> -->
+        <th style="min-width: 100px">Content</th>
+        <th style="min-width: 100px">Documents</th>
+        <th style="min-width: 100px">Create At</th>
+        <!-- <th  style="min-width: 100px;">update At</th> -->
+        <th style="min-width: 100px">scheduled</th>
+        <th style="min-width: 100px"></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-exam>
       <tr>
         <td>{{ exam.exam__title }}</td>
         <td>{{ exam.obligatoire ? "Course" : "Certificate" }}</td>
-        <td>{{ exam.subject }}</td>
-        <td>{{ exam.exam__type }}</td>
-
-        <td class="TFile" *ngIf="exam.exam__type === 'File'">file</td>
-        <td class="TFile" *ngIf="exam.exam__type === 'FileOff'">file Off</td>
+        <td style="max-width: 200px">{{ exam.subject }}</td>
         <td class="TFile" *ngIf="exam.exam__type === 'Normal'">
           {{ exam.questions.length }} Question
         </td>
+        <td class="TFile" *ngIf="exam.exam__type === 'File'">file</td>
+        <td class="TFile" *ngIf="exam.exam__type === 'FileOff'">file Off</td>
         <td class="TFile" *ngIf="exam.exam__type === 'offline'">Empty</td>
+        <td style="position: relative">
+          <div class="btnUpSup" (click)="openupdateSupport(exam)">
+            <i class="fa-solid fa-pencil fa"></i>
+          </div>
+          <div *ngIf="exam.file" class="supportitems">
+            <div
+              *ngFor="let f of exam.file; let index = index"
+              key="index"
+              class="supportitem"
+            >
+              <div *ngIf="f.file__type === 'support'">
+                <div class="supportimg" (click)="openFile(f.file__path)">
+                  <i
+                    *ngIf="typeFile(f).type !== 'image'"
+                    class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+                  ></i>
+                  <img
+                    *ngIf="typeFile(f).type === 'image'"
+                    [src]="f.file__path"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
 
         <td>{{ exam.createdAt | date : "EEEE dd MMMM  HH:mm" }}</td>
 
@@ -96,6 +120,7 @@
           </div>
         </td>
         <td>
+          <div></div>
           <p-button
             *ngIf="exam.exam__type === 'offline'"
             (click)="toggleDelete(exam, exam.exam__id, 'exam')"
@@ -115,6 +140,7 @@
               direction="left"
               type="linear"
               [mask]="true"
+              [disabled]="exam.answers.length > 0"
               transitionDelay="80"
               showIcon="pi pi-bars"
               hideIcon="pi pi-times"
@@ -399,36 +425,146 @@
   </form>
 </p-dialog>
 
+<!-- updateSupportExam -->
+<p-dialog
+  [modal]="true"
+  header="Delete Confirmation "
+  [(visible)]="supportUp"
+  [style]="{ width: '25rem' }"
+>
+  <div>
+    <label for="UpFile">Import Files :</label>
+    <div id="UpFile" class="fileTestForm box">
+      <ul class="boxpreview" *ngIf="urlsSuport != []">
+        <!-- [matTooltip]="url.name" -->
+        <div *ngFor="let url of existsuportFile; let i = index">
+          <li>
+            <div class="filepreview">
+              <div class="removeFile" (click)="deleteSupFile(i, url.fileId)">
+                <i class="fa-solid fa-xmark fa-xl"></i>
+              </div>
+              <div class="previewimg">
+                <img *ngIf="url.type === 'image'" [src]="url.url" />
+                <i
+                  *ngIf="url.type !== 'image'"
+                  class="fa-solid  fa-file-{{ url.type }} fa"
+                ></i>
+              </div>
+
+              <div class="fileTitle">{{ url.name }}</div>
+            </div>
+          </li>
+        </div>
+
+        <div *ngFor="let url of urlsSuport; let i = index">
+          <li>
+            <div class="filepreview">
+              <div class="removeFile" (click)="removeSupFile(i)">
+                <i class="fa-solid fa-xmark fa-xl"></i>
+              </div>
+              <div class="previewimg">
+                <img *ngIf="url.type === 'image'" [src]="url.url" />
+                <i
+                  *ngIf="url.type !== 'image'"
+                  class="fa-solid  fa-file-{{ url.type }} fa"
+                ></i>
+              </div>
+
+              <div class="fileTitle">{{ url.name }}</div>
+            </div>
+          </li>
+        </div>
+      </ul>
+      <div class="custome-file">
+        <span> <i class="fa-solid fa-paperclip fa-lg"></i>Attach File </span>
+        <input
+          type="file"
+          accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+          multiple
+          (change)="detectFilesSupport($event)"
+        />
+      </div>
+    </div>
+
+    <p-footer>
+      <div class="Row">
+        <button
+          *ngIf="listsuportFile.length > 0 || this.IdsSuport.length > 0"
+          class="btnsave"
+          (click)="AddSupport()"
+        >
+          <i class="fa-solid fa-folder-plus"></i>Save
+        </button>
+      </div>
+    </p-footer>
+  </div>
+</p-dialog>
+
 <!-- edit Exam -->
 <p-dialog
-[header]="Exam ? 'Exam: ' + Exam.exam__title : ''"
+  [header]="Exam ? 'Exam: ' + Exam.exam__title : ''"
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '50rem' }"
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
 >
+  <div class="form-group col-md-12" *ngIf="!oblig">
+    <label>Description of Exam :</label>
+    <span
+      *ngIf="!supEdit"
+      style="position: absolute; right: 10px; top: 3px"
+      (click)="toggleUpdate()"
+      ><i class="fa-solid fa-pencil fa-xl"></i
+    ></span>
+    <span
+      *ngIf="supEdit"
+     class="btnUp"
+      (click)="AddSupport()"
+      >Save</span
+    >
+    <textarea
+      type="text"
+      pInputText
+      placeholder="Enter Description"
+      class="form-control"
+      [(ngModel)]="examdesc"
+      [readOnly]="!supEdit"
+    ></textarea>
+
+    <!-- <span
+class="error"
+*ngIf="descErr"
+>{{descErr}}</span
+> -->
+  </div>
+
   <div *ngIf="examType == 'File' || examType == 'FileOff'">
     <div>
-      <div class="titlebox">Exam file</div>
+      <!-- <div class="titlebox">Exam file</div> -->
 
       <div style="display: flex; gap: 40px">
         <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
           <div *ngFor="let f of Exam.fileExam; let index = index" key="index">
-            <div
-              class="removeFile"
-              *ngIf="Exam.fileExam.length > 1 || Fileupload.length > 0"
-              (click)="deleteFileExam(f.file__id, index)"
-            >
-              <i class="fa-solid fa-xmark fa-xl"></i>
+            <div *ngIf="f.file__type === 'content'">
+              <div
+                class="removeFile"
+                *ngIf="Exam.fileExam.length > 1 || Fileupload.length > 0"
+                (click)="deleteFileExam(f.file__id, index)"
+              >
+                <i class="fa-solid fa-xmark fa-xl"></i>
+              </div>
+              <div class="previewimg" (click)="openFile(f.file__path)">
+                <i
+                  *ngIf="typeFile(f).type !== 'image'"
+                  class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+                ></i>
+                <img
+                  *ngIf="typeFile(f).type === 'image'"
+                  [src]="f.file__path"
+                />
+              </div>
+              <label class="fileTitle" for="">{{ f.file__name }}</label>
             </div>
-            <div class="previewimg" (click)="openFile(f.file__path)">
-              <i
-                *ngIf="typeFile(f).type !== 'image'"
-                class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
-              ></i>
-              <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
-            </div>
-            <label class="fileTitle" for="">{{ f.file__name }}</label>
           </div>
 
           <div *ngFor="let file of FileAdds; let i = index">
@@ -452,6 +588,7 @@
               Add File
             </span>
             <input
+              style="width: 140px"
               type="file"
               accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
               multiple
@@ -471,6 +608,7 @@
       </button>
     </div>
   </div>
+
   <div *ngIf="examType == 'Normal'">
     <ng-container *ngFor="let questionType of getQuestionTypes()">
       <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
@@ -746,6 +884,7 @@
           Attach File
         </span>
         <input
+          style="width: 140px"
           type="file"
           accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
           multiple
@@ -980,7 +1119,6 @@
               questionForms.get('question__type')?.value == '' 
                 ? 'none'
                 : 'auto',}"
-
         />
       </div>
     </div>
@@ -1010,6 +1148,7 @@
           Attach File
         </span>
         <input
+          style="width: 140px"
           type="file"
           accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
           multiple
