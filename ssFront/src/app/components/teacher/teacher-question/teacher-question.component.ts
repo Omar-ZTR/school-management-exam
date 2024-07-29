@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
+import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 
 @Component({
   selector: 'app-teacher-question',
@@ -123,7 +124,16 @@ this.intializeAccociation()
       }
     );
   }
-
+  typeFile(file: any): any {
+    const extension = getFileExtension(file.file__name);
+    const fileType = getFileType(extension);
+    // console.log("type file is",fileType)
+    // console.log("type  is",file.file__type)
+    return { name: file.name, type: fileType };
+  }
+  openFile(filePath: string): void {
+    window.open(filePath, '_blank');
+  }
   loadQuestions(response: any): void {
     console.log('Question added with response:', response);
 

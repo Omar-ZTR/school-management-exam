@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGroup = exports.updateGroup = exports.getGroupById = exports.getGroupsSubject = exports.getAllGroups = exports.createGroup = void 0;
+exports.deleteGroup = exports.updateGroup = exports.getGroupById = exports.getGroupsSubject = exports.getFullGroups = exports.getAllGroups = exports.createGroup = void 0;
 const sequelize_1 = require("sequelize");
 const groupModel_1 = require("../models/groupModel"); // Import your Group model
 const subjectModel_1 = require("../models/subjectModel");
 const examModel_1 = require("../models/examModel");
+const studentModel_1 = require("../models/studentModel");
+const teacherModel_1 = require("../models/teacherModel");
+const answerModel_1 = require("../models/answerModel");
 // Create operation
 const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -63,6 +66,66 @@ const getAllGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getAllGroups = getAllGroups;
+const getFullGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const groups = yield groupModel_1.Group.findAll({
+            include: [
+                {
+                    model: subjectModel_1.Subject,
+                    as: 'subjects',
+                },
+                {
+                    model: examModel_1.Exam,
+                    as: 'exams',
+                },
+                {
+                    model: studentModel_1.Student,
+                    as: 'students',
+                },
+                {
+                    model: teacherModel_1.Teacher,
+                    as: 'teachers',
+                },
+            ],
+        });
+        const result = yield Promise.all(groups.map((group) => __awaiter(void 0, void 0, void 0, function* () {
+            const subjects = yield Promise.all(group.subjects.map((subject) => __awaiter(void 0, void 0, void 0, function* () {
+                const exams = yield Promise.all(group.exams.filter((ex) => ex.subject === subject.subject__name).map((exam) => __awaiter(void 0, void 0, void 0, function* () {
+                    const students = yield Promise.all(group.students.map((student) => __awaiter(void 0, void 0, void 0, function* () {
+                        const answer = yield answerModel_1.Answer.findOne({
+                            where: {
+                                Student__id: student.user__id,
+                                exam__id: exam.exam__id,
+                            }
+                        });
+                        return {
+                            user__name: student.first__name,
+                            ans__result: answer ? answer.ans__result : null,
+                        };
+                    })));
+                    return {
+                        exam__title: exam.exam__title,
+                        students,
+                    };
+                })));
+                return {
+                    subject__name: subject.subject__name,
+                    exams,
+                };
+            })));
+            return {
+                group__name: group.group__name,
+                subjects,
+            };
+        })));
+        res.status(200).json(result);
+    }
+    catch (error) {
+        console.error('Error fetching groups:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getFullGroups = getFullGroups;
 const getGroupsSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("id is : ", req.params);
     try {

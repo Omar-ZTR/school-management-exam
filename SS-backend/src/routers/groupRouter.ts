@@ -6,11 +6,15 @@ import {
   updateGroup,
   deleteGroup,
   getGroupsSubject,
+  getFullGroups,
 } from '../controllers/groupController';
 
 const routerGroup = express.Router();
 
 routerGroup.get('/group', getAllGroups);
+
+
+routerGroup.get('/fullgroup', getFullGroups);
 
 routerGroup.get('/groupSub/:exam__id', getGroupsSubject);
 

@@ -91,6 +91,11 @@ export class ExamsComponent {
   minutes!: string;
   seconds!: string;
   countdownInterval!: any;
+
+  hasSupportFile(examShow: any): boolean {
+    return examShow.fileExam.some((file: { file__type: string; }) => file.file__type === 'support');
+  }
+
   ngOnInit(): void {
 
 

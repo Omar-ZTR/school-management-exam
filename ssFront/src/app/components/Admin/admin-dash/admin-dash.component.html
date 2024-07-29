@@ -3,13 +3,13 @@
     <div class="borderDiv Done active" (click)="showCharts()">
       <div class="boxIcon"><span style="font-size: 40px ; color: #f97316;">{{ completed }}</span></div>
       <div class="textStatic">
-         Exams done.
+         Certificates done.
       </div>
     </div>
     <div class="borderDiv Soon inactive">
       <div class="boxIcon"> <span style="font-size: 40px; ; color: #f97316;" >{{ soon }}</span></div>
       <div class="textStatic">
-        Future exams.
+        Future certificates.
       </div>
     </div>
     <div class="mega-box" *ngIf="ChartPlus">
@@ -46,14 +46,14 @@
   <div class="cardStatic" style="background-color: #f97316;">
     <div class="borderDiv Done active" (click)="showCharts()">
       <div class="boxIcon"><span style="font-size: 40px; color: #100d6ae3;">{{ TeacherCount }}</span></div>
-      <div class="textStatic">
+      <div class="">
         
         teachersAccept.
       </div>
     </div>
     <div class="borderDiv Soon inactive">
       <div class="boxIcon"> <span style="font-size: 40px ;color: #100d6ae3;">{{ GroupCount }}</span></div>
-      <div class="textStatic">
+      <div class="">
         groups.
       </div>
     </div>

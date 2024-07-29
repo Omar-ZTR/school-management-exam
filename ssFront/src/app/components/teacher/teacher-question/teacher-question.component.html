@@ -86,9 +86,40 @@ style="color: red;"
         </div>
 
         <div class="Question">
-          <div class="textQuestion">
+         
+
+          <div class="basicQuestion">
+
+ <div class="textQuestion">
             {{ question.question__text }}
           </div>
+          <div style="position: relative">
+                
+            <div *ngIf="question.file" class="supportitems">
+              <div
+                *ngFor="let f of question.file; let index = index"
+                key="index"
+                class="supportitem"
+              >
+                <div >
+                  <div class="supportimg" (click)="openFile(f.file__path)">
+                    <i
+                      *ngIf="typeFile(f).type !== 'image'"
+                      class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+                    ></i>
+                    <img
+                      *ngIf="typeFile(f).type === 'image'"
+                      [src]="f.file__path"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+
+
 
           <ul>
             <li>
@@ -102,6 +133,7 @@ style="color: red;"
             </li>
 
             <li><span class="lab">Note:</span> {{ question.note }}</li>
+         
           </ul>
 
           <div *ngIf="question.reponses.length > 0" style="margin-top: 40px">

@@ -527,6 +527,7 @@
       pInputText
       placeholder="Enter Description"
       class="form-control"
+      [ngClass]="{'readonl': !supEdit}"
       [(ngModel)]="examdesc"
       [readOnly]="!supEdit"
     ></textarea>

@@ -22,6 +22,7 @@ import { ManageStudentComponent } from './components/Admin/manage-student/manage
 import { ManageSchoolComponent } from './components/Admin/manage-school/manage-school.component';
 import { AdminComponent } from './components/Admin/admin/admin.component';
 import { TeacherQuestionComponent } from './components/teacher/teacher-question/teacher-question.component';
+import { AllresultComponent } from './components/Admin/allresult/allresult.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -63,7 +64,7 @@ export const routes: Routes = [
       { path: 'manageTeacher', component: ManageTeacherComponent },
       { path: 'manageStudent', component: ManageStudentComponent },
       { path: 'manageSchool', component: ManageSchoolComponent },
-      // { path: 'Result', component: ResultComponent },
+      { path: 'result', component: AllresultComponent },
       // { path: 'Correction', component: CorrectionExamsComponent },
     ],
   },

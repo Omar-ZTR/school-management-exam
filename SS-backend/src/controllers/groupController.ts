@@ -3,6 +3,9 @@ import { Group } from "../models/groupModel"; // Import your Group model
 import { Request, Response } from "express";
 import { Subject } from "../models/subjectModel";
 import { Exam } from "../models/examModel";
+import { Student } from "../models/studentModel";
+import { Teacher } from "../models/teacherModel";
+import { Answer } from "../models/answerModel";
 
 // Create operation
 export const createGroup = async (req: Request, res: Response) => {
@@ -55,6 +58,75 @@ export const getAllGroups = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+export const getFullGroups = async (req: Request, res: Response) => {
+  try {
+    const groups = await Group.findAll({
+      include: [
+        {
+          model: Subject,
+          as: 'subjects',
+        },
+        {
+          model: Exam,
+          as: 'exams',
+        },
+        {
+          model: Student,
+          as: 'students',
+          
+        },
+        {
+          model: Teacher,
+          as: 'teachers',
+        },
+      ],
+    });
+    const result = await Promise.all(groups.map(async group => {
+      const subjects = await Promise.all(group.subjects.map(async subject => {
+        const exams = await Promise.all(group.exams.filter((ex:any) => ex.subject === subject.subject__name).map(async exam => {
+          const students = await Promise.all(group.students.map(async student => {
+            const answer = await Answer.findOne({
+              where: {
+                Student__id: student.user__id,
+                exam__id: exam.exam__id,
+              }
+            });
+
+            return {
+              user__name: student.first__name,
+              ans__result: answer ? answer.ans__result : null,
+            };
+          }));
+
+          return {
+            exam__title: exam.exam__title,
+            students,
+          };
+        }));
+
+        return {
+          subject__name: subject.subject__name,
+          exams,
+        };
+      }));
+
+      return {
+        group__name: group.group__name,
+        subjects,
+      };
+    }));
+
+    res.status(200).json(result);
+  
+  } catch (error) {
+    console.error('Error fetching groups:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 
 export const getGroupsSubject = async (req: Request, res: Response) => {
   console.log("id is : ", req.params);

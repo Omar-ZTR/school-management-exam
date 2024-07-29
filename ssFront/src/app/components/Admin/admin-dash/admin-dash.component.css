@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: center;
 
- width: max-content;
+  width: max-content;
   font-family: "Poppins", sans-serif;
   font-weight: 550;
   font-style: italic;
@@ -25,7 +25,7 @@
 .cardStatic:hover .active {
   transform: scale(1.1);
   filter: none;
- 
+
 }
 
 .cardStatic:hover .inactive {
@@ -33,8 +33,8 @@
   filter: blur(0.8px);
 }
 
-.mega-box{
-  
+.mega-box {
+
   position: absolute;
   padding: 30px;
   top: 99%;
@@ -55,28 +55,30 @@
   border: 1px solid rgba(255, 255, 255, .25);
   border-radius: 20px;
   flex-direction: column;
-  animation: toBottom 0.6s cubic-bezier(0, 0.21, 0.58, 1); /* Apply the animation */
+  animation: toBottom 0.6s cubic-bezier(0, 0.21, 0.58, 1);
+  /* Apply the animation */
 }
 
 @keyframes toBottom {
   0% {
-   height: 5px;
-   opacity: 0;
-   visibility: hidden;
+    height: 5px;
+    opacity: 0;
+    visibility: hidden;
   }
 
-  50%{
- 
+  50% {
+
     opacity: 0;
   }
-100%{
-  opacity: 1;
+
+  100% {
+    opacity: 1;
     height: max-content;
     visibility: visible;
   }
 }
 
-.titleLegend{
+.titleLegend {
   text-align: center;
   font-family: "Poppins", sans-serif;
   font-weight: 550;
@@ -86,74 +88,83 @@
   margin: 20px;
 }
 
-.RowCard{
+.RowCard {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
 }
-.cardCourb{
-  border-radius: 10px; 
-margin: 50px 0;
-min-width: 40rem;
-display: flex;
-z-index: -1;
-flex-direction: row;
-align-items: center;
+
+.cardCourb {
+  border-radius: 10px;
+  margin: 50px 0;
+  min-width: 40rem;
+  display: flex;
+  z-index: -1;
+  flex-direction: row;
+  align-items: center;
 }
-.closeChart{
+
+.closeChart {
   position: absolute;
- 
+
   top: 10px;
   right: 20px;
   font-size: 25px;
 
 }
-.legendbox{
+
+.legendbox {
   width: 30px;
   height: 30px;
-  border-radius:50% ;
+  border-radius: 50%;
 }
-.legendChart{
+
+.legendChart {
   display: flex;
   gap: 20px;
   align-items: center;
 }
 
 
-.boxIcon{
+.boxIcon {
   width: 50px;
   height: 50px;
   border-radius: 20px 0;
   background: white;
-  
+
   display: flex;
-  box-shadow:-4px 12px 10px -6px rgba(236, 236, 236, 0.908);
+  box-shadow: -4px 12px 10px -6px rgba(236, 236, 236, 0.908);
   text-align: center;
   justify-content: center;
   align-items: center;
- 
+
 }
 
 
 
-.textStatic{
+.textStatic {
 
 
   animation: slideIn 1s forwards;
-  
-}
+  text-shadow: 1px -1px #28267a;}
 
 @keyframes slideIn {
   from {
-    transform: translateX(-10%); /* Start from the left */
-    opacity: 0; /* Optional: start with opacity 0 */
+    transform: translateX(-10%);
+    /* Start from the left */
+    opacity: 0;
+    /* Optional: start with opacity 0 */
   }
+
   to {
-    transform: translateX(0); /* End at the current position */
-    opacity: 1; /* Optional: end with opacity 1 */
+    transform: translateX(0);
+    /* End at the current position */
+    opacity: 1;
+    /* Optional: end with opacity 1 */
   }
 }
+
 .borderDiv {
   min-width: 260px;
   width: max-content;
@@ -169,16 +180,18 @@ align-items: center;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(5px);
   animation: slideIn 1s ease-in;
- 
+
   margin: 10px 0 0 -50px;
 }
+
 .borderDiv.Done {
 
   margin: 10px 0 0 -60px;
 }
-.borderDiv.Soon{
-  
-    margin: 10px;
-    margin-left: 40%;
-    
+
+.borderDiv.Soon {
+
+  margin: 10px;
+  margin-left: 40%;
+
 }

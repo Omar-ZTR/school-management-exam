@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import { QuestionService } from '../../../services/serviceTeacher/question.service';
+import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 
 @Component({
   selector: 'app-listview',
@@ -73,7 +74,16 @@ removeQuestion(quest:any){
   this.questionremoved.emit(quest);
 }
 
-
+typeFile(file: any): any {
+  const extension = getFileExtension(file.file__name);
+  const fileType = getFileType(extension);
+  // console.log("type file is",fileType)
+  // console.log("type  is",file.file__type)
+  return { name: file.name, type: fileType };
+}
+openFile(filePath: string): void {
+  window.open(filePath, '_blank');
+}
 deleteQuestion(quest:any){
   // this.checkAssociations(); 
   this.questionremoved.emit(quest);

@@ -103,13 +103,12 @@ import { disableCursor } from '@fullcalendar/core/internal';
         font-style: italic !important;
         font-size: 30px !important;
       }
-      :host ::ng-deep .p-fieldset-content{
-      padding: 1rem !important ;
-    display: flex !important ;
-    flex-direction: column !important ;
-    gap: 30px !important ;
-
-  }
+      :host ::ng-deep .p-fieldset-content {
+        padding: 1rem !important ;
+        display: flex !important ;
+        flex-direction: column !important ;
+        gap: 30px !important ;
+      }
     `,
   ],
 })
@@ -134,7 +133,7 @@ export class TeacherExamComponent {
   questionForms: FormGroup;
   isEditing: boolean = false;
   dataquest!: { question: any; files: any };
-  dataExam!: {files: any };
+  dataExam!: { files: any };
   questionFile: any = [];
   QuestFileInitialEdit: any = [];
   FileAdds: any = [];
@@ -154,12 +153,12 @@ export class TeacherExamComponent {
   urlsSuport: any[] = [];
   listsuportFile: any[] = [];
   existsuportFile: any[] = [];
-  supportUp:boolean = false;
+  supportUp: boolean = false;
   IdsSuport: any[] = [];
-  idExamSup!:any;
-  examdesc:string='';
-  oblig!:boolean;
-  supEdit :boolean=false
+  idExamSup!: any;
+  examdesc: string = '';
+  oblig!: boolean;
+  supEdit: boolean = false;
   user__id = this.tokenService.getUserIdFromToken();
   constructor(
     private examService: ExamService,
@@ -178,11 +177,7 @@ export class TeacherExamComponent {
       note: ['', [Validators.required, rangeNumber(0, 20)]],
 
       reponses: this.fb.array([]),
-      question__type: [
-        '',[Validators.required]
-       
-      ],
-
+      question__type: ['', [Validators.required]],
     });
   }
 
@@ -596,7 +591,7 @@ export class TeacherExamComponent {
         question.question__text,
         [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
       ],
-      question__type: [question.question__type,[Validators.required]],
+      question__type: [question.question__type, [Validators.required]],
       reponses: reponsesArray,
     });
 
@@ -621,34 +616,32 @@ export class TeacherExamComponent {
         [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
       ],
       question__subject: [this.Exam.subject],
-      question__type: ['',[Validators.required]],
-      reponses: this.fb.array([])
+      question__type: ['', [Validators.required]],
+      reponses: this.fb.array([]),
     });
   }
 
-  changeType(type:string){
-    this.questionForms.get('question__type')?.valueChanges.subscribe(value => {
-      
+  changeType(type: string) {
+    this.questionForms
+      .get('question__type')
+      ?.valueChanges.subscribe((value) => {
         this.initializeReponsesArray(type);
-     
-    });
+      });
   }
 
-  initializeReponsesArray(type:string) {
+  initializeReponsesArray(type: string) {
     const reponsesArray = this.questionForms.get('reponses') as FormArray;
     reponsesArray.clear();
     if (type === 'QCM') {
       reponsesArray.push(this.createReponse());
       reponsesArray.push(this.createReponse());
     }
-   
-  
   }
 
   createReponse(): FormGroup {
     return this.fb.group({
       reponse__text: ['', Validators.required],
-      reponse__statut: [false]
+      reponse__statut: [false],
     });
   }
   addReponse(): void {
@@ -698,22 +691,26 @@ export class TeacherExamComponent {
     this.update = true;
   }
 
-  async detectFiles(event: any,type:string) {
+  async detectFiles(event: any, type: string) {
     let files = event.target.files;
     const filesArray = Array.from(files);
-    let existingFileNames =[]
-if(type==='exam'){
-  existingFileNames = this.Exam.fileExam.map((file: { file__name: any; }) => file.file__name);
-  
-}else{
-  existingFileNames = this.questionFile.map((file: { name: any; }) => file.name);
+    let existingFileNames = [];
+    if (type === 'exam') {
+      existingFileNames = this.Exam.fileExam.map(
+        (file: { file__name: any }) => file.file__name
+      );
+    } else {
+      existingFileNames = this.questionFile.map(
+        (file: { name: any }) => file.name
+      );
+    }
 
-}
-    
-    const filteredFiles = filesArray.filter((file:any) => !existingFileNames.includes(file.name));
-    console.log("filtredFIle",filteredFiles)
-    console.log("filesArray",filesArray)
-    files = filteredFiles
+    const filteredFiles = filesArray.filter(
+      (file: any) => !existingFileNames.includes(file.name)
+    );
+    console.log('filtredFIle', filteredFiles);
+    console.log('filesArray', filesArray);
+    files = filteredFiles;
     if (files) {
       for (let file of files) {
         this.Fileupload.push(file);
@@ -757,7 +754,6 @@ if(type==='exam'){
     this.initializeAddForms(questionType);
     this.questionFile = [];
 
-
     this.add = true;
   }
   closeQuest() {
@@ -765,31 +761,18 @@ if(type==='exam'){
     this.update = false;
   }
 
-  checkUpdate(Type : string): boolean {
-
-    if(Type === 'exam'){
-      
-    return (
-      this.fileIds.length > 0  ||
-      this.Fileupload.length > 0
-    );
-    }else{
-    return (
-      JSON.stringify(this.QuestionUpdate) !==
-        JSON.stringify(this.questionForms.value) ||
-      JSON.stringify(this.QuestFileInitialEdit) !==
-        JSON.stringify(this.questionFile) ||
-      this.Fileupload.length > 0
-    );
-
+  checkUpdate(Type: string): boolean {
+    if (Type === 'exam') {
+      return this.fileIds.length > 0 || this.Fileupload.length > 0;
+    } else {
+      return (
+        JSON.stringify(this.QuestionUpdate) !==
+          JSON.stringify(this.questionForms.value) ||
+        JSON.stringify(this.QuestFileInitialEdit) !==
+          JSON.stringify(this.questionFile) ||
+        this.Fileupload.length > 0
+      );
     }
-
-
-
-
-
-
-
   }
   saveExamUpdate() {
     console.log('Fileupload', this.Fileupload);
@@ -798,42 +781,36 @@ if(type==='exam'){
     console.log('this.Exam.fileExam)', this.Exam.fileExam);
 
     this.dataExam = {
-     
       files: this.Fileupload,
     };
 
-
     const model = 'exam';
-this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
-  (response: any) => {
-
-
-    this.fileIds.forEach((id: any) => {
-      if (id) {
-        console.log('fiiiid', id);
-        this.questService.deleteFiles(id, model).subscribe(
-          (response: any) => {},
-          (error: { error: { message: any } }) => {
-            console.log('error', error);
-          }
-        );
-      }
-    });
-    this.fileIds=[]
-    this.FileAdds=[]
-    this.Fileupload=[]
-    this.fetchExam(this.Exam.exam__id);
-    alert('Successfully updated');
-    console.log('succ112@@111111111111111113ess', response);
-
-  },
-  (error: { error: { message: any } }) => {
-    console.log('error', error);
-  }
-);
-   
-
-
+    this.examService
+      .UpdateFileExam(this.Exam.exam__id, this.dataExam)
+      .subscribe(
+        (response: any) => {
+          this.fileIds.forEach((id: any) => {
+            if (id) {
+              console.log('fiiiid', id);
+              this.questService.deleteFiles(id, model).subscribe(
+                (response: any) => {},
+                (error: { error: { message: any } }) => {
+                  console.log('error', error);
+                }
+              );
+            }
+          });
+          this.fileIds = [];
+          this.FileAdds = [];
+          this.Fileupload = [];
+          this.fetchExam(this.Exam.exam__id);
+          alert('Successfully updated');
+          console.log('succ112@@111111111111111113ess', response);
+        },
+        (error: { error: { message: any } }) => {
+          console.log('error', error);
+        }
+      );
   }
   saveQuestion(): void {
     Object.values(this.questionForms.controls).forEach((control) => {
@@ -888,7 +865,6 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
               JSON.stringify(this.questionFile)
         );
 
-       
         return;
       }
 
@@ -907,9 +883,9 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
                 );
               }
             });
-            this.fileIds=[]
-            this.FileAdds=[]
-            this.Fileupload=[]
+            this.fileIds = [];
+            this.FileAdds = [];
+            this.Fileupload = [];
             this.fetchExam(this.Exam.exam__id);
             this.closeQuest();
             alert('Successfully updated');
@@ -922,9 +898,9 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
     } else if (!this.update && this.add) {
       this.questService.createquestion(this.dataquest).subscribe(
         (response: any) => {
-          this.fileIds=[]
-          this.FileAdds=[]
-          this.Fileupload=[]
+          this.fileIds = [];
+          this.FileAdds = [];
+          this.Fileupload = [];
 
           this.fetchExam(this.Exam.exam__id);
           alert('Successfully create');
@@ -981,14 +957,13 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
         this.groupQuestionsByType();
         console.log(' <div *ngIf="f.file__type === ', this.Exam);
         this.examType = this.Exam.exam__type;
-        this.examdesc= this.Exam.exam__desc
-        this.oblig=this.Exam.obligatoire
-        this.idExamSup = this.Exam.exam__id
+        this.examdesc = this.Exam.exam__desc;
+        this.oblig = this.Exam.obligatoire;
+        this.idExamSup = this.Exam.exam__id;
         if (this.Exam.fileExam && this.Exam.fileExam.length > 0) {
           for (const f of this.Exam.fileExam) {
-            console.log("ffffffff", f);
+            console.log('ffffffff', f);
             this.fileExamInit.push(f);
-            
           }
         }
         // this.fileExamInit = this.Exam.fileExam
@@ -1037,7 +1012,7 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
     );
   }
 
-  deleteObj(id: any, action: string ) {
+  deleteObj(id: any, action: string) {
     const exam__id = id;
     console.log('examid is ', exam__id);
     if (this.deleteform.type === 'exam') {
@@ -1045,8 +1020,7 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
         (response) => {
           console.log('Response delete Exam :', response);
           this.Exams = this.Exams.filter((exam) => exam.exam__id !== id);
-          this.deletexam = false
-
+          this.deletexam = false;
         },
         (error: any) => {
           console.error('Error fetching groups', error);
@@ -1061,12 +1035,18 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
       this.questService.deleteQuestion(id, model).subscribe(
         (response) => {
           console.log('Response from backend:', response);
-          console.log('RgroupedQuestionsgroupedQuestions', this.deleteform.QType);
-          this.Exam.questions = this.Exam.questions.filter((quest: { question__id: any; }) => quest.question__id !== id);
-          this.groupedQuestions[this.deleteform.QType] =  this.groupedQuestions[this.deleteform.QType].filter((quest: { question__id: any; }) => quest.question__id !== id);
-          
-          this.deletexam = false
+          console.log(
+            'RgroupedQuestionsgroupedQuestions',
+            this.deleteform.QType
+          );
+          this.Exam.questions = this.Exam.questions.filter(
+            (quest: { question__id: any }) => quest.question__id !== id
+          );
+          this.groupedQuestions[this.deleteform.QType] = this.groupedQuestions[
+            this.deleteform.QType
+          ].filter((quest: { question__id: any }) => quest.question__id !== id);
 
+          this.deletexam = false;
         },
         (error: any) => {
           console.error('Error fetching groups', error);
@@ -1103,40 +1083,40 @@ this.examService.UpdateFileExam(this.Exam.exam__id, this.dataExam).subscribe(
     return this.Exams ? this.first === 0 : true;
   }
 
-  async openupdateSupport(exam:any){
-    this.supportUp = true
-    this.idExamSup= exam.exam__id
-    this.urlsSuport=[]
-    const files = exam.file .filter( (f: any) =>
-      f.file__type ==='support'
-  );
-  console.log("klsdhbsdgb hdsbd hdbd ",files)
-  this.existsuportFile=[]
-  this.IdsSuport = [];
-if(files){
-  for (let file of files) {
-    // this.listsuportFile.push(file);
- 
-    const extension = getFileExtension(file.file__name);
-    const fileType = getFileType(extension);
-    this.existsuportFile.push({ name: file.file__name, type: fileType, url: file.file__path ,fileId : file.file__id});
-    // await this.readFileAsync(file).then((url: any) => {
-    //   this.existsuportFile.push({ name: file.file__name, type: fileType, url: url ,fileId : file.file__id});
-    // });
-  }
+  async openupdateSupport(exam: any) {
+    this.supportUp = true;
+    this.idExamSup = exam.exam__id;
+    this.urlsSuport = [];
+    const files = exam.file.filter((f: any) => f.file__type === 'support');
+    console.log('klsdhbsdgb hdsbd hdbd ', files);
+    this.existsuportFile = [];
+    this.IdsSuport = [];
+    if (files) {
+      for (let file of files) {
+        // this.listsuportFile.push(file);
+
+        const extension = getFileExtension(file.file__name);
+        const fileType = getFileType(extension);
+        this.existsuportFile.push({
+          name: file.file__name,
+          type: fileType,
+          url: file.file__path,
+          fileId: file.file__id,
+        });
+        // await this.readFileAsync(file).then((url: any) => {
+        //   this.existsuportFile.push({ name: file.file__name, type: fileType, url: url ,fileId : file.file__id});
+        // });
+      }
+    }
   }
 
-
+  toggleUpdate() {
+    this.supEdit = true;
   }
-
-toggleUpdate(){
-  this.supEdit=true
-}
-  deleteSupFile(index: number, id:any) {
+  deleteSupFile(index: number, id: any) {
     this.existsuportFile.splice(index, 1);
     this.IdsSuport.push(id);
   }
-
 
   removeSupFile(index: number) {
     this.urlsSuport.splice(index, 1);
@@ -1151,7 +1131,7 @@ toggleUpdate(){
     if (files) {
       for (let file of files) {
         this.listsuportFile.push(file);
-     
+
         const extension = getFileExtension(file.name);
         const fileType = getFileType(extension);
 
@@ -1162,90 +1142,74 @@ toggleUpdate(){
     }
   }
 
-
   AddSupport() {
+    if (
+      this.examdesc !== '' ||
+      this.listsuportFile.length > 0 ||
+      this.IdsSuport.length > 0
+    ) {
 
-    
-   
-    
-    if(this.examdesc!=='' || this.listsuportFile.length > 0 || this.IdsSuport.length > 0 ){
-    
-
-    
-        const data = {
-          exam__desc: this.examdesc,
-        };
-    
-        const datasupport = {
-          exam: data,
-          files: this.listsuportFile,
-        };
-        const model = "exam"
-        console.log('datasupportdatasupport datasupport', datasupport);
-        this.examService.AddDescSupport(datasupport, this.idExamSup).subscribe(
-          (response: any) => {
-            console.log('Exams Desc',this.idExamSup, this.Exams);
-
-            const index = this.Exams.findIndex(
-              
-              (exam) => exam.exam__id === this.idExamSup
-            );
-            console.log('Exams Desc',this.idExamSup,index);
-if (this.IdsSuport.length > 0){
-
-
-            this.IdsSuport.forEach((id: any) => {
-              if (id) {
-                console.log('fiiiid', id);
-                this.questService.deleteFiles(id, model).subscribe(
-                  (response: any) => {
-
-                    console.log("abs",this.Exams[index],"jhlh/n",response)
-                    this.Exams[index] = response;
-
-                  },
-                  (error: { error: { message: any } }) => {
-                    console.log('error', error);
-                  }
-                );
+      const model = 'exam';
+      if (this.IdsSuport.length > 0) {
+        this.IdsSuport.forEach((id: any) => {
+          if (id) {
+            this.questService.deleteFiles(id, model).subscribe(
+              (response: any) => {},
+              (error: { error: { message: any } }) => {
+                console.log('error', error);
               }
-            });}else{
-              console.log("abs",this.Exams[index],"lk fals")
-              this.Exams[index] = response;
-            }
-
-
-
-            console.log("this.Exams[index]this.Exams[index]",this.Exams[index])
-            this.supEdit=false
-            this.IdsSuport=[]
-            this.supportUp = false
-            this.listsuportFile = [];
-            this.urlsSuport = [];
-            this.existsuportFile= [];
-          },
-          (error: { error: { message: any } }) => {
-            //this.ngxService.stop();
-            console.log('errrr', error);
-            // if(error.error?.message){
-            //   this.responseMessage = error.error?.message;
-            // }else{
-            //   this.responseMessage = GlobalConstants.genericError;
-            // }
-            // // alert(this.responseMessage +" " +GlobalConstants.error);
-            // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+            );
           }
-        );
-     }else{
-      console.log('is nos support');
-      
-     }
-     }
+        });
+      } else {
+        console.log('abs no delete');
+      }
+
+
+
+      const data = {
+        exam__desc: this.examdesc,
+      };
+
+      const datasupport = {
+        exam: data,
+        files: this.listsuportFile,
+      };
     
+      console.log('datasupportdatasupport datasupport', datasupport);
+      this.examService.AddDescSupport(datasupport, this.idExamSup).subscribe(
+        (response: any) => {
+          console.log('Exams Desc', this.IdsSuport);
+         
+          const index = this.Exams.findIndex(
+            (exam) => exam.exam__id === this.idExamSup
+          );
+          console.log('Exams Desc', this.idExamSup, index);
 
+          this.Exams[index] = response;
 
-
-
-
-
+          console.log('this.Exams[index]this.Exams[index]', this.Exams[index]);
+          this.supEdit = false;
+          this.IdsSuport = [];
+          this.supportUp = false;
+          this.listsuportFile = [];
+          this.urlsSuport = [];
+          this.existsuportFile = [];
+        },
+        (error: { error: { message: any } }) => {
+          //this.ngxService.stop();
+          console.log('errrr', error);
+          // if(error.error?.message){
+          //   this.responseMessage = error.error?.message;
+          // }else{
+          //   this.responseMessage = GlobalConstants.genericError;
+          // }
+          // // alert(this.responseMessage +" " +GlobalConstants.error);
+          // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+        }
+      );
+    } else {
+      console.log('is nos support');
+    }
+  }
 }

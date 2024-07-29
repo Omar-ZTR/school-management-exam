@@ -105,7 +105,10 @@ display: flex;
   border-radius: 10px;
   object-fit: cover;
 }
-
+.readonl{
+  background: transparent;
+  border: none;
+}
 .supportimg .fa {
   font-size: 1.5rem;
   color: #00159a;

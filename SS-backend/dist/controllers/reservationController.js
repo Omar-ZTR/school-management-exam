@@ -44,11 +44,19 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
     const group = yield groupModel_1.Group.findByPk(groupid);
     console.log("groupgroup group group", group);
     try {
+        const currentDate = new Date();
         const reservations = yield reservationModel_1.Reservation.findAll({
             where: {
-                [sequelize_1.Op.or]: [
-                    { group__name: { [sequelize_1.Op.eq]: group.group__name } },
-                    { group__name: { [sequelize_1.Op.is]: null } }
+                [sequelize_1.Op.and]: [
+                    {
+                        [sequelize_1.Op.or]: [
+                            { group__name: { [sequelize_1.Op.eq]: group.group__name } },
+                            { group__name: { [sequelize_1.Op.is]: null } }
+                        ]
+                    },
+                    {
+                        startDate: { [sequelize_1.Op.gt]: currentDate }
+                    }
                 ]
             }
         });
@@ -60,6 +68,7 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
                 salle: reservation.salle,
                 group__name: reservation.group__name,
                 title: reservation.exam__title,
+                desc: exam === null || exam === void 0 ? void 0 : exam.exam__desc,
                 startDate: reservation.startDate,
                 endDate: reservation.endDate,
                 code: reservation.code,

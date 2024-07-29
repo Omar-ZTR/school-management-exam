@@ -22,6 +22,11 @@ export class GroupService {
     return this.httpClient.get<Group[]>(this.url + "/group");
   }
 
+  getFullGroups(){
+    return this.httpClient.get(this.url + "/fullgroup");
+  }
+
+
   getGroupSubject(exam_id: any): Observable<any> {
 
     console.log("sssaaaaaaaaaa",exam_id)

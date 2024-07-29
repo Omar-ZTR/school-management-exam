@@ -45,14 +45,23 @@ export const getSpecificReservations = async (req: Request, res: Response) => {
 
     console.log("groupgroup group group",group)
      try {
-         const reservations = await Reservation.findAll({
-             where:  {
-                [Op.or]: [
-                  { group__name:  { [Op.eq]: group!.group__name } },
-                  { group__name: { [Op.is]: null } }
-                ]
-              }
-           });
+        const currentDate = new Date();
+
+const reservations = await Reservation.findAll({
+  where: {
+    [Op.and]: [
+      {
+        [Op.or]: [
+          { group__name: { [Op.eq]: group!.group__name } },
+          { group__name: { [Op.is]: null } }
+        ]
+      },
+      {
+        startDate: { [Op.gt]: currentDate }
+      }
+    ]
+  }
+});
 
 
            const formattedReservations = await Promise.all(reservations.map(async (reservation) => {
@@ -63,6 +72,7 @@ export const getSpecificReservations = async (req: Request, res: Response) => {
                 salle:reservation.salle,
                 group__name:reservation.group__name,
                 title: reservation.exam__title,
+                desc: exam?.exam__desc,
                 startDate: reservation.startDate,
                 endDate: reservation.endDate,
                 code: reservation.code,

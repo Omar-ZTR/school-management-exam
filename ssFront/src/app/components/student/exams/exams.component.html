@@ -33,7 +33,7 @@
             </div>
         </div> -->
 
-    <div class="ard" (click)="showDialog(event)">
+    <div class="ard" *ngIf="subscribe[event.exam__id].acceptation !== false"  (click)="showDialog(event)">
       <div class="paperclip">
         <i class="fa-solid fa-paperclip fa-flip-vertical fa-2xl"></i>
       </div>
@@ -48,8 +48,7 @@
 
       <div class="title">{{ event.title }}</div>
       <div class="description">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
+       {{event.desc}}
       </div>
       <div class="description">
         {{ event.startDate | date : "shortTime" }} -
@@ -86,12 +85,12 @@
 
         <div class="ag-courses-item_title">
           {{ event.title }}
-          <span class="ag-courses-item_date">
+          <!-- <span class="ag-courses-item_date">
             {{ event.obligation }}
-          </span>
+          </span> -->
         </div>
         <div class="ag-courses-item_date-box">
-          Start:
+        
           <span class="ag-courses-item_date">
             {{ event.startDate | date : "EEEE dd MMMM" }}
           </span>
@@ -287,32 +286,28 @@
         {{ plan.salle ? "Salle " + plan.salle : "Remotly" }}
       </div>
     </div>
-    <div class="new-text">Support course:</div>
+    <div  *ngIf="hasSupportFile(examShow)"  class="new-text">Documents:</div>
     <div class="examFiles">
-      <div
-        *ngIf="examShow.fileExam"
-        class="fleximg"
-        style="margin-bottom: 10px"
-      >
-        <div *ngFor="let f of examShow.fileExam; let index = index" key="index">
-          <div class="downloadFile">
-            <i class="fa-solid fa-download"></i>
+      <div *ngIf="examShow.fileExam" class="supportitems">
+            <div
+              *ngFor="let f of examShow.fileExam; let index = index"
+              key="index"
+              class="supportitem"
+            >
+              <div *ngIf="f.file__type === 'support'">
+                <div class="supportimg" (click)="openFile(f.file__path)">
+                  <i
+                    *ngIf="typeFile(f).type !== 'image'"
+                    class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+                  ></i>
+                  <img
+                    *ngIf="typeFile(f).type === 'image'"
+                    [src]="f.file__path"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="previewimg">
-            <i
-              *ngIf="typeFile(f).type !== 'image'"
-              class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
-              (click)="openFile(f.file__path)"
-            ></i>
-            <img
-              *ngIf="typeFile(f).type === 'image'"
-              (click)="openFile(f.file__path)"
-              [src]="f.file__path"
-            />
-          </div>
-          <div class="fileTitle">{{ f.file__name }}</div>
-        </div>
-      </div>
     </div>
   </div>
 </p-dialog>
