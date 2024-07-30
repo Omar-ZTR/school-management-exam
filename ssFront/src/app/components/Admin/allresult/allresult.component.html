@@ -1,25 +1,42 @@
-<div class="card">
-  <!-- <p-toast /> -->
-
-  <div class="groups" *ngFor="let g of groups">
-    <div class="btnGroups">
-      {{ g.group__name }}
+<div style="display: flex; ">
+  <div style="display: flex; gap: 10px; flex-direction: column">
+    <div *ngFor="let g of groups">
+      <div style="width: max-content;display: flex;">
+        <button class="button-35" (click)="switchGroup(g)" role="button"   [ngClass]="{
+          'active': groupSelect.group__name === g.group__name,
+          'inactive': groupSelect.group__name !== g.group__name,
+          'disabled': g.subjects.length === 0
+        }"
+        [disabled]="g.subjects.length === 0"
+        [pTooltip]="g.subjects.length === 0 ? 'is empty not ready' : ''"
+      >
+          {{ g.group__name }}
+        </button>
+        <div *ngIf="groupSelect.group__name ===  g.group__name" class="buttonshape"></div>
+      </div>
     </div>
+  </div>
 
-    <p-table
-      [value]="g.subjects"
+  <div class="card" style="border:none !important;" >
+    <!-- <p-toast /> -->
+     
+
+    <div class="groups">
+      <p-table
+      [value]="groupSelect.subjects"
       dataKey="id"
-      [tableStyle]="{ 'min-width': '60rem' }"
+      [tableStyle]="{ 'min-width': '40rem' }"
       [expandedRowKeys]="expandedRows"
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 45rem"></th>
-         
+          <th ></th>
+          <th>Subject</th>
         </tr>
       </ng-template>
+      
       <ng-template pTemplate="body" let-Sub let-expanded="expanded">
-        <tr>
+        <tr (click)="toggleRow(Sub)">
           <td>
             <p-button
               type="button"
@@ -28,39 +45,47 @@
               [text]="true"
               [rounded]="true"
               [plain]="true"
+              (click)="toggleRow(Sub)"
               [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-            />
+            ></p-button>
           </td>
-          <td>{{ Sub.subject__name }}</td>
+          <td      >{{ Sub.subject__name }}</td>
         </tr>
       </ng-template>
+      
       <ng-template pTemplate="rowexpansion" let-s>
         <tr>
-          <td colspan="7">
-            <div class="p-3" *ngFor="let SubEx of s.exams">
-              <p-table [value]="SubEx.students" dataKey="id">
+          <td colspan="2">
+            <div class="p-3">
+              <p-table [value]="s.exams" dataKey="exam__id">
                 <ng-template pTemplate="header">
                   <tr>
                     <th>Exam</th>
                     <th>Name student</th>
                     <th>Note</th>
-                
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-E>
-                  <tr>
-                  
-                    <td>{{ SubEx.exam__title }}</td>
-                    <td>{{ E.user__name }}</td>
-                    <td>{{ E.ans__result }}</td>
-                  
-                  </tr>
+                <ng-template pTemplate="body" let-exam>
+                  <ng-container *ngIf="isFutureDate(exam.date)" >
+                    <tr>
+                      <td >{{ exam.exam__title }}</td>
+                      <td colspan="2" >Pending, it will be at {{exam.date  | date : "YYYY MMMM dd"}}   {{ exam.date | date : "shortTime" }} </td>
+                      
+                    </tr>
+                  </ng-container>
+
+                  <ng-container *ngIf="isPastDate(exam.date)">
+                  <ng-container *ngFor="let student of exam.students; let i = index">
+                    <tr>
+                      <td *ngIf="i === 0" [rowSpan]="exam.students.length">{{ exam.exam__title }}</td>
+                      <td>{{ student.user__name }}</td>
+                      <td>{{student.ans__id && student.ans__result? student.ans__result : !student.ans__id? 0 :  'Pending '    }}     </td>
+                    </tr>
+                  </ng-container></ng-container>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td colspan="6">
-                      There are no order for this product yet.
-                    </td>
+                    <td colspan="3">There are no Exams.</td>
                   </tr>
                 </ng-template>
               </p-table>
@@ -68,6 +93,13 @@
           </td>
         </tr>
       </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3">There are no Subjects.</td>
+        </tr>
+      </ng-template>
+
     </p-table>
+    </div>
   </div>
 </div>

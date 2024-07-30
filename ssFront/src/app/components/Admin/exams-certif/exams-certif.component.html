@@ -1,0 +1,264 @@
+<div class="contentExams">
+  <div class="tabExams">
+   
+    <div class="TitelForm" >Exams course</div>
+    <p-table
+      [value]="examsView"
+      dataKey="exam__id"
+      [expandedRowKeys]="expandedRows"
+      [tableStyle]="{ 'min-width': '20rem' }"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+         
+
+        </tr>
+        <tr style="border: none;">
+            <td> <button
+                class="button-35"
+                (click)="getallexam()"
+                role="button"
+                [ngClass]="{
+                  'active': btn,
+                  'inactive': !btn,
+                }"
+              >
+                All exams
+              </button>
+          </td> <td>
+              <button
+                class="button-35"
+                (click)="getexamScheduled()"
+                role="button"
+                [ngClass]="{
+              'active': !btn,
+              'inactive': btn,
+            }"
+              >
+                Exams scheduled
+              </button></td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-exam let-expanded="expanded">
+        <tr
+          [ngClass]="{
+            disabled: exam.reservation.length === 0 && exam.answers.length === 0
+          }"
+          [pTooltip]="exam.reservation.length === 0 ? 'is Not scheduled' : ''"
+          (click)="toggleRow(exam)"
+        >
+          <td style="padding: 1rem 0.5rem" style="width: max-content">
+            <p-button
+              type="button"
+              pRipple
+              [pRowToggler]="exam"
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              (click)="toggleRow(exam)"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            ></p-button>
+          </td>
+          <td style="padding: 1rem 0.5rem">
+            {{ exam.exam__title }}
+            <div
+              style="font-size: 13px"
+              *ngIf="
+                exam.reservation.length !== 0 &&
+                isFutureDate(exam.reservation[0].startDate)
+              "
+            >
+              Pending, it will be at
+              {{ exam.reservation[0].startDate | date : "yyyy MMMM dd" }}
+              {{ exam.reservation[0].startDate | date : "shortTime" }}
+            </div>
+            <div
+              style="font-size: 13px"
+              *ngIf="
+                exam.reservation.length !== 0 &&
+                isPastDate(exam.reservation[0].startDate)
+              "
+            >
+              is passed at
+              {{ exam.reservation[0].startDate | date : "yyyy MMMM dd" }}
+              {{ exam.reservation[0].startDate | date : "shortTime" }}
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="rowexpansion" let-exam>
+        <tr>
+          <td style="padding: 0rem 0rem" colspan="2">
+            <div>
+              <p-table
+                [value]="exam.answers"
+                dataKey="ans__id"
+                [paginator]="true"
+                [rows]="5"
+                [rowsPerPageOptions]="[5, 10, 20]"
+              >
+                <ng-template pTemplate="header">
+                  <tr style="background: #eef2ff">
+                    <th>Student</th>
+                    <th>Result</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-answer>
+                  <tr>
+                    <td style="padding: 1rem 0.5rem">
+                      {{ answer.student__name }}
+                    </td>
+                    <td style="padding: 1rem 0.5rem">
+                      {{
+                        answer.ans__result !== null
+                          ? answer.ans__result
+                          : "Pending"
+                      }}
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td style="padding: 1rem 0.5rem" colspan="2">
+                      There are no answers.
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td style="padding: 1rem 0.5rem" colspan="2">There are no exams.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="tabExams">
+
+    <div class="TitelForm" >Subscription requests</div>
+    <p-table
+      [value]="groupedSubscriptions | keyvalue"
+      dataKey="key"
+      [expandedRowKeys]="expandedRowSub"
+      [tableStyle]="{ 'min-width': '20rem' }"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+        
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-group let-expanded="expanded">
+        <tr (click)="toggleRowSub(group.key)">
+          <td style="padding: 1rem 0.5rem; width: max-content">
+            <p-button
+              type="button"
+              pRipple
+              [pRowToggler]="group.key"
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              (click)="toggleRowSub(group.key)"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            ></p-button>
+          </td>
+          <td style="padding: 1rem 0.5rem">
+            {{ group.key }}
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="rowexpansion" let-group>
+        <tr>
+          <td style="padding: 0rem 0rem" colspan="2">
+            <div>
+              <p-table
+                [value]="group.value"
+                dataKey="subscribe__id"
+                [paginator]="true"
+                [rows]="5"
+                [rowsPerPageOptions]="[5, 10, 20]"
+              >
+                <ng-template pTemplate="header">
+                  <tr style="background: #f4f6fc">
+                    <th style="background: #eef2ff">Student</th>
+                    <th>Acceptation</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-subscr >
+                  <tr>
+                    <td style="padding: 1rem 0.5rem">
+                      {{ subscr.student.first__name }}
+                      {{ subscr.student.last__name }}
+                    </td>
+                    <td style="padding: 1rem 0.5rem">
+                      <p-triStateCheckbox
+                        (onChange)="
+                          acceptationSub($event, subscr.student.user__id)
+                        "
+                        class="hidden-checkbox"
+                        inputId="checked{{ subscr.student.user__id }}"
+                      />
+                      <label for="checked{{ subscr.student.user__id }}">
+                        <p-tag
+                          [value]="
+                            mapValue(
+                              acceptation[subscr.student.user__id].accept
+                            )
+                          "
+                          [severity]="
+                            getSeverity(
+                              acceptation[subscr.student.user__id].accept
+                            )
+                          "
+                        />
+                      </label>
+                      <div
+                        (click)="
+                          updateAcceptation(
+                            acceptation[subscr.student.user__id],subscr
+                          )
+                        "
+                        class="btnsave"
+                        *ngIf="
+                          acceptation[subscr.student.user__id].accept !==
+                          subscr.acceptation
+                        "
+                      >
+                        save
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td style="padding: 1rem 0.5rem" colspan="2">
+                      There are no answers.
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td style="padding: 1rem 0.5rem" colspan="2">There are no exams.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

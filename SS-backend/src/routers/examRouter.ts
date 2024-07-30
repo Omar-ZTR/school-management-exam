@@ -12,6 +12,7 @@ import {
   getTeacherExams,
   updateExamFile,
   addDescreptionExam,
+  getfullCertifExam,
 } from '../controllers/examController';
 import { createAnswers, getAnswers } from '../controllers/answerStudentController';
 
@@ -21,7 +22,7 @@ routerExam.get('/allexams', getAllExams);
 
 
 routerExam.get('/examCertif', getFilteredExams);
-
+routerExam.get('/examfullCertif', getfullCertifExam);
 routerExam.get('/examsGS', getExamsGroupsStutents);
 
 routerExam.get('/exams', getFullExams);

@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { Subscribe } from "../models/subscribeModel";
 import { Exam } from "../models/examModel";
 import { Student } from "../models/studentModel";
+import { Reservation } from "../models/reservationModel";
+import { date } from "joi";
 
 export const createSubscribe = async (req: Request, res: Response) => {
     try {
@@ -20,16 +22,66 @@ export const createSubscribe = async (req: Request, res: Response) => {
 
   export const getAllSubscribes = async (req: Request, res: Response) => {
     try {
-      const subscribes = await Subscribe.findAll({
+      const Allsubscribes = await Subscribe.findAll({
+      
+      });
+
+      const datenow = new Date(); // Capitalize Date
+
+      for (const subscrib of Allsubscribes) {
+        const exam = await Reservation.findOne({
+          where: { exam__id: subscrib.exam__id },
+        });
+      
+        if (!exam || (exam && exam.startDate < datenow)) {
+          await Subscribe.destroy({
+            where: { subscribe__id: subscrib.subscribe__id },
+          });
+        }
+      }
+      console.log("Allsubscribes is : ",Allsubscribes)
+    const subscribes = await Subscribe.findAll({
         include:  [{ model: Exam }, { model: Student }],
       });
+
+console.log("ssaubscribes is : ",subscribes)
+
       res.status(200).json(subscribes);
     } catch (error) {
       console.error("Error fetch subscribe:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   };
+  export const updateSubscribe = async (req: Request, res: Response) => {
+    const { subscribe__id } = req.params;
+    const updateData ={
+acceptation: req.body.accept
 
+    } 
+  console.log("updatedata",updateData)
+    try {
+      // Check if the Subscribe exists
+      const subscribe = await Subscribe.findOne({ where: { subscribe__id } });
+  
+      if (!subscribe) {
+        return res.status(404).json({ error: 'Subscribe not found' });
+      }
+  
+      // Update the Subscribe with new data
+      await Subscribe.update(updateData, { where: { subscribe__id } });
+  
+      // Fetch the updated Subscribe with associated models
+      const updatedSubscribe = await Subscribe.findOne({
+        where: { subscribe__id },
+        include: [{ model: Exam }, { model: Student }],
+      });
+  
+      res.status(200).json(updatedSubscribe);
+    } catch (error) {
+      console.error('Error updating subscribe:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 
   export const getOneSubscribe = async (req: Request, res: Response) => {
     try {

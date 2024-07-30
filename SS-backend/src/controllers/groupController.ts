@@ -6,6 +6,7 @@ import { Exam } from "../models/examModel";
 import { Student } from "../models/studentModel";
 import { Teacher } from "../models/teacherModel";
 import { Answer } from "../models/answerModel";
+import { Reservation } from "../models/reservationModel";
 
 // Create operation
 export const createGroup = async (req: Request, res: Response) => {
@@ -97,16 +98,28 @@ export const getFullGroups = async (req: Request, res: Response) => {
             return {
               user__name: student.first__name,
               ans__result: answer ? answer.ans__result : null,
+              ans__id: answer ? answer.ans__id : null,
             };
           }));
-
-          return {
-            exam__title: exam.exam__title,
-            students,
-          };
+          const res = await checkExam(group.group__name, exam.exam__id);
+          if (res) {
+            return {
+              exam__title: exam.exam__title,
+              students,
+              date: res.startDate
+            };
+          } else {
+            return {
+              exam__title: exam.exam__title,
+              students,
+              date: ''
+            };
+          }
+        
         }));
 
         return {
+          id: subject.subject__id,
           subject__name: subject.subject__name,
           exams,
         };
@@ -126,7 +139,20 @@ export const getFullGroups = async (req: Request, res: Response) => {
   }
 };
 
-
+const checkExam = async (group: string, exam: number) => {
+  try {
+    const check = await Reservation.findOne({
+      where: {
+        exam__id: exam,
+        group__name: group
+      }
+    });
+    return check;
+  } catch (error) {
+    console.error('Error checking exam:', error);
+    return null;
+  }
+};
 
 export const getGroupsSubject = async (req: Request, res: Response) => {
   console.log("id is : ", req.params);

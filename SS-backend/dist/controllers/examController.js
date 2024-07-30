@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredExams = exports.deleteExam = exports.updateExamFile = exports.updateExam = exports.addDescreptionExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
+exports.getfullCertifExam = exports.getFilteredExams = exports.deleteExam = exports.updateExamFile = exports.updateExam = exports.addDescreptionExam = exports.getExamsGroupsStutents = exports.getTeacherExams = exports.getFullExams = exports.getAllExams = exports.getExamById = exports.createExam = void 0;
 const examModel_1 = require("../models/examModel"); // Import your Exam model
 const reponseModel_1 = require("../models/reponseModel");
 const questionModel_1 = require("../models/questionModel");
@@ -372,6 +372,10 @@ const getFilteredExams = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 {
                     model: answerModel_1.Answer,
                 },
+                {
+                    model: reservationModel_1.Reservation,
+                    as: 'reservation',
+                },
             ],
         });
         res.status(200).json(exams);
@@ -382,3 +386,35 @@ const getFilteredExams = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getFilteredExams = getFilteredExams;
+const getfullCertifExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const exams = yield examModel_1.Exam.findAll({
+            where: {
+                obligatoire: false,
+            },
+            include: [
+                {
+                    model: answerModel_1.Answer,
+                },
+                {
+                    model: reservationModel_1.Reservation,
+                    as: 'reservation',
+                },
+            ],
+        });
+        // Transform the response to add student__name to each answer
+        const transformedExams = yield Promise.all(exams.map((exam) => __awaiter(void 0, void 0, void 0, function* () {
+            const transformedAnswers = yield Promise.all(exam.answers.map((answer) => __awaiter(void 0, void 0, void 0, function* () {
+                const student = yield studentModel_1.Student.findOne({ where: { user__id: answer.Student__id } });
+                return Object.assign(Object.assign({}, answer.toJSON()), { student__name: student ? `${student.first__name} ${student.last__name}` : null });
+            })));
+            return Object.assign(Object.assign({}, exam.toJSON()), { answers: transformedAnswers });
+        })));
+        res.status(200).json(transformedExams);
+    }
+    catch (error) {
+        console.error("Error fetching exams:", error);
+        res.status(500).json({ error: "An error occurred while fetching exams." });
+    }
+});
+exports.getfullCertifExam = getfullCertifExam;

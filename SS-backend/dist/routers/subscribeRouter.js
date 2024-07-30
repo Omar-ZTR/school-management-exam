@@ -9,4 +9,5 @@ const routerSubscribe = express_1.default.Router();
 routerSubscribe.post('/subscribe', subscribeController_1.createSubscribe);
 routerSubscribe.get('/subscribe/:exam__id/:user__id', subscribeController_1.getOneSubscribe);
 routerSubscribe.get('/subscribe', subscribeController_1.getAllSubscribes);
+routerSubscribe.put('/subscribes/:subscribe__id', subscribeController_1.updateSubscribe);
 exports.default = routerSubscribe;

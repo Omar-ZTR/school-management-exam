@@ -1,0 +1,114 @@
+.disabled {
+    background-color: #ebeaea;
+pointer-events: none;
+  }
+  .button-35 {
+    align-items: center;
+    background: rgb(255, 255, 255);
+    box-shadow: transparent 0 2px 0 3px,rgba(18, 18, 18, .1)  0 -13px 20px -6px;
+    border-radius: 12px;
+   
+    box-sizing: border-box;
+    color: #121212;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 1 1 auto;
+    font-family: Inter,sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    justify-content: center;
+    line-height: 1;
+    margin: 0 20px 15px 0;
+   
+    outline: none;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    border: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    position: relative;
+  }
+  .button-35:hover {
+    box-shadow: #121212 0 -2px 0 1.3px, transparent 0 0 0 0;
+  
+   
+  }
+  th{
+    background: transparent !important;
+  }
+  .hidden-checkbox {
+    display: none;
+  }
+
+.btnsave{
+    align-items: center;
+    background: rgb(255, 255, 255);
+    box-shadow: #050505 0px 4px 28px -9px, rgba(18, 18, 18, .1) 1px -14px 20px -6px;
+    border-radius: 12px;
+
+    color: #121212;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 1 1 auto;
+    font-family: Inter, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    justify-content: center;
+    line-height: 1;
+    margin: 0 15px;
+
+    padding: .5rem .6rem;
+    text-align: center;
+
+    border: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    position: relative;
+}
+.btnsave:hover {
+    box-shadow: #050505 0px 4px 28px -6px, rgba(29, 16, 102, 0.1) 1px -14px 20px -6px;
+  
+   
+  }
+  .TitelForm {
+    margin-bottom: 10px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 25px;
+    color: #f68f39;
+    background: white;
+    width: fit-content;
+    padding: 15px 30px 15px 10px;
+    border-radius: 0 40px 40px 0;
+    box-shadow: 5px 5px 7px -3px #a1b7ff;
+  }
+.contentExams{
+    display: flex;
+    gap: 100px;
+    min-width: 45rem;
+    justify-content: space-between;
+}
+.tabExams{
+    filter: drop-shadow(-11px -7px 22px #1d1d1d46);
+
+}
+  .button-35.disabled {
+    background-color: gray;
+
+  }
+   
+  .button-35.active {
+    transform: scale(1);
+    filter: none;
+  }
+  
+  .button-35.inactive {
+    transform: scale(0.88);
+    filter: blur(0.8px);
+  }

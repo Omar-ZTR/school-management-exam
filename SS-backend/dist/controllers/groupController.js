@@ -17,6 +17,7 @@ const examModel_1 = require("../models/examModel");
 const studentModel_1 = require("../models/studentModel");
 const teacherModel_1 = require("../models/teacherModel");
 const answerModel_1 = require("../models/answerModel");
+const reservationModel_1 = require("../models/reservationModel");
 // Create operation
 const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -101,14 +102,27 @@ const getFullGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                         return {
                             user__name: student.first__name,
                             ans__result: answer ? answer.ans__result : null,
+                            ans__id: answer ? answer.ans__id : null,
                         };
                     })));
-                    return {
-                        exam__title: exam.exam__title,
-                        students,
-                    };
+                    const res = yield checkExam(group.group__name, exam.exam__id);
+                    if (res) {
+                        return {
+                            exam__title: exam.exam__title,
+                            students,
+                            date: res.startDate
+                        };
+                    }
+                    else {
+                        return {
+                            exam__title: exam.exam__title,
+                            students,
+                            date: ''
+                        };
+                    }
                 })));
                 return {
+                    id: subject.subject__id,
                     subject__name: subject.subject__name,
                     exams,
                 };
@@ -126,6 +140,21 @@ const getFullGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getFullGroups = getFullGroups;
+const checkExam = (group, exam) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const check = yield reservationModel_1.Reservation.findOne({
+            where: {
+                exam__id: exam,
+                group__name: group
+            }
+        });
+        return check;
+    }
+    catch (error) {
+        console.error('Error checking exam:', error);
+        return null;
+    }
+});
 const getGroupsSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("id is : ", req.params);
     try {

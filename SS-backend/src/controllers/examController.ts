@@ -417,6 +417,10 @@ export const getFilteredExams = async (req: Request, res: Response) => {
          
          
         },
+        {
+          model: Reservation,
+          as: 'reservation',
+        },
       ],
     });
 
@@ -426,3 +430,51 @@ export const getFilteredExams = async (req: Request, res: Response) => {
     res.status(500).json({ error: "An error occurred while fetching exams." });
   }
 };
+
+export const getfullCertifExam = async(req: Request, res: Response) => {
+
+try{
+  const exams = await Exam.findAll({
+    where: {
+      obligatoire: false,
+    },
+    include: [
+      {
+        model: Answer,
+        
+      },
+      {
+        model: Reservation,
+        as: 'reservation',
+      },
+    ],
+  });
+  
+  // Transform the response to add student__name to each answer
+  const transformedExams = await Promise.all(exams.map(async (exam) => {
+    const transformedAnswers = await Promise.all(exam.answers.map(async (answer) => {
+      const student = await Student.findOne({ where: { user__id: answer.Student__id } });
+      return {
+        ...answer.toJSON(),
+        student__name: student ? `${student.first__name} ${student.last__name}` : null,
+      };
+    }));
+  
+    return {
+      ...exam.toJSON(),
+      answers: transformedAnswers,
+    };
+  }));
+  
+  res.status(200).json(transformedExams);
+}catch (error) {
+  console.error("Error fetching exams:", error);
+  res.status(500).json({ error: "An error occurred while fetching exams." });
+}
+
+
+  
+}
+
+
+

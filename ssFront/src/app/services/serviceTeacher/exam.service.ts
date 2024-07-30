@@ -93,8 +93,25 @@ export class ExamService {
   }
 
   getcertifExam(): Observable<any> {
-    return this.httpClient.get<any[]>(this.url + '/examCertif');
+    return this.httpClient.get<any[]>(this.url + '/examfullCertif');
   }
+
+ certifExam(): Observable<any> {
+    return this.httpClient.get<any[]>(this.url + '/examfullCertif');
+  }
+
+  Subscribe() {
+    return this.httpClient.get(this.url + '/subscribe');
+  }
+
+  updateSubscribe(data:any) {
+    const subscribe__id = data.sub__id
+
+    return this.httpClient.put(`${this.url}/subscribes/${subscribe__id}`, data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json'),
+    });
+  }
+
 }
 
 // createExam(data: any): Observable<any> {
