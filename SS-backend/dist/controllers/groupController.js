@@ -288,10 +288,23 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 {
                     model: examModel_1.Exam,
                 },
+                {
+                    model: subjectModel_1.Subject,
+                },
             ],
         });
         if (group) {
-            res.status(200).json(group);
+            let formdata;
+            // Map through the exams and get reservations
+            formdata = yield Promise.all(group.exams.map((exam) => __awaiter(void 0, void 0, void 0, function* () {
+                const reserv = yield checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
+                // Add student__name to the exam object
+                return Object.assign(Object.assign({}, exam.get({ plain: true })), { reservation: reserv });
+            })));
+            // Combine the group object with the modified exams
+            const grouped = Object.assign(Object.assign({}, group.get({ plain: true })), { exams: formdata // Fix the syntax here
+             });
+            res.status(200).json(grouped);
         }
         else {
             res.status(404).json({ message: "Group not found" });

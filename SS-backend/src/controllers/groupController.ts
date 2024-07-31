@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Model, Op } from "sequelize";
 import { Group } from "../models/groupModel"; // Import your Group model
 import { Request, Response } from "express";
 import { Subject } from "../models/subjectModel";
@@ -7,6 +7,7 @@ import { Student } from "../models/studentModel";
 import { Teacher } from "../models/teacherModel";
 import { Answer } from "../models/answerModel";
 import { Reservation } from "../models/reservationModel";
+import sequelize from "sequelize";
 
 // Create operation
 export const createGroup = async (req: Request, res: Response) => {
@@ -301,11 +302,36 @@ export const getGroupById = async (req: Request, res: Response) => {
       include: [
         {
           model: Exam,
+         
+        },
+        {
+          model: Subject,
         },
       ],
     });
     if (group) {
-      res.status(200).json(group);
+      let formdata;
+    
+      // Map through the exams and get reservations
+      formdata = await Promise.all(group.exams.map(async exam => {
+          const reserv = await checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
+          // Add student__name to the exam object
+          return {
+              ...exam.get({ plain: true }), // Convert Sequelize model instance to plain object
+              reservation: reserv
+          };
+      }));
+      
+      // Combine the group object with the modified exams
+      const grouped = {
+          ...group.get({ plain: true }),
+          exams: formdata // Fix the syntax here
+      };
+
+
+
+
+      res.status(200).json(grouped);
     } else {
       res.status(404).json({ message: "Group not found" });
     }
