@@ -29,7 +29,10 @@ export class ExamAnswersService {
     return this.httpClient.get(`${this.url}/getanswers/${id}`);
   }
 
-
+  getStudentAnswer(id:any) {
+   
+    return this.httpClient.get(`${this.url}/studentanswer/${id}`);
+  }
 
 
   updateAnswer(data:any){

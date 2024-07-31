@@ -7,12 +7,15 @@ import {
   deleteGroup,
   getGroupsSubject,
   getFullGroups,
+  getTeacherGroups,
 } from '../controllers/groupController';
 
 const routerGroup = express.Router();
 
 routerGroup.get('/group', getAllGroups);
 
+
+routerGroup.get('/teachergroup', getTeacherGroups);
 
 routerGroup.get('/fullgroup', getFullGroups);
 

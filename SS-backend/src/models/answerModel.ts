@@ -5,6 +5,7 @@ import { User } from "./User__model";
 import { Reponse } from "./reponseModel";
 import { AnswerStudent } from "./answerStudentModel";
 import { FileAnswer } from "./fileModel";
+import { Student } from "./studentModel";
 
 @Table({
     timestamps: true,
@@ -28,6 +29,8 @@ export class Answer extends Model<Answer> {
   
     @BelongsTo(() => Exam)
     exam!: Exam;
+
+    @ForeignKey(() => Student)
 
     @Column({
         type: DataType.INTEGER,

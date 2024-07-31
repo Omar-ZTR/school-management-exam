@@ -28,12 +28,15 @@ export const createGroup = async (req: Request, res: Response) => {
 
       await group.$set("subjects", subjects);
     }
-    const newGroup = await Group.findOne({ where: { group__id: group.group__id }, include: [
-      {
-        model: Subject,
-        as: "subjects",
-      },
-    ], });
+    const newGroup = await Group.findOne({
+      where: { group__id: group.group__id },
+      include: [
+        {
+          model: Subject,
+          as: "subjects",
+        },
+      ],
+    });
 
     res.status(201).json(newGroup);
   } catch (error) {
@@ -60,82 +63,166 @@ export const getAllGroups = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getFullGroups = async (req: Request, res: Response) => {
   try {
     const groups = await Group.findAll({
       include: [
         {
           model: Subject,
-          as: 'subjects',
+          as: "subjects",
         },
         {
           model: Exam,
-          as: 'exams',
+          as: "exams",
         },
         {
           model: Student,
-          as: 'students',
-          
+          as: "students",
         },
         {
           model: Teacher,
-          as: 'teachers',
+          as: "teachers",
         },
       ],
     });
-    const result = await Promise.all(groups.map(async group => {
-      const subjects = await Promise.all(group.subjects.map(async subject => {
-        const exams = await Promise.all(group.exams.filter((ex:any) => ex.subject === subject.subject__name).map(async exam => {
-          const students = await Promise.all(group.students.map(async student => {
-            const answer = await Answer.findOne({
-              where: {
-                Student__id: student.user__id,
-                exam__id: exam.exam__id,
-              }
-            });
+    const result = await Promise.all(
+      groups.map(async (group) => {
+        const subjects = await Promise.all(
+          group.subjects.map(async (subject) => {
+            const exams = await Promise.all(
+              group.exams
+                .filter((ex: any) => ex.subject === subject.subject__name)
+                .map(async (exam) => {
+                  const students = await Promise.all(
+                    group.students.map(async (student) => {
+                      const answer = await Answer.findOne({
+                        where: {
+                          Student__id: student.user__id,
+                          exam__id: exam.exam__id,
+                        },
+                      });
+
+                      return {
+                        user__name:
+                          student.first__name + " " + student.last__name,
+                        ans__result: answer ? answer.ans__result : null,
+                        ans__id: answer ? answer.ans__id : null,
+                      };
+                    })
+                  );
+                  const res = await checkExam(group.group__name, exam.exam__id);
+                  if (res) {
+                    return {
+                      exam__title: exam.exam__title,
+                      students,
+                      date: res.startDate,
+                    };
+                  } else {
+                    return {
+                      exam__title: exam.exam__title,
+                      students,
+                      date: "",
+                    };
+                  }
+                })
+            );
 
             return {
-              user__name: student.first__name,
-              ans__result: answer ? answer.ans__result : null,
-              ans__id: answer ? answer.ans__id : null,
+              id: subject.subject__id,
+              subject__name: subject.subject__name,
+              exams,
             };
-          }));
-          const res = await checkExam(group.group__name, exam.exam__id);
-          if (res) {
-            return {
-              exam__title: exam.exam__title,
-              students,
-              date: res.startDate
-            };
-          } else {
-            return {
-              exam__title: exam.exam__title,
-              students,
-              date: ''
-            };
-          }
-        
-        }));
+          })
+        );
 
         return {
-          id: subject.subject__id,
-          subject__name: subject.subject__name,
-          exams,
+          group__name: group.group__name,
+          subjects,
         };
-      }));
-
-      return {
-        group__name: group.group__name,
-        subjects,
-      };
-    }));
+      })
+    );
 
     res.status(200).json(result);
-  
   } catch (error) {
-    console.error('Error fetching groups:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching groups:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getTeacherGroups = async (req: Request, res: Response) => {
+  try {
+    const groups = await Group.findAll({
+      include: [
+        {
+          model: Subject,
+          as: "subjects",
+        },
+        {
+          model: Exam,
+          as: "exams",
+        },
+        {
+          model: Student,
+          as: "students",
+        },
+        {
+          model: Teacher,
+          as: "teachers",
+        },
+      ],
+    });
+
+    // const result = await Promise.all(groups.map(async group => {
+    //   const subjects = await Promise.all(group.subjects.map(async subject => {
+    //     const exams = await Promise.all(group.exams.filter((ex:any) => ex.subject === subject.subject__name).map(async exam => {
+    //       const students = await Promise.all(group.students.map(async student => {
+    //         const answer = await Answer.findOne({
+    //           where: {
+    //             Student__id: student.user__id,
+    //             exam__id: exam.exam__id,
+    //           }
+    //         });
+
+    //         return {
+    //           user__name: student.first__name,
+    //           ans__result: answer ? answer.ans__result : null,
+    //           ans__id: answer ? answer.ans__id : null,
+    //         };
+    //       }));
+    //       const res = await checkExam(group.group__name, exam.exam__id);
+    //       if (res) {
+    //         return {
+    //           exam__title: exam.exam__title,
+    //           students,
+    //           date: res.startDate
+    //         };
+    //       } else {
+    //         return {
+    //           exam__title: exam.exam__title,
+    //           students,
+    //           date: ''
+    //         };
+    //       }
+
+    //     }));
+
+    //     return {
+    //       id: subject.subject__id,
+    //       subject__name: subject.subject__name,
+    //       exams,
+    //     };
+    //   }));
+
+    //   return {
+    //     group__name: group.group__name,
+    //     subjects,
+    //   };
+    // }));
+
+    res.status(200).json(groups);
+  } catch (error) {
+    console.error("Error fetching groups:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -144,12 +231,12 @@ const checkExam = async (group: string, exam: number) => {
     const check = await Reservation.findOne({
       where: {
         exam__id: exam,
-        group__name: group
-      }
+        group__name: group,
+      },
     });
     return check;
   } catch (error) {
-    console.error('Error checking exam:', error);
+    console.error("Error checking exam:", error);
     return null;
   }
 };
@@ -207,9 +294,18 @@ export const getGroupsSubject = async (req: Request, res: Response) => {
 export const getGroupById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const group = await Group.findByPk(id);
-    if (Group) {
-      res.status(200).json(Group);
+    const group = await Group.findOne({
+      where: {
+        group__id: id,
+      },
+      include: [
+        {
+          model: Exam,
+        },
+      ],
+    });
+    if (group) {
+      res.status(200).json(group);
     } else {
       res.status(404).json({ message: "Group not found" });
     }
@@ -223,40 +319,38 @@ export const getGroupById = async (req: Request, res: Response) => {
 export const updateGroup = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-const groupData = req.body
-const groupExist = await Group.findByPk(id);
+    const groupData = req.body;
+    const groupExist = await Group.findByPk(id);
 
-if (!groupExist) {
-    return res.status(404).json({ error: 'group not found' });
-}
+    if (!groupExist) {
+      return res.status(404).json({ error: "group not found" });
+    }
     if (
-        
-        groupData.subjects &&
-        Array.isArray(groupData.subjects) &&
-        groupData.subjects.length > 0
-      ) {
-        const subjects = await Subject.findAll({
-          where: {
-            subject__id: groupData.subjects,
-          },
-        });
-  
-        await groupExist.$set("subjects", subjects);
-      }else {
-        // If no groups are provided or the array is empty, delete all associations
-        await groupExist.$set('subjects', []);
+      groupData.subjects &&
+      Array.isArray(groupData.subjects) &&
+      groupData.subjects.length > 0
+    ) {
+      const subjects = await Subject.findAll({
+        where: {
+          subject__id: groupData.subjects,
+        },
+      });
+
+      await groupExist.$set("subjects", subjects);
+    } else {
+      // If no groups are provided or the array is empty, delete all associations
+      await groupExist.$set("subjects", []);
     }
-if(groupExist.group__name !== groupData.group__name){
-    const [updated] = await Group.update(req.body, {
-      where: { group__id: id },
-    });
-    if (!updated) {
- 
-      throw new Error("Group not found");
+    if (groupExist.group__name !== groupData.group__name) {
+      const [updated] = await Group.update(req.body, {
+        where: { group__id: id },
+      });
+      if (!updated) {
+        throw new Error("Group not found");
+      }
     }
-}
-const updatedGroup = await Group.findOne({ where: { group__id: id } });
-res.status(200).json(updatedGroup);
+    const updatedGroup = await Group.findOne({ where: { group__id: id } });
+    res.status(200).json(updatedGroup);
   } catch (error) {
     console.error("Error updating Group", error);
     res.status(500).send("Error updating Group");

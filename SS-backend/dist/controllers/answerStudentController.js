@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAnswers = exports.updateResult = exports.createAnswers = void 0;
+exports.getAnswers = exports.getStudentAnswers = exports.updateResult = exports.createAnswers = void 0;
 const examModel_1 = require("../models/examModel");
 const answerModel_1 = require("../models/answerModel");
 const answerStudentModel_1 = require("../models/answerStudentModel");
@@ -21,6 +21,7 @@ const reponseModel_1 = require("../models/reponseModel");
 const fileModel_1 = require("../models/fileModel");
 const upload_1 = __importDefault(require("../utils/upload"));
 const studentModel_1 = require("../models/studentModel");
+const subjectModel_1 = require("../models/subjectModel");
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -88,6 +89,35 @@ const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.updateResult = updateResult;
+const getStudentAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        let answers;
+        answers = yield answerModel_1.Answer.findAll({
+            where: { Student__id: id },
+        });
+        answers = yield Promise.all(answers.map((ans) => __awaiter(void 0, void 0, void 0, function* () {
+            const exam = yield examModel_1.Exam.findOne({
+                where: {
+                    exam__id: ans.exam__id,
+                },
+            });
+            const subject = yield subjectModel_1.Subject.findOne({
+                where: {
+                    subject__name: exam === null || exam === void 0 ? void 0 : exam.subject
+                },
+            });
+            // Add student__name to the answer object
+            return Object.assign(Object.assign({}, ans.get({ plain: true })), { exam__title: (exam === null || exam === void 0 ? void 0 : exam.exam__title) || null, exam__oblig: (exam === null || exam === void 0 ? void 0 : exam.obligatoire) || null, subject: subject });
+        })));
+        res.status(200).json(answers);
+    }
+    catch (error) {
+        console.error("Error fetching answers", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getStudentAnswers = getStudentAnswers;
 const getAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

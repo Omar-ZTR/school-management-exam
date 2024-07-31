@@ -1,0 +1,91 @@
+.inputNumbe {
+    width: 70px;
+    height: 30px;
+    border: none;
+    background: rgb(0 0 0 / 2%);
+}
+.displayNone{
+    display: none;
+}
+
+.tableData{
+max-width: 500px;
+filter: drop-shadow(-11px -7px 22px #1d1d1d46);
+
+}
+
+.TitelForm {
+    margin-bottom: 10px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 25px;
+    color: #f68f39;
+    background: white;
+    width: fit-content;
+    padding: 15px 30px 15px 10px;
+    border-radius: 0 40px 40px 0;
+    box-shadow: 5px 5px 7px -3px #a1b7ff;
+  }
+
+.buttonSend {
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: #5E5DF0 0 0px 20px -6px;
+    box-sizing: border-box;
+    color: #100d6a;
+    cursor: pointer;
+    font-family: Inter,
+        Helvetica,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        NotoColorEmoji,
+        "Noto Color Emoji",
+        "Segoe UI Symbol",
+        "Android Emoji",
+        EmojiSymbols,
+        -apple-system,
+        system-ui,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        "Noto Sans",
+        sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 8px 18px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: fit-content;
+    word-break: break-word;
+    border: 0;
+}
+
+
+
+.border-none {
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+/* Define the touched border class */
+.border-touched {
+    border-bottom: 1px solid black;
+    background: rgb(0 0 0 / 2%);
+    border-top: 1px solid black;
+    /* You can customize the border style and color */
+}
+
+
+.contentresult{
+
+    display: flex;
+    gap: 50px;
+    justify-content: space-between;
+    width: 100%;
+
+}

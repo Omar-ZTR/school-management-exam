@@ -21,9 +21,17 @@ export class GroupService {
   getGroups(): Observable<Group[]>{
     return this.httpClient.get<Group[]>(this.url + "/group");
   }
+  getoneGroup(id:any){
+    return this.httpClient.get(`${this.url}/group/${id}`);
+  }
 
+  
   getFullGroups(){
     return this.httpClient.get(this.url + "/fullgroup");
+  }
+
+  getteacherGroups(){
+    return this.httpClient.get(this.url + "/teachergroup");
   }
 
 

@@ -23,7 +23,7 @@ routerExam.get('/allexams', getAllExams);
 
 routerExam.get('/examCertif', getFilteredExams);
 routerExam.get('/examfullCertif', getfullCertifExam);
-routerExam.get('/examsGS', getExamsGroupsStutents);
+routerExam.get('/examsGS/:id', getExamsGroupsStutents);
 
 routerExam.get('/exams', getFullExams);
 

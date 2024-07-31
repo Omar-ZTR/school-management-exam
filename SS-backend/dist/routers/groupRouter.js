@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const groupController_1 = require("../controllers/groupController");
 const routerGroup = express_1.default.Router();
 routerGroup.get('/group', groupController_1.getAllGroups);
+routerGroup.get('/teachergroup', groupController_1.getTeacherGroups);
 routerGroup.get('/fullgroup', groupController_1.getFullGroups);
 routerGroup.get('/groupSub/:exam__id', groupController_1.getGroupsSubject);
 routerGroup.get('/group/:id', groupController_1.getGroupById);

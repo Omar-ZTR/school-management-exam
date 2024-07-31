@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGroup = exports.updateGroup = exports.getGroupById = exports.getGroupsSubject = exports.getFullGroups = exports.getAllGroups = exports.createGroup = void 0;
+exports.deleteGroup = exports.updateGroup = exports.getGroupById = exports.getGroupsSubject = exports.getTeacherGroups = exports.getFullGroups = exports.getAllGroups = exports.createGroup = void 0;
 const sequelize_1 = require("sequelize");
 const groupModel_1 = require("../models/groupModel"); // Import your Group model
 const subjectModel_1 = require("../models/subjectModel");
@@ -34,12 +34,15 @@ const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
             yield group.$set("subjects", subjects);
         }
-        const newGroup = yield groupModel_1.Group.findOne({ where: { group__id: group.group__id }, include: [
+        const newGroup = yield groupModel_1.Group.findOne({
+            where: { group__id: group.group__id },
+            include: [
                 {
                     model: subjectModel_1.Subject,
                     as: "subjects",
                 },
-            ], });
+            ],
+        });
         res.status(201).json(newGroup);
     }
     catch (error) {
@@ -73,34 +76,36 @@ const getFullGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             include: [
                 {
                     model: subjectModel_1.Subject,
-                    as: 'subjects',
+                    as: "subjects",
                 },
                 {
                     model: examModel_1.Exam,
-                    as: 'exams',
+                    as: "exams",
                 },
                 {
                     model: studentModel_1.Student,
-                    as: 'students',
+                    as: "students",
                 },
                 {
                     model: teacherModel_1.Teacher,
-                    as: 'teachers',
+                    as: "teachers",
                 },
             ],
         });
         const result = yield Promise.all(groups.map((group) => __awaiter(void 0, void 0, void 0, function* () {
             const subjects = yield Promise.all(group.subjects.map((subject) => __awaiter(void 0, void 0, void 0, function* () {
-                const exams = yield Promise.all(group.exams.filter((ex) => ex.subject === subject.subject__name).map((exam) => __awaiter(void 0, void 0, void 0, function* () {
+                const exams = yield Promise.all(group.exams
+                    .filter((ex) => ex.subject === subject.subject__name)
+                    .map((exam) => __awaiter(void 0, void 0, void 0, function* () {
                     const students = yield Promise.all(group.students.map((student) => __awaiter(void 0, void 0, void 0, function* () {
                         const answer = yield answerModel_1.Answer.findOne({
                             where: {
                                 Student__id: student.user__id,
                                 exam__id: exam.exam__id,
-                            }
+                            },
                         });
                         return {
-                            user__name: student.first__name,
+                            user__name: student.first__name + " " + student.last__name,
                             ans__result: answer ? answer.ans__result : null,
                             ans__id: answer ? answer.ans__id : null,
                         };
@@ -110,14 +115,14 @@ const getFullGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                         return {
                             exam__title: exam.exam__title,
                             students,
-                            date: res.startDate
+                            date: res.startDate,
                         };
                     }
                     else {
                         return {
                             exam__title: exam.exam__title,
                             students,
-                            date: ''
+                            date: "",
                         };
                     }
                 })));
@@ -135,23 +140,95 @@ const getFullGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).json(result);
     }
     catch (error) {
-        console.error('Error fetching groups:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching groups:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getFullGroups = getFullGroups;
+const getTeacherGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const groups = yield groupModel_1.Group.findAll({
+            include: [
+                {
+                    model: subjectModel_1.Subject,
+                    as: "subjects",
+                },
+                {
+                    model: examModel_1.Exam,
+                    as: "exams",
+                },
+                {
+                    model: studentModel_1.Student,
+                    as: "students",
+                },
+                {
+                    model: teacherModel_1.Teacher,
+                    as: "teachers",
+                },
+            ],
+        });
+        // const result = await Promise.all(groups.map(async group => {
+        //   const subjects = await Promise.all(group.subjects.map(async subject => {
+        //     const exams = await Promise.all(group.exams.filter((ex:any) => ex.subject === subject.subject__name).map(async exam => {
+        //       const students = await Promise.all(group.students.map(async student => {
+        //         const answer = await Answer.findOne({
+        //           where: {
+        //             Student__id: student.user__id,
+        //             exam__id: exam.exam__id,
+        //           }
+        //         });
+        //         return {
+        //           user__name: student.first__name,
+        //           ans__result: answer ? answer.ans__result : null,
+        //           ans__id: answer ? answer.ans__id : null,
+        //         };
+        //       }));
+        //       const res = await checkExam(group.group__name, exam.exam__id);
+        //       if (res) {
+        //         return {
+        //           exam__title: exam.exam__title,
+        //           students,
+        //           date: res.startDate
+        //         };
+        //       } else {
+        //         return {
+        //           exam__title: exam.exam__title,
+        //           students,
+        //           date: ''
+        //         };
+        //       }
+        //     }));
+        //     return {
+        //       id: subject.subject__id,
+        //       subject__name: subject.subject__name,
+        //       exams,
+        //     };
+        //   }));
+        //   return {
+        //     group__name: group.group__name,
+        //     subjects,
+        //   };
+        // }));
+        res.status(200).json(groups);
+    }
+    catch (error) {
+        console.error("Error fetching groups:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getTeacherGroups = getTeacherGroups;
 const checkExam = (group, exam) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const check = yield reservationModel_1.Reservation.findOne({
             where: {
                 exam__id: exam,
-                group__name: group
-            }
+                group__name: group,
+            },
         });
         return check;
     }
     catch (error) {
-        console.error('Error checking exam:', error);
+        console.error("Error checking exam:", error);
         return null;
     }
 });
@@ -203,9 +280,18 @@ exports.getGroupsSubject = getGroupsSubject;
 const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const group = yield groupModel_1.Group.findByPk(id);
-        if (groupModel_1.Group) {
-            res.status(200).json(groupModel_1.Group);
+        const group = yield groupModel_1.Group.findOne({
+            where: {
+                group__id: id,
+            },
+            include: [
+                {
+                    model: examModel_1.Exam,
+                },
+            ],
+        });
+        if (group) {
+            res.status(200).json(group);
         }
         else {
             res.status(404).json({ message: "Group not found" });
@@ -224,7 +310,7 @@ const updateGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const groupData = req.body;
         const groupExist = yield groupModel_1.Group.findByPk(id);
         if (!groupExist) {
-            return res.status(404).json({ error: 'group not found' });
+            return res.status(404).json({ error: "group not found" });
         }
         if (groupData.subjects &&
             Array.isArray(groupData.subjects) &&
@@ -238,7 +324,7 @@ const updateGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         else {
             // If no groups are provided or the array is empty, delete all associations
-            yield groupExist.$set('subjects', []);
+            yield groupExist.$set("subjects", []);
         }
         if (groupExist.group__name !== groupData.group__name) {
             const [updated] = yield groupModel_1.Group.update(req.body, {

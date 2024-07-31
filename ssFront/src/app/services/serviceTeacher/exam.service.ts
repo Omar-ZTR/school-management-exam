@@ -75,8 +75,8 @@ export class ExamService {
     return this.httpClient.get<Exam[]>(`${this.url}/examsTeach/${id}`);
   }
 
-  getTeacherExamGS(): Observable<ExamGS[]> {
-    return this.httpClient.get<ExamGS[]>(`${this.url}/examsGS`);
+  getTeacherExamGS(id:any): Observable<ExamGS[]> {
+    return this.httpClient.get<ExamGS[]>(`${this.url}/examsGS/${id}`);
   }
   getExamByid(exam_id: any): Observable<any> {
     console.log('sssaaaaaaaaaa', exam_id);

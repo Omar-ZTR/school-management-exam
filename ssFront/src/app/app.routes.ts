@@ -24,6 +24,7 @@ import { AdminComponent } from './components/Admin/admin/admin.component';
 import { TeacherQuestionComponent } from './components/teacher/teacher-question/teacher-question.component';
 import { AllresultComponent } from './components/Admin/allresult/allresult.component';
 import { ExamsCertifComponent } from './components/Admin/exams-certif/exams-certif.component';
+import { StudentanswersComponent } from './components/student/studentanswers/studentanswers.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -38,7 +39,7 @@ export const routes: Routes = [
       { path: 'dash', component: DashStudentComponent },
       { path: 'update', component: UpdateProfileComponent },
       { path: 'exam', component: ExamsComponent },
-      { path: 'examtaken', component: ExamtakenComponent },
+      { path: 'result', component: StudentanswersComponent },
     ],
   },
   {

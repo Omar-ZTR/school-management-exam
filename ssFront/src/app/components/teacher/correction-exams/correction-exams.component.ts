@@ -20,6 +20,7 @@ import {
 } from '../../../shared/utilsFile';
 import { saveAs } from 'file-saver';
 import { InputTextModule } from 'primeng/inputtext';
+import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 
 @Component({
   selector: 'app-correction-exams',
@@ -103,7 +104,9 @@ export class CorrectionExamsComponent {
   Exam: any;
   studentAnswer: any;
   questionNotes: { idQ: number; value: number; noteQ: number }[] = [];
+  user__id = this.tokenService.getUserIdFromToken();
 
+  
   showDialog(dataAnswer: any) {
     this.visible = true;
     this.studentAnswer = dataAnswer;
@@ -133,14 +136,15 @@ export class CorrectionExamsComponent {
 
   constructor(
     private AnswerService: ExamAnswersService,
-    private examService: ExamService
+    private examService: ExamService,
+    private tokenService: TokenServiceService,
   ) {}
   ngOnInit(): void {
     this.fetchAnswers();
   }
 
   fetchAnswers(): void {
-    this.AnswerService.getAnswer(14).subscribe(
+    this.AnswerService.getAnswer(this.user__id).subscribe(
       (data:any) => {
         this.AnswersObli = data.ObliAnswers;
         this.AnswersCertif = data.CertifAnswers;

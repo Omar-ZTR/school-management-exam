@@ -8,6 +8,8 @@ import { Reponse } from "../models/reponseModel";
 import { FileAnswer, FileQuestion } from "../models/fileModel";
 import uploadFileMiddleware from "../utils/upload";
 import { Student } from "../models/studentModel";
+import { Subject } from "../models/subjectModel";
+import { Group } from "../models/groupModel";
 const baseUrl = "http://localhost:3000/files/";
 
 // Create operation
@@ -82,6 +84,48 @@ export const updateResult = async (req: Request, res: Response) => {
     res.status(500).send("Error updating result");
   }
 };
+export const getStudentAnswers = async (req: Request, res: Response) => {
+
+try{
+  const { id } = req.params;
+
+  let  answers 
+  answers = await Answer.findAll({
+    where: { Student__id: id},
+  });
+
+
+  answers = await Promise.all(answers.map(async ans => {
+    const exam = await Exam.findOne({
+      where: {
+        exam__id: ans.exam__id,
+
+      },
+     
+    });
+    const subject = await Subject.findOne({
+      where: {
+       subject__name: exam?.subject
+
+      },
+      
+    });
+    // Add student__name to the answer object
+    return {
+      ...ans.get({ plain: true }), // Convert Sequelize model instance to plain object
+      exam__title:exam?.exam__title || null,
+      exam__oblig:exam?.obligatoire || null,
+subject:subject
+    };
+  }));
+
+  res.status(200).json(answers);
+} catch (error) {
+  console.error("Error fetching answers", error);
+  res.status(500).json({ error: "Internal server error" });
+}
+};
+
 
 export const getAnswers = async (req: Request, res: Response) => {
   try {
@@ -266,3 +310,6 @@ async function getNamestudent(examid: number) {
     throw error;
   }
 }
+
+
+

@@ -2,6 +2,7 @@ import { Table, Model, Column, DataType, ForeignKey, BelongsTo, HasMany } from "
 import { users } from "./usress/userModel";
 import { Group } from "./groupModel";
 import { Subscribe } from "./subscribeModel";
+import { Answer } from "./answerModel";
 
 @Table({
   tableName: "Student",
@@ -22,7 +23,8 @@ export class Student extends users<Student> {
 
   @BelongsTo(() => Group)
   group?: Group;
-
+  @HasMany(() => Answer)
+  answers!: Subscribe[];
 
   @HasMany(() => Subscribe)
   subscribes!: Subscribe[];

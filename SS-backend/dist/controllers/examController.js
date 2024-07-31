@@ -204,16 +204,105 @@ const getTeacherExams = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.getTeacherExams = getTeacherExams;
 const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { id } = req.params;
         const exams = yield examModel_1.Exam.findAll({
             include: [
                 {
                     model: groupModel_1.Group,
-                    include: [{ model: studentModel_1.Student }],
-                    through: { attributes: [] },
-                },
+                    include: [
+                        {
+                            model: studentModel_1.Student,
+                        }
+                    ],
+                    through: { attributes: [] }
+                }
             ],
+            where: { user__id: id },
         });
-        res.status(200).json(exams);
+        const result = yield Promise.all(exams.map((exam) => __awaiter(void 0, void 0, void 0, function* () {
+            const groups = yield Promise.all(exam.groups.map((group) => __awaiter(void 0, void 0, void 0, function* () {
+                const students = yield Promise.all(group.students.map((student) => __awaiter(void 0, void 0, void 0, function* () {
+                    const answer = yield answerModel_1.Answer.findOne({
+                        where: {
+                            Student__id: student.user__id,
+                            exam__id: exam.exam__id,
+                        }
+                    });
+                    return {
+                        exam: exam.exam__id,
+                        student__id: student.user__id,
+                        user__name: student.first__name + ' ' + student.last__name,
+                        ans__result: answer ? answer.ans__result : null,
+                        ans__id: answer ? answer.ans__id : null,
+                    };
+                })));
+                const res = yield checkExam(group.group__name, exam.exam__id);
+                if (res) {
+                    return {
+                        group__id: group.group__id,
+                        exam: exam.exam__id,
+                        group__name: group.group__name, // Include group information if needed
+                        students: students,
+                        date: res.startDate
+                    };
+                }
+                else {
+                    return {
+                        group__id: group.group__id,
+                        exam: exam.exam__id,
+                        group__name: group.group__name, // Include group information if needed
+                        students: students,
+                        date: ''
+                    };
+                }
+                // return {
+                //   group__id: group.group__id,
+                //   exam:exam.exam__id,
+                //   group__name: group.group__name,  // Include group information if needed
+                //   students: students
+                // };
+            })));
+            let answers;
+            let check;
+            if (!exam.obligatoire) {
+                answers = yield answerModel_1.Answer.findAll({
+                    where: {
+                        exam__id: exam.exam__id,
+                    }
+                });
+                answers = yield Promise.all(answers.map((ans) => __awaiter(void 0, void 0, void 0, function* () {
+                    const student = yield studentModel_1.Student.findOne({
+                        where: {
+                            user__id: ans.Student__id,
+                        }
+                    });
+                    // Add student__name to the answer object
+                    return Object.assign(Object.assign({}, ans.get({ plain: true })), { student__name: student ? `${student.first__name} ${student.last__name}` : null });
+                })));
+                check = yield reservationModel_1.Reservation.findAll({
+                    where: {
+                        exam__id: exam.exam__id,
+                    }
+                });
+            }
+            return {
+                exam__oblig: exam.obligatoire,
+                exam__id: exam.exam__id,
+                exam__name: exam.exam__title, // Include exam information if needed
+                groups: groups,
+                answers: answers,
+                date: check
+            };
+        })));
+        // Filter answers by `exam__id`
+        // exams.forEach(exam => {
+        //   exam.groups.forEach(group => {
+        //     group.students.forEach(student => {
+        //       student.answers = student.answers.filter(answer => answer.exam__id === exam.exam__id);
+        //     });
+        //   });
+        // });
+        res.status(200).json(result);
     }
     catch (error) {
         console.error("Error fetching students for groups:", error);
@@ -221,6 +310,21 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.getExamsGroupsStutents = getExamsGroupsStutents;
+const checkExam = (group, exam) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const check = yield reservationModel_1.Reservation.findOne({
+            where: {
+                exam__id: exam,
+                group__name: group
+            }
+        });
+        return check;
+    }
+    catch (error) {
+        console.error('Error checking exam:', error);
+        return null;
+    }
+});
 const addDescreptionExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

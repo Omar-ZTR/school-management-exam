@@ -10,7 +10,7 @@ import { Student } from "../models/studentModel";
 import { updateQuestionsWithExam } from "./questionController";
 import uploadFileMiddleware from "../utils/upload";
 import { Answer } from "../models/answerModel";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
@@ -220,23 +220,140 @@ export const getTeacherExams = async (req: Request, res: Response) => {
 };
 export const getExamsGroupsStutents = async (req: Request, res: Response) => {
   try {
+    const {id} = req.params;
     const exams = await Exam.findAll({
       include: [
         {
           model: Group,
-          include: [{ model: Student }],
-          through: { attributes: [] }, 
-        },
+          include: [
+            {
+              model: Student,
+             
+            }
+          ],
+          through: { attributes: [] }
+        }
       ],
+      where: { user__id: id },
     });
+    const result = await Promise.all(exams.map(async exam => {
+      const groups = await Promise.all(exam.groups.map(async group => {
+        const students = await Promise.all(group.students.map(async student => {
+          const answer = await Answer.findOne({
+            where: {
+              Student__id: student.user__id,
+              exam__id: exam.exam__id,
+            }
+          });
+    
+          return {
+            exam:exam.exam__id,
+            student__id:student.user__id,
+            user__name: student.first__name + ' ' + student.last__name,
+            ans__result: answer ? answer.ans__result : null,
+            ans__id: answer ? answer.ans__id : null,
+          };
+        }));
+        const res = await checkExam(group.group__name, exam.exam__id);
+        if (res) {
+          return {
+            group__id: group.group__id,
+          exam:exam.exam__id,
+          group__name: group.group__name,  // Include group information if needed
+          students: students,
+            date: res.startDate
+          };
+        } else {
+          return {
+            group__id: group.group__id,
+          exam:exam.exam__id,
+          group__name: group.group__name,  // Include group information if needed
+          students: students,
+            date: ''
+          };
+        }
+        // return {
+        //   group__id: group.group__id,
+        //   exam:exam.exam__id,
+        //   group__name: group.group__name,  // Include group information if needed
+        //   students: students
+        // };
+      }));
+      let answers;
+      let check;
+      if (!exam.obligatoire) {
+        answers = await Answer.findAll({
+          where: {
+            exam__id: exam.exam__id,
+          }
+        });
+      
+        answers = await Promise.all(answers.map(async ans => {
+          const student = await Student.findOne({
+            where: {
+              user__id: ans.Student__id,
+            }
+          });
+      
+          // Add student__name to the answer object
+          return {
+            ...ans.get({ plain: true }), // Convert Sequelize model instance to plain object
+            student__name: student ? `${student.first__name} ${student.last__name}` : null,
+          };
+        }));
+         check = await Reservation.findAll({
+          where: {
+            exam__id: exam.exam__id,
+          
+          }
+        });
+ 
+      }
 
-    res.status(200).json(exams);
+
+
+
+
+      
+      return {
+        exam__oblig:exam.obligatoire,
+        exam__id:exam.exam__id,
+        exam__name: exam.exam__title,  // Include exam information if needed
+        groups: groups,
+        answers:answers,
+        date: check
+      };
+    }));
+    // Filter answers by `exam__id`
+    // exams.forEach(exam => {
+    //   exam.groups.forEach(group => {
+    //     group.students.forEach(student => {
+    //       student.answers = student.answers.filter(answer => answer.exam__id === exam.exam__id);
+    //     });
+    //   });
+    // });
+
+    res.status(200).json(result);
   } catch (error) {
     console.error("Error fetching students for groups:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+const checkExam = async (group: string, exam: number) => {
+  try {
+    const check = await Reservation.findOne({
+      where: {
+        exam__id: exam,
+        group__name: group
+      }
+    });
+    return check;
+  } catch (error) {
+    console.error('Error checking exam:', error);
+    return null;
+  }
+};
 
 export const addDescreptionExam = async (req: Request, res: Response) => {
   try {

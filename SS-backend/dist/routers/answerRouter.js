@@ -9,4 +9,5 @@ const routerAnswer = express_1.default.Router();
 routerAnswer.post('/answers', answerStudentController_1.createAnswers);
 routerAnswer.get('/getanswers/:id', answerStudentController_1.getAnswers);
 routerAnswer.put('/result/:id', answerStudentController_1.updateResult);
+routerAnswer.get('/studentanswer/:id', answerStudentController_1.getStudentAnswers);
 exports.default = routerAnswer;

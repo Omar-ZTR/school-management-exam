@@ -9,7 +9,7 @@ const routerExam = express_1.default.Router();
 routerExam.get('/allexams', examController_1.getAllExams);
 routerExam.get('/examCertif', examController_1.getFilteredExams);
 routerExam.get('/examfullCertif', examController_1.getfullCertifExam);
-routerExam.get('/examsGS', examController_1.getExamsGroupsStutents);
+routerExam.get('/examsGS/:id', examController_1.getExamsGroupsStutents);
 routerExam.get('/exams', examController_1.getFullExams);
 routerExam.get('/examsTeach/:id', examController_1.getTeacherExams);
 routerExam.get('/exams/:id', examController_1.getExamById);

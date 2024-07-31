@@ -1,0 +1,29 @@
+<div class="card">
+    <p-table
+        [value]="results"
+        [paginator]="true"
+        [rows]="5"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [rowsPerPageOptions]="[5, 10, 20]"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:25%">subject</th>
+                <th style="width:25%">coefficient</th>
+
+                <th style="width:25%">Exam</th>
+                
+                
+                <th style="width:25%">Note</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-result>
+            <tr>
+                <td>{{ result.subject.subject__name }}</td>
+                <td>{{ result.subject.coefficient}}</td>
+                <td>{{ result.exam__title }}</td>
+                <td>{{ result.ans__result }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

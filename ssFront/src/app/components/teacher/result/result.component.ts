@@ -13,6 +13,11 @@ import { FormsModule } from '@angular/forms';
 import { PaginatorModule } from 'primeng/paginator';
 import { DialogModule } from 'primeng/dialog';
 import { ImageModule } from 'primeng/image';
+import { GroupService } from '../../../services/servicesUtils/group.service';
+import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { ExamAnswersService } from '../../../services/serviceAnswers/exam-answers.service';
 
 export interface Student {
   user__id: number;
@@ -71,7 +76,8 @@ interface PageEvent {
     InputTextModule,
     IconFieldModule,
     InputIconModule,
-  
+    ButtonModule,
+    TooltipModule,
   ],
   providers: [],
   templateUrl: './result.component.html',
@@ -79,125 +85,350 @@ interface PageEvent {
 })
 export class ResultComponent implements OnInit {
   selectedExams: any;
-  ExamGS: ExamGS[] = [];
-  ExamT: ExamTab[] = [];
-  ExamD: ExamGS[] = [];
+  // ExamGS: ExamGS[] = [];
+  // ExamT: ExamTab[] = [];
+  // ExamD: ExamGS[] = [];
+
+  resultAnsStudent: {
+    [key: string]: {
+      ans__result: any;
+      ans__id: any;
+      exam__id: any;
+      student__id: any;
+    };
+  } = {};
+
   groupedExams: { [subject: string]: any[] } = {};
   subjectRenderTracker: { [subject: string]: boolean } = {};
-  
+  expandedRows: { [key: string]: boolean } = {};
   searchValue: string = '';
-
+ user__id = this.tokenService.getUserIdFromToken();
   first: number = 0;
-
+ 
   rows: number = 10;
+  firstC: number = 0;
+ 
+  rowsC: number = 10;
+
+
+  Exams: any;
+  examCourse: any;
+  msgErr: string='';
+  filteredExamCourse: any;
+  examCertif: any;
+  filteredexamCertif: any;
+
+  PageChange(event: any) {
+    this.firstC = event.first;
+    this.rowsC = event.rows;
+    console.log(this.rows, this.first);
+  }
+
   onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
     console.log(this.rows, this.first);
   }
-  constructor(private examService: ExamService) {}
+  constructor(
+    private AnswerService: ExamAnswersService,
+    private groupService: GroupService,
+    private tokenService: TokenServiceService,
+    private examService: ExamService
+  ) {}
+  // fetchGroups() {
+  //   this.groupService.getteacherGroups().subscribe(
+  //     (data) => {
+
+  //   console.log('radicali ', data);
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching groups', error);
+  //     }
+  //   );
+  // }
+
+  onRowExpand(event: any, index: number) {
+    this.expandedRows = {}; // Reset expanded rows
+    this.expandedRows[index] = true; // Expand only the selected row
+    console.log('Expanded row:', event.data);
+    console.log('Expanded rows state:', this.expandedRows);
+  }
+
+  onRowCollapse(event: any, index: number) {
+    delete this.expandedRows[index]; // Collapse the selected row
+    console.log('Collapsed row:', event.data);
+    console.log('Expanded rows state:', this.expandedRows);
+  }
+
+  dateNow: Date = new Date();
+  isFutureDate(examDate: Date): boolean {
+    return new Date(examDate) > this.dateNow;
+  }
+  toggleRow(sub: any) {
+    this.expandedRows[sub.exam__id] = !this.expandedRows[sub.exam__id];
+  }
+  // Function to check if the exam date is in the past
+  isPastDate(examDate: Date): boolean {
+    return new Date(examDate) < this.dateNow;
+  }
 
   ngOnInit() {
-    this.examService.getTeacherExamGS().subscribe(
-      (data: ExamGS[]) => {
+    // this.fetchGroups()
+
+    this.examService.getTeacherExamGS(this.user__id).subscribe(
+      (data) => {
         console.log('Response from backend:', data);
-        this.ExamGS = data;
-        console.log(this.ExamGS);
-        this.ExamD = this.ExamGS;
-        this.ExamGS.forEach((exam) => {
-          exam.groups.forEach((group) => {
-            group.students.forEach((student) => {
-              this.ExamT.push({
-                exam__id: exam.exam__id,
-                subject: exam.subject,
-                group__id: group.group__id,
-                group__name: group.group__name,
-                user__id: student.user__id,
-                student__name: `${student.first__name} ${student.last__name}`,
-                user__email: student.user__email,
-              });
-            });
-          });
-        });
-        console.log(this.ExamT);
+        this.Exams = data;
+        console.log(this.Exams);
+        // this.ExamD = this.ExamGS;
+        for (const exam of this.Exams) {
+          for (const group of exam.groups) {
+            for (const stud of group.students) {
+              const key = `${stud.exam}-${stud.student__id}`;
+              // Ensure this.acceptation[key] is initialized as an object
+              if (!this.resultAnsStudent[key]) {
+                this.resultAnsStudent[key] = {
+                  ans__result: null,
+                  ans__id: null,
+                  exam__id: null,
+                  student__id: null,
+                };
+              }
+
+              // Set properties
+              this.resultAnsStudent[key].ans__result = stud.ans__result;
+              this.resultAnsStudent[key].ans__id = stud.ans__id;
+              this.resultAnsStudent[key].exam__id = stud.exam;
+              this.resultAnsStudent[key].student__id = stud.student__id;
+              console.log(
+                'exam.student.user__id',
+                key,
+                this.resultAnsStudent[key]
+              );
+            }
+          }
+        }
+        this.examCourse = this.Exams.filter(
+          (exam: { exam__oblig: boolean }) => exam.exam__oblig === true
+        );
+        this.examCertif = this.Exams.filter(
+          (exam: { exam__oblig: boolean }) => exam.exam__oblig === false
+        );
+        for (const exam of this.examCertif) {
+        
+            for (const ans of exam.answers) {
+              console.log("iid",ans.ans__id, ans.ans__result)
+              const key = `${ans.exam__id}-${ans.Student__id}`;
+              // Ensure this.acceptation[key] is initialized as an object
+              if (!this.resultAnsStudent[key]) {
+                this.resultAnsStudent[key] = {
+                  ans__result: null,
+                  ans__id: null,
+                  exam__id: null,
+                  student__id: null,
+                };
+              }
+
+              // Set properties
+              this.resultAnsStudent[key].ans__result = ans.ans__result;
+              this.resultAnsStudent[key].ans__id = ans.ans__id;
+              this.resultAnsStudent[key].exam__id = ans.exam__id;
+              this.resultAnsStudent[key].student__id = ans.Student__id;
+              console.log(
+                'exam.student.user__id',
+                key,
+                this.resultAnsStudent[key]
+              );
+
+             
+            }
+          }
+      
+        this.loadExamCourseData();
+        this.loadExamCertifData()
+  console.log("cerife",this.examCertif) 
       },
       (error: any) => {
         console.error('Error fetching exams', error);
       }
     );
+    
+    // Initially, the filtered data is the same as the original data
+   
+  }
+
+  loadExamCourseData() {
+    this.filteredExamCourse = [...this.examCourse];
+ 
+  }
+
+  loadExamCertifData() {
+    this.filteredexamCertif = [...this.examCertif];
+ 
   }
 
   rowStudents(group: Group): number {
     return group.students ? group.students.length : 0;
   }
 
-  filterData(searchValue: string) {
-    const filteredData = searchValue
-      ? this.ExamGS.reduce(
-          (acc: any[], exam: { subject: string; groups: any[] }) => {
-            // Check if search value is in the subject
-            if (
-              exam.subject.toLowerCase().includes(searchValue.toLowerCase())
-            ) {
-              acc.push(exam); // Add the entire exam if subject matches
-              return acc;
-            }
+  // filterData(searchValue: string) {
+  //   const filteredData = searchValue
+  //     ? this.Exams.reduce(
+  //         (acc: any[], exam: { subject: string; groups: any[] }) => {
+  //           // Check if search value is in the subject
+  //           if (
+  //             exam.subject.toLowerCase().includes(searchValue.toLowerCase())
+  //           ) {
+  //             acc.push(exam); // Add the entire exam if subject matches
+  //             return acc;
+  //           }
 
-            const filteredGroups = exam.groups.filter((group) =>
-              group.group__name
-                .toLowerCase()
-                .includes(searchValue.toLowerCase())
-            );
+  //           const filteredGroups = exam.groups.filter((group) =>
+  //             group.group__name
+  //               .toLowerCase()
+  //               .includes(searchValue.toLowerCase())
+  //           );
 
-            if (filteredGroups.length > 0) {
-              // Return the entire exam with filtered groups if group name matches
-              acc.push({ ...exam, groups: filteredGroups });
-              return acc;
-            }
+  //           if (filteredGroups.length > 0) {
+  //             // Return the entire exam with filtered groups if group name matches
+  //             acc.push({ ...exam, groups: filteredGroups });
+  //             return acc;
+  //           }
 
-            // Check if search value is in any student name or email within the exam
-            const updatedGroups = exam.groups
-              .map((group) => {
-                const filteredStudents = group.students.filter(
-                  (student: { first__name: string; user__email: string }) =>
-                    student.first__name
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase()) ||
-                    student.user__email
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                );
-                if (filteredStudents.length > 0) {
-                  const updatedStudents = filteredStudents.map(
-                    (student: { user__email: string }) => ({
-                      ...student,
-                      // Include the email in the filtered students
-                      user__email: student.user__email
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase())
-                        ? student.user__email
-                        : '',
-                    })
-                  );
-                  return { ...group, students: updatedStudents };
-                } else {
-                  return null; // Return null for groups with no matching students
-                }
-              })
-              .filter(Boolean); // Remove null values from the array
+  //           // Check if search value is in any student name or email within the exam
+  //           const updatedGroups = exam.groups
+  //             .map((group) => {
+  //               const filteredStudents = group.students.filter(
+  //                 (student: { first__name: string; user__email: string }) =>
+  //                   student.first__name
+  //                     .toLowerCase()
+  //                     .includes(searchValue.toLowerCase()) ||
+  //                   student.user__email
+  //                     .toLowerCase()
+  //                     .includes(searchValue.toLowerCase())
+  //               );
+  //               if (filteredStudents.length > 0) {
+  //                 const updatedStudents = filteredStudents.map(
+  //                   (student: { user__email: string }) => ({
+  //                     ...student,
+  //                     // Include the email in the filtered students
+  //                     user__email: student.user__email
+  //                       .toLowerCase()
+  //                       .includes(searchValue.toLowerCase())
+  //                       ? student.user__email
+  //                       : '',
+  //                   })
+  //                 );
+  //                 return { ...group, students: updatedStudents };
+  //               } else {
+  //                 return null; // Return null for groups with no matching students
+  //               }
+  //             })
+  //             .filter(Boolean); // Remove null values from the array
 
-            if (updatedGroups.length > 0) {
-              // Return the entire exam with updated groups containing filtered students
-              acc.push({ ...exam, groups: updatedGroups });
-            }
+  //           if (updatedGroups.length > 0) {
+  //             // Return the entire exam with updated groups containing filtered students
+  //             acc.push({ ...exam, groups: updatedGroups });
+  //           }
 
-            return acc;
-          },
-          []
+  //           return acc;
+  //         },
+  //         []
+  //       )
+  //     : this.Exams; // Reset to original data when search input is empty
+
+  //   // this.Exam = filteredData;
+  // }
+
+  
+  
+  filterData(searchTerm: string) {
+    if (!searchTerm) {
+      this.filteredExamCourse = [...this.examCourse];
+    } else {
+      this.filteredExamCourse = this.examCourse.filter((exam: { exam__name: string; groups: { group__name: string; students: any[]; }[]; }) =>
+        exam.exam__name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        exam.groups.some((group: { group__name: string; students: any[]; }) =>
+          group.group__name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          group.students.some(student =>
+            student.user__name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
         )
-      : this.ExamGS; // Reset to original data when search input is empty
+      );
+    }
+  }
 
-    this.ExamD = filteredData;
+  filterDataCertif(searchTerm: string) {
+    if (!searchTerm) {
+      this.filteredexamCertif = [...this.examCertif];
+    } else {
+      this.filteredexamCertif = this.examCertif.filter((exam: { exam__name: string; answers: any[]; }) =>
+        exam.exam__name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        exam.answers.some((ans: { student__name: string; }) =>
+          ans.student__name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+  }
+
+
+  
+  
+  
+  updateresult(exam: any, student: any) {
+    const key = `${exam}-${student}`;
+if(this.resultAnsStudent[key].ans__result > 20 ||this.resultAnsStudent[key].ans__result < 0 ){
+
+  this.msgErr = 'must be between 20 and 0'
+  return
+}
+    console.log(
+      'this.resultAnsStudent[key] is',
+      key,
+      this.resultAnsStudent[key]
+    );
+    if (this.resultAnsStudent[key].ans__id) {
+    const answerData = {
+      ans__id: this.resultAnsStudent[key].ans__id,
+      ans__result: this.resultAnsStudent[key].ans__result,
+    };
+
+    this.AnswerService.updateAnswer(answerData).subscribe(
+      (response: any) => {
+        alert('Successfully Update');
+
+        console.log('seccess update', response);
+      },
+      (error: { error: { message: any } }) => {
+        console.log('errrr', error);
+      }
+    );
+
+  }
+    const dataforNew = {
+      Student__id: this.resultAnsStudent[key].student__id,
+      exam__id: this.resultAnsStudent[key].exam__id,
+      ans__result: this.resultAnsStudent[key].ans__result,
+    };
+
+
+
+    if (!this.resultAnsStudent[key].ans__id) {
+      const dataAnswers = {
+        ans: dataforNew,
+        files: [],
+      };
+      this.AnswerService.createAnswers(dataAnswers).subscribe(
+        (response: any) => {
+          this.resultAnsStudent[key].ans__id = response.ans__id
+          alert('Successfully created');
+          console.log('success create', response);
+        },
+        (error: { error: { message: any } }) => {
+          console.log('error', error);
+        }
+      );
+    }
   }
 
   // groupExamsBySubject() {
@@ -214,14 +445,14 @@ export class ResultComponent implements OnInit {
     return this.groupedExams[subject].length;
   }
 
-  shouldRenderSubjectCell(rowIndex: number): boolean {
-    const exam = this.ExamT[rowIndex];
-    if (!this.subjectRenderTracker[exam.subject]) {
-      this.subjectRenderTracker[exam.subject] = true;
-      return true;
-    }
-    return false;
-  }
+  // shouldRenderSubjectCell(rowIndex: number): boolean {
+  //   const exam = this.ExamT[rowIndex];
+  //   if (!this.subjectRenderTracker[exam.subject]) {
+  //     this.subjectRenderTracker[exam.subject] = true;
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   rowGroups(exam: ExamGS): number {
     return exam.groups
