@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { HttpClientModule } from '@angular/common/http';
 import { ExamService } from '../../../services/serviceTeacher/exam.service';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
@@ -167,7 +167,8 @@ export class TeacherExamComponent {
     private teacherService: TeacherService,
     private fb: FormBuilder,
     private calandarService: CalandarService,
-    private tokenService: TokenServiceService
+    private tokenService: TokenServiceService,
+    private messageService: MessageService
   ) {
     this.questionForms = this.fb.group({
       question__text: [
@@ -383,13 +384,16 @@ export class TeacherExamComponent {
         );
         this.Exams[index] = this.examShudeled;
 
-        alert('Successfully update');
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'delete successfuly' });
+
         console.log('seccess update', response);
 
         // window.location.reload();
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: error.error?.message });
+
       }
     );
   }
@@ -400,7 +404,7 @@ export class TeacherExamComponent {
       return;
     } else {
       if (this.eventForm.valid) {
-        console.log('987654', this.futureDateValidator());
+       
         const formValues = this.eventForm.value;
         const calandarData = {
           startDate: new Date(
@@ -418,6 +422,8 @@ export class TeacherExamComponent {
             const index = this.Exams.findIndex(
               (exam) => exam.exam__id === response.exam__id
             );
+
+
             // this.Exams.reservation.findIndex(exam => exam.exam__id === response.exam__id);
             const indexR = this.Exams[index].reservation.findIndex(
               (reserv) => reserv.reserv__id === response.reserv__id
@@ -434,13 +440,19 @@ export class TeacherExamComponent {
               this.Exams[index].reservation[indexR]
             );
             this.updatecalendar = false;
-            alert('Successfully update');
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully update' });
+
+        
             console.log('seccess update', response);
 
             // window.location.reload();
           },
           (error: { error: { message: any } }) => {
             console.log('errrr', error);
+            if(error.error?.message){
+         
+              this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+              }
           }
         );
       }
@@ -804,7 +816,8 @@ export class TeacherExamComponent {
           this.FileAdds = [];
           this.Fileupload = [];
           this.fetchExam(this.Exam.exam__id);
-          alert('Successfully updated');
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully update' });
+
           console.log('succ112@@111111111111111113ess', response);
         },
         (error: { error: { message: any } }) => {
@@ -888,7 +901,8 @@ export class TeacherExamComponent {
             this.Fileupload = [];
             this.fetchExam(this.Exam.exam__id);
             this.closeQuest();
-            alert('Successfully updated');
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully update' });
+
             console.log('success', response);
           },
           (error: { error: { message: any } }) => {
@@ -903,11 +917,16 @@ export class TeacherExamComponent {
           this.Fileupload = [];
 
           this.fetchExam(this.Exam.exam__id);
-          alert('Successfully create');
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Question created successfuly' });
+
           console.log('seccess', response);
           this.closeQuest();
         },
         (error: { error: { message: any } }) => {
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
           console.log('errrr', error);
         }
       );
@@ -1021,9 +1040,15 @@ export class TeacherExamComponent {
           console.log('Response delete Exam :', response);
           this.Exams = this.Exams.filter((exam) => exam.exam__id !== id);
           this.deletexam = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfuly delete' });
+
         },
         (error: any) => {
           console.error('Error fetching groups', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     } else {
@@ -1039,6 +1064,9 @@ export class TeacherExamComponent {
             'RgroupedQuestionsgroupedQuestions',
             this.deleteform.QType
           );
+
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfuly delete' });
+
           this.Exam.questions = this.Exam.questions.filter(
             (quest: { question__id: any }) => quest.question__id !== id
           );
@@ -1050,6 +1078,10 @@ export class TeacherExamComponent {
         },
         (error: any) => {
           console.error('Error fetching groups', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
       console.log('delete ', this.deleteform.type);
@@ -1154,9 +1186,15 @@ export class TeacherExamComponent {
         this.IdsSuport.forEach((id: any) => {
           if (id) {
             this.questService.deleteFiles(id, model).subscribe(
-              (response: any) => {},
+              (response: any) => {
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Update successfuly' });
+
+
+              },
               (error: { error: { message: any } }) => {
                 console.log('error', error);
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Note saved successfuly' });
+
               }
             );
           }
@@ -1180,7 +1218,8 @@ export class TeacherExamComponent {
       this.examService.AddDescSupport(datasupport, this.idExamSup).subscribe(
         (response: any) => {
           console.log('Exams Desc', this.IdsSuport);
-         
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfuly Update' });
+
           const index = this.Exams.findIndex(
             (exam) => exam.exam__id === this.idExamSup
           );
@@ -1199,9 +1238,11 @@ export class TeacherExamComponent {
         (error: { error: { message: any } }) => {
           //this.ngxService.stop();
           console.log('errrr', error);
-          // if(error.error?.message){
-          //   this.responseMessage = error.error?.message;
-          // }else{
+          if(error.error?.message){
+       
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: error.error?.message });
+}
+          // else{
           //   this.responseMessage = GlobalConstants.genericError;
           // }
           // // alert(this.responseMessage +" " +GlobalConstants.error);

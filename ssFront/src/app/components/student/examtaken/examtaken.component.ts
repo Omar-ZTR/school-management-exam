@@ -18,6 +18,7 @@ import { ButtonModule } from 'primeng/button';
 import { ExamAnswersService } from '../../../services/serviceAnswers/exam-answers.service';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
 import { saveAs } from 'file-saver';
+import { MessageService } from 'primeng/api';
 
 
 @Component({
@@ -114,7 +115,8 @@ export class ExamtakenComponent {
     private examService: ExamService, 
     private examAnswers: ExamAnswersService, 
     private fb: FormBuilder,  
-    private tokenService: TokenServiceService 
+    private tokenService: TokenServiceService,
+    private messageService: MessageService, 
   ) {
     this.AnswersForm = this.fb.group({
       exam__id: '',
@@ -389,11 +391,17 @@ this.checkAnswers()
       (response: any) => {
         this.visible = false
       this.answerSended.emit(response);
-        alert('Successfully created');
+      
+        this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Answers saved Successfully' });
+
         console.log('success', response);
       },
       (error: { error: { message: any } }) => {
         console.log('error', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

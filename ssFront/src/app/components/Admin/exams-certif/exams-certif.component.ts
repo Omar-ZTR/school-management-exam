@@ -6,6 +6,7 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { TagModule } from 'primeng/tag';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-exams-certif',
@@ -83,7 +84,7 @@ export class ExamsCertifComponent implements OnInit {
     return new Date(examDate) < this.dateNow;
   }
 
-  constructor(private ExamService: ExamService) {}
+  constructor(private ExamService: ExamService, private messageService : MessageService) {}
 
   ngOnInit() {
     this.getExamCertif();
@@ -232,12 +233,26 @@ export class ExamsCertifComponent implements OnInit {
 
     this.ExamService.updateSubscribe(sub).subscribe(
       (response) => {
-        alert('Successfully create');
+       
+        if(sub.accept == true){
+ this.messageService.add({ severity: 'success', summary: '', detail:  'accepted' });
+        }
+        if(sub.accept == false){
+          this.messageService.add({ severity: 'success', summary: '', detail:  'Rejected' });
+        }
+        if(sub.accept == null){
+          this.messageService.add({ severity: 'success', summary: '', detail:  'Pending' });
+        }
+
         console.log('seccess', response);
         this.groupedSubscriptions[data.exams.exam__title][i]=response
       },
       (error) => {
         console.error('Error fetching exams', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
 

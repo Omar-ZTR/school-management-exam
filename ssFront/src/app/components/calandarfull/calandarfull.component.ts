@@ -27,6 +27,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageService } from 'primeng/api';
 
 export interface GroupResponse {
   groupsSubject: any[];
@@ -96,7 +97,8 @@ export class CalandarfullComponent implements OnInit {
     private examService: ExamService,
     private calandarService: CalandarService,
     private groupService: GroupService,
-    private salleService: SalleService
+    private salleService: SalleService,
+    private messageService : MessageService,
   ) {
     this.formSG = this.fb.group({
       salleGroupList: this.fb.array([]),
@@ -925,7 +927,9 @@ export class CalandarfullComponent implements OnInit {
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
                     this.isAddPlan.emit(response);
-                    alert('Successfully created');
+                   
+                  
+                    
                     console.log('success create', response);
                     this.fetchEvents();
                     const examData = {
@@ -936,17 +940,25 @@ export class CalandarfullComponent implements OnInit {
 
                     this.examService.updateExam(examData).subscribe(
                       (response: any) => {
-                        alert('Successfully updated');
+                          this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
                         console.log('success update', response);
                         this.modalService.dismissAll();
                       },
                       (error: { error: { message: any } }) => {
                         console.log('error', error);
+                        if(error.error?.message){
+         
+                          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                          }
                       }
                     );
                   },
                   (error: { error: { message: any } }) => {
                     console.log('error', error);
+                    if(error.error?.message){
+         
+                      this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                      }
                   }
                 );
               } else {
@@ -982,7 +994,7 @@ export class CalandarfullComponent implements OnInit {
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
                     this.isAddPlan.emit(response);
-                    alert('Successfully created');
+            
                     console.log('success create', response);
                     this.fetchEvents();
                     const examData = {
@@ -993,17 +1005,26 @@ export class CalandarfullComponent implements OnInit {
 
                     this.examService.updateExam(examData).subscribe(
                       (response: any) => {
-                        alert('Successfully updated');
+                        this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+
                         console.log('success update', response);
                         this.modalService.dismissAll();
                       },
                       (error: { error: { message: any } }) => {
                         console.log('error', error);
+                        if(error.error?.message){
+         
+                          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                          }
                       }
                     );
                   },
                   (error: { error: { message: any } }) => {
                     console.log('error', error);
+                    if(error.error?.message){
+         
+                      this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                      }
                   }
                 );
               } else {
@@ -1042,7 +1063,7 @@ export class CalandarfullComponent implements OnInit {
               this.calandarService.createReserv(calandarData).subscribe(
                 (response: any) => {
                   this.isAddPlan.emit(response);
-                  alert('Successfully create');
+                  
                   console.log('seccess create', response);
                   this.fetchEvents();
                   const examData = {
@@ -1052,18 +1073,27 @@ export class CalandarfullComponent implements OnInit {
 
                   this.examService.updateExam(examData).subscribe(
                     (response: any) => {
-                      alert('Successfully create');
+                      this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+
                       console.log('seccess update', response);
                       this.modalService.dismissAll();
                     },
                     (error: { error: { message: any } }) => {
                       console.log('errrr', error);
+                      if(error.error?.message){
+         
+                        this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                        }
                     }
                   );
                   // window.location.reload();
                 },
                 (error: { error: { message: any } }) => {
                   console.log('errrr', error);
+                  if(error.error?.message){
+         
+                    this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                    }
                 }
               );
             }
@@ -1091,7 +1121,7 @@ export class CalandarfullComponent implements OnInit {
             (response: any) => {
               this.isAddPlan.emit(response);
 
-              alert('Successfully create');
+              
               console.log('seccess create', response);
               this.fetchEvents();
               const examData = {
@@ -1101,18 +1131,27 @@ export class CalandarfullComponent implements OnInit {
 
               this.examService.updateExam(examData).subscribe(
                 (response: any) => {
-                  alert('Successfully create');
+                  this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+
                   this.modalService.dismissAll();
                   console.log('seccess update', response);
                 },
                 (error: { error: { message: any } }) => {
                   console.log('errrr', error);
+                  if(error.error?.message){
+         
+                    this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                    }
                 }
               );
               // window.location.reload();
             },
             (error: { error: { message: any } }) => {
               console.log('errrr', error);
+              if(error.error?.message){
+         
+                this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+                }
             }
           );
         }

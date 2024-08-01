@@ -16,6 +16,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-subjects',
@@ -113,7 +114,7 @@ export class SubjectsComponent {
     this.NameNew = '';
     this.CoeffNew = null;
   }
-  constructor(private subjectService: SubjectService) {}
+  constructor(private subjectService: SubjectService, private messageService : MessageService) {}
   ngOnInit() {
     this.fetchSubjects();
   }
@@ -315,7 +316,7 @@ console.log("coefficientcoefficient",Subject.coefficient)
 
       this.subjectService.createSubject(subjectData).subscribe(
         (data: any) => {
-          alert('Successfully create');
+          this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully create Subject' });
           console.log('seccess', data);
 
           this.subjects.push(data);
@@ -325,6 +326,10 @@ console.log("coefficientcoefficient",Subject.coefficient)
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     }
@@ -347,13 +352,17 @@ console.log("coefficientcoefficient",Subject.coefficient)
 
       this.subjectService.updateSubject(subjectData,subjectId).subscribe(
         (response: any) => {
-          alert('Successfully create');
+          this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully update Subject' });
           console.log('seccess', response);
   
           this.subjectIds = this.subjectIds.filter((id) => id !== subjectId);
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     }
@@ -364,7 +373,7 @@ console.log("coefficientcoefficient",Subject.coefficient)
     console.log('hay subject name : ', this.subjectName[subjectId].Subject__name);
     this.subjectService.DeleteSubject(subjectId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully delete Subject' });
         console.log('seccess', response);
         this.subjects = this.subjects.filter(
           (subject: { subject__id: number; }) => subject.subject__id !== subjectId
@@ -372,6 +381,10 @@ console.log("coefficientcoefficient",Subject.coefficient)
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

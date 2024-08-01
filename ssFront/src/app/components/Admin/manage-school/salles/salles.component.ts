@@ -16,6 +16,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-salles',
@@ -103,7 +104,7 @@ export class SallesComponent {
   NameErrMsg: string = '';
   loading: boolean = true;
   visible: boolean = false;
-
+ constructor(private salleService: SalleService, private messageService : MessageService ) {}
   showDialog() {
     this.visible = true;
   }
@@ -115,7 +116,7 @@ export class SallesComponent {
     this.NameNew = '';
     this.placeNew = null;
   }
-  constructor(private salleService: SalleService) {}
+ 
   ngOnInit() {
     this.fetchsalles();
   }
@@ -313,7 +314,7 @@ export class SallesComponent {
 
       this.salleService.createSalle(salleData).subscribe(
         (data: any) => {
-          alert('Successfully create');
+          this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully create Salle' });
           console.log('seccess', data);
 
           this.salles.push(data);
@@ -323,6 +324,10 @@ export class SallesComponent {
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     }
@@ -345,13 +350,18 @@ export class SallesComponent {
 
       this.salleService.updateSalle(salleData, salleId).subscribe(
         (response: any) => {
-          alert('Successfully create');
+          this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully update' });
+
           console.log('seccess', response);
 
           this.salleIds = this.salleIds.filter((id) => id !== salleId);
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     }
@@ -362,7 +372,10 @@ export class SallesComponent {
     console.log('hay salle name : ', this.salleName[salleId].salle__name);
     this.salleService.DeleteSalle(salleId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+            
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully delete' });
+
+
         console.log('seccess', response);
         this.salles = this.salles.filter(
           (salle: { salle__id: number }) => salle.salle__id !== salleId
@@ -370,6 +383,10 @@ export class SallesComponent {
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

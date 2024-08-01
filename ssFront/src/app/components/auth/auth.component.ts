@@ -19,6 +19,7 @@ import { ResetPasswordComponent } from '../reset-password/reset-password.compone
 import { CheckSuccessComponent } from '../../shared/check-success/check-success.component';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-auth',
   standalone: true,
@@ -62,6 +63,7 @@ export class AuthComponent {
     private fb: FormBuilder,
     private snackbarService: SnackbarService,
     private userService: UserService,
+    private messageService : MessageService,
     private router: Router
   ) {
     this.forgotpass = new FormGroup({
@@ -124,7 +126,8 @@ export class AuthComponent {
     this.userService.login(this.loginObj).subscribe(
       (response: any) => {
         localStorage.setItem('token', response.token);
-        alert('Successfully Login');
+     
+        this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Welcomme, Successfully Login' });
 
         const tokenPayload = JSON.parse(atob(response.token.split('.')[1]));
         console.log(tokenPayload);
@@ -137,15 +140,17 @@ export class AuthComponent {
         }
       },
       (error: { error: { message: any } }) => {
+     
         if (error.error?.message) {
-          this.msgErrEmail = error.error?.message;
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
         } else {
-          this.responseMessage = GlobalConstants.genericError;
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  GlobalConstants.genericError });
+
         }
-        this.snackbarService.openSnackBar(
-          this.responseMessage,
-          GlobalConstants.error
-        );
+        // this.snackbarService.openSnackBar(
+        //   this.responseMessage,
+        //   GlobalConstants.error
+        // );
       }
     );
   }

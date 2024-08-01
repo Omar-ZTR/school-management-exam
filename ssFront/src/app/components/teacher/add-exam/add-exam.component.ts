@@ -339,9 +339,11 @@ export class AddExamComponent {
         (error: { error: { message: any } }) => {
           //this.ngxService.stop();
           console.log('errrr', error);
-          // if(error.error?.message){
-          //   this.responseMessage = error.error?.message;
-          // }else{
+          if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
+          // else{
           //   this.responseMessage = GlobalConstants.genericError;
           // }
           // // alert(this.responseMessage +" " +GlobalConstants.error);
@@ -402,6 +404,10 @@ if((!this.oblig && this.examDesc !== '') || this.listsuportFile.length > 0 ){
       (error: { error: { message: any } }) => {
       
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
        
       }
     );
@@ -465,6 +471,10 @@ if((!this.oblig && this.examDesc !== '') || this.listsuportFile.length > 0 ){
         (error: { error: { message: any } }) => {
           //this.ngxService.stop();
           console.log('errrr', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
           // if(error.error?.message){
           //   this.responseMessage = error.error?.message;
           // }else{

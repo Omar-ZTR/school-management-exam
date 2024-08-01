@@ -21,6 +21,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
 import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-add-question',
@@ -83,6 +84,7 @@ export class AddQuestionComponent {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private messageService : MessageService
     
   ) {
     this.subjectForm = this.fb.group({
@@ -335,7 +337,7 @@ console.log("hhsjas sallem maman " )
 
       this.questService.createquestion(this.dataquest).subscribe(
         (response: any) => {
-          alert('Successfully create');
+         
           console.log('seccess', response);
           console.log('ffffilessss', this.dataquest.files);
           this.questionAdded.emit(response);
@@ -345,6 +347,10 @@ console.log("hhsjas sallem maman " )
         },
         (error: { error: { message: any } }) => {
           console.log('errrr', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     }
@@ -419,11 +425,16 @@ console.log("hhsjas sallem maman " )
             });
             this.questionAdded.emit(response);
             
-            alert('Successfully updated');
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Update' });
+
             console.log('success', response);
           },
           (error: { error: { message: any } }) => {
             console.log('error', error);
+            if(error.error?.message){
+         
+              this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+              }
           }
         );
     }

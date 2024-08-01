@@ -18,6 +18,7 @@ import { TokenServiceService } from '../../../services/servicesUser/token-servic
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ExamAnswersService } from '../../../services/serviceAnswers/exam-answers.service';
+import { MessageService } from 'primeng/api';
 
 export interface Student {
   user__id: number;
@@ -133,7 +134,8 @@ export class ResultComponent implements OnInit {
     private AnswerService: ExamAnswersService,
     private groupService: GroupService,
     private tokenService: TokenServiceService,
-    private examService: ExamService
+    private examService: ExamService,
+    private messageService : MessageService,
   ) {}
   // fetchGroups() {
   //   this.groupService.getteacherGroups().subscribe(
@@ -395,12 +397,17 @@ if(this.resultAnsStudent[key].ans__result > 20 ||this.resultAnsStudent[key].ans_
 
     this.AnswerService.updateAnswer(answerData).subscribe(
       (response: any) => {
-        alert('Successfully Update');
+      
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Update' });
 
         console.log('seccess update', response);
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
 
@@ -421,11 +428,17 @@ if(this.resultAnsStudent[key].ans__result > 20 ||this.resultAnsStudent[key].ans_
       this.AnswerService.createAnswers(dataAnswers).subscribe(
         (response: any) => {
           this.resultAnsStudent[key].ans__id = response.ans__id
-          alert('Successfully created');
+         
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Update' });
+
           console.log('success create', response);
         },
         (error: { error: { message: any } }) => {
           console.log('error', error);
+          if(error.error?.message){
+         
+            this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+            }
         }
       );
     }

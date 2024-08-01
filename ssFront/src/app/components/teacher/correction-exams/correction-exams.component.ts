@@ -21,6 +21,7 @@ import {
 import { saveAs } from 'file-saver';
 import { InputTextModule } from 'primeng/inputtext';
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-correction-exams',
@@ -138,6 +139,7 @@ export class CorrectionExamsComponent {
     private AnswerService: ExamAnswersService,
     private examService: ExamService,
     private tokenService: TokenServiceService,
+    private messageService: MessageService
   ) {}
   ngOnInit(): void {
     this.fetchAnswers();
@@ -379,12 +381,16 @@ export class CorrectionExamsComponent {
          this.AnswersObli[index].ans__result = response.ans__result;
         }
 
-        alert('Successfully create');
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Note saved successfuly' });
         this.visible=false
         console.log('seccess update', response);
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

@@ -21,6 +21,7 @@ import { ListboxModule } from 'primeng/listbox';
 import { SubjectService } from '../../../services/servicesUtils/subject.service';
 import { GroupService } from '../../../services/servicesUtils/group.service';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
+import { MessageService } from 'primeng/api';
 
 export interface Teacher {
   user__id: number;
@@ -100,7 +101,8 @@ export class ManageTeacherComponent implements OnInit {
   constructor(
     private teacherService: TeacherService,
     private subjectService: SubjectService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private messageService: MessageService
   ) {}
 
   customers!: any[];
@@ -445,20 +447,24 @@ export class ManageTeacherComponent implements OnInit {
 
     this.teacherService.updateTeacher(teacherData, teacherId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully update teacher' });
         console.log('seccess', response);
 
         this.teacherIds = this.teacherIds.filter((id) => id !== teacherId);
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }
   deleteTeacher(teacherId: number) {
     this.teacherService.DeleteTeacher(teacherId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully delete teacher' });
         console.log('seccess', response);
         this.teachers = this.teachers.filter(
           (teacher) => teacher.user__id !== teacherId
@@ -479,6 +485,10 @@ export class ManageTeacherComponent implements OnInit {
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

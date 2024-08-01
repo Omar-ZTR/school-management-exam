@@ -4,6 +4,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import { QuestionService } from '../../../services/serviceTeacher/question.service';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-listview',
@@ -34,7 +35,7 @@ export class ListviewComponent   {
   associationStatus: { [key: number]: boolean } = {};
 
 
-constructor(  private questService: QuestionService,){}
+constructor(  private questService: QuestionService, private messageService : MessageService ){}
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -96,9 +97,13 @@ deleteQuestion(quest:any){
   this.questService.deleteQuestion(quest.question__id, model).subscribe(
     (data) => {
       console.log('deleteQuestion:', data);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Successfully created' });
     },
     (error: any) => {
-      console.error('Error fetching groups', error);
+      if(error.error?.message){
+         
+        this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+        }
     }
   );
 

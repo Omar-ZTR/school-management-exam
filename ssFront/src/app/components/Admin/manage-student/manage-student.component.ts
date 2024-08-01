@@ -18,6 +18,7 @@ import { GroupService } from '../../../services/servicesUtils/group.service';
 
 import { Teacher } from '../manage-teacher/manage-teacher.component';
 import { StudentService } from '../../../services/serviceStudent/student.service';
+import { MessageService } from 'primeng/api';
 export interface Student {
   user__id: number;
   first__name: string;
@@ -88,7 +89,8 @@ export class ManageStudentComponent implements OnInit {
   }
   constructor(
     private studentService: StudentService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private messageService : MessageService,
   ) {}
 
   switchTable(tableName: string) {
@@ -367,20 +369,25 @@ if(groupfind){
 
     this.studentService.updateStudent(studentData, studentId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully update student' });
         console.log('seccess', response);
 
         this.studentsIds = this.studentsIds.filter((id) => id !== studentId);
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }
   deleteStudent(studentId: number) {
     this.studentService.DeleteStudent(studentId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully delete student' });
+
         console.log('seccess', response);
         this.students = this.students.filter(
           (student) => student.user__id !== studentId
@@ -401,6 +408,10 @@ if(groupfind){
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

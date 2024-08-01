@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
 import { getFileExtension, getFileType } from '../../../shared/utilsFile';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-teacher-question',
@@ -58,7 +59,8 @@ export class TeacherQuestionComponent {
   constructor(
     private questService: QuestionService,
     private teacherService: TeacherService,
-    private tokenService: TokenServiceService
+    private tokenService: TokenServiceService,
+    private messageService : MessageService,
   ) {}
   subjectFilter!: string ;
   typeFilter!: string;
@@ -193,11 +195,17 @@ const id = quest.question__id
         console.log('Response from backend:', response);
     
         this.Allquestions = this.Allquestions.filter((quest: { question__id: any; }) => quest.question__id !== id);
-        alert('Successfully Delete');
+        
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Delete' });
+
             console.log('success', response);
       },
       (error: any) => {
         console.error('Error fetching groups', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }

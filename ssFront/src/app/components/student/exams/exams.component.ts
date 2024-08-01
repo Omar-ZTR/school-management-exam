@@ -16,6 +16,7 @@ import {
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 import { CarouselModule } from 'primeng/carousel';
 import { SubscribeService } from '../../../services/servicesUtils/subscribe.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-exams',
@@ -75,6 +76,7 @@ export class ExamsComponent {
     private calandarService: CalandarService,
     private examService: ExamService,
     private subscribeService: SubscribeService,
+    private messageService : MessageService,
   ) {}
   responsiveOptions: any[] | undefined;
 
@@ -333,13 +335,19 @@ sendSubscribe(){
 
   this.subscribeService.createSubscribe(subscribeData).subscribe(
     (data: any) => {
-      alert('Successfully create');
+      this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Subscribe request sended successfully' });
+
       console.log('seccess', data);
 
       
     },
     (error: { error: { message: any } }) => {
       console.log('errrr', error);
+      if(error.error?.message){
+         
+        this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+        }
+      
     }
   );
 

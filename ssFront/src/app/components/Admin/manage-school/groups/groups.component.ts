@@ -16,6 +16,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
 
 export interface Subject {
   subject__name: string;
@@ -100,7 +101,8 @@ export class GroupsComponent {
 
   constructor(
     private subjectService: SubjectService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private messageService : MessageService
   ) {}
   ngOnInit() {
     this.fetchSubjects();
@@ -360,8 +362,9 @@ export class GroupsComponent {
 
         this.groupService.createGroup(groupData).subscribe(
           (data: Group) => {
-            alert('Successfully create');
+        
             console.log('seccess', data);
+            this.messageService.add({ severity: 'success', summary: 'Success', detail:  'group created successfully' });
 
             this.groups.push(data);
             this.NewgroupAdd(data);
@@ -370,6 +373,10 @@ export class GroupsComponent {
           },
           (error: { error: { message: any } }) => {
             console.log('errrr', error);
+            if(error.error?.message){
+         
+              this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+              }
           }
         );
       }
@@ -399,13 +406,18 @@ if(this.controllerUpdate(Name,groupId)){
 
     this.groupService.updateGroup(groupData, groupId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+       
         console.log('seccess', response);
+        this.messageService.add({ severity: 'success', summary: 'Success', detail:  'group updated successfully' });
 
         this.groupIds = this.groupIds.filter((id) => id !== groupId);
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }
@@ -415,7 +427,9 @@ if(this.controllerUpdate(Name,groupId)){
     console.log('hay group name : ', this.groupName[groupId].group__name);
     this.groupService.DeleteGroup(groupId).subscribe(
       (response: any) => {
-        alert('Successfully create');
+        
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  'Group deleted successfully' });
+
         console.log('seccess', response);
         this.groups = this.groups.filter(
           (group) => group.group__id !== groupId
@@ -423,6 +437,10 @@ if(this.controllerUpdate(Name,groupId)){
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
       }
     );
   }
