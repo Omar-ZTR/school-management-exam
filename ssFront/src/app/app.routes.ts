@@ -25,6 +25,7 @@ import { TeacherQuestionComponent } from './components/teacher/teacher-question/
 import { AllresultComponent } from './components/Admin/allresult/allresult.component';
 import { ExamsCertifComponent } from './components/Admin/exams-certif/exams-certif.component';
 import { StudentanswersComponent } from './components/student/studentanswers/studentanswers.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -54,6 +55,7 @@ export const routes: Routes = [
       { path: 'addQuestion', component: TeacherQuestionComponent },
       { path: 'Result', component: ResultComponent },
       { path: 'Correction', component: CorrectionExamsComponent },
+      { path: 'chat', component: ChatComponent },
     ],
   },
   {

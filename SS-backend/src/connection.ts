@@ -21,12 +21,14 @@ import { Admin } from "./models/adminModel";
 import { TeacherSubject } from "./models/teacherSubjectsModel";
 import { TeacherGroup } from "./models/teacherGroupsModel";
 import { Subscribe } from "./models/subscribeModel";
+import { Chat } from "./models/chatModel";
 
 const connection = new Sequelize("smartskills", "root", "", {
   host: "localhost",
   dialect: "mysql",
   database: "smartskills",
   models: [
+    Chat,
     Subscribe,
     User,
     Exam,

@@ -15,6 +15,7 @@ import routerAnswer from "./routers/answerRouter";
 import routerTeacher from "./routers/teacherRouter";
 import routerStudents from "./routers/studentRouter";
 import routerSubscribe from "./routers/subscribeRouter";
+import routerChat from "./routers/chatRouter";
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use(
   routersubject,
   routerStudents,
   routerSubscribe,
+  routerChat
 );
 
 const corsOptions = {
@@ -76,7 +78,7 @@ app.use("/files", express.static(path.join(__dirname, "utils/filesUpload")));
 dotenv.config();
 // alter: true
 connection
-  .sync({alter: true})
+  .sync({})
   .then(() => {
     console.log("Database successfully connected");
   })

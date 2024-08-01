@@ -23,11 +23,13 @@ const adminModel_1 = require("./models/adminModel");
 const teacherSubjectsModel_1 = require("./models/teacherSubjectsModel");
 const teacherGroupsModel_1 = require("./models/teacherGroupsModel");
 const subscribeModel_1 = require("./models/subscribeModel");
+const chatModel_1 = require("./models/chatModel");
 const connection = new sequelize_typescript_1.Sequelize("smartskills", "root", "", {
     host: "localhost",
     dialect: "mysql",
     database: "smartskills",
     models: [
+        chatModel_1.Chat,
         subscribeModel_1.Subscribe,
         User__model_1.User,
         examModel_1.Exam,

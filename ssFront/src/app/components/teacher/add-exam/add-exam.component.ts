@@ -24,6 +24,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
 import { Teacher } from '../../Admin/manage-teacher/manage-teacher.component';
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-add-exam',
   standalone: true,
@@ -93,7 +94,8 @@ export class AddExamComponent {
     private examService: ExamService,
     private questService: QuestionService,
     private fb: FormBuilder,
-    private tokenService: TokenServiceService
+    private tokenService: TokenServiceService,
+    private messageService: MessageService
   ) {
     this.examForm = this.fb.group({
       subject: ['', Validators.required], // Required validator for exam name
@@ -326,7 +328,8 @@ export class AddExamComponent {
       console.log('datasupportdatasupport datasupport', datasupport);
       this.examService.AddDescSupport(datasupport, this.dataPLan).subscribe(
         (response: any) => {
-          console.log('plan  Desc', response);
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Exam create successfuly' });
+
           this.showCalendar = true;
           this.visibleOption = false;
           this.examDesc = ''
@@ -349,6 +352,8 @@ export class AddExamComponent {
     console.log('is nos support');
     this.showCalendar = true;
     this.visibleOption = false;
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Exam create successfuly' });
+
    }
 
 
@@ -383,31 +388,28 @@ if((!this.oblig && this.examDesc !== '') || this.listsuportFile.length > 0 ){
       files: this.listsuportFile,
     };
 
-    console.log('datasupportdatasupport datasupport', datasupport);
+   
     this.examService.AddDescSupport(datasupport, this.dataPLan).subscribe(
       (response: any) => {
-        console.log('AAAAADDDD Desc', response);
       
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Exam create successfuly' });
+
         this.visibleOption = false;
         this.examDesc = ''
         this.listsuportFile = []
         this.urlsSuport=[]
       },
       (error: { error: { message: any } }) => {
-        //this.ngxService.stop();
+      
         console.log('errrr', error);
-        // if(error.error?.message){
-        //   this.responseMessage = error.error?.message;
-        // }else{
-        //   this.responseMessage = GlobalConstants.genericError;
-        // }
-        // // alert(this.responseMessage +" " +GlobalConstants.error);
-        // this.snackbarService.openSnackBar(this.responseMessage , GlobalConstants.error);
+       
       }
     );
  }else{
   console.log('is nos support');
   this.visibleOption = false;
+  this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Exam create successfuly' });
+
  }
  }
 
@@ -420,13 +422,11 @@ if((!this.oblig && this.examDesc !== '') || this.listsuportFile.length > 0 ){
         this.examForm.value.exam__type === 'Normal' &&
         this.questarr.length == 0
       ) {
-        console.log('gggggGGGggggGGGGGGgggggGGG');
+       
         this.errQuestion = true;
         return;
       }
-      console.log(
-        'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-      );
+     
       this.examForm.patchValue({
         questions: this.questarr,
       });
@@ -454,7 +454,7 @@ if((!this.oblig && this.examDesc !== '') || this.listsuportFile.length > 0 ){
       console.log(this.dataexam);
       this.examService.createExam(this.dataexam).subscribe(
         (response: any) => {
-          this.showSuccessAlert(() => {});
+         
           console.log('seccess', response);
 
           this.dataPLan = response.exam__id;

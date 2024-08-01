@@ -1,0 +1,31 @@
+.btnResult{
+  
+    position: absolute;
+    display: flex;
+    color: #090d56;
+    right: 10px;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    bottom: 8px;
+    align-items: center;
+ 
+}
+.noteResult{
+    min-width: 70px;
+    height: 50px;
+    background: #f49236bf;
+    color: #ffffff;
+    padding: 10px;
+    display: flex;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    align-items: center;
+
+}
+.start{
+
+    justify-content: left !important;
+}
