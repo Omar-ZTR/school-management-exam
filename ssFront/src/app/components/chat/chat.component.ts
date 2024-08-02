@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/servicesUtils/chat.service';
 import { interval, Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { ResetPasswordComponent } from "../reset-password/reset-password.component";
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule, ResetPasswordComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })

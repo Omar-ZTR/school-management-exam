@@ -177,11 +177,7 @@ export class AuthComponent {
           this.responseMessage = GlobalConstants.genericError;
         }
         // alert(this.responseMessage +" " +GlobalConstants.error);
-        this.snackbarService.openSnackBar(
-          this.responseMessage,
-          GlobalConstants.error
-        );
-        console.log('refu', error);
+       
       }
     );
   }

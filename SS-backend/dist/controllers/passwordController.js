@@ -45,7 +45,7 @@ const sendResetEmail = (req, res) => __awaiter(void 0, void 0, void 0, function*
             tokens = yield tokenModel_1.Token.create(tokenData);
         }
         console.log(tokens);
-        const url = `http://localhost:3000/${student.user__id}/${tokens.token}/`;
+        const url = `http://localhost:4200/resetpass/${student.user__id}/${tokens.token}/`;
         yield (0, sendEmail_1.default)(student.user__email, "Password Reset", url);
         res.status(200).send({ message: "Password reset link sent to your email account", url, success: true });
     }
@@ -72,37 +72,37 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.verifyToken = verifyToken;
 const resetpassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("llllllllllllllllllll");
+    console.log("Starting password reset process");
     try {
-        console.log("ffffffffffffffffff");
         const passwordSchema = joi_1.default.object({
             password: joi_1.default.string().required().label("Password"),
         });
-        console.log("llllllllllllllllllll");
-        const { error } = passwordSchema.validate(req.body);
-        if (error)
+        const { error } = passwordSchema.validate({ password: req.body.password });
+        if (error) {
+            console.log("Validation error:", error.details[0].message);
             return res.status(400).send({ message: error.details[0].message });
-        console.log("hhhhhhhhhhhhhhhh", req.params.user__id);
-        console.log("hhhhhhhhhhhhhhhh", req.params.id);
-        const student = yield studentModel_1.Student.findOne({ where: { user__id: req.params.user__id } });
-        console.log("aaaaaaaaaaaaaaaa");
-        if (!student)
+        }
+        const { user__id, token } = req.params;
+        const student = yield studentModel_1.Student.findOne({ where: { user__id } });
+        if (!student) {
+            console.log("Invalid link: Student not found");
             return res.status(400).send({ message: "Invalid link" });
-        const token = yield tokenModel_1.Token.findOne({
-            where: { user__id: student.user__id, token: req.params.token },
-        });
-        if (!token)
+        }
+        const tokenRecord = yield tokenModel_1.Token.findOne({ where: { user__id: student.user__id, token } });
+        if (!tokenRecord) {
+            console.log("Invalid link: Token not found");
             return res.status(400).send({ message: "Invalid link" });
-        console.log("1111", student.password);
+        }
         const salt = yield bcryptjs_1.default.genSalt(Number(process.env.SALT));
         const hashPassword = yield bcryptjs_1.default.hash(req.body.password, salt);
         student.password = hashPassword;
         yield student.save();
-        yield token.destroy();
-        console.log("2222", student.password);
+        yield tokenRecord.destroy();
+        console.log("Password reset successfully for user:", user__id);
         res.status(200).send({ success: true, message: "Password reset successfully" });
     }
     catch (error) {
+        console.error("Internal Server Error:", error);
         res.status(500).send({ message: "Internal Server Error", error });
     }
 });

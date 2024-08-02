@@ -26,11 +26,14 @@ import { AllresultComponent } from './components/Admin/allresult/allresult.compo
 import { ExamsCertifComponent } from './components/Admin/exams-certif/exams-certif.component';
 import { StudentanswersComponent } from './components/student/studentanswers/studentanswers.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
   { path: 'home', component: HomeComponent, canActivate: [RouteGuardService] },
   { path: 'auth', component: AuthComponent},
+  { path: 'resetpass/:id/:token', component: ResetPasswordComponent},
+
   {
     path: 'student',
     component: StudentComponent,

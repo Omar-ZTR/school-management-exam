@@ -39,7 +39,7 @@ export const sendResetEmail= async(req: Request, res: Response)  =>  {
         }
       
 console.log(tokens)
-        const url = `http://localhost:3000/${student.user__id}/${tokens.token}/`;
+        const url = `http://localhost:4200/resetpass/${student.user__id}/${tokens.token}/`;
         await sendEmail(student.user__email, "Password Reset", url);
 
         res.status(200).send({ message: "Password reset link sent to your email account", url,success: true });
@@ -66,42 +66,45 @@ export const verifyToken=  async (req: Request, res: Response) => {
     }
 };
 
-export const resetpassword= async(req: Request, res: Response) => {
-    console.log("llllllllllllllllllll")
+export const resetpassword = async (req: Request, res: Response) => {
+    console.log("Starting password reset process");
+
     try {
-        console.log("ffffffffffffffffff")
         const passwordSchema = Joi.object({
             password: Joi.string().required().label("Password"),
         });
 
-        console.log("llllllllllllllllllll")
-        const { error } = passwordSchema.validate(req.body);
-        if (error)
+        const { error } = passwordSchema.validate({ password: req.body.password });
+        if (error) {
+            console.log("Validation error:", error.details[0].message);
             return res.status(400).send({ message: error.details[0].message });
-        console.log("hhhhhhhhhhhhhhhh",req.params.user__id)
-        console.log("hhhhhhhhhhhhhhhh",req.params.id)
-        const student = await Student.findOne({ where: { user__id: req.params.user__id } });
+        }
 
-        console.log("aaaaaaaaaaaaaaaa")
+        const { user__id, token } = req.params;
 
-        if (!student) return res.status(400).send({ message: "Invalid link" });
+        const student = await Student.findOne({ where: { user__id } });
+        if (!student) {
+            console.log("Invalid link: Student not found");
+            return res.status(400).send({ message: "Invalid link" });
+        }
 
-        const token = await Token.findOne({
-            where: { user__id: student.user__id, token: req.params.token },
-        });
-        if (!token) return res.status(400).send({ message: "Invalid link" });
-
-       console.log("1111",student.password)
+        const tokenRecord = await Token.findOne({ where: { user__id: student.user__id, token } });
+        if (!tokenRecord) {
+            console.log("Invalid link: Token not found");
+            return res.status(400).send({ message: "Invalid link" });
+        }
 
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
         const hashPassword = await bcrypt.hash(req.body.password, salt);
 
         student.password = hashPassword;
         await student.save();
-        await token.destroy();
-        console.log("2222",student.password)
+        await tokenRecord.destroy();
+
+        console.log("Password reset successfully for user:", user__id);
         res.status(200).send({ success: true, message: "Password reset successfully" });
     } catch (error) {
+        console.error("Internal Server Error:", error);
         res.status(500).send({ message: "Internal Server Error", error });
     }
 };

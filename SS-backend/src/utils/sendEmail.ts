@@ -13,7 +13,7 @@ const sendEmail = async (email: string, subject: string, text: string) => {
             secure: true,
             auth: {
                 user: 'omarzouiter97@gmail.com',
-              pass: 'oukiouki@omr211',
+              pass: 'qfcynxfqcahnjslx',
             },
         });
         console.log('Email sent sasxd');

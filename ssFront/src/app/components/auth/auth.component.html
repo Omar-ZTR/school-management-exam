@@ -64,7 +64,7 @@
     ></path>
   </svg> 
   
-    <label for="username">Username</label>
+    <label for="username">Email</label>
     <input
       type="text"
       name="email"
@@ -115,23 +115,25 @@
 
 <div [ngClass]="{ popFull: popy, popFullClose: !popy }">
   <div class="popBox">
-    <div class="popform" *ngIf="check == false">
+    <div class="resetBox" *ngIf="check == false">
       <div class="closepop" (click)="popy = !popy">
         <i class="fa-solid fa-xmark"></i>
       </div>
-      <h3 class="poptitle">Forgot Password</h3>
-      <div class="subpoptitle">
+      <h3 class="resettitle">Forgot Password</h3>
+      <div class="subresettitle">
         Enter your registered email to reset your password.
       </div>
    
 
       <div class="popForm" [formGroup]="forgotpass">
+        <div class="form-group col-md-12">
         <label>Email :</label>
         <input
           type="text"
+          pInputText
           [(ngModel)]="forgotObj.user__email"
           placeholder="Enter Email"
-          class="form-control"
+          [style]="{color:'#212121 !important'}"
           formControlName="user__email"
         />
         <span
@@ -142,7 +144,8 @@
         >
           {{ responseMessage }}
         </span>
-        <button type="button" (click)="SendMail()">Send</button>
+        </div>
+        <button type="button" class="btnForgt"  (click)="SendMail()">Send</button>
       </div>
     </div>
     <div class="popcheck" *ngIf="check == true">
