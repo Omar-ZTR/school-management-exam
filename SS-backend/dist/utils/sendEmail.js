@@ -32,7 +32,7 @@ const sendEmail = (email, subject, text) => __awaiter(void 0, void 0, void 0, fu
             from: 'omarzouiter97@gmail.com',
             to: email,
             subject: subject,
-            text: text,
+            html: text,
         });
         console.log('Email sent successfully');
     }

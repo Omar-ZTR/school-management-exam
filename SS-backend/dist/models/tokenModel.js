@@ -30,6 +30,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
     __metadata("design:type", String)
 ], Token.prototype, "token", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING),
+    __metadata("design:type", String)
+], Token.prototype, "role", void 0);
 exports.Token = Token = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: true,

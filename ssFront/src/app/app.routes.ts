@@ -27,13 +27,14 @@ import { ExamsCertifComponent } from './components/Admin/exams-certif/exams-cert
 import { StudentanswersComponent } from './components/student/studentanswers/studentanswers.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { VerifieEmailComponent } from './components/verifie-email/verifie-email.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
   { path: 'home', component: HomeComponent, canActivate: [RouteGuardService] },
   { path: 'auth', component: AuthComponent},
   { path: 'resetpass/:id/:token', component: ResetPasswordComponent},
-
+  { path: 'verifyemail/:codeVerifey', component: VerifieEmailComponent},
   {
     path: 'student',
     component: StudentComponent,

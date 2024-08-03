@@ -47,6 +47,13 @@ export class UserService {
     });
   }
 
+  verifyEmail(data: any) {
+    
+    return this.httpClient.post(`${this.url}/verifemail/${data}`, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json'),
+    });
+  }
+
   getUsers() {
     return this.httpClient.get(this.url + '/user/get');
   }

@@ -68,7 +68,7 @@ app.use("/files", express_1.default.static(path_1.default.join(__dirname, "utils
 dotenv.config();
 // alter: true
 connection_1.default
-    .sync({})
+    .sync({ alter: true })
     .then(() => {
     console.log("Database successfully connected");
 })

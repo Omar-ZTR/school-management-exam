@@ -26,11 +26,11 @@ export class GlobalConstants {
     
         const password = control.parent.get('Password');
         const rePassword = control;
-    
+    console.log("rePassword re re ",rePassword)
         if (!password || !rePassword) {
           return null;
         }
-    
+        console.log("password re re ",password.value === rePassword.value)
         return password.value === rePassword.value ? null : { mismatch: true };
       }
       // Validator to check if the date is at least 18 years ago

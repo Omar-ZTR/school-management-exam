@@ -78,7 +78,7 @@ app.use("/files", express.static(path.join(__dirname, "utils/filesUpload")));
 dotenv.config();
 // alter: true
 connection
-  .sync({})
+  .sync({alter: true})
   .then(() => {
     console.log("Database successfully connected");
   })

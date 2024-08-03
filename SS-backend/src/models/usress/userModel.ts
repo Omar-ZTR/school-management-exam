@@ -35,6 +35,14 @@ export class users<T extends users<T>> extends Model<T> {
   active!: boolean;
 
 
+  @Column(DataType.BOOLEAN)
+  emailVerifed!: boolean;
+
+
+@Column(DataType.STRING,)
+codeVerifey!:string;
+
+
   @Column({
     type: DataType.STRING,
     allowNull: false,

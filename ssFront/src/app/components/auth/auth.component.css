@@ -9,7 +9,7 @@
   align-items: stretch;
   /* justify-content: center; */
   padding: 2em 1em;
-  z-index: 999;
+  z-index: 1;
 }
 
 /* .switch{
@@ -33,7 +33,7 @@ background: #1845ad;
   align-items: center;
   height: 100%;
   width: 100%;
-  z-index: 9999;
+  z-index: 2;
 }
 
 .popFullClose {

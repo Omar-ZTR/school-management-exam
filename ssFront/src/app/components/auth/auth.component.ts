@@ -165,16 +165,23 @@ export class AuthComponent {
     console.log(this.forgotObj);
     this.userService.forgotPassword(this.forgotObj).subscribe(
       (response: any) => {
-        alert(response.message);
+       
+        this.messageService.add({ severity: 'success', summary: 'Success', detail:  response.message });
+
         console.log('seccess', response);
         this.check = !this.check;
+        setTimeout(() => {
+          this.popy = false;
+        }, 50000);
+  
       },
       (error: { error: { message: any } }) => {
         //this.ngxService.stop();
         if (error.error?.message) {
-          this.responseMessage = error.error?.message;
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
         } else {
-          this.responseMessage = GlobalConstants.genericError;
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  GlobalConstants.genericError });
+
         }
         // alert(this.responseMessage +" " +GlobalConstants.error);
        

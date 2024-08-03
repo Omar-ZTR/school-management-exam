@@ -21,7 +21,7 @@ const sendEmail = async (email: string, subject: string, text: string) => {
             from: 'omarzouiter97@gmail.com',
             to: email,
             subject: subject,
-            text: text,
+            html: text,
         });
         console.log('Email sent successfully');
     } catch (error) {

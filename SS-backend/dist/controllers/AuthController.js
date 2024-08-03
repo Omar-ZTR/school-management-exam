@@ -21,6 +21,7 @@ const tokenModel_1 = require("../models/tokenModel");
 const token_1 = __importDefault(require("../utils/token"));
 const adminModel_1 = require("../models/adminModel");
 const upload_1 = __importDefault(require("../utils/upload"));
+const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
 const baseUrl = "http://localhost:3000/files/";
 // Signup function
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,38 +53,102 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 userData.CV__path = baseUrl + file.filename;
             }
         }
-        if (userData.role === "Student") {
-            existingUser = yield studentModel_1.Student.findOne({
+        existingUser = yield studentModel_1.Student.findOne({
+            where: { user__email: userData.user__email },
+        });
+        if (!existingUser) {
+            existingUser = yield teacherModel_1.Teacher.findOne({
                 where: { user__email: userData.user__email },
             });
-            if (existingUser) {
-                return res.status(400).json({ message: "Student already exists" });
-            }
+        }
+        if (!existingUser) {
+            existingUser = yield teacherModel_1.Teacher.findOne({
+                where: { user__email: userData.user__email },
+            });
+        }
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let code = "";
+        for (let i = 0; i < 100; i++) {
+            code += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        userData.codeVerifey = code;
+        if (userData.role === "Student") {
             newUser = yield studentModel_1.Student.create(userData);
+            const url = `http://localhost:4200/verifyemail/${newUser.codeVerifey}/`;
+            const text = `
+      <div>
+    <h1>Account Activation</h1>
+    <h2>We are delighted to welcome you to our platform, ${newUser.first__name}!</h2>
+    <p>To complete your registration and activate your account, please confirm your email by clicking the button below:</p>
+    <a href="${url}" style="
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    ">Confirm Your Email</a>
+    <p>Thank you for choosing us.</p>
+    <p>Best regards,</p>
+  </div>`;
+            yield (0, sendEmail_1.default)(newUser.user__email, "Account Activation", text);
             res
                 .status(201)
                 .json({ message: "Student registered successfully", user: newUser });
         }
         else if (userData.role === "Teacher") {
-            existingUser = yield teacherModel_1.Teacher.findOne({
-                where: { user__email: userData.user__email },
-            });
-            if (existingUser) {
-                return res.status(400).json({ message: "Teacher already exists" });
-            }
             newUser = yield teacherModel_1.Teacher.create(userData);
+            const url = `http://localhost:4200/verifyemail/${newUser.codeVerifey}/`;
+            const text = `
+      <div>
+    <h1>Account Activation</h1>
+    <h2>We are delighted to welcome you to our platform, ${newUser.first__name}!</h2>
+    <p>To complete your registration and activate your account, please confirm your email by clicking the button below:</p>
+    <a href="${url}" style="
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    ">Confirm Your Email</a>
+    <p>Thank you for choosing us.</p>
+    <p>Best regards,</p>
+  </div>`;
+            yield (0, sendEmail_1.default)(newUser.user__email, "Account Activation", text);
             res
                 .status(201)
                 .json({ message: "Teacher registered successfully", user: newUser });
         }
         else {
-            existingUser = yield User__model_1.User.findOne({
-                where: { user__email: userData.user__email },
-            });
-            if (existingUser) {
-                return res.status(400).json({ message: "User already exists" });
-            }
-            newUser = yield User__model_1.User.create(userData);
+            newUser = yield adminModel_1.Admin.create(userData);
+            const url = `http://localhost:4200/verifyemail/${newUser.codeVerifey}/`;
+            const text = `
+      <div>
+    <h1>Account Activation</h1>
+    <h2>We are delighted to welcome you to our platform, ${newUser.first__name}!</h2>
+    <p>To complete your registration and activate your account, please confirm your email by clicking the button below:</p>
+    <a href="${url}" style="
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    ">Confirm Your Email</a>
+    <p>Thank you for choosing us.</p>
+    <p>Best regards,</p>
+  </div>`;
+            yield (0, sendEmail_1.default)(newUser.user__email, "Account Activation", text);
             res
                 .status(201)
                 .json({ message: "User registered successfully", user: newUser });
@@ -100,7 +165,9 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // console.log("innnnnw",req.body.email)
         const { user__email, password } = req.body;
-        let user = yield studentModel_1.Student.findOne({ where: { user__email } });
+        let user = yield studentModel_1.Student.findOne({
+            where: { user__email },
+        });
         if (!user) {
             user = yield teacherModel_1.Teacher.findOne({ where: { user__email } });
         }
@@ -108,19 +175,22 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             user = yield adminModel_1.Admin.findOne({ where: { user__email } });
         }
         if (user && (yield bcryptjs_1.default.compare(password, user.password))) {
-            let tokens = yield tokenModel_1.Token.findOne({ where: { user__id: user.user__id } });
+            let tokens = yield tokenModel_1.Token.findOne({
+                where: { user__id: user.user__id, role: user.role },
+            });
             if (!tokens) {
                 const tokenData = {
                     user__id: user.user__id,
+                    role: user.role,
                     token: (0, token_1.default)(user),
                 };
                 tokens = yield tokenModel_1.Token.create(tokenData);
             }
-            const tokenData = {
-                user__id: user.user__id,
-                token: (0, token_1.default)(user),
-            };
-            tokens = yield tokenModel_1.Token.create(tokenData);
+            // const tokenData = {
+            //   user__id: user.user__id,
+            //   token: generateToken(user),
+            // };
+            // tokens = await Token.create(tokenData as any);
             res.status(200).json({ token: tokens.token });
         }
         else {

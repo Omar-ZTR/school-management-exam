@@ -1,0 +1,56 @@
+.email-container {
+
+    display: flex;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: flex-end;
+}
+.email-header, .email-footer {
+    /* text-align: center; */
+    padding: 37px;
+    max-width: 40rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #212121;
+    left: 20%;
+    margin-top: 50px;
+    position: absolute;
+    border-radius: 10px 10px 0 0;
+}
+.email-img {
+    width: 50rem;
+}
+.email-body {
+    padding: 20px;
+}
+.Titel {
+    margin-bottom: 18px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 41px;
+    color: #120e47;
+    width: fit-content;
+    padding: 32px 30px 15px 10px;
+    /* border-radius: 0 40px 40px 0; */
+    /* box-shadow: 5px 5px 7px -3px #a1b7ff; */
+  }
+
+  .subTitel {
+    margin-bottom: 10px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 20px;
+    color: #0f0f0f;
+    width: fit-content;
+    /* padding: 15px 30px 15px 10px; */
+    /* border-radius: 0 40px 40px 0; */
+    /* box-shadow: 5px 5px 7px -3px #a1b7ff; */
+  }

@@ -23,19 +23,19 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     // Call getMessages every second
-    this.intervalSubscription = interval(5000).subscribe(() => {
-      this.chatService.getChat().subscribe(
-        (data: any) => {
-          // Update messages or handle the response here
-          console.log('sasa chats', data);
-  this.chat = data
+  //   this.intervalSubscription = interval(5000).subscribe(() => {
+  //     this.chatService.getChat().subscribe(
+  //       (data: any) => {
+  //         // Update messages or handle the response here
+  //         console.log('sasa chats', data);
+  // this.chat = data
   
-        },
-        (error: { error: { message: any } }) => {
-          console.log('errrr', error);
-        }
-      );
-    });
+  //       },
+  //       (error: { error: { message: any } }) => {
+  //         console.log('errrr', error);
+  //       }
+  //     );
+  //   });
   }
 
   ngOnDestroy(): void {

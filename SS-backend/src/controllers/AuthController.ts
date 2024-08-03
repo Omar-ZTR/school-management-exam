@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
 import nodemailer from "nodemailer";
-import { User } from "../models/User__model"; 
+import { User } from "../models/User__model";
 import { Student } from "../models/studentModel";
 import { Teacher } from "../models/teacherModel";
 import { Token } from "../models/tokenModel";
@@ -10,10 +10,9 @@ import generateToken from "../utils/token";
 import { users } from "../models/usress/userModel";
 import { Admin } from "../models/adminModel";
 import uploadFileMiddleware from "../utils/upload";
+import sendEmail from "../utils/sendEmail";
 
 const baseUrl = "http://localhost:3000/files/";
-
-
 
 // Signup function
 export const signup = async (req: Request, res: Response) => {
@@ -34,7 +33,7 @@ export const signup = async (req: Request, res: Response) => {
       console.error("Error parsing user data:", parseError);
       return res.status(400).json({ message: "Invalid user data format" });
     }
-    
+
     console.log("Parsed user data:", userData);
 
     userData.resetPasswordToken = "";
@@ -47,39 +46,113 @@ export const signup = async (req: Request, res: Response) => {
     if (req.files && (req.files as Express.Multer.File[]).length > 0) {
       console.log("files 7", req.files);
       for (const file of req.files as Express.Multer.File[]) {
-        userData.CV__path= baseUrl + file.filename
+        userData.CV__path = baseUrl + file.filename;
       }
     }
-    if (userData.role === "Student") {
-      existingUser = await Student.findOne({
+
+    existingUser = await Student.findOne({
+      where: { user__email: userData.user__email },
+    });
+    if (!existingUser) {
+      existingUser = await Teacher.findOne({
         where: { user__email: userData.user__email },
       });
-      if (existingUser) {
-        return res.status(400).json({ message: "Student already exists" });
-      }
+    }
+
+    if (!existingUser) {
+      existingUser = await Teacher.findOne({
+        where: { user__email: userData.user__email },
+      });
+    }
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let code = "";
+    for (let i = 0; i < 100; i++) {
+      code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    userData.codeVerifey = code;
+
+    if (userData.role === "Student") {
       newUser = await Student.create(userData);
+
+      const url = `http://localhost:4200/verifyemail/${newUser.codeVerifey}/`;
+
+      const text = `
+      <div>
+    <h1>Account Activation</h1>
+    <h2>We are delighted to welcome you to our platform, ${newUser.first__name}!</h2>
+    <p>To complete your registration and activate your account, please confirm your email by clicking the button below:</p>
+    <a href="${url}" style="
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    ">Confirm Your Email</a>
+    <p>Thank you for choosing us.</p>
+    <p>Best regards,</p>
+  </div>`;
+      await sendEmail(newUser.user__email, "Account Activation", text);
       res
         .status(201)
         .json({ message: "Student registered successfully", user: newUser });
     } else if (userData.role === "Teacher") {
-      existingUser = await Teacher.findOne({
-        where: { user__email: userData.user__email },
-      });
-      if (existingUser) {
-        return res.status(400).json({ message: "Teacher already exists" });
-      }
       newUser = await Teacher.create(userData);
+      const url = `http://localhost:4200/verifyemail/${newUser.codeVerifey}/`;
+
+      const text = `
+      <div>
+    <h1>Account Activation</h1>
+    <h2>We are delighted to welcome you to our platform, ${newUser.first__name}!</h2>
+    <p>To complete your registration and activate your account, please confirm your email by clicking the button below:</p>
+    <a href="${url}" style="
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    ">Confirm Your Email</a>
+    <p>Thank you for choosing us.</p>
+    <p>Best regards,</p>
+  </div>`;
+      await sendEmail(newUser.user__email, "Account Activation", text);
       res
         .status(201)
         .json({ message: "Teacher registered successfully", user: newUser });
     } else {
-      existingUser = await User.findOne({
-        where: { user__email: userData.user__email },
-      });
-      if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
-      }
-      newUser = await User.create(userData);
+      newUser = await Admin.create(userData);
+      const url = `http://localhost:4200/verifyemail/${newUser.codeVerifey}/`;
+
+      const text = `
+      <div>
+    <h1>Account Activation</h1>
+    <h2>We are delighted to welcome you to our platform, ${newUser.first__name}!</h2>
+    <p>To complete your registration and activate your account, please confirm your email by clicking the button below:</p>
+    <a href="${url}" style="
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    ">Confirm Your Email</a>
+    <p>Thank you for choosing us.</p>
+    <p>Best regards,</p>
+  </div>`;
+      await sendEmail(newUser.user__email, "Account Activation", text);
       res
         .status(201)
         .json({ message: "User registered successfully", user: newUser });
@@ -90,35 +163,40 @@ export const signup = async (req: Request, res: Response) => {
   }
 };
 
-type UserType = Student | Teacher | Admin; 
+type UserType = Student | Teacher | Admin;
 // Login function
 export const login = async (req: Request, res: Response) => {
   try {
     // console.log("innnnnw",req.body.email)
     const { user__email, password } = req.body;
 
-    let user: UserType | null = await Student.findOne({ where: { user__email } });
+    let user: UserType | null = await Student.findOne({
+      where: { user__email },
+    });
     if (!user) {
-     user = await Teacher.findOne({ where: { user__email } });
+      user = await Teacher.findOne({ where: { user__email } });
     }
     if (!user) {
       user = await Admin.findOne({ where: { user__email } });
-     }
+    }
     if (user && (await bcrypt.compare(password, user.password))) {
-      let tokens = await Token.findOne({ where: { user__id: user.user__id } });
+      let tokens = await Token.findOne({
+        where: { user__id: user.user__id, role: user.role },
+      });
       if (!tokens) {
         const tokenData = {
           user__id: user.user__id,
+          role: user.role,
           token: generateToken(user),
         };
 
         tokens = await Token.create(tokenData as any);
       }
-      const tokenData = {
-        user__id: user.user__id,
-        token: generateToken(user),
-      };
-      tokens = await Token.create(tokenData as any);
+      // const tokenData = {
+      //   user__id: user.user__id,
+      //   token: generateToken(user),
+      // };
+      // tokens = await Token.create(tokenData as any);
       res.status(200).json({ token: tokens.token });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -129,14 +207,6 @@ export const login = async (req: Request, res: Response) => {
   }
   console.log("hello", req.headers);
 };
-
-
-
-
-
-
-
-
 
 // Signup function
 
@@ -169,9 +239,6 @@ export const ssignup = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
 
 // Forgot password function
 export const forgotPassword = async (req: Request, res: Response) => {
@@ -244,8 +311,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
 //       res.status(500).send({ message: "Internal Server Error"});
 //   }
 //   });
-
-
 
 // const verifyToken = (token: string) => {
 //   try {

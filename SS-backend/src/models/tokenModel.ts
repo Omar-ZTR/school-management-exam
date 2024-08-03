@@ -20,6 +20,9 @@ export class Token extends Model<Token> {
       @Column(DataType.STRING)
       token!: string;
 
+      @Column(DataType.STRING)
+      role!: string;
+
 
 
 }
