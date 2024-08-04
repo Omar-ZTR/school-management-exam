@@ -8,12 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteReservation = exports.updateReservation = exports.getReservationById = exports.getAllReservations = exports.getSpecificReservations = exports.createReservation = void 0;
+exports.notifyExamReservation = exports.deleteReservation = exports.updateReservation = exports.getReservationById = exports.getAllReservations = exports.getSpecificReservations = exports.createReservation = void 0;
 const sequelize_1 = require("sequelize");
 const reservationModel_1 = require("../models/reservationModel"); // Import your Reservation model
 const examModel_1 = require("../models/examModel");
 const groupModel_1 = require("../models/groupModel");
+const salleModel_1 = require("../models/salleModel");
+const studentModel_1 = require("../models/studentModel");
+const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
+const date_fns_1 = require("date-fns");
 // Create operation
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -22,17 +29,28 @@ const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // Create the reservation object with the generated code
         const reservationData = Object.assign(Object.assign({}, req.body), { code: code });
         const reservation = yield reservationModel_1.Reservation.create(reservationData);
+        const updatedReservation = yield reservationModel_1.Reservation.findOne({
+            where: { reserv__id: reservation.reserv__id },
+            include: [
+                {
+                    model: examModel_1.Exam,
+                },
+            ],
+        });
+        if (updatedReservation) {
+            yield (0, exports.notifyExamReservation)(updatedReservation);
+        }
         res.status(201).json(reservation);
     }
     catch (error) {
         console.error("Error creation reservation", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.createReservation = createReservation;
 const generateCode = () => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let code = '';
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let code = "";
     for (let i = 0; i < 4; i++) {
         code += characters.charAt(Math.floor(Math.random() * characters.length));
     }
@@ -51,14 +69,14 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
                     {
                         [sequelize_1.Op.or]: [
                             { group__name: { [sequelize_1.Op.eq]: group.group__name } },
-                            { group__name: { [sequelize_1.Op.is]: null } }
-                        ]
+                            { group__name: { [sequelize_1.Op.is]: null } },
+                        ],
                     },
                     {
-                        startDate: { [sequelize_1.Op.gt]: currentDate }
-                    }
-                ]
-            }
+                        startDate: { [sequelize_1.Op.gt]: currentDate },
+                    },
+                ],
+            },
         });
         const formattedReservations = yield Promise.all(reservations.map((reservation) => __awaiter(void 0, void 0, void 0, function* () {
             const exam = yield examModel_1.Exam.findByPk(reservation.exam__id);
@@ -81,9 +99,8 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
     catch (error) {
         console.error("Error fetch reservations:", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
-    ;
 });
 exports.getSpecificReservations = getSpecificReservations;
 // Read operation - Get all reservations
@@ -94,9 +111,8 @@ const getAllReservations = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (error) {
         console.error("Error fetch reservations:", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
-    ;
 });
 exports.getAllReservations = getAllReservations;
 // Read operation - Get reservation by ID
@@ -113,7 +129,7 @@ const getReservationById = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (error) {
         console.error("Error fetch reservation", error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.getReservationById = getReservationById;
@@ -121,13 +137,25 @@ exports.getReservationById = getReservationById;
 const updateReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const [updated] = yield reservationModel_1.Reservation.update(req.body, { where: { reserv__id: id } });
+        const [updated] = yield reservationModel_1.Reservation.update(req.body, {
+            where: { reserv__id: id },
+        });
         if (updated) {
-            const updatedReservation = yield reservationModel_1.Reservation.findOne({ where: { reserv__id: id } });
+            const updatedReservation = yield reservationModel_1.Reservation.findOne({
+                where: { reserv__id: id },
+                include: [
+                    {
+                        model: examModel_1.Exam,
+                    },
+                ],
+            });
+            if (updatedReservation) {
+                yield (0, exports.notifyExamReservation)(updatedReservation);
+            }
             res.status(200).json(updatedReservation);
         }
         else {
-            throw new Error('Reservation not found');
+            throw new Error("Reservation not found");
         }
     }
     catch (error) {
@@ -145,7 +173,7 @@ const deleteReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
             res.status(204).send();
         }
         else {
-            throw new Error('Reservation not found');
+            throw new Error("Reservation not found");
         }
     }
     catch (error) {
@@ -154,3 +182,44 @@ const deleteReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.deleteReservation = deleteReservation;
+const notifyExamReservation = (updatedReservation) => __awaiter(void 0, void 0, void 0, function* () {
+    const salle = yield salleModel_1.Salle.findOne({
+        where: { salle__id: updatedReservation.salle },
+    });
+    let group = null;
+    if (updatedReservation.group__name) {
+        group = yield groupModel_1.Group.findOne({
+            where: { group__name: updatedReservation.group__name },
+            include: [
+                {
+                    model: studentModel_1.Student,
+                },
+            ],
+        });
+    }
+    const formattedDate = (0, date_fns_1.format)(new Date(updatedReservation.startDate), "d MMMM yyyy 'at' HH:mm");
+    let text = `
+    <div>
+      <h1>Exam Notification</h1>
+      <p>You have an exam titled "${updatedReservation.exam.exam__title}" scheduled on ${formattedDate}`;
+    if (salle) {
+        text += ` in salle "${salle.salle__name}"`;
+    }
+    if (group) {
+        text += ` with the group "${group.group__name}."`;
+    }
+    else {
+        text += `. This exam is a certificate exam.`;
+    }
+    text += `</p>
+      <p>Thank you for choosing us.</p>
+      <p>Best regards,</p>
+     
+    </div>`;
+    if (group === null || group === void 0 ? void 0 : group.students) {
+        for (const student of group.students) {
+            yield (0, sendEmail_1.default)(student.user__email, "Exam Notification", text);
+        }
+    }
+});
+exports.notifyExamReservation = notifyExamReservation;

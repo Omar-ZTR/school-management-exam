@@ -10,6 +10,7 @@ import uploadFileMiddleware from "../utils/upload";
 import { Student } from "../models/studentModel";
 import { Subject } from "../models/subjectModel";
 import { Group } from "../models/groupModel";
+import sendEmail from "../utils/sendEmail";
 const baseUrl = "http://localhost:3000/files/";
 
 // Create operation
@@ -74,7 +75,32 @@ export const updateResult = async (req: Request, res: Response) => {
     const { id } = req.params;
     const [updated] = await Answer.update(req.body, { where: { ans__id: id } });
     if (updated) {
-      const updatedResult = await Answer.findOne({ where: { ans__id: id } });
+      const updatedResult = await Answer.findOne({ where: { ans__id: id },
+        include: [
+          {
+            model: Student,
+  
+           
+          },
+          {
+            model: Exam,
+  
+           
+          },
+        ], });
+      if(updatedResult){
+          let text = `
+     <div>
+      <h1>Exam Result</h1>
+      <p>Your score in the exam titled "${updatedResult.exam.exam__title}" is ${updatedResult.ans__result}.</p>
+      <p>Thank you for choosing us.</p>
+      <p>Best regards,</p>
+    
+    </div>`;
+      await sendEmail(updatedResult.student.user__email, "Exam Result", text);
+      }
+    
+  
       res.status(200).json(updatedResult);
     } else {
       throw new Error("Result not found");

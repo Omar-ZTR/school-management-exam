@@ -271,6 +271,10 @@ console.log("aksjjjjjjjjjjjjjjjjjjjjj",this.groupId)
         
             this.fakesubscribe[course.exam__id] = { check: true, acceptation: true };
           }
+          for( const certife of this.CertifExam) {
+        
+            this.subscribe[certife.exam__id] = { check: null, acceptation: null };
+          }
         
         console.log('nnddd', this.examlist);
       },

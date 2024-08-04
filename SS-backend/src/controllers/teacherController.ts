@@ -5,6 +5,7 @@ import { Group } from "../models/groupModel";
 import { Question } from "../models/questionModel";
 import { FileQuestion } from "../models/fileModel";
 import { Reponse } from "../models/reponseModel";
+import sendEmail from "../utils/sendEmail";
 
 export const getAllTeacher = async (req: Request, res: Response) => {
   try {
@@ -19,6 +20,9 @@ export const getAllTeacher = async (req: Request, res: Response) => {
           as: "groups",
         },
       ],
+      where: {
+        emailVerifed: true,
+      },
     });
     console.log("teachers is : ", Teachers);
     res.status(200).json(Teachers);
@@ -81,8 +85,58 @@ export const updateTeacher = async (req: Request, res: Response) => {
 
       if (updated) {
         const updatedTeacher = await Teacher.findOne({
+          
           where: { user__id: id },
         });
+
+        if (updatedTeacher) {
+          let status;
+          switch (updatedTeacher.active) {
+            case true:
+              status: "accepted";
+              break;
+            case false:
+              status: "refused";
+              break;
+            case null:
+              status: "in stay wait";
+              break;
+            default:
+              return res.status(400).json({ message: "Invalid status" });
+          }
+  
+          const url = `http://localhost:4200/dash`;
+          let text = `
+          <div>
+            <h1>Account Activation</h1>
+            <h2>We are delighted to welcome you to our platform!</h2>
+            <p>Your account status is ${status}.</p>`;
+          
+          if (status === "accepted") {
+            text += `
+            <p>To log in, please click below:</p>
+            <a href="${url}" style="
+              display: inline-block;
+              padding: 10px 20px;
+              font-size: 16px;
+              color: #ffffff;
+              background-color: #007bff;
+              border: none;
+              border-radius: 5px;
+              text-decoration: none;
+            ">Confirm Your Email</a>`;
+          }
+          
+          text += `
+            <p>Thank you for choosing us.</p>
+            <p>Best regards,</p>
+          </div>`;
+          await sendEmail(updatedTeacher.user__email, "Account Activation", text);
+        }
+
+
+
+
         return res.status(200).json(updatedTeacher);
       } else {
         throw new Error("Teacher not updated");

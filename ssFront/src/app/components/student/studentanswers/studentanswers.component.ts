@@ -36,7 +36,9 @@ export class StudentanswersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.moyen=  this.calculateResult();
     this.fetchAnswers();
+    
   }
 
   fetchAnswers(): void {
@@ -45,7 +47,7 @@ export class StudentanswersComponent implements OnInit {
         this.results = data;
         // this.groupQuestionsByType();
         this.fetchIngroup();
-        console.log('datataken', this.results);
+        console.log('results datataken results results', this.results);
       },
       (error: any) => {
         console.error('Error fetching exam', error);

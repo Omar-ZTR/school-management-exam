@@ -14,7 +14,7 @@
       </tr>
     </ng-template>
   </p-table>
-  <div *ngIf="examType == 'File'" style="padding: 10px 20px 20px 20px;">
+  <div *ngIf="examType === 'File' || examType === 'FileOff'" style="padding: 10px 20px 20px 20px;">
     <div class="examFiles">
       <div *ngIf="Exam.fileExam" class="fleximg" style="margin-bottom: 10px">
         <div  *ngFor="let f of Exam.fileExam; let index = index" key="index">
@@ -83,7 +83,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="examType != 'File'">
+  <div *ngIf="examType === 'Normal'">
     <ng-container *ngFor="let questionType of getQuestionTypes()">
       <p-fieldset [legend]="'Section: ' + questionType" [toggleable]="true">
         <ng-container

@@ -47,6 +47,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Answer.prototype, "Student__id", void 0);
 __decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => studentModel_1.Student),
+    __metadata("design:type", studentModel_1.Student)
+], Answer.prototype, "student", void 0);
+__decorate([
     (0, sequelize_typescript_1.HasMany)(() => answerStudentModel_1.AnswerStudent),
     __metadata("design:type", Array)
 ], Answer.prototype, "answers", void 0);

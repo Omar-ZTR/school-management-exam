@@ -1,18 +1,4 @@
-<!-- -->
-<!-- <mat-drawer-container class="bb">
-    <mat-drawer class="main__sidebar" #drawer mode="side" >
-        <app-sidebar></app-sidebar> 
-        
-    </mat-drawer>
 
-    <mat-drawer-content class="main__content">
- 
-      <p><button mat-button (click)="drawer.toggle()">drawer.toggle()</button></p>
-      
-    </mat-drawer-content>
-  </mat-drawer-container> -->
-
-<!-- <app-sidebar></app-sidebar> -->
 <div id="cssportal-grid">
   <div id="div1">
     <div class="topBar">
@@ -100,47 +86,30 @@
     <router-outlet></router-outlet>
   </div>
   <div id="div3">
-    <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
+    <div class="menuBar" [ngClass]="{ menuBar: isMenuMobile, Scard: !isMenuMobile }">
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
           <li  routerLink="/student/dash" routerLinkActive="actives">
-            <i class="fas fa-home fa-xs icon"></i>
+            <i pTooltip="Dashboard" class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
-        
-          <li  (click)="toggleExams()">
-            <i class="fa-solid fa-folder-tree fa-xs icon"></i>
-            <div class="title">Exams</div>
+
+          <li   routerLink="/student/exam" routerLinkActive="actives">
+            <i pTooltip="List Exam" class="fa-solid fa-table-list fa-xs icon"></i>
+            <div class="title">List Exam</div>
           </li>
-          <ul *ngIf="showExams" class="sub-menu">
-            <li  routerLink="/student/result" routerLinkActive="actives">
-              <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
-              <div class="title">examtaken</div>
-            </li>
-            <li  routerLink="/student/exam" routerLinkActive="actives">
-              <i class="fa-solid fa-table-list fa-xs icon"></i>
-              <div class="title">List Exam</div>
-            </li>
-          </ul>
-          <li  routerLink="" routerLinkActive="actives">
-            <i class="fa-solid fa-calendar-days fa-xs icon"></i>
-            <div class="title">Exams</div>
-          </li>
-          <li  routerLink="/student/addxQuestion" routerLinkActive="actives">
-            <i class="fas fa-user-edit fa-xs icon"></i>
-            <div class="title">Add question</div>
-          </li>
-          <li  routerLink="/student/Rxesult" routerLinkActive="actives">
-            <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
+         
+          <li  routerLink="/student/result" routerLinkActive="actives">
+            <i pTooltip="Result" class="fa-solid fa-layer-group fa-xs icon"></i>
             <div class="title">Result</div>
           </li>
           <li  routerLink="/student/Cxorrection" routerLinkActive="actives">
-            <i class="fa-solid fa-message fa-xs icon"></i>
-            <div class="title">Correction</div>
+            <i pTooltip="Contact" class="fa-solid fa-message fa-xs icon"></i>
+            <div class="title">Contact</div>
           </li>
           <hr />
           <li  (click)="logout()">
-            <i class="fa-solid fa-right-from-bracket fa-xs icon"></i>
+            <i pTooltip="Logout" class="fa-solid fa-right-from-bracket fa-xs icon"></i>
             <div class="title">Logout</div>
           </li>
         </ul>

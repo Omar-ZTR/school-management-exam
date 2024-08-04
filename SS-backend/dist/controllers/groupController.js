@@ -299,7 +299,12 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             formdata = yield Promise.all(group.exams.map((exam) => __awaiter(void 0, void 0, void 0, function* () {
                 const reserv = yield checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
                 // Add student__name to the exam object
-                return Object.assign(Object.assign({}, exam.get({ plain: true })), { reservation: reserv });
+                const answers = yield answerModel_1.Answer.findAll({
+                    where: {
+                        exam__id: exam.exam__id,
+                    },
+                });
+                return Object.assign(Object.assign({}, exam.get({ plain: true })), { reservation: reserv, answers: answers });
             })));
             // Combine the group object with the modified exams
             const grouped = Object.assign(Object.assign({}, group.get({ plain: true })), { exams: formdata // Fix the syntax here

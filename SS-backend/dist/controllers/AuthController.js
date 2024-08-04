@@ -160,7 +160,6 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.signup = signup;
-// Login function
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // console.log("innnnnw",req.body.email)
@@ -174,27 +173,42 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!user) {
             user = yield adminModel_1.Admin.findOne({ where: { user__email } });
         }
-        if (user && (yield bcryptjs_1.default.compare(password, user.password))) {
-            let tokens = yield tokenModel_1.Token.findOne({
-                where: { user__id: user.user__id, role: user.role },
-            });
-            if (!tokens) {
-                const tokenData = {
-                    user__id: user.user__id,
-                    role: user.role,
-                    token: (0, token_1.default)(user),
-                };
-                tokens = yield tokenModel_1.Token.create(tokenData);
-            }
-            // const tokenData = {
-            //   user__id: user.user__id,
-            //   token: generateToken(user),
-            // };
-            // tokens = await Token.create(tokenData as any);
-            res.status(200).json({ token: tokens.token });
+        if (!user) {
+            res.status(404).json({ message: "not exist !" });
         }
         else {
-            res.status(401).json({ message: "Invalid email or password" });
+            if (user && user.emailVerifed !== true) {
+                res.status(401).json({ message: "Comfirm your email !" });
+            }
+            else {
+                if (user && user.emailVerifed == true && user.active !== true) {
+                    res.status(401).json({ message: "you need  acceptation !" });
+                }
+                else {
+                    if (user && user.active == true && (yield bcryptjs_1.default.compare(password, user.password))) {
+                        let tokens = yield tokenModel_1.Token.findOne({
+                            where: { user__id: user.user__id, role: user.role },
+                        });
+                        if (!tokens) {
+                            const tokenData = {
+                                user__id: user.user__id,
+                                role: user.role,
+                                token: (0, token_1.default)(user),
+                            };
+                            tokens = yield tokenModel_1.Token.create(tokenData);
+                        }
+                        // const tokenData = {
+                        //   user__id: user.user__id,
+                        //   token: generateToken(user),
+                        // };
+                        // tokens = await Token.create(tokenData as any);
+                        res.status(200).json({ token: tokens.token });
+                    }
+                    else {
+                        res.status(401).json({ message: "Invalid email or password" });
+                    }
+                }
+            }
         }
     }
     catch (error) {

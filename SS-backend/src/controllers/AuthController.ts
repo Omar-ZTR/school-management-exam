@@ -163,23 +163,42 @@ export const signup = async (req: Request, res: Response) => {
   }
 };
 
-type UserType = Student | Teacher | Admin;
+
+
+
+
+
 // Login function
+type UserType = Student | Teacher | Admin;
+
 export const login = async (req: Request, res: Response) => {
   try {
     // console.log("innnnnw",req.body.email)
     const { user__email, password } = req.body;
 
     let user: UserType | null = await Student.findOne({
-      where: { user__email },
+      where: { user__email  },
     });
     if (!user) {
       user = await Teacher.findOne({ where: { user__email } });
     }
     if (!user) {
-      user = await Admin.findOne({ where: { user__email } });
+      user = await Admin.findOne({ where: { user__email   } });
     }
-    if (user && (await bcrypt.compare(password, user.password))) {
+
+    if(!user ){
+
+      res.status(404).json({ message: "not exist !" });
+    }else{
+ if(user && user.emailVerifed !== true){
+
+      res.status(401).json({ message: "Comfirm your email !" });
+    }else{
+if(user && user.emailVerifed == true && user.active !== true){
+
+  res.status(401).json({ message: "you need  acceptation !" });
+}else{
+    if (user && user.active == true && (await bcrypt.compare(password, user.password))) {
       let tokens = await Token.findOne({
         where: { user__id: user.user__id, role: user.role },
       });
@@ -201,6 +220,15 @@ export const login = async (req: Request, res: Response) => {
     } else {
       res.status(401).json({ message: "Invalid email or password" });
     }
+  }
+
+
+    }
+
+
+
+    }
+   
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ error: "Intesrnal server error" });

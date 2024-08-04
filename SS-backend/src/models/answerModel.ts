@@ -38,6 +38,10 @@ export class Answer extends Model<Answer> {
     })
     Student__id!: number;
 
+
+    @BelongsTo(() => Student)
+    student!: Student;
+
     @HasMany(() => AnswerStudent)
     answers!: AnswerStudent[];
 

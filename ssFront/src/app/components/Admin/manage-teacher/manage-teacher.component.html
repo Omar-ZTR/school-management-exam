@@ -13,7 +13,7 @@
       'description',
       'user__email'
     ]"
-    [tableStyle]="{ 'min-width': '50rem' }"
+    [tableStyle]="{ 'max-width': '50rem' }"
   >
     <ng-template pTemplate="caption">
       <div class="flex">
@@ -85,34 +85,34 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 10%">first Name</th>
-        <th style="width: 10%">last Name</th>
-        <th style="width: 10%">Email</th>
-        <th style="width: 25%">Description</th>
-        <th style="width: 25%">CV</th>
-        <!-- <th style="width:max-content">specialty</th> -->
-        <th style="width: 25%">Domain</th>
-        <th style="width: 25%">Groups</th>
-        <th style="width: 10%">Status</th>
-        <th style="width: 10%">Action</th>
+        <th style="width: 100px">first Name</th>
+        <th style="width: 100px">last Name</th>
+        <th style="width: 100px">Email</th>
+        <th style="width: 100px">Description</th>
+        <th style="width: 100px">CV</th>
+        <!-- <th style="width:m100pxcontent">specialty</th> -->
+        <th style="width: 100px">Domain</th>
+        <th style="width: 100px">Groups</th>
+        <th style="width: 100px">Status</th>
+        <th style="width: 100px">Action</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-teacher>
       <tr>
-        <td>
+        <td style="padding: 1rem .8rem !important;" >
           {{ teacher.first__name }}
         </td>
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
           {{ teacher.last__name }}
         </td>
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
           {{ teacher.user__email }}
         </td>
         <td >
           <div class="textDesc">{{ teacher.description }}</div>
           
         </td>
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
           <div class="previewimg" *ngIf="teacher.CV__path">
            
             <i
@@ -123,10 +123,10 @@
            
           </div>
         </td>
-        <!-- <td>
+        <!-- <td style="padding: 1rem .3rem !important;" >
                 {{ teacher.specialty }}
             </td> -->
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
           <div class="inlineflex">
             <div
               class="list"
@@ -154,7 +154,7 @@
             />
           </div>
         </td>
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
           <div class="inlineflex">
             <div class="list" *ngIf="groupExist[teacher.user__id]!.length > 0">
               <p-listbox
@@ -182,7 +182,7 @@
         </td>
 
         <!-- [severity]="getSeverity(teacher.status)" -->
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
       
             <p-triStateCheckbox
               (onChange)="activation($event, teacher.user__id)"
@@ -197,7 +197,7 @@
             </label>
      
         </td>
-        <td>
+        <td style="padding: 1rem .3rem !important;" >
           <div class="inlineflex">
             <p-button
               *ngIf="teacherIds.includes(teacher.user__id)"
@@ -224,7 +224,7 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">No Teacher found.</td>
+        <td colspan="9">No Teacher found.</td>
       </tr>
     </ng-template>
   </p-table>

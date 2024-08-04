@@ -98,7 +98,7 @@ export class CalandarfullComponent implements OnInit {
     private calandarService: CalandarService,
     private groupService: GroupService,
     private salleService: SalleService,
-    private messageService : MessageService,
+    private messageService: MessageService
   ) {
     this.formSG = this.fb.group({
       salleGroupList: this.fb.array([]),
@@ -127,10 +127,8 @@ export class CalandarfullComponent implements OnInit {
     let Allgroups = this.groups;
 
     for (const e of this.examlist) {
- 
       for (const g of this.groups) {
         if (e.group__name === g.group__name && e.exam__id == this.examId) {
-  
           Allgroups = this.groups.filter(
             (G: { group__id: any }) => G.group__id !== g.group__id
           );
@@ -171,10 +169,9 @@ export class CalandarfullComponent implements OnInit {
       startTime: [''],
       endTime: [''],
     });
-     
+
     this.fetchEvents();
     // this.fetchGroups();
-   
   }
 
   resetSalleGroupList(): void {
@@ -241,7 +238,6 @@ export class CalandarfullComponent implements OnInit {
       .map((control) => control.value.group__id)
       .filter((id: any) => id != null);
 
-   
     if (selectedSalleIds.length > 0) {
       for (const SID of selectedSalleIds) {
         if (!this.GIDsg.includes(SID.group__id)) {
@@ -252,7 +248,6 @@ export class CalandarfullComponent implements OnInit {
         item.disabled = this.GIDsg.includes(item.group__id);
       });
     }
-  
   }
 
   SIDsg: any = [];
@@ -260,7 +255,6 @@ export class CalandarfullComponent implements OnInit {
     const selectedSalleIds = this.salleGroupList.controls
       .map((control) => control.value.salle__id)
       .filter((id: any) => id != null);
-
 
     if (selectedSalleIds.length > 0) {
       for (const SID of selectedSalleIds) {
@@ -272,7 +266,6 @@ export class CalandarfullComponent implements OnInit {
         item.disabled = this.SIDsg.includes(item.salle__id);
       });
     }
-
   }
 
   removeSalleGroup(index: number): void {
@@ -345,7 +338,6 @@ export class CalandarfullComponent implements OnInit {
       .map((control) => control.value.group__id)
       .filter((id: any) => id != null);
 
-
     if (selectedgroupIds.length > 0) {
       for (const SID of selectedgroupIds) {
         if (!this.IDg.includes(SID.group__id)) {
@@ -356,7 +348,6 @@ export class CalandarfullComponent implements OnInit {
         item.disabled = this.IDg.includes(item.group__id);
       });
     }
- 
   }
 
   removeGroup(index: number): void {
@@ -447,10 +438,7 @@ export class CalandarfullComponent implements OnInit {
   }
 
   fetchExam(): void {
-    console.log(
-      'xxx',
-      this.data
-    );
+    console.log('xxx', this.data);
     this.examService.getExamByid(this.data).subscribe(
       (data) => {
         this.Exam = data;
@@ -471,13 +459,12 @@ export class CalandarfullComponent implements OnInit {
     );
   }
   fetchEvents(): void {
-    console.log("gg event")
+    console.log('gg event');
     this.calandarService.getEvents().subscribe(
       (data) => {
         this.examlist = data;
         this.checkGroups();
-        console.log("ffdffddfd")
-       
+        console.log('ffdffddfd');
       },
       (error) => {
         console.error('Error fetching fake questions', error);
@@ -495,7 +482,7 @@ export class CalandarfullComponent implements OnInit {
       endhour: new Date(`${startDate}T${endHour}`),
       reserv__id: -1,
     };
-   
+
     this.fetchSalles(fetchSalleData);
   }
 
@@ -507,7 +494,6 @@ export class CalandarfullComponent implements OnInit {
     this.salleService.getSalleSpecific(fetchSalleData).subscribe(
       (data) => {
         this.salles = data;
-   
       },
       (error) => {
         console.error('Error fetching salles', error);
@@ -522,9 +508,9 @@ export class CalandarfullComponent implements OnInit {
 
   openWeekView(dayString: string) {
     const day = this.extractDayNumber(dayString);
- 
+
     const selectedDate = new Date(this.currentYear, this.currentMonth, day);
- 
+
     const startOfWeek = new Date(selectedDate);
 
     const dayOfWeek = selectedDate.getDay();
@@ -532,7 +518,7 @@ export class CalandarfullComponent implements OnInit {
     startOfWeek.setDate(selectedDate.getDate() - dayOfWeek);
 
     this.currentWeekStart = startOfWeek;
-   
+
     this.isMonthView = false;
     this.isMonthViewChange.emit(this.isMonthView);
     this.generateCurrentWeek();
@@ -567,7 +553,6 @@ export class CalandarfullComponent implements OnInit {
     this.currentWeekStart = new Date(
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
     );
-   
   }
 
   getWeekDates(): Date[] {
@@ -676,22 +661,19 @@ export class CalandarfullComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
   openEventForm(kdate: Date, hour: string, modal: any): void {
-
-
     const formattedDate = this.formatDateToLocal(kdate);
     let formattedTime = `${hour}:00`;
     if (hour.length == 4) {
       formattedTime = `0${hour}:00`;
     }
 
-  
     this.eventForm.patchValue({
       startDate: formattedDate,
       startTime: formattedTime,
       endTime: formattedTime,
       salle: '',
     });
-    this.checkGroups()
+    this.checkGroups();
     this.resetSalleGroupList();
     this.inisiallLists();
     this.state = false;
@@ -883,17 +865,14 @@ export class CalandarfullComponent implements OnInit {
   formatDate(date: string, time: string): string {
     const dateTimeString = `${date}T${time}`;
     const dateTime = new Date(dateTimeString);
- 
+
     return dateTime.toISOString();
   }
   saveEvent() {
- 
     this.controlTime();
     if (this.eventForm.valid) {
       const formValues = this.eventForm.value;
       // For debugging purposes
-
-     
 
       if (this.examType) {
         if (this.state) {
@@ -912,24 +891,27 @@ export class CalandarfullComponent implements OnInit {
                 // calandarData.group__name = row.group__id.group__name;
                 // calandarData.salle = row.salle__id.salle__id;
 
-
                 const calandarData = {
                   exam__id: this.data,
-          
+
                   startDate: `${formValues.startDate}T${formValues.startTime}`,
-                  endDate: this.formatDate(formValues.startDate, formValues.endTime),
-                  group__name :row.group__id.group__name,
-                  salle : row.salle__id.salle__id,
+                  endDate: this.formatDate(
+                    formValues.startDate,
+                    formValues.endTime
+                  ),
+                  group__name: row.group__id.group__name,
+                  salle: row.salle__id.salle__id,
                   exam__title: formValues.title,
                 };
 
-
+                console.log(
+                  'this.salleGroupList.value final is here boo : ',
+                  this.salleGroupList.value
+                );
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
                     this.isAddPlan.emit(response);
-                   
-                  
-                    
+
                     console.log('success create', response);
                     this.fetchEvents();
                     const examData = {
@@ -940,25 +922,35 @@ export class CalandarfullComponent implements OnInit {
 
                     this.examService.updateExam(examData).subscribe(
                       (response: any) => {
-                          this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+                        this.messageService.add({
+                          severity: 'success',
+                          summary: 'Success',
+                          detail: 'Exam Successfully scheduled',
+                        });
                         console.log('success update', response);
                         this.modalService.dismissAll();
                       },
                       (error: { error: { message: any } }) => {
                         console.log('error', error);
-                        if(error.error?.message){
-         
-                          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                          }
+                        if (error.error?.message) {
+                          this.messageService.add({
+                            severity: 'danger',
+                            summary: 'Failed',
+                            detail: error.error?.message,
+                          });
+                        }
                       }
                     );
                   },
                   (error: { error: { message: any } }) => {
                     console.log('error', error);
-                    if(error.error?.message){
-         
-                      this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                      }
+                    if (error.error?.message) {
+                      this.messageService.add({
+                        severity: 'danger',
+                        summary: 'Failed',
+                        detail: error.error?.message,
+                      });
+                    }
                   }
                 );
               } else {
@@ -978,23 +970,29 @@ export class CalandarfullComponent implements OnInit {
           ) {
             for (const row of this.GroupList.value) {
               if (row.group__id && row.group__id.group__name) {
-
                 const calandarData = {
                   exam__id: this.data,
-          
+
                   startDate: `${formValues.startDate}T${formValues.startTime}`,
-                  endDate: this.formatDate(formValues.startDate, formValues.endTime),
-                  group__name :row.group__id.group__name,
-               
+                  endDate: this.formatDate(
+                    formValues.startDate,
+                    formValues.endTime
+                  ),
+                  group__name: row.group__id.group__name,
+
                   exam__title: formValues.title,
                 };
 
+                console.log(
+                  'this.GroupList.value final is here boo : ',
+                  this.GroupList.value
+                );
 
                 calandarData.group__name = row.group__id.group__name;
                 this.calandarService.createReserv(calandarData).subscribe(
                   (response: any) => {
                     this.isAddPlan.emit(response);
-            
+
                     console.log('success create', response);
                     this.fetchEvents();
                     const examData = {
@@ -1005,26 +1003,36 @@ export class CalandarfullComponent implements OnInit {
 
                     this.examService.updateExam(examData).subscribe(
                       (response: any) => {
-                        this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+                        this.messageService.add({
+                          severity: 'success',
+                          summary: 'Success',
+                          detail: 'Exam Successfully scheduled',
+                        });
 
                         console.log('success update', response);
                         this.modalService.dismissAll();
                       },
                       (error: { error: { message: any } }) => {
                         console.log('error', error);
-                        if(error.error?.message){
-         
-                          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                          }
+                        if (error.error?.message) {
+                          this.messageService.add({
+                            severity: 'danger',
+                            summary: 'Failed',
+                            detail: error.error?.message,
+                          });
+                        }
                       }
                     );
                   },
                   (error: { error: { message: any } }) => {
                     console.log('error', error);
-                    if(error.error?.message){
-         
-                      this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                      }
+                    if (error.error?.message) {
+                      this.messageService.add({
+                        severity: 'danger',
+                        summary: 'Failed',
+                        detail: error.error?.message,
+                      });
+                    }
                   }
                 );
               } else {
@@ -1047,23 +1055,24 @@ export class CalandarfullComponent implements OnInit {
             this.SalleList.value.length > 0
           ) {
             for (const row of this.SalleList.value) {
-
               const calandarData = {
                 exam__id: this.data,
-        
+
                 startDate: `${formValues.startDate}T${formValues.startTime}`,
-                endDate: this.formatDate(formValues.startDate, formValues.endTime),
-            
-                salle : row.salle__id.salle__id,
+                endDate: this.formatDate(
+                  formValues.startDate,
+                  formValues.endTime
+                ),
+
+                salle: row.salle__id.salle__id,
                 exam__title: formValues.title,
               };
-
-              
+              console.log("this.SalleList.value final is here boo : ",this.SalleList.value)
               // calandarData.salle = row.salle__id.salle__id;
               this.calandarService.createReserv(calandarData).subscribe(
                 (response: any) => {
                   this.isAddPlan.emit(response);
-                  
+
                   console.log('seccess create', response);
                   this.fetchEvents();
                   const examData = {
@@ -1073,27 +1082,37 @@ export class CalandarfullComponent implements OnInit {
 
                   this.examService.updateExam(examData).subscribe(
                     (response: any) => {
-                      this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+                      this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Exam Successfully scheduled',
+                      });
 
                       console.log('seccess update', response);
                       this.modalService.dismissAll();
                     },
                     (error: { error: { message: any } }) => {
                       console.log('errrr', error);
-                      if(error.error?.message){
-         
-                        this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                        }
+                      if (error.error?.message) {
+                        this.messageService.add({
+                          severity: 'danger',
+                          summary: 'Failed',
+                          detail: error.error?.message,
+                        });
+                      }
                     }
                   );
                   // window.location.reload();
                 },
                 (error: { error: { message: any } }) => {
                   console.log('errrr', error);
-                  if(error.error?.message){
-         
-                    this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                    }
+                  if (error.error?.message) {
+                    this.messageService.add({
+                      severity: 'danger',
+                      summary: 'Failed',
+                      detail: error.error?.message,
+                    });
+                  }
                 }
               );
             }
@@ -1102,14 +1121,12 @@ export class CalandarfullComponent implements OnInit {
             this.MsgError = 'Salle is empty ';
           }
         } else {
-
           const calandarData = {
             exam__id: this.data,
-    
+
             startDate: `${formValues.startDate}T${formValues.startTime}`,
             endDate: this.formatDate(formValues.startDate, formValues.endTime),
-    
-         
+
             exam__title: formValues.title,
           };
           console.log(
@@ -1121,7 +1138,6 @@ export class CalandarfullComponent implements OnInit {
             (response: any) => {
               this.isAddPlan.emit(response);
 
-              
               console.log('seccess create', response);
               this.fetchEvents();
               const examData = {
@@ -1131,27 +1147,37 @@ export class CalandarfullComponent implements OnInit {
 
               this.examService.updateExam(examData).subscribe(
                 (response: any) => {
-                  this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Exam Successfully scheduled' });
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Exam Successfully scheduled',
+                  });
 
                   this.modalService.dismissAll();
                   console.log('seccess update', response);
                 },
                 (error: { error: { message: any } }) => {
                   console.log('errrr', error);
-                  if(error.error?.message){
-         
-                    this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                    }
+                  if (error.error?.message) {
+                    this.messageService.add({
+                      severity: 'danger',
+                      summary: 'Failed',
+                      detail: error.error?.message,
+                    });
+                  }
                 }
               );
               // window.location.reload();
             },
             (error: { error: { message: any } }) => {
               console.log('errrr', error);
-              if(error.error?.message){
-         
-                this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
-                }
+              if (error.error?.message) {
+                this.messageService.add({
+                  severity: 'danger',
+                  summary: 'Failed',
+                  detail: error.error?.message,
+                });
+              }
             }
           );
         }

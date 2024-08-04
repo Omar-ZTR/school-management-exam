@@ -22,6 +22,7 @@ const fileModel_1 = require("../models/fileModel");
 const upload_1 = __importDefault(require("../utils/upload"));
 const studentModel_1 = require("../models/studentModel");
 const subjectModel_1 = require("../models/subjectModel");
+const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
 const baseUrl = "http://localhost:3000/files/";
 // Create operation
 const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -76,7 +77,26 @@ const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const { id } = req.params;
         const [updated] = yield answerModel_1.Answer.update(req.body, { where: { ans__id: id } });
         if (updated) {
-            const updatedResult = yield answerModel_1.Answer.findOne({ where: { ans__id: id } });
+            const updatedResult = yield answerModel_1.Answer.findOne({ where: { ans__id: id },
+                include: [
+                    {
+                        model: studentModel_1.Student,
+                    },
+                    {
+                        model: examModel_1.Exam,
+                    },
+                ], });
+            if (updatedResult) {
+                let text = `
+     <div>
+      <h1>Exam Result</h1>
+      <p>Your score in the exam titled "${updatedResult.exam.exam__title}" is ${updatedResult.ans__result}.</p>
+      <p>Thank you for choosing us.</p>
+      <p>Best regards,</p>
+    
+    </div>`;
+                yield (0, sendEmail_1.default)(updatedResult.student.user__email, "Exam Result", text);
+            }
             res.status(200).json(updatedResult);
         }
         else {

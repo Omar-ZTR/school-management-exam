@@ -100,10 +100,10 @@
     <router-outlet></router-outlet>
   </div>
   <div id="div3">
-    <div class="card" [ngClass]="{ card: isMenuMobile, Scard: !isMenuMobile }">
+    <div class="menuBar" [ngClass]="{ menuBar: isMenuMobile, Scard: !isMenuMobile }">
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
-          <li  routerLink="/teacher/chat" routerLinkActive="actives">
+          <li  routerLink="/teacher/dash" routerLinkActive="actives">
             <i class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>

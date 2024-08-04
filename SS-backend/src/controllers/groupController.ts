@@ -316,9 +316,14 @@ export const getGroupById = async (req: Request, res: Response) => {
       formdata = await Promise.all(group.exams.map(async exam => {
           const reserv = await checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
           // Add student__name to the exam object
+          const answers = await Answer.findAll({
+            where: {
+              exam__id: exam.exam__id,
+            },})
           return {
               ...exam.get({ plain: true }), // Convert Sequelize model instance to plain object
-              reservation: reserv
+              reservation: reserv,
+              answers:answers
           };
       }));
       

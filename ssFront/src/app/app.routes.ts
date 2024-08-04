@@ -28,6 +28,7 @@ import { StudentanswersComponent } from './components/student/studentanswers/stu
 import { ChatComponent } from './components/chat/chat.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { VerifieEmailComponent } from './components/verifie-email/verifie-email.component';
+import { TeacherDashComponent } from './components/teacher/teacher-dash/teacher-dash.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -53,7 +54,7 @@ export const routes: Routes = [
     canActivate: [RouteGuardService],
     data: { expectedRole: ['Teacher'] },
     children: [
-      { path: 'dash', component: ExamsComponent },
+      { path: 'dash', component: TeacherDashComponent },
       { path: 'addExam', component: AddExamComponent },
       { path: 'listExam', component: TeacherExamComponent },
       { path: 'addQuestion', component: TeacherQuestionComponent },

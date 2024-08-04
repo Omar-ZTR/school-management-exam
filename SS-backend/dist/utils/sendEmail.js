@@ -24,7 +24,7 @@ const sendEmail = (email, subject, text) => __awaiter(void 0, void 0, void 0, fu
             secure: true,
             auth: {
                 user: 'omarzouiter97@gmail.com',
-                pass: 'qfcynxfqcahnjslx',
+                pass: 'qcgllkqwjstkejty',
             },
         });
         console.log('Email sent sasxd');

@@ -8,12 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOneSubscribe = exports.updateSubscribe = exports.getAllSubscribes = exports.createSubscribe = void 0;
 const subscribeModel_1 = require("../models/subscribeModel");
 const examModel_1 = require("../models/examModel");
 const studentModel_1 = require("../models/studentModel");
 const reservationModel_1 = require("../models/reservationModel");
+const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
 const createSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const subscribe = yield subscribeModel_1.Subscribe.create(req.body);
@@ -24,8 +28,8 @@ const createSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(201).json(newsubscribe);
     }
     catch (error) {
-        console.error('Error creating subscribe', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error creating subscribe", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.createSubscribe = createSubscribe;
@@ -59,14 +63,14 @@ exports.getAllSubscribes = getAllSubscribes;
 const updateSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { subscribe__id } = req.params;
     const updateData = {
-        acceptation: req.body.accept
+        acceptation: req.body.accept,
     };
     console.log("updatedata", updateData);
     try {
         // Check if the Subscribe exists
         const subscribe = yield subscribeModel_1.Subscribe.findOne({ where: { subscribe__id } });
         if (!subscribe) {
-            return res.status(404).json({ error: 'Subscribe not found' });
+            return res.status(404).json({ error: "Subscribe not found" });
         }
         // Update the Subscribe with new data
         yield subscribeModel_1.Subscribe.update(updateData, { where: { subscribe__id } });
@@ -75,11 +79,36 @@ const updateSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
             where: { subscribe__id },
             include: [{ model: examModel_1.Exam }, { model: studentModel_1.Student }],
         });
+        if (updatedSubscribe) {
+            let status;
+            switch (updatedSubscribe.acceptation) {
+                case true:
+                    status: "accepted";
+                    break;
+                case false:
+                    status: "refused";
+                    break;
+                case null:
+                    status: "in stay wait";
+                    break;
+                default:
+                    return res.status(400).json({ message: "Invalid status" });
+            }
+            let text = `
+      <div>
+        <h1> ${updatedSubscribe.exams.exam__title} </h1>
+        
+        <p>Your request is ${status}.</p>
+        <p>Thank you for choosing us.</p>
+        <p>Best regards,</p>
+      </div>`;
+            yield (0, sendEmail_1.default)(updatedSubscribe.student.user__email, "Account Activation", text);
+        }
         res.status(200).json(updatedSubscribe);
     }
     catch (error) {
-        console.error('Error updating subscribe:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error updating subscribe:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.updateSubscribe = updateSubscribe;

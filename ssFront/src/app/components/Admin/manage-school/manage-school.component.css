@@ -216,3 +216,10 @@ gap: 5px;
   transform: scale(0.88);
   filter: blur(0.8px);
 }
+
+
+td{
+  padding: 1rem .3rem !important;
+  text-wrap: balance !important;
+  max-width: 200px !important;
+}

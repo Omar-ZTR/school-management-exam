@@ -48,7 +48,7 @@
   }
   
   .textDesc{
-    width: 300px!important;
+    
     
     max-height: 100px !important;
     overflow: auto;
@@ -87,4 +87,10 @@
 .inlineflex {
   display: inline-flex;
   gap: 5px;
+  flex-direction: column;
+}
+td{
+  padding: 1rem .3rem !important;
+  text-wrap: balance !important;
+  max-width: 200px !important;
 }
