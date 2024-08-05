@@ -187,13 +187,13 @@ console.log("sgroupIdgroupIdss", this.groupId)
       clearInterval(this.countdownInterval);
     }
 
-    this.updateCountdown(reservation.startDate);
+    // this.updateCountdown(reservation.startDate);
 
     // Start a new interval to update the countdown every second
 
-    // this.countdownInterval = setInterval(() => {
-    //   this.updateCountdown(reservation.startDate);
-    // }, 1000);
+    this.countdownInterval = setInterval(() => {
+      this.updateCountdown(reservation.startDate);
+    }, 1000);
 
     this.fetchExam(reservation.exam__id)
       .then((exam) => {
@@ -260,12 +260,15 @@ console.log("difference difference difference",difference)
     }
   }
   fetchExams(): void {
-console.log("aksjjjjjjjjjjjjjjjjjjjjj",this.groupId)
+
     this.calandarService.getExams(this.groupId).subscribe(
       (data) => {
         this.examlist = data;
         this.CourseExam = this.examlist.filter((exam: any) => exam.obligation === true);
         this.CertifExam = this.examlist.filter((exam: any) => exam.obligation === false);
+        console.log("CourseExamCourseExam",this.CourseExam)
+        console.log("CertifExamCertifExam",this.CertifExam)
+        console.log("examlistexamlist",this.examlist)
         this.getSubscribe();
         for( const course of this.CourseExam) {
         
@@ -313,8 +316,11 @@ console.log("aksjjjjjjjjjjjjjjjjjjjjj",this.groupId)
   }
 
   getSubscribe(): void {
- 
+ console.log("hadha examscomp")
       this.subscribeService.getSubscribes().subscribe(
+
+
+
         (data: any) => {
           console.log('Subscription check data:', data);
         this.subscribes = data

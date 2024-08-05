@@ -114,6 +114,7 @@ export class ExamsCertifComponent implements OnInit {
     this.btn = true;
   }
   getSubscribes() {
+    console.log("hadha certif comp")
     this.ExamService.Subscribe().subscribe(
       (data) => {
         this.subscribes = data;

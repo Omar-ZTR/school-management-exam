@@ -52,5 +52,21 @@ export class TokenServiceService {
   }
 
 
+  getRoleFromToken(): number | null {
+    console.log("hloooo")
+    const token = localStorage.getItem('token');
+    console.log("bbb",token)
+    // && !this.jwtHelper.isTokenExpired(token)
+    if (token ) {
+     
+      const decodedToken = this.jwtHelper.decodeToken(token);
+      console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",decodedToken)
+      return decodedToken.role || null;
+    }
+    return null;
+  }
+
+
+
 
 }

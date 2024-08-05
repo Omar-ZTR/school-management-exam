@@ -366,7 +366,10 @@ if(groupfind){
       active: statut,
     };
     console.log('data  status:', studentData);
-
+if(!studentData.group__id ){
+  this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  'group is required' });
+return
+}
     this.studentService.updateStudent(studentData, studentId).subscribe(
       (response: any) => {
         this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully update student' });

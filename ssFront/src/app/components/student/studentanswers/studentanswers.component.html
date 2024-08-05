@@ -1,45 +1,116 @@
+
+<div style="display: flex; gap: 50px;" >
+
+
+<div>
+  <div class="TitelForm">Certificates:</div>
 <div class="card">
-    <p-table
+  <p-table
     [value]="groupedAnsStudArray"
     [paginator]="true"
-    paginatorStyleClass='start'
+    paginatorStyleClass="start"
     [rows]="5"
     [tableStyle]="{ 'min-width': '40rem' }"
     [rowsPerPageOptions]="[5, 10, 20]"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="min-width:20%">Subject</th>
-        <th style="min-width:10%">Coefficient</th>
-        <th style="min-width:20%">Exam</th>
-        <th style="min-width:10%">Note</th>
+        <th style="min-width: 20%">Subject</th>
+        <th style="min-width: 10%">Coefficient</th>
+        <th style="min-width: 20%">Exam</th>
+        <th style="min-width: 10%">Note</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-group>
       <ng-container *ngFor="let ans of group.ansStudArray; let i = index">
         <tr>
-            <td *ngIf="i === 0" [attr.rowspan]="group.ansStudArray.length">{{ group.subject }}</td>
-            <td *ngIf="i === 0" [attr.rowspan]="group.ansStudArray.length">{{ ans.coefficient }}</td>
-            <td *ngIf="ans.exam !== null">{{ ans.exam }}</td>
-            <td *ngIf="ans.exam === null" colspan="2">No exams yet</td>
-            <td *ngIf="ans.exam !== null && ans.ansId === null && isFutureDate(ans.date)" colspan="2">It will be at {{ ans.date }}</td>
-            <td *ngIf="ans.exam !== null && ans.ansId === null && isPastDate(ans.date)" colspan="2">You have not answered this exam</td>
-            <td *ngIf="ans.ansId !== null && ans.note !== null">{{ ans.note }}</td>
-            <td *ngIf="ans.ansId !== null && ans.note === null">Not corrected yet</td>
-          </tr>
+          <td *ngIf="i === 0" [attr.rowspan]="group.ansStudArray.length">
+            {{ group.subject }}
+          </td>
+          <td *ngIf="i === 0" [attr.rowspan]="group.ansStudArray.length">
+            {{ ans.coefficient }}
+          </td>
+          <td *ngIf="ans.exam !== null">{{ ans.exam }}</td>
+          <td *ngIf="ans.exam === null" colspan="2">No exams yet</td>
+          <td
+            *ngIf="
+              ans.exam !== null && ans.ansId === null && isFutureDate(ans.date)
+            "
+            colspan="2"
+          >
+            It will be at {{ ans.date }}
+          </td>
+          <td
+            *ngIf="
+              ans.exam !== null && ans.ansId === null && isPastDate(ans.date)
+            "
+            colspan="2"
+          >
+            You have not answered this exam
+          </td>
+          <td *ngIf="ans.ansId !== null && ans.note !== null">
+            {{ ans.note }}
+          </td>
+          <td *ngIf="ans.ansId !== null && ans.note === null">
+            Not corrected yet
+          </td>
+        </tr>
       </ng-container>
     </ng-template>
-    <ng-template pTemplate="footer" >
-        <div class="btnResult"  >
-Mean<div class="noteResult" >
-{{moyen.mean == null ? 'Not ready now' : moyen.mean }}
+    <ng-template pTemplate="footer">
+      <div class="btnResult">
+        Mean
+        <div class="noteResult">
+          {{ moyen.mean == null ? "Not ready now" : moyen.mean }}
+        </div>
+      </div>
+    </ng-template>
+  </p-table>
 </div>
 
-        </div>
+</div>
 
+<div>
+  <div class="TitelForm">Certificates:</div>
+<div class="card">
+  
+  <p-table
+    [value]="answersCertif"
+    [paginator]="true"
+    paginatorStyleClass="start"
+    [rows]="5"
+    [tableStyle]="{ 'min-width': '10rem' }"
+    [rowsPerPageOptions]="[5, 10, 20]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="min-width: 20%">Exam</th>
 
+        <th style="min-width: 10%">Note</th>
+      </tr>
     </ng-template>
+    <ng-template pTemplate="body" let-ans>
+      <tr>
+        <td *ngIf="ans.exam !== null">{{ ans.exam__title }}</td>
 
+        <!-- <td *ngIf="ans.exam !== null && ans.ansId === null && isFutureDate(ans.date)" colspan="2">It will be at {{ ans.date }}</td>
+          <td *ngIf="ans.exam !== null && ans.ansId === null && isPastDate(ans.date)" colspan="2">You have not answered this exam</td> -->
 
+        <td *ngIf="ans.ans__result !== null">{{ ans.ans__result }}</td>
+        <td *ngIf="ans.ans__result === null">Not corrected yet</td>
+      </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="footer">
+      <div class="btnResult">
+        Mean
+        <div class="noteResult">
+          {{ moyen.mean == null ? "Not ready now" : moyen.mean }}
+        </div>
+      </div>
+    </ng-template> -->
   </p-table>
+</div>
+
+</div>
+
 </div>

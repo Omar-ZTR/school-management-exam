@@ -443,6 +443,12 @@ export class ManageTeacherComponent implements OnInit {
       groups: arrayGroups,
       active: statut,
     };
+if((teacherData.subjects.length == 0 || teacherData.groups.length ==0 )  && teacherData.active == true  ){
+  this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  'Subjects and groups is requierd' });
+
+  return
+}
+
     console.log('data  status:', teacherData);
 
     this.teacherService.updateTeacher(teacherData, teacherId).subscribe(

@@ -33,7 +33,10 @@ const getAllContacts = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const Contacts = yield contactModel_1.Contact.findAll({
             where: {
                 recipient__email: email
-            }
+            },
+            order: [
+                ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+            ]
         });
         res.status(200).json(Contacts);
     }

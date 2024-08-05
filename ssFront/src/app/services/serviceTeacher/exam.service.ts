@@ -101,6 +101,7 @@ export class ExamService {
   }
 
   Subscribe() {
+    console.log("examser")
     return this.httpClient.get(this.url + '/subscribe');
   }
 

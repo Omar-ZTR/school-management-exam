@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { ExamAnswersService } from '../../../services/serviceAnswers/exam-answers.service';
-import { StudentService } from '../../../services/serviceStudent/student.service';
+
 import { TokenServiceService } from '../../../services/servicesUser/token-service.service';
 import { GroupService } from '../../../services/servicesUtils/group.service';
 import { TeacherService } from '../../../services/serviceTeacher/teacher.service';
@@ -10,6 +9,11 @@ import { UserService } from '../../../services/servicesUser/user.service';
 import { GlobalConstants } from '../../../shared/global-constants';
 import { TooltipModule } from 'primeng/tooltip';
 import { Router } from '@angular/router';
+import { CalandarService } from '../../../services/serviceTeacher/calandar.service';
+import { DialogModule } from 'primeng/dialog';
+import { SubscribeService } from '../../../services/servicesUtils/subscribe.service';
+import { FormsModule } from '@angular/forms';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 interface Teacher {
   first__name: string;
@@ -20,95 +24,91 @@ interface Teacher {
 
   subjects: [];
   groups: [];
-  exam: [];
+  exam: any[];
 }
 @Component({
   selector: 'app-teacher-dash',
   standalone: true,
-  imports: [CommonModule,TooltipModule],
+  imports: [
+    CommonModule,
+    TooltipModule,
+    FormsModule,
+    MultiSelectModule,
+    DialogModule,
+  ],
   templateUrl: './teacher-dash.component.html',
   styleUrl: './teacher-dash.component.css',
+  styles: [
+    `
+      :host ::ng-deep .p-dialog-content {
+        overflow-y: visible !important;
+      }
+    `,
+  ],
 })
 export class TeacherDashComponent {
   user__id = this.tokenService.getUserIdFromToken();
   group__id = this.tokenService.getGroupIdFromToken();
-  group: any[] = []
+  group: any;
+  students: any[] = [];
   subjectsArray: any[] = [];
-  teacher!:Teacher;
-  imgProfil: any ;
+  schudles: any[] = [];
+  exams: any[] = [];
+  teacher!: Teacher;
+  imgProfil: any;
   imgUp: any;
   updateimg: boolean = false;
   results: any[] = [];
-
+  visible: boolean = false;
   dataStudent: any;
   StudentOptions: any;
+  selectedEmails: any[] = [];
+  schedule: any;
 
   constructor(
     private groupService: GroupService,
     private tokenService: TokenServiceService,
     private teacherService: TeacherService,
-    private AnswersService: ExamAnswersService,
+
     private userService: UserService,
-    private messageService : MessageService,
+    private messageService: MessageService,
     private router: Router,
+    private calandarService: CalandarService,
+    private subscribeService: SubscribeService
   ) {}
 
   ngOnInit(): void {
     this.fetchTeacher();
-    // this.fetchIngroup();
-    // this.fetchAnswers()
   }
-  // generateAcceptationCharts() {
-  //   const accept = this.studentsAccept.length;
-  //   const refused = this.studentsRefused.length;
-  //   const wait = this.studentsWait.length;
 
-  //   this.dataStudent = {
-  //     labels: [`Accepted ${accept}`, `Refused ${refused}`, `waiting ${wait}`],
-  //     datasets: [
-  //       {
-  //         data: [accept, refused, wait],
-  //         backgroundColor: ['#039e31', '#ff0000', '#f97316'],
-  //         hoverBackgroundColor: ['#039e31', '#ff0000', '#f97316'],
-  //       },
-  //     ],
-  //   };
+  showCode(data: any) {
+    this.schedule = data;
+  
+    if (this.schedule.exam.obligatoire == true) {
+      this.fetchIngroup(this.schedule.group__name);
+    } else {
+      this.subscribeService.subscribeExam(this.schedule.exam__id).subscribe(
+        (data: any) => {
+          this.students = [];
+          this.selectedEmails = [];
+          for (const sub of data) {
+            console.log('sup k', sub);
+            this.students.push(sub.student);
+          }
 
-  //   this.StudentOptions = {
-  //     cutout: '60%',
-  //     plugins: {
-  //       legend: {
-  //         labels: {
-  //           usePointStyle: true,
-  //           color: '#09782c',
-  //           font: {
-  //             size: 14, // Set the font size
-  //             style: 'italic', // Set the font style
-  //             family: 'Arial', // Set the font family
-  //           },
-  //           padding: 20, // Set padding between legend items
-  //           boxWidth: 20, // Set the box width
-  //         },
-  //       },
-  //     },
-  //   };
-  // }
-  fetchAnswers(): void {
-    this.AnswersService.getStudentAnswer(this.user__id).subscribe(
-      (data: any) => {
-        this.results = data.filter(
-          (answer: { ans_result: any; exam__oblig: boolean }) =>
-            answer.ans_result > 15 && answer.exam__oblig !== true
-        );
-        // this.groupQuestionsByType();
+          console.log('students subs', this.students);
+        },
+        (error: any) => {
+          console.error('Error fetching exam', error);
+        }
+      );
+    }
 
-        console.log('results datataken results results', this.results);
-      },
-      (error: any) => {
-        console.error('Error fetching exam', error);
-      }
-    );
+    console.log('shusdele ids heure', this.schedule);
+    this.visible = true;
   }
+
+
 
   loadFile(event: any) {}
   async detectFilesSupport(event: any) {
@@ -135,29 +135,77 @@ export class TeacherDashComponent {
     });
   }
 
-  // fetchIngroup(): void {
-  //   this.groupService.getoneGroup(this.group__id).subscribe(
-  //     (data: any) => {
-  //       this.group = data;
-  //       // this.student.group = this.group.group__name
-  //       // this.groupQuestionsByType();
-  //       console.log('group', this.group);
-  //       this.formateData()
+  fetchIngroup(name: any): void {
+    this.groupService.getGroupbyName(name).subscribe(
+      (data: any) => {
+        this.students = [];
+        this.selectedEmails = [];
 
-  //     },
-  //     (error: any) => {
-  //       console.error('Error fetching exam', error);
-  //     }
-  //   );
-  // }
+        this.students = data.students;
+
+        console.log('students group', this.students);
+      },
+      (error: any) => {
+        console.error('Error fetching exam', error);
+      }
+    );
+  }
+
+  fetchexams(): void {
+    this.calandarService.getSchedule(this.exams).subscribe(
+      (data: any) => {
+        this.schudles = data;
+        console.log('fetchexams fetchexams fetchexams resfetchexamsults', data);
+      },
+      (error: any) => {
+        console.error('Error fetching exam', error);
+      }
+    );
+  }
+  sendCode() {
+    console.log('emails is', this.selectedEmails);
+
+    // Initialize an empty array to store email addresses
+    let emails = [];
+
+    // Loop through selectedEmails to extract the email addresses
+    for (const email of this.selectedEmails) {
+      emails.push(email.user__email);
+    }
+
+    // Create a data object to send in the request
+    let data = {
+      exam__title: this.schedule.exam__title,
+      code: this.schedule.code,
+      emails: emails,
+    };
+
+    // Call the sendCodeExam method of calandarService and handle the response
+    this.calandarService.sendCodeExam(data).subscribe(
+      (response: any) => {
+        console.log('Fetch exams results:', response);
+
+        this.visible = false;
+
+      },
+      (error: any) => {
+        console.error('Error fetching exam', error);
+      }
+    );
+  }
 
   fetchTeacher(): void {
     this.teacherService.getTecher(this.user__id).subscribe(
       (data: any) => {
         this.teacher = data[0];
-this.group = this.teacher.groups
-        this.subjectsArray = this.teacher.subjects
-    
+        this.group = this.teacher.groups;
+        this.subjectsArray = this.teacher.subjects;
+
+        for (const exam of this.teacher.exam) {
+          this.exams.push(exam.exam__id);
+        }
+        this.fetchexams();
+
         console.log('teacher', this.teacher);
         console.log('subjectsArray', this.subjectsArray);
         console.log('group', this.group);
@@ -212,20 +260,30 @@ this.group = this.teacher.groups
   savePdp(): void {
     const file = this.imgUp;
 
-    this.teacherService.updatePicture(file,this.user__id).subscribe(
+    this.teacherService.updatePicture(file, this.user__id).subscribe(
       (response: any) => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail:  response.message });
-        console.log('responseresponse :',response.message);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: response.message,
+        });
+        console.log('responseresponse :', response.message);
 
-    this.updateimg=false
+        this.updateimg = false;
       },
       (error: any) => {
-
         if (error.error?.message) {
-          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Failed',
+            detail: error.error?.message,
+          });
         } else {
-          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  GlobalConstants.genericError });
-
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Failed',
+            detail: GlobalConstants.genericError,
+          });
         }
 
         console.error('Error fetching exam', error);
@@ -238,37 +296,38 @@ this.group = this.teacher.groups
     this.router.navigate(['/auth']);
   }
 
-
   SendMail() {
-const data = {
-  user__email : this.teacher.user__email
-}
+    const data = {
+      user__email: this.teacher.user__email,
+    };
     this.userService.forgotPassword(data).subscribe(
       (response: any) => {
-        this.logout()
-        this.messageService.add({ severity: 'success', summary: 'Success', detail:  response.message });
+        this.logout();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: response.message,
+        });
 
         console.log('seccess', response);
- 
-       
-  
       },
       (error: { error: { message: any } }) => {
         //this.ngxService.stop();
         if (error.error?.message) {
-          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Failed',
+            detail: error.error?.message,
+          });
         } else {
-          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  GlobalConstants.genericError });
-
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Failed',
+            detail: GlobalConstants.genericError,
+          });
         }
         // alert(this.responseMessage +" " +GlobalConstants.error);
-       
       }
     );
   }
-
-
-
-
-
 }

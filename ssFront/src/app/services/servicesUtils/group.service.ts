@@ -25,7 +25,10 @@ export class GroupService {
     return this.httpClient.get(`${this.url}/group/${id}`);
   }
 
-  
+  getGroupbyName(name:any){
+    return this.httpClient.get(`${this.url}/groupname/${name}`);
+  }
+
   getFullGroups(){
     return this.httpClient.get(this.url + "/fullgroup");
   }

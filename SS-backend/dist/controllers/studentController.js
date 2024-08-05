@@ -20,7 +20,11 @@ const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
 const upload_1 = __importDefault(require("../utils/upload"));
 const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const student = yield studentModel_1.Student.findAll({});
+        const student = yield studentModel_1.Student.findAll({
+            order: [
+                ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+            ]
+        });
         console.log("studens is : ", student);
         res.status(200).json(student);
     }
@@ -230,13 +234,13 @@ const updateStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 let status;
                 switch (updatedStudent.active) {
                     case true:
-                        status: "accepted";
+                        status = "accepted";
                         break;
                     case false:
-                        status: "refused";
+                        status = "refused";
                         break;
                     case null:
-                        status: "in stay wait";
+                        status = "in stay wait";
                         break;
                     default:
                         return res.status(400).json({ message: "Invalid status" });

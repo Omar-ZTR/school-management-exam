@@ -10,7 +10,9 @@ export const getAllStudents = async (req: Request, res: Response) => {
 
 
     const student = await Student.findAll({
-     
+      order: [
+        ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+      ]
     });
     console.log("studens is : ", student);
     res.status(200).json(student);
@@ -238,13 +240,13 @@ export const updateStudent = async (req: Request, res: Response) => {
         let status;
         switch (updatedStudent.active) {
           case true:
-            status: "accepted";
+            status= "accepted";
             break;
           case false:
-            status: "refused";
+            status= "refused";
             break;
           case null:
-            status: "in stay wait";
+            status= "in stay wait";
             break;
           default:
             return res.status(400).json({ message: "Invalid status" });

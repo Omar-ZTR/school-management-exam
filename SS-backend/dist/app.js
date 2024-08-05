@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -45,6 +54,9 @@ const studentRouter_1 = __importDefault(require("./routers/studentRouter"));
 const subscribeRouter_1 = __importDefault(require("./routers/subscribeRouter"));
 const chatRouter_1 = __importDefault(require("./routers/chatRouter"));
 const contactRouter_1 = __importDefault(require("./routers/contactRouter"));
+const reservationModel_1 = require("./models/reservationModel");
+const sequelize_1 = require("sequelize");
+const reservationController_1 = require("./controllers/reservationController");
 const app = (0, express_1.default)();
 const cors = require("cors");
 app.use((0, body_parser_1.json)());
@@ -66,6 +78,23 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });
 app.use("/files", express_1.default.static(path_1.default.join(__dirname, "utils/filesUpload")));
+var cron = require('node-cron');
+cron.schedule('0 9 */2 * *', () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Running cron job for sending emails');
+    const reservations = yield reservationModel_1.Reservation.findAll({
+        where: { where: {
+                startDate: {
+                    [sequelize_1.Op.gt]: new Date(),
+                },
+            }, },
+    });
+    if (reservations) {
+        for (const exam of reservations) {
+            yield (0, reservationController_1.notifyExamReservation)(exam);
+        }
+    }
+    console.log("helo corn");
+}));
 dotenv.config();
 // alter: true
 connection_1.default

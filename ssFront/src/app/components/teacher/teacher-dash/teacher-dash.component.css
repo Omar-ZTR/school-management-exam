@@ -228,13 +228,20 @@
   .itemListExam {
     display: flex;
     background: #ffffff;
-    justify-content: space-between;
-    align-items: center;
     padding: 20px;
     border-radius: 10px;
     width: 400px;
     min-height: 150px;
     box-shadow: 0px 5px 14px -7px black;
+  
+    justify-content: space-around;
+  }
+  .dateExam{
+
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 18px;
   }
   .nocertif{
     font-family: "Poppins", sans-serif;
@@ -356,4 +363,49 @@
     font-style: italic;
     font-size: 20px;
   }
+
+  .codeSchedule{
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    letter-spacing: 25px;
+    font-size: 53px;
+  }
+
+  .dialogContent{
+    min-height: 200px;
   
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+  }
+
+.yellow{
+  background: #ffdd003b;
+}
+
+
+  .button-34 {
+    background: #eff8ff;
+    border-radius: 999px;
+    box-shadow: #252525 0 10px 20px -10px;
+    margin: 0 20px;
+    color: #1935a3;
+    padding: 8px 18px;
+    cursor: pointer;
+    width: fit-content;
+    font-family: Inter, Helvetica, "Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 990px;
+  
+  }
+  .flexRow{
+    display: flex;
+  }

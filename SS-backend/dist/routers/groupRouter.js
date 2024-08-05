@@ -11,6 +11,7 @@ routerGroup.get('/teachergroup', groupController_1.getTeacherGroups);
 routerGroup.get('/fullgroup', groupController_1.getFullGroups);
 routerGroup.get('/groupSub/:exam__id', groupController_1.getGroupsSubject);
 routerGroup.get('/group/:id', groupController_1.getGroupById);
+routerGroup.get('/groupname/:name', groupController_1.getGroupByName);
 routerGroup.post('/group', groupController_1.createGroup);
 routerGroup.put('/group/:id', groupController_1.updateGroup);
 routerGroup.delete('/group/:id', groupController_1.deleteGroup);

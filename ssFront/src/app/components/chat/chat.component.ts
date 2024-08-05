@@ -40,9 +40,9 @@ export class ChatComponent implements OnInit {
 
   ngOnDestroy(): void {
     // Clean up the subscription when the component is destroyed
-    if (this.intervalSubscription) {
-      this.intervalSubscription.unsubscribe();
-    }
+    // if (this.intervalSubscription) {
+    //   this.intervalSubscription.unsubscribe();
+    // }
   }
 
   getMessages(): void {

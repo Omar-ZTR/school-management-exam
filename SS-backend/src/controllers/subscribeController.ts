@@ -22,6 +22,9 @@ export const createSubscribe = async (req: Request, res: Response) => {
 
 export const getAllSubscribes = async (req: Request, res: Response) => {
   try {
+
+    console.log("tesetteset is tesetteset: ");
+
     const Allsubscribes = await Subscribe.findAll({});
 
     const datenow = new Date(); // Capitalize Date
@@ -73,31 +76,33 @@ export const updateSubscribe = async (req: Request, res: Response) => {
       include: [{ model: Exam }, { model: Student }],
     });
     if (updatedSubscribe) {
-      let status;
+      let stat='';
+      console.log("helo subscribed hhhh ",updatedSubscribe.acceptation)
+      console.log("helo subscribed hhhh ",updatedSubscribe.acceptation)
       switch (updatedSubscribe.acceptation) {
         case true:
-          status: "accepted";
+          stat= "accepted";
           break;
         case false:
-          status: "refused";
+          stat= "refused";
           break;
         case null:
-          status: "in stay wait";
+          stat= "in stay wait";
           break;
         default:
           return res.status(400).json({ message: "Invalid status" });
       }
-
+      console.log("helo status hhhh ",stat)
      
       let text = `
       <div>
-        <h1> ${updatedSubscribe.exams.exam__title} </h1>
+        <h1> Your request for ${updatedSubscribe.exams.exam__title} is ${stat}. </h1>
         
-        <p>Your request is ${status}.</p>
+     
         <p>Thank you for choosing us.</p>
         <p>Best regards,</p>
       </div>`;
-      await sendEmail(updatedSubscribe.student.user__email, "Account Activation", text);
+      await sendEmail(updatedSubscribe.student.user__email, "Subscribe Certificate", text);
     }
 
     res.status(200).json(updatedSubscribe);
@@ -124,3 +129,20 @@ export const getOneSubscribe = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+export const getSubscribeExam = async (req: Request, res: Response) => {
+
+try{
+  const {id} =  req.params
+  const subscribes = await Subscribe.findAll({
+    where:{exam__id : id, acceptation:true},
+    include: [ { model: Student }],
+  });
+  res.status(200).json(subscribes);
+} catch (error) {
+  console.error("Error fetch subscribe", error);
+  res.status(500).json({ error: "Internal server error" });
+}
+
+}

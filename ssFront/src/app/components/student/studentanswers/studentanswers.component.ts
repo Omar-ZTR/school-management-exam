@@ -28,6 +28,7 @@ export class StudentanswersComponent implements OnInit {
   groupedAnsStud: { [key: string]: any[] } = {};
   groupedAnsStudArray: { subject: string, ansStudArray: any[] }[] = [];
   moyen!: { result: { [key: string]: any; }; sum: any; mean: any; };
+  answersCertif: any[]=[];
 
   constructor(
     private groupService: GroupService,
@@ -46,6 +47,11 @@ export class StudentanswersComponent implements OnInit {
       (data: any) => {
         this.results = data;
         // this.groupQuestionsByType();
+this.answersCertif = this.results.filter(
+  (answer: { exam__id: any; exam__oblig: boolean }) =>
+   answer.exam__oblig === false
+);
+console.log('answersCertif answersCertif answersCertif results', this.answersCertif);
         this.fetchIngroup();
         console.log('results datataken results results', this.results);
       },

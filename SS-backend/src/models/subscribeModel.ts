@@ -1,8 +1,6 @@
 import { Table, Model, Column, ForeignKey, DataType, BelongsTo } from "sequelize-typescript";
 import { Exam } from "./examModel";
-import { Question } from "./questionModel";
-import { Teacher } from "./teacherModel";
-import { Subject } from "./subjectModel";
+
 import { Student } from "./studentModel";
 
 @Table({

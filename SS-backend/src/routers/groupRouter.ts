@@ -8,6 +8,7 @@ import {
   getGroupsSubject,
   getFullGroups,
   getTeacherGroups,
+  getGroupByName,
 } from '../controllers/groupController';
 
 const routerGroup = express.Router();
@@ -22,6 +23,9 @@ routerGroup.get('/fullgroup', getFullGroups);
 routerGroup.get('/groupSub/:exam__id', getGroupsSubject);
 
 routerGroup.get('/group/:id', getGroupById);
+
+
+routerGroup.get('/groupname/:name', getGroupByName);
 
 routerGroup.post('/group', createGroup);
 

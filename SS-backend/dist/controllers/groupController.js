@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGroup = exports.updateGroup = exports.getGroupById = exports.getGroupsSubject = exports.getTeacherGroups = exports.getFullGroups = exports.getAllGroups = exports.createGroup = void 0;
+exports.deleteGroup = exports.updateGroup = exports.getGroupByName = exports.getGroupById = exports.getGroupsSubject = exports.getTeacherGroups = exports.getFullGroups = exports.getAllGroups = exports.createGroup = void 0;
 const sequelize_1 = require("sequelize");
 const groupModel_1 = require("../models/groupModel"); // Import your Group model
 const subjectModel_1 = require("../models/subjectModel");
@@ -349,6 +349,27 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getGroupById = getGroupById;
+const getGroupByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name } = req.params;
+        const group = yield groupModel_1.Group.findOne({
+            where: {
+                group__name: name,
+            },
+            include: [
+                {
+                    model: studentModel_1.Student,
+                },
+            ],
+        });
+        res.status(200).json(group);
+    }
+    catch (error) {
+        console.error("Error fetch Group", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getGroupByName = getGroupByName;
 // Update operation
 const updateGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

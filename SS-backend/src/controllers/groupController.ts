@@ -384,6 +384,33 @@ if (subTeach.subject__name === subject.subject__name){
   }
 };
 
+
+
+
+export const getGroupByName = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.params;
+    const group = await Group.findOne({
+      where: {
+        group__name: name,
+      },
+      include: [
+        {
+          model: Student,
+        },
+        
+      ],
+    });
+
+    res.status(200).json(group);
+
+  } catch (error) {
+    console.error("Error fetch Group", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 // Update operation
 export const updateGroup = async (req: Request, res: Response) => {
   try {

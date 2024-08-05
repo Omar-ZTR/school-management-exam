@@ -388,14 +388,13 @@ align-items: stretch; */
 
   .ard {
     width: 300px;
-    /* padding: 1px; */
+    min-height: 250px;
     background: #fff;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
     margin: 40px 10px;
-    /* margin-top: 40px; */
     font-family: "Poppins", sans-serif;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -473,13 +472,15 @@ align-items: stretch; */
     line-height: 1.6;
 }
 .ard .footer {
-    margin-top: 20px;
-    width: 80%;
-    height: 10px;
-    background: #f4a21e;
-    border-radius: 5px;
-    margin-left: auto;
-    margin-right: auto;
+      /* margin-top: 20px; */
+      width: 80%;
+      position: absolute;
+      height: 10px;
+      background: #f4a21e;
+      border-radius: 5px;
+      bottom: 5px;
+      left: 10%;
+      /* margin-right: auto; */
 }
 .supportitems{
   display: flex;  

@@ -128,7 +128,7 @@ const getStudentAnswers = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 },
             });
             // Add student__name to the answer object
-            return Object.assign(Object.assign({}, ans.get({ plain: true })), { exam__title: (exam === null || exam === void 0 ? void 0 : exam.exam__title) || null, exam__oblig: (exam === null || exam === void 0 ? void 0 : exam.obligatoire) || null, subject: subject });
+            return Object.assign(Object.assign({}, ans.get({ plain: true })), { exam__title: (exam === null || exam === void 0 ? void 0 : exam.exam__title) || null, exam__oblig: (exam === null || exam === void 0 ? void 0 : exam.obligatoire) || false, subject: subject });
         })));
         res.status(200).json(answers);
     }

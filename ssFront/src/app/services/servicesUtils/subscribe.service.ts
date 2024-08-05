@@ -21,18 +21,24 @@ export class SubscribeService {
     });
   }
 
-
-  getCheckSubscribe(exam__id: any, user__id: any) {
-    // Create HttpParams from the data object
-    let params = new HttpParams()
-      .set('exam__id', exam__id.toString())
-      .set('user__id', user__id.toString());
-
-    return this.httpClient.get(this.url + '/subscribe', {
-      headers: new HttpHeaders().set('Content-Type', 'application/json'),
-      params: params // Attach query parameters here
+  subscribeExam( id: any) {
+    
+    return this.httpClient.get(`${this.url}/subExAm/${id}`, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+
+  // getCheckSubscribe(exam__id: any, user__id: any) {
+  //   // Create HttpParams from the data object
+  //   let params = new HttpParams()
+  //     .set('exam__id', exam__id.toString())
+  //     .set('user__id', user__id.toString());
+
+  //   return this.httpClient.get(this.url + '/subscribe', {
+  //     headers: new HttpHeaders().set('Content-Type', 'application/json'),
+  //     params: params // Attach query parameters here
+  //   });
+  // }
 
 
 }

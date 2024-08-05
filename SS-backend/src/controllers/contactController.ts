@@ -23,7 +23,10 @@ const {email} = req.params
     const Contacts = await Contact.findAll({
         where:{
             recipient__email :email
-        }
+        },
+        order: [
+          ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+        ]
     });
     res.status(200).json(Contacts);
   } catch (error) {

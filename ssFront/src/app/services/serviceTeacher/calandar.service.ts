@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -15,6 +15,16 @@ export class CalandarService {
       headers:new HttpHeaders().set('Content-Type' , 'application/json')
     })
   }
+
+
+
+  sendCodeExam(data:any){
+    console.log("fifi aywaaaa ahaooo", data)
+    return this.httpClient.post(this.url + "/sendcode" , data , {
+      headers:new HttpHeaders().set('Content-Type' , 'application/json')
+    })
+  }
+
 
   updatereservation(data:any){
     const id = data.id;
@@ -34,6 +44,18 @@ export class CalandarService {
     return this.httpClient.get(this.url + "/reservation");
   }
 
+  
+  getSchedule(ids: number[]) {
+    console.log("aksjjjjjjjjjjjjjjjjjjjjj", ids);
+  
+    // Join the IDs into a comma-separated string
+    const params = new HttpParams().set('ids', ids.join(','));
+  
+    return this.httpClient.get(`${this.url}/reservationTeacher`, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      params: params
+    });
+  }
 
   deletePlan(id: any) {
 

@@ -79,6 +79,22 @@
   align-items: center;
 
 }
+.btnResetPass{
+  display: flex;
+  padding: 10px;
+  height: 50px;
+  margin: 20px 0;
+  background: #ffffff;
+  color: #071864;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 13px -6px #212121;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 550;
+  font-style: italic;
+  font-size: 20px;
+}
 
 
 

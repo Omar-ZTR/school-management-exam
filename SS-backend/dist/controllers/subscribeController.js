@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOneSubscribe = exports.updateSubscribe = exports.getAllSubscribes = exports.createSubscribe = void 0;
+exports.getSubscribeExam = exports.getOneSubscribe = exports.updateSubscribe = exports.getAllSubscribes = exports.createSubscribe = void 0;
 const subscribeModel_1 = require("../models/subscribeModel");
 const examModel_1 = require("../models/examModel");
 const studentModel_1 = require("../models/studentModel");
@@ -35,6 +35,7 @@ const createSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.createSubscribe = createSubscribe;
 const getAllSubscribes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("tesetteset is tesetteset: ");
         const Allsubscribes = yield subscribeModel_1.Subscribe.findAll({});
         const datenow = new Date(); // Capitalize Date
         for (const subscrib of Allsubscribes) {
@@ -80,29 +81,32 @@ const updateSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
             include: [{ model: examModel_1.Exam }, { model: studentModel_1.Student }],
         });
         if (updatedSubscribe) {
-            let status;
+            let stat = '';
+            console.log("helo subscribed hhhh ", updatedSubscribe.acceptation);
+            console.log("helo subscribed hhhh ", updatedSubscribe.acceptation);
             switch (updatedSubscribe.acceptation) {
                 case true:
-                    status: "accepted";
+                    stat = "accepted";
                     break;
                 case false:
-                    status: "refused";
+                    stat = "refused";
                     break;
                 case null:
-                    status: "in stay wait";
+                    stat = "in stay wait";
                     break;
                 default:
                     return res.status(400).json({ message: "Invalid status" });
             }
+            console.log("helo status hhhh ", stat);
             let text = `
       <div>
-        <h1> ${updatedSubscribe.exams.exam__title} </h1>
+        <h1> Your request for ${updatedSubscribe.exams.exam__title} is ${stat}. </h1>
         
-        <p>Your request is ${status}.</p>
+     
         <p>Thank you for choosing us.</p>
         <p>Best regards,</p>
       </div>`;
-            yield (0, sendEmail_1.default)(updatedSubscribe.student.user__email, "Account Activation", text);
+            yield (0, sendEmail_1.default)(updatedSubscribe.student.user__email, "Subscribe Certificate", text);
         }
         res.status(200).json(updatedSubscribe);
     }
@@ -132,3 +136,18 @@ const getOneSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getOneSubscribe = getOneSubscribe;
+const getSubscribeExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const subscribes = yield subscribeModel_1.Subscribe.findAll({
+            where: { exam__id: id, acceptation: true },
+            include: [{ model: studentModel_1.Student }],
+        });
+        res.status(200).json(subscribes);
+    }
+    catch (error) {
+        console.error("Error fetch subscribe", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getSubscribeExam = getSubscribeExam;

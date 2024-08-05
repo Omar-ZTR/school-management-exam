@@ -17,6 +17,9 @@ import routerStudents from "./routers/studentRouter";
 import routerSubscribe from "./routers/subscribeRouter";
 import routerChat from "./routers/chatRouter";
 import routerContact from "./routers/contactRouter";
+import { Reservation } from "./models/reservationModel";
+import { Op } from "sequelize";
+import { notifyExamReservation } from "./controllers/reservationController";
 
 const app = express();
 
@@ -77,6 +80,28 @@ app.use(
 );
 app.use("/files", express.static(path.join(__dirname, "utils/filesUpload")));
 
+var cron = require('node-cron');
+cron.schedule('0 9 */2 * *', async () => {
+  console.log('Running cron job for sending emails');
+  const reservations = await Reservation.findAll({
+    where: {  where: {
+      startDate: {
+        [Op.gt]: new Date(), 
+      },
+    },},
+  });
+ 
+  if (reservations) {
+
+for (const exam of reservations){
+  await notifyExamReservation(exam);
+}
+
+    
+  }
+
+console.log("helo corn")
+});
 dotenv.config();
 // alter: true
 connection

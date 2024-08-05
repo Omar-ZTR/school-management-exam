@@ -13,7 +13,6 @@ import { RouteGuardService } from './services/servicesUser/route-guard.service';
 import { AddExamComponent } from './components/teacher/add-exam/add-exam.component';
 import { TeacherExamComponent } from './components/teacher/teacher-exam/teacher-exam.component';
 import { ResultComponent } from './components/teacher/result/result.component';
-import { ExamtakenComponent } from './components/student/examtaken/examtaken.component';
 import { CorrectionExamsComponent } from './components/teacher/correction-exams/correction-exams.component';
 import { ExamsComponent } from './components/student/exams/exams.component';
 import { AdminDashComponent } from './components/Admin/admin-dash/admin-dash.component';
@@ -25,7 +24,6 @@ import { TeacherQuestionComponent } from './components/teacher/teacher-question/
 import { AllresultComponent } from './components/Admin/allresult/allresult.component';
 import { ExamsCertifComponent } from './components/Admin/exams-certif/exams-certif.component';
 import { StudentanswersComponent } from './components/student/studentanswers/studentanswers.component';
-import { ChatComponent } from './components/chat/chat.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { VerifieEmailComponent } from './components/verifie-email/verifie-email.component';
 import { TeacherDashComponent } from './components/teacher/teacher-dash/teacher-dash.component';
@@ -76,7 +74,7 @@ export const routes: Routes = [
       { path: 'manageSchool', component: ManageSchoolComponent },
       { path: 'result', component: AllresultComponent },
       { path: 'certifexam', component: ExamsCertifComponent },
-      // { path: 'Correction', component: CorrectionExamsComponent },
+      { path: 'contact', component: ContactComponent },
     ],
   },
 ];

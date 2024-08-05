@@ -299,7 +299,7 @@
 			</g>
 	</svg>
 	
-    <div class="listAnswers" *ngIf="isUser">
+    <div class="listAnswers" *ngIf="isUser && answers && answers.length > 0">
 
 <div class="itemAnswers" *ngFor="let ans of answers" >
     <div class=" answer">
@@ -315,27 +315,36 @@
 </div>
 	
   <form [formGroup]="contactForm" >
-    <h1 class="title text-center mb-4">Talk to Us</h1>
+    <h1 *ngIf="role !=='Admin'" class="title text-center mb-4">Talk to Us</h1>
   
     <!-- Name -->
-    <div class="form-group position-relative">
+    <div *ngIf="role !=='Admin'" class="form-group position-relative">
       <label for="formName" class="d-block">
-        <i class="icon" data-feather="user"></i>
+        <!-- <i class="icon" data-feather="user"></i> -->
       </label>
       <input type="text" id="formName" formControlName="sender__name" class="form-control form-control-lg thick" placeholder="Name">
     </div>
   
     <!-- E-mail -->
-    <div class="form-group position-relative">
+    <div *ngIf="role !=='Admin'" class="form-group position-relative">
       <label for="formEmail" class="d-block">
-        <i class="icon" data-feather="mail"></i>
+        <!-- <i class="icon" data-feather="mail"></i> -->
       </label>
       <input type="email" id="formEmail" formControlName="sender__email" class="form-control form-control-lg thick" placeholder="E-mail">
     </div>
+
+
+	<div *ngIf="role ==='Admin'" class="form-group position-relative">
+		<label for="formEmail" class="d-block">
+		  <!-- <i class="icon" data-feather="mail"></i> -->
+		</label>
+		<input type="email" id="formEmail" formControlName="recipient__email" class="form-control form-control-lg thick" placeholder="E-mail">
+	  </div>
+
   
     <!-- Message -->
     <div class="form-group message">
-      <textarea id="formMessage" formControlName="message" class="form-control form-control-lg" rows="7" placeholder="Mensagem"></textarea>
+      <textarea id="formMessage" formControlName="message" class="form-control form-control-lg" rows="7" placeholder="Message"></textarea>
     </div>
   
     <!-- Submit btn -->

@@ -140,7 +140,7 @@ try{
     return {
       ...ans.get({ plain: true }), // Convert Sequelize model instance to plain object
       exam__title:exam?.exam__title || null,
-      exam__oblig:exam?.obligatoire || null,
+      exam__oblig:exam?.obligatoire || false,
 subject:subject
     };
   }));

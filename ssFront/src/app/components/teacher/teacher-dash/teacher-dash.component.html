@@ -45,11 +45,7 @@
               type="file"
               (change)="detectFilesSupport($event)"
             />
-            <img
-              class="imgprofil"
-              [src]="imgProfil"
-              alt=""
-            />
+            <img class="imgprofil" [src]="imgProfil" alt="" />
             <div class="btnsave" *ngIf="updateimg" (click)="savePdp()">
               <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>
@@ -62,43 +58,85 @@
 
         <div class="contentprofil" *ngIf="teacher">
           <div>Email: {{ teacher.user__email }}</div>
-          <div class="subjectProfil"  >Subjects:
+          <div class="subjectProfil">
+            Subjects:
 
             <div *ngFor="let sub of subjectsArray">
-            <span class="itemSubjects"> {{ sub.subject__name }}</span>
-          </div> 
+              <span class="itemSubjects"> {{ sub.subject__name }}</span>
+            </div>
           </div>
-         
         </div>
       </div>
 
-      <div class="btnResetPass"      pTooltip="you will be logged out and receive an email with a link to reset your password." 
-      tooltipPosition="top"   (click)="SendMail()" >Reset Password</div>
-
-    </div>
-
-    <!-- <div>
-      <div class="TitelForm">Certificates:</div>
-    
-    <div class="listExam" *ngIf="results.length > 0"  >
-    
-      <div class="itemListExam" *ngFor="let ans of results">
-    
-        <div>
-       <div class="titleExam">{{ans.exam__title}}</div> 
-       <div class="titleExam" style="margin-top: 20px;">Note : {{ans.ans__result}}</div>  
-        </div>
-        
-    
-        <img *ngIf="ans.ans__result > 15" class="badgeimg" src="../../../../assets/bdge.png" alt="" />
-        
+      <div
+        class="btnResetPass"
+        pTooltip="you will be logged out and receive an email with a link to reset your password."
+        tooltipPosition="top"
+        (click)="SendMail()"
+      >
+        Reset Password
       </div>
-    
     </div>
-    <div *ngIf="results.length == 0" class="nocertif">
-      There is no certificate
-      <img class="badgeimg" src="../../../../assets/empypng.png" alt="" />
+
+    <div>
+      <div class="TitelForm">Scheduled exams:</div>
+
+      <div class="listExam" *ngIf="schudles.length > 0">
+        <div (click)="showCode(schu)" *ngFor="let schu of schudles">
+          <div
+            class="itemListExam"
+            [ngClass]="{ yellow: schu.exam.obligatoire == false }"
+          >
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+              "
+            >
+              <div class="titleExam">{{ schu.exam__title }}</div>
+              <div class="dateExam">
+                {{ schu.startDate | date : "EEEE dd MMMM  HH:mm" }}
+              </div>
+            </div>
+            <div class="titleExam">
+              {{ schu.exam.obligatoire ? "Course" : "Certificate" }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="schudles.length == 0" class="nocertif">
+        There is no Exams
+        <img class="badgeimg" src="../../../../assets/empypng.png" alt="" />
+      </div>
     </div>
-    </div> -->
   </div>
 </div>
+
+<p-dialog
+  [header]="schedule ? schedule.exam__title : ''"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <div class="dialogContent">
+    <div class="codeSchedule">
+      {{ schedule?.code }}
+    </div>
+    <div class="flexRow">
+      <p-multiSelect
+        [options]="students"
+        [(ngModel)]="selectedEmails"
+        optionLabel="first__name"
+        placeholder="Select Student"
+      >
+        <ng-template let-option pTemplate="item">
+          {{ option.first__name }}
+        </ng-template>
+      </p-multiSelect>
+
+      <div class="button-34" (click)="sendCode()">send</div>
+    </div>
+  </div>
+</p-dialog>
