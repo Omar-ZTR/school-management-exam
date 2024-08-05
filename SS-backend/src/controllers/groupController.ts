@@ -302,39 +302,77 @@ export const getGroupById = async (req: Request, res: Response) => {
       include: [
         {
           model: Exam,
-         
         },
         {
           model: Subject,
+        },
+        {
+          model: Teacher,
         },
       ],
     });
     if (group) {
       let formdata;
-    
+
       // Map through the exams and get reservations
-      formdata = await Promise.all(group.exams.map(async exam => {
+      formdata = await Promise.all(
+        group.exams.map(async (exam) => {
           const reserv = await checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
           // Add student__name to the exam object
           const answers = await Answer.findAll({
             where: {
               exam__id: exam.exam__id,
-            },})
+            },
+          });
           return {
-              ...exam.get({ plain: true }), // Convert Sequelize model instance to plain object
-              reservation: reserv,
-              answers:answers
+            ...exam.get({ plain: true }), // Convert Sequelize model instance to plain object
+            reservation: reserv,
+            answers: answers,
           };
-      }));
-      
+        })
+      );
+      let formdatasubject;
+
+      // Map through the exams and get reservations
+      formdatasubject = await Promise.all(
+        group.subjects.map(async (subject) => {
+          let teacher;
+          for (const teach of group.teachers) {
+            const teacherfind = await Teacher.findOne({
+              where: {
+                user__id: teach.user__id,
+              },
+              include: [
+                {
+                  model: Subject,
+                },
+              ],
+            });
+            if(teacherfind?.subjects){
+              for( const subTeach of teacherfind?.subjects){
+if (subTeach.subject__name === subject.subject__name){
+  teacher = `${teacherfind.first__name} ${teacherfind.last__name}`
+}
+}
+            }
+
+
+          }
+
+          return {
+            ...subject.get({ plain: true }), // Convert Sequelize model instance to plain object
+            teacher: teacher,
+         
+          };
+        })
+      );
+
       // Combine the group object with the modified exams
       const grouped = {
-          ...group.get({ plain: true }),
-          exams: formdata // Fix the syntax here
+        ...group.get({ plain: true }),
+        exams: formdata,
+        subjects:formdatasubject // Fix the syntax here
       };
-
-
-
 
       res.status(200).json(grouped);
     } else {

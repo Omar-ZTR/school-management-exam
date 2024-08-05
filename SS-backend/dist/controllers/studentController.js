@@ -12,14 +12,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStudent = exports.deleteStudent = exports.getDaysStudentCount = exports.getChartStudentCount = exports.getMonthlyStudentCount = exports.getAllStudents = void 0;
+exports.updateStudent = exports.deleteStudent = exports.updatePictureProfile = exports.getDaysStudentCount = exports.getChartStudentCount = exports.getMonthlyStudentCount = exports.getstudentbyid = exports.getAllStudents = void 0;
 const studentModel_1 = require("../models/studentModel");
 const sequelize_typescript_1 = require("sequelize-typescript");
 const sequelize_1 = require("sequelize");
 const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
+const upload_1 = __importDefault(require("../utils/upload"));
 const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const students = yield studentModel_1.Student.findAll({
+        const student = yield studentModel_1.Student.findAll({});
+        console.log("studens is : ", student);
+        res.status(200).json(student);
+    }
+    catch (error) {
+        console.error("Error fetch student:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getAllStudents = getAllStudents;
+const getstudentbyid = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const students = yield studentModel_1.Student.findOne({
             where: {
                 emailVerifed: true,
             },
@@ -32,7 +45,7 @@ const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(500).json({ error: "Internal server error" });
     }
 });
-exports.getAllStudents = getAllStudents;
+exports.getstudentbyid = getstudentbyid;
 const getMonthlyStudentCount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const currentYear = new Date().getFullYear();
@@ -162,6 +175,32 @@ const getDaysStudentCount = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getDaysStudentCount = getDaysStudentCount;
+const baseUrl = "http://localhost:3000/files/";
+const updatePictureProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield (0, upload_1.default)(req, res); // Handle file upload
+        if (req.files && req.files.length > 0) {
+            console.log("files:", req.files);
+            const file = req.files[0];
+            const img__path = baseUrl + file.filename;
+            console.log("file attribute:", file);
+            // Assuming Student model has a column named `img__path`
+            yield studentModel_1.Student.update({ img__path }, {
+                where: { user__id: id },
+            });
+            res.status(200).send({ message: 'Profile picture updated successfully.' });
+        }
+        else {
+            res.status(400).send({ message: 'No files were uploaded.' });
+        }
+    }
+    catch (error) {
+        console.error("Error updating profile picture:", error);
+        res.status(500).send({ message: 'Error updating profile picture.' });
+    }
+});
+exports.updatePictureProfile = updatePictureProfile;
 const deleteStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

@@ -26,6 +26,8 @@ export class UserService {
   }
 
   forgotPassword(data: any) {
+console.log("forgetpass is data ",data)
+
     return this.httpClient.post(this.url + '/forgotPassword', data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json'),
     });

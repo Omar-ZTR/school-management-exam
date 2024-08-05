@@ -33,4 +33,19 @@ export class TeacherService {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+
+
+
+  updatePicture(file: any, id: any) {
+    console.log('fffffffffffffffffffffffl', file);
+    const formData = new FormData();
+    
+   
+        formData.append('files', file);
+   
+    return this.httpClient.put(`${this.url}/pdpTeacher/${id}`, formData, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
+
 }

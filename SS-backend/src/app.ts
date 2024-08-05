@@ -16,6 +16,7 @@ import routerTeacher from "./routers/teacherRouter";
 import routerStudents from "./routers/studentRouter";
 import routerSubscribe from "./routers/subscribeRouter";
 import routerChat from "./routers/chatRouter";
+import routerContact from "./routers/contactRouter";
 
 const app = express();
 
@@ -55,7 +56,8 @@ app.use(
   routersubject,
   routerStudents,
   routerSubscribe,
-  routerChat
+  routerChat,
+  routerContact,
 );
 
 const corsOptions = {

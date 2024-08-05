@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TeacherByid = exports.deleteTeacher = exports.updateTeacher = exports.getAllTeacher = void 0;
+exports.updatePProfile = exports.TeacherByid = exports.deleteTeacher = exports.updateTeacher = exports.getAllTeacher = void 0;
 const teacherModel_1 = require("../models/teacherModel");
 const subjectModel_1 = require("../models/subjectModel");
 const groupModel_1 = require("../models/groupModel");
@@ -20,6 +20,9 @@ const questionModel_1 = require("../models/questionModel");
 const fileModel_1 = require("../models/fileModel");
 const reponseModel_1 = require("../models/reponseModel");
 const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
+const examModel_1 = require("../models/examModel");
+const studentModel_1 = require("../models/studentModel");
+const upload_1 = __importDefault(require("../utils/upload"));
 const getAllTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const Teachers = yield teacherModel_1.Teacher.findAll({
@@ -176,6 +179,15 @@ const TeacherByid = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 {
                     model: groupModel_1.Group,
                     as: "groups",
+                    include: [
+                        {
+                            model: studentModel_1.Student,
+                        },
+                    ]
+                },
+                {
+                    model: examModel_1.Exam,
+                    as: "exam",
                 },
                 {
                     model: questionModel_1.Question,
@@ -192,3 +204,29 @@ const TeacherByid = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.TeacherByid = TeacherByid;
+const baseUrl = "http://localhost:3000/files/";
+const updatePProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield (0, upload_1.default)(req, res); // Handle file upload
+        if (req.files && req.files.length > 0) {
+            console.log("files:", req.files);
+            const file = req.files[0];
+            const img__path = baseUrl + file.filename;
+            console.log("file attribute:", file);
+            // Assuming Student model has a column named `img__path`
+            yield teacherModel_1.Teacher.update({ img__path }, {
+                where: { user__id: id },
+            });
+            res.status(200).send({ message: 'Profile picture updated successfully.' });
+        }
+        else {
+            res.status(400).send({ message: 'No files were uploaded.' });
+        }
+    }
+    catch (error) {
+        console.error("Error updating profile picture:", error);
+        res.status(500).send({ message: 'Error updating profile picture.' });
+    }
+});
+exports.updatePProfile = updatePProfile;

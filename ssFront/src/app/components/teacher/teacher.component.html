@@ -104,43 +104,44 @@
       <div [ngClass]="{ body: isMenuMobile, Sbody: !isMenuMobile }">
         <ul>
           <li  routerLink="/teacher/dash" routerLinkActive="actives">
-            <i class="fas fa-home fa-xs icon"></i>
+            <i pTooltip="Dashboard" class="fas fa-home fa-xs icon"></i>
             <div class="title">Dashboard</div>
           </li>
         
           <li  (click)="toggleExams()">
-            <i class="fa-solid fa-folder-tree fa-xs icon"></i>
+            <i pTooltip="Exams" class="fa-solid fa-folder-tree fa-xs icon"></i>
             <div class="title">Exams</div>
           </li>
           <ul *ngIf="showExams" class="sub-menu">
             <li  routerLink="/teacher/addExam" routerLinkActive="actives">
-              <i class="fa-solid fa-file-circle-plus fa-xs icon"></i>
+              <i pTooltip="Add Exam" class="fa-solid fa-file-circle-plus fa-xs icon"></i>
               <div class="title">Add Exam</div>
             </li>
             <li  routerLink="/teacher/listExam" routerLinkActive="actives">
-              <i class="fa-solid fa-table-list fa-xs icon"></i>
+              <i pTooltip="List Exam" class="fa-solid fa-table-list fa-xs icon"></i>
               <div class="title">List Exam</div>
             </li>
           </ul>
-          <li  routerLink="/teacher/exam" routerLinkActive="actives">
-            <i class="fa-solid fa-calendar-days fa-xs icon"></i>
-            <div class="title">Exams</div>
-          </li>
+         
           <li  routerLink="/teacher/addQuestion" routerLinkActive="actives">
-            <i class="fas fa-user-edit fa-xs icon"></i>
-            <div class="title">Add question</div>
+            <i pTooltip="Question" class="fas fa-inbox fa-xs icon"></i>
+            <div class="title">Question</div>
           </li>
           <li  routerLink="/teacher/Result" routerLinkActive="actives">
-            <i class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
-            <div class="title">Result</div>
+            <i pTooltip="Results" class="fa-solid fa-square-poll-vertical fa-xs icon"></i>
+            <div class="title">Results</div>
           </li>
           <li  routerLink="/teacher/Correction" routerLinkActive="actives">
-            <i class="fa-solid fa-message fa-xs icon"></i>
-            <div class="title">Correction</div>
+            <i pTooltip="Exam correction" class="fa-solid fa-pen-to-square fa-xs icon"></i>
+            <div class="title">Exam correction</div>
+          </li>
+          <li  routerLink="/teacher/contact" routerLinkActive="actives">
+            <i pTooltip="Contact" class="fa-solid fa-message fa-xs icon"></i>
+            <div class="title">Contact</div>
           </li>
           <hr />
           <li  (click)="logout()">
-            <i class="fa-solid fa-right-from-bracket fa-xs icon"></i>
+            <i pTooltip="Logout" class="fa-solid fa-right-from-bracket fa-xs icon"></i>
             <div class="title">Logout</div>
           </li>
         </ul>

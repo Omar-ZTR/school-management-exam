@@ -3,10 +3,28 @@ import { Student } from "../models/studentModel";
 import { Sequelize } from "sequelize-typescript";
 import { Op } from "sequelize";
 import sendEmail from "../utils/sendEmail";
+import uploadFileMiddleware from "../utils/upload";
 
 export const getAllStudents = async (req: Request, res: Response) => {
   try {
-    const students = await Student.findAll({
+
+
+    const student = await Student.findAll({
+     
+    });
+    console.log("studens is : ", student);
+    res.status(200).json(student);
+  } catch (error) {
+    console.error("Error fetch student:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+export const getstudentbyid = async (req: Request, res: Response) => {
+  try {
+
+    const students = await Student.findOne({
       where: {
         emailVerifed: true,
       },
@@ -18,6 +36,11 @@ export const getAllStudents = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
+
+
 export const getMonthlyStudentCount = async (req: Request, res: Response) => {
   try {
     const currentYear = new Date().getFullYear();
@@ -153,6 +176,39 @@ export const getDaysStudentCount = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+const baseUrl = "http://localhost:3000/files/";
+
+export const updatePictureProfile = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await uploadFileMiddleware(req, res); // Handle file upload
+
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+      console.log("files:", req.files);
+
+      const file = (req.files as Express.Multer.File[])[0];
+      const img__path = baseUrl + file.filename;
+      console.log("file attribute:", file);
+
+      // Assuming Student model has a column named `img__path`
+      await Student.update({ img__path }, {
+        where: { user__id: id },
+      });
+
+      res.status(200).send({ message: 'Profile picture updated successfully.' });
+    } else {
+      res.status(400).send({ message: 'No files were uploaded.' });
+    }
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    res.status(500).send({ message: 'Error updating profile picture.' });
+  }
+};
+
+
+
 
 export const deleteStudent = async (req: Request, res: Response) => {
   try {

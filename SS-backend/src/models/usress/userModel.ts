@@ -65,4 +65,11 @@ codeVerifey!:string;
   )
   CV__path!: string;
 
+
+  @Column({type:DataType.STRING,
+  }
+  )
+  img__path!: string;
+
+
 }

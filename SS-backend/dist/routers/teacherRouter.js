@@ -9,6 +9,7 @@ const routerTeacher = express_1.default.Router();
 routerTeacher.get('/teachers', teacherController_1.getAllTeacher);
 routerTeacher.get('/teacher/:id', teacherController_1.TeacherByid);
 routerTeacher.put('/teacher/:id', teacherController_1.updateTeacher);
+routerTeacher.put('/pdpTeacher/:id', teacherController_1.updatePProfile);
 routerTeacher.delete('/teacher/:id', teacherController_1.deleteTeacher);
 exports.default = routerTeacher;
 // {

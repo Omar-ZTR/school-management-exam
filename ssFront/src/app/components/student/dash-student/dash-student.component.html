@@ -1,6 +1,5 @@
-
-<div class="row__card">
-<div class="News">
+<!-- <div class="row__card">
+  <div class="News">
     <h3>last News</h3>
     <p>
       A glass-like card to demonstrate the
@@ -8,124 +7,163 @@
     </p>
     <p class="News-footer">Created by Rahul C.</p>
   </div>
-</div>
-  <div class="row__card" >
+</div> -->
+<div style="display: flex; flex-direction: column; gap: 30px;" >
 
-<div *ngFor="let sub of subjectsArray">
-  <div class="subjects card1">
-    <div>
-   {{sub.subject}}
-     
+
+
+<div style="width: 100%">
+  <div class="TitelForm">Subjects:</div>
+  <div style="display: flex; gap: 30px; flex-wrap: wrap">
+    <div *ngFor="let sub of subjectsArray">
+      <div class="subjects">
+        <div class="borderDiv">
+          {{ sub.subject }}
+        </div>
+        <div class="subTitle">by {{ sub.teacher }}</div>
+        <div class="subtext">
+          Exams :
+
+          <div>{{ sub.nb__examDone }}/{{ sub.nb__exam }}</div>
+        </div>
+      </div>
     </div>
-    <div >{{ sub.nb__examDone}}/{{ sub.nb__exam}} </div>
   </div>
+
 
 </div>
 
+<div style="display: flex; " >  
+  <div>
+    <div class="TitelForm">Profil:</div>
+  <div class="profilcard">
+    <div class="headreProfil">
+      <div class="profile-pic">
+        <label class="-label" for="file">
+          <span > <i class="fa-solid fa-camera"></i></span>
+         
+        </label>
+        <input id="file" type="file"   (change)="detectFilesSupport($event)"  />
+      <img class="imgprofil" [src]="imgProfil" alt=" student.first__name[0]" />
+        <div class="btnsave" *ngIf="updateimg" (click)="savePdp()" >
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+      </div>
+     </div>
+   
+      <div class="nameprofil">
+        {{ student.first__name }} {{ student.last__name }}
+      </div>
+    </div>
 
-  <!-- <div class="card card2">
-    <p>
-      A glass-like card to demonstrate the
-      <strong>Glassmorphism UI design</strong> trend.
-    </p>
-    <p class="card-footer">Created by Rahul C.</p>
+    <div class="contentprofil" *ngIf="student">
+      <div>Email: {{ student.user__email }}</div>
+
+      <div>Group: {{ student.group }}</div>
+    </div>
   </div>
-  <div class="card card3">
-    <p>
-      A glass-like card to demonstrate the
-      <strong>Glassmorphism UI design</strong> trend.
-    </p>
-    <p class="card-footer">Created by Rahul C.</p>
-  </div> -->
+  <div class="btnResetPass"      pTooltip="you will be logged out and receive an email with a link to reset your password." 
+  tooltipPosition="top"   (click)="SendMail()" >Reset Password</div>
+  </div>
+
+
+<div>
+  <div class="TitelForm">Certificates:</div>
+
+<div class="listExam" *ngIf="results.length > 0"  >
+
+  <div class="itemListExam" *ngFor="let ans of results">
+
+    <div>
+   <div class="titleExam">{{ans.exam__title}}</div> 
+   <div class="titleExam" style="margin-top: 20px;">Note : {{ans.ans__result}}</div>  
+    </div>
+    
+
+    <img *ngIf="ans.ans__result > 15" class="badgeimg" src="../../../../assets/bdge.png" alt="" />
+    
+  </div>
+
 </div>
-<div class="row__table">
+<div *ngIf="results.length == 0" class="nocertif">
+  There is no certificate
+  <img class="badgeimg" src="../../../../assets/empypng.png" alt="" />
+</div>
+</div>
 
-  <div class="EX__done">
-    <h3 class="table__name">Exams done</h3>
-    <table>
-      <thead>
-        <tr class="rowOftable">
-          <th>Column 1</th>
-          <th>Column 2</th>
-          <th>Column 3</th>
-        
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="rowOftable">
-          <td >cell1</td>
-          <td >Cell 2</td>
-          <td >Cell 3</td>
-       
-        </tr>
-        <tr class="rowOftable">
-          <td >Cell 1</td>
-          <td >Cell 2</td>
-          <td >Cell 3</td>
-       
-        </tr>
-        <tr class="rowOftable">
-          <td >Cell 1</td>
-          <td >Cell 2</td>
-          <td >Cell 3</td>
-       
-        </tr>
-        <tr class="rowOftable">
-          <td >Cell 1</td>
-          <td >Cell 2</td>
-          <td >Cell 3</td>
-       
-        </tr>
-        <tr class="rowOftable">
-          <td >Cell 1</td>
-          <td >Cell 2</td>
-          <td >Cell 3</td>
-       
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="EX__taked"> 
-        <h3 class="table__name">Exams taked</h3>
-        <table>
+</div>
+
+</div>
+<!-- <div class="row__table">
+    <div class="EX__done">
+      <h3 class="table__name">Exams done</h3>
+      <table>
         <thead>
           <tr class="rowOftable">
             <th>Column 1</th>
             <th>Column 2</th>
-         
+            <th>Column 3</th>
           </tr>
         </thead>
         <tbody>
           <tr class="rowOftable">
-            <td >Cell 1</td>
-            <td >Cell 2</td>
-          
-         
+            <td>cell1</td>
+            <td>Cell 2</td>
+            <td>Cell 3</td>
           </tr>
           <tr class="rowOftable">
-            <td >Cell 1</td>
-            <td >Cell 2</td>
-          
-         
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+            <td>Cell 3</td>
           </tr>
           <tr class="rowOftable">
-            <td >Cell 1</td>
-            <td >Cell 2</td>
-          
-         
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+            <td>Cell 3</td>
           </tr>
           <tr class="rowOftable">
-            <td >Cell 1</td>
-            <td >Cell 2</td>
-          
-         
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+            <td>Cell 3</td>
           </tr>
           <tr class="rowOftable">
-            <td >Cell 1</td>
-            <td >Cell 2</td>
-          
-         
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+            <td>Cell 3</td>
           </tr>
         </tbody>
-      </table></div>
-</div>
+      </table>
+    </div>
+    <div class="EX__taked">
+      <h3 class="table__name">Exams taked</h3>
+      <table>
+        <thead>
+          <tr class="rowOftable">
+            <th>Column 1</th>
+            <th>Column 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="rowOftable">
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+          </tr>
+          <tr class="rowOftable">
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+          </tr>
+          <tr class="rowOftable">
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+          </tr>
+          <tr class="rowOftable">
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+          </tr>
+          <tr class="rowOftable">
+            <td>Cell 1</td>
+            <td>Cell 2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->

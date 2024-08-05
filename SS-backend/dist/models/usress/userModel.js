@@ -78,6 +78,11 @@ __decorate([
         allowNull: true, }),
     __metadata("design:type", String)
 ], users.prototype, "CV__path", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING,
+    }),
+    __metadata("design:type", String)
+], users.prototype, "img__path", void 0);
 exports.users = users = __decorate([
     (0, sequelize_typescript_1.Table)({
         timestamps: false,

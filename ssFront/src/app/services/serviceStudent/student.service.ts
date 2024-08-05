@@ -29,9 +29,33 @@ export class StudentService {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+
+
+  getStudent(id: any) {
+    
+    return this.httpClient.get(`${this.url}/student/${id}`, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
+
   AnalyseStudents(){
     return this.httpClient.get(this.url + "/studentMonthly");
   }
 
+  updatepdp(file: any, id: any) {
+    console.log('fffffffffffffffffffffffl', file);
+    const formData = new FormData();
+    
+    // if (data && data.length > 0) {
+    //   for (const file of data) {
+    //     // Serialize exam data
+      
+    //   } }
+        formData.append('files', file);
+   
+    return this.httpClient.put(`${this.url}/pdp/${id}`, formData, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
 
 }

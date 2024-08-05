@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-teacher',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule,],
+  imports: [CommonModule,TooltipModule, RouterOutlet, RouterModule,],
   templateUrl: './teacher.component.html',
   styleUrl: './teacher.component.css'
 })

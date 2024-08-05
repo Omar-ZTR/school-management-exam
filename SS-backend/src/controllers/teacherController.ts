@@ -6,6 +6,9 @@ import { Question } from "../models/questionModel";
 import { FileQuestion } from "../models/fileModel";
 import { Reponse } from "../models/reponseModel";
 import sendEmail from "../utils/sendEmail";
+import { Exam } from "../models/examModel";
+import { Student } from "../models/studentModel";
+import uploadFileMiddleware from "../utils/upload";
 
 export const getAllTeacher = async (req: Request, res: Response) => {
   try {
@@ -177,6 +180,15 @@ export const TeacherByid = async (req: Request, res: Response) => {
         {
           model: Group,
           as: "groups",
+          include:[
+            {
+              model: Student,
+            },
+          ]
+        },
+        {
+          model: Exam,
+          as: "exam",
         },
         {
           model: Question,
@@ -190,5 +202,36 @@ export const TeacherByid = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error Fetching Teacher", error);
     res.status(500).send("Error Fetching Teacher");
+  }
+};
+
+
+const baseUrl = "http://localhost:3000/files/";
+
+export const updatePProfile = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await uploadFileMiddleware(req, res); // Handle file upload
+
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+      console.log("files:", req.files);
+
+      const file = (req.files as Express.Multer.File[])[0];
+      const img__path = baseUrl + file.filename;
+      console.log("file attribute:", file);
+
+      // Assuming Student model has a column named `img__path`
+      await Teacher.update({ img__path }, {
+        where: { user__id: id },
+      });
+
+      res.status(200).send({ message: 'Profile picture updated successfully.' });
+    } else {
+      res.status(400).send({ message: 'No files were uploaded.' });
+    }
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    res.status(500).send({ message: 'Error updating profile picture.' });
   }
 };

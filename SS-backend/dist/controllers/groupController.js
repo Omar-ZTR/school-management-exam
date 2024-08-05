@@ -291,6 +291,9 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 {
                     model: subjectModel_1.Subject,
                 },
+                {
+                    model: teacherModel_1.Teacher,
+                },
             ],
         });
         if (group) {
@@ -306,8 +309,33 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 });
                 return Object.assign(Object.assign({}, exam.get({ plain: true })), { reservation: reserv, answers: answers });
             })));
+            let formdatasubject;
+            // Map through the exams and get reservations
+            formdatasubject = yield Promise.all(group.subjects.map((subject) => __awaiter(void 0, void 0, void 0, function* () {
+                let teacher;
+                for (const teach of group.teachers) {
+                    const teacherfind = yield teacherModel_1.Teacher.findOne({
+                        where: {
+                            user__id: teach.user__id,
+                        },
+                        include: [
+                            {
+                                model: subjectModel_1.Subject,
+                            },
+                        ],
+                    });
+                    if (teacherfind === null || teacherfind === void 0 ? void 0 : teacherfind.subjects) {
+                        for (const subTeach of teacherfind === null || teacherfind === void 0 ? void 0 : teacherfind.subjects) {
+                            if (subTeach.subject__name === subject.subject__name) {
+                                teacher = `${teacherfind.first__name} ${teacherfind.last__name}`;
+                            }
+                        }
+                    }
+                }
+                return Object.assign(Object.assign({}, subject.get({ plain: true })), { teacher: teacher });
+            })));
             // Combine the group object with the modified exams
-            const grouped = Object.assign(Object.assign({}, group.get({ plain: true })), { exams: formdata // Fix the syntax here
+            const grouped = Object.assign(Object.assign({}, group.get({ plain: true })), { exams: formdata, subjects: formdatasubject // Fix the syntax here
              });
             res.status(200).json(grouped);
         }
