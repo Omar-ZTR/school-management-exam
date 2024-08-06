@@ -101,10 +101,18 @@
               >
                 <div #taken>
                   <p-image
+                  *ngIf="typeFile(f).type === 'image'"
                     [src]="f.file__path"
                     resize="both"
                     [preview]="true"
                   ></p-image>
+
+                  <i
+                  *ngIf="typeFile(f).type !== 'image'"
+                  class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+                  (click)="openFile(f.file__path)"
+                ></i>
+
                 </div>
               </div>
             </div>

@@ -1,31 +1,68 @@
-
- <header class="mainHeading">
-    <div class="mainHeading__content">
-       <div class="mainHeading__text">
-         
-          <h2 class="mainHeading__title">SmartSkills</h2>
-          <p class="mainHeading__description">
-            SmartExam help run and manage the class such as Class Roster, 
-            Attendance, and more. With the Gradebook, 
-            teachers can review and grade tests and quizzes in real-time.
-          </p>
-          <button class="cta">know more</button>
-       </div>
- 
-       <div class="mainHeading__image">
-          <img
-             src="../../../../assets/hedr.png"
-             alt=""
-          />
-          <span class="sp2"> <i class="fa-solid fa-award"></i><i class="fa-solid fa-calendar-days"></i>
-         <div class="textcard">
-            Congratulations
-         </div></span>
-         <span class="sp1"> <i class="fa-solid fa-calendar-days"></i>
-          </span>
-          <span class="sp3"></span>
-
-       </div>
+<!-- <header class="mainHeading">
+  <div class="mainHeading__content">
+    <div class="mainHeading__text">
+      <h2 class="mainHeading__title">SmartSkills</h2>
+      <p class="mainHeading__description">
+        SmartExam help run and manage the class such as Class Roster,
+        Attendance, and more. With the Gradebook, teachers can review and grade
+        tests and quizzes in real-time.
+      </p>
+      <button class="cta">know more</button>
     </div>
- </header>
- 
+
+    <div class="mainHeading__image">
+      <img src="../../../../assets/hedr.png" alt="" />
+      <span class="sp2">
+        <i class="fa-solid fa-award"></i
+        ><i class="fa-solid fa-calendar-days"></i>
+        <div class="textcard">Congratulations</div></span
+      >
+      <span class="sp1"> <i class="fa-solid fa-calendar-days"></i> </span>
+      <span class="sp3"></span>
+    </div>
+  </div>
+</header> -->
+<!--  -->
+<div style="position: relative;">
+
+
+
+   <div class="boxText">
+      <h2 class="titleBoxe">SmartSkills</h2>
+      <p class="mainHeading__description">
+        SmartExam help run and manage the class such as Class Roster,
+        Attendance, and more. With the Gradebook, teachers can review and grade
+        tests and quizzes in real-time.
+      </p>
+      <button routerLink="/auth" class="cta">Get started</button>
+    </div>
+
+<div [ngStyle]="{'background-color': currentBackgroundColor}">
+   <p-carousel
+     [numVisible]="1"
+     [value]="items"
+     [numScroll]="1"
+     [circular]="true"
+     autoplayInterval="3000"
+     (onPage)="onPageChange($event)"
+   >
+   <ng-template pTemplate="item" let-item>
+   
+       <div class="mb-3" >
+         <div class="relative mx-auto">
+           <img style="    width: 100%;
+        height: 100vh;
+        background-blend-mode: multiply;
+           object-fit: cover;
+           "
+             [src]="item.src"
+             alt="produame"
+             class="w-full border-round"
+           />
+         </div>
+      
+     </div>
+   </ng-template>
+ </p-carousel>
+</div>
+</div>

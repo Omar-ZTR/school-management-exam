@@ -90,7 +90,7 @@
     <button type="button" (click)="onlogin()">Log In</button>
   </div>
   <div *ngIf="formName == false">
-    <app-sign-up></app-sign-up>
+    <app-sign-up (formname)="setswitch()"  ></app-sign-up>
   </div>
 
   <div *ngIf="formName == false" class="social">

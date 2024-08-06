@@ -48,36 +48,13 @@
         </g>
       </svg>
       <ul>
-        <li>
-          <a routerLink="/student/contact"
-            ><i class="fa-solid fa-bell"></i>
-            <span class="notification-count">6</span>
-          </a>
-        </li>
+
         <li>
           <a (click)="toggleSettingsMenu()">
             <img src="../../../assets/mee.jpeg" alt="me" />
             <div class="bartitle">Name</div>
           </a>
-          <ul *ngIf="isSettingsMenuOpen">
-            <li>
-              <a routerLink="/student/edit-profile"
-                ><i class="fas fa-user-edit"></i> Edit Profile</a
-              >
-            </li>
-            <li>
-              <a routerLink="/student/about"
-                ><i class="fa-solid fa-bell"></i>
-                <div class="bartitle">contact</div></a
-              >
-            </li>
-            <hr />
-            <li>
-              <a (click)="logout()"
-                ><i class="fas fa-sign-out-alt"></i> Logout</a
-              >
-            </li>
-          </ul>
+         
         </li>
       </ul>
     </div>

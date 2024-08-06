@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
@@ -65,6 +65,9 @@ import { MessageService } from 'primeng/api';
   ],
 })
 export class SignUpComponent {
+
+  @Output() formname = new EventEmitter<any>(); 
+
   signupform: FormGroup;
   stepslist: any[] = [
     { stepName: 'Basic details', iscomplate: false },
@@ -223,6 +226,7 @@ export class SignUpComponent {
       console.log('dataUser', dataUser);
       this.userService.signup(dataUser).subscribe(
         (response: any) => {
+          this.formname.emit(true);
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
