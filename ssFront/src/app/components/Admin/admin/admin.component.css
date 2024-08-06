@@ -65,3 +65,26 @@
     transform: translateX(9px) translateY(1px) rotate(45deg);
   }
   
+  .logo {
+    color: #464646;
+    display: flex;
+    font-family: "Pacifico", cursive;
+    font-weight: 600;
+    font-size: 1.5rem;
+    /* width: 200px; */
+    position: relative;
+    align-items: center;
+    cursor: pointer;
+    
+  }
+  .toplog{
+    display: flex;
+    top: -70px;
+  }
+  .imgNav{
+    position: absolute;
+    width: 100px;
+    right: -30%;
+    bottom: -50%;
+    z-index: -1;
+  }
