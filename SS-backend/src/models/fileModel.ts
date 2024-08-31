@@ -1,9 +1,9 @@
 import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from "sequelize-typescript";
-import { Exam } from "./examModel"; // Import the Exam model if it exists
+import { Exam } from "./examModel"; 
 import { Question } from "./questionModel";
 import { Answer } from "./answerModel";
 
-// Define a base class for common file attributes
+
 @Table({
     timestamps: true,
     tableName: "File",

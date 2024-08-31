@@ -50,10 +50,7 @@ export const createAnswers = async (req: Request, res: Response) => {
       console.log("if  fotnaha");
       const ansDatas = answersData.answers;
       for (const ansData of ansDatas) {
-        console.log(
-          ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
-          ansData
-        );
+    
         const question = await Question.findByPk(ansData.question__id);
         if (!question) {
           return res.status(404).json({ message: "question not found" });
@@ -136,9 +133,9 @@ try{
       },
       
     });
-    // Add student__name to the answer object
+    
     return {
-      ...ans.get({ plain: true }), // Convert Sequelize model instance to plain object
+      ...ans.get({ plain: true }), 
       exam__title:exam?.exam__title || null,
       exam__oblig:exam?.obligatoire || false,
 subject:subject
@@ -268,7 +265,7 @@ async function GetQuestionById(questionId: number) {
       where: {
         question__id: questionId,
       },
-      attributes: ["question__id", "question__text"], // Adjust attributes as needed
+      attributes: ["question__id", "question__text"], 
       include: [
         {
           model: Reponse,

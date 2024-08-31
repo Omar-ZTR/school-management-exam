@@ -9,7 +9,7 @@ import { Answer } from "../models/answerModel";
 import { Reservation } from "../models/reservationModel";
 import sequelize from "sequelize";
 
-// Create operation
+// Create 
 export const createGroup = async (req: Request, res: Response) => {
   try {
     const groupData = req.body;
@@ -46,7 +46,7 @@ export const createGroup = async (req: Request, res: Response) => {
   }
 };
 
-// Read operation - Get all Groups
+// Get all Groups
 export const getAllGroups = async (req: Request, res: Response) => {
   try {
     const groups = await Group.findAll({
@@ -314,18 +314,17 @@ export const getGroupById = async (req: Request, res: Response) => {
     if (group) {
       let formdata;
 
-      // Map through the exams and get reservations
+     
       formdata = await Promise.all(
         group.exams.map(async (exam) => {
-          const reserv = await checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
-          // Add student__name to the exam object
+          const reserv = await checkExam(group.group__name, exam.exam__id); 
           const answers = await Answer.findAll({
             where: {
               exam__id: exam.exam__id,
             },
           });
           return {
-            ...exam.get({ plain: true }), // Convert Sequelize model instance to plain object
+            ...exam.get({ plain: true }), 
             reservation: reserv,
             answers: answers,
           };
@@ -333,7 +332,7 @@ export const getGroupById = async (req: Request, res: Response) => {
       );
       let formdatasubject;
 
-      // Map through the exams and get reservations
+     
       formdatasubject = await Promise.all(
         group.subjects.map(async (subject) => {
           let teacher;
@@ -360,18 +359,18 @@ if (subTeach.subject__name === subject.subject__name){
           }
 
           return {
-            ...subject.get({ plain: true }), // Convert Sequelize model instance to plain object
+            ...subject.get({ plain: true }), 
             teacher: teacher,
          
           };
         })
       );
 
-      // Combine the group object with the modified exams
+    
       const grouped = {
         ...group.get({ plain: true }),
         exams: formdata,
-        subjects:formdatasubject // Fix the syntax here
+        subjects:formdatasubject 
       };
 
       res.status(200).json(grouped);
@@ -411,7 +410,7 @@ export const getGroupByName = async (req: Request, res: Response) => {
 };
 
 
-// Update operation
+// Update 
 export const updateGroup = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -434,7 +433,7 @@ export const updateGroup = async (req: Request, res: Response) => {
 
       await groupExist.$set("subjects", subjects);
     } else {
-      // If no groups are provided or the array is empty, delete all associations
+     
       await groupExist.$set("subjects", []);
     }
     if (groupExist.group__name !== groupData.group__name) {
@@ -453,7 +452,7 @@ export const updateGroup = async (req: Request, res: Response) => {
   }
 };
 
-// Delete operation
+// Delete 
 export const deleteGroup = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

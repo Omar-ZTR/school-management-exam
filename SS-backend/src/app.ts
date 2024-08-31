@@ -15,7 +15,7 @@ import routerAnswer from "./routers/answerRouter";
 import routerTeacher from "./routers/teacherRouter";
 import routerStudents from "./routers/studentRouter";
 import routerSubscribe from "./routers/subscribeRouter";
-import routerChat from "./routers/chatRouter";
+import routerChat from "./models/usress/chatRouter";
 import routerContact from "./routers/contactRouter";
 import { Reservation } from "./models/reservationModel";
 import { Op } from "sequelize";

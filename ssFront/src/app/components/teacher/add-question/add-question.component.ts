@@ -111,7 +111,7 @@ export class AddQuestionComponent {
     return this.reponsesForm;
   }
   initializeForm(questionEdit: any): void {
-    // Set the main form controls' values
+  
     this.questionsForm.patchValue({
       question__text: questionEdit.question__text,
       note: questionEdit.note,
@@ -119,10 +119,10 @@ export class AddQuestionComponent {
       question__subject: questionEdit.question__subject,
     });
 
-    // Clear existing reponses
+
     this.reponses.clear();
 
-    // Add reponse controls
+  
     questionEdit.reponses.forEach((reponse: any) => {
       this.reponses.push(
         this.fb.group({
@@ -381,9 +381,9 @@ console.log("hhsjas sallem maman " )
 
     
       return (
-        this.questionsForm.touched ||  // Check if the form has been touched
-      this.fileIds.length > 0 ||  // Compare initial and current file data
-        this.fileQuest.length > 0  // Check if there are any files in the fileQuest array
+        this.questionsForm.touched ||  
+      this.fileIds.length > 0 || 
+        this.fileQuest.length > 0 
       );
     }
   updateQuestion() {

@@ -12,7 +12,7 @@ export const createResult = async (req: Request, res: Response) => {
     }
 };
 
-// Read operation - Get all results
+//Get all results
 export const getAllResults = async (req: Request, res: Response) => {
     try {
         const results = await Result.findAll();
@@ -23,7 +23,7 @@ export const getAllResults = async (req: Request, res: Response) => {
     }
 };
 
-// Read operation - Get result by ID
+//Get result by ID
 export const getResultById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -39,7 +39,7 @@ export const getResultById = async (req: Request, res: Response) => {
     }
 };
 
-// Update operation
+// Update 
 export const updateResult = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -56,7 +56,7 @@ export const updateResult = async (req: Request, res: Response) => {
     }
 };
 
-// Delete operation
+// Delete 
 export const deleteResult = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;

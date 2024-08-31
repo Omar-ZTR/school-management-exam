@@ -27,7 +27,7 @@ export class User extends Model<User> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: "user_email_unique_constraint" // Unique constraint name
+    unique: "user_email_unique_constraint" 
   })
   user__email!: string;
 

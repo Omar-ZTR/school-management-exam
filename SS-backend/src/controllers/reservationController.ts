@@ -7,13 +7,13 @@ import { Salle } from "../models/salleModel";
 import { Student } from "../models/studentModel";
 import sendEmail from "../utils/sendEmail";
 import { format } from "date-fns";
-// Create operation
+// Create 
 export const createReservation = async (req: Request, res: Response) => {
   try {
     console.log("bbbbbbbb", req.body);
     const code = generateCode();
 
-    // Create the reservation object with the generated code
+  
     const reservationData = {
       ...req.body,
       code: code,
@@ -102,7 +102,7 @@ console.log("currentDate is ",currentDate)
     res.status(500).json({ error: "Internal server error" });
   }
 };
-// Read operation - Get all reservations
+//Get all reservations
 export const getAllReservations = async (req: Request, res: Response) => {
   try {
     const reservations = await Reservation.findAll();
@@ -112,7 +112,7 @@ export const getAllReservations = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-// Read operation - Get reservation by ID
+//Get reservation by ID
 export const getReservationById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -130,7 +130,7 @@ export const getReservationById = async (req: Request, res: Response) => {
 
 export const getReservationTeacher = async (req: Request, res: Response) => {
   try {
-    // Extract IDs from query parameters
+   
 
     console.log("ids is", req.query.ids);
 
@@ -168,7 +168,7 @@ export const getReservationTeacher = async (req: Request, res: Response) => {
   }
 };
 
-// Update operation
+// Update 
 export const updateReservation = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -199,7 +199,7 @@ export const updateReservation = async (req: Request, res: Response) => {
   }
 };
 
-// Delete operation
+// Delete 
 export const deleteReservation = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

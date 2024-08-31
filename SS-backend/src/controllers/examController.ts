@@ -13,16 +13,16 @@ import { Answer } from "../models/answerModel";
 import { Op, Sequelize } from "sequelize";
 
 const baseUrl = "http://localhost:3000/files/";
-// Create operation
+// Create 
 
 export const createExam = async (req: Request, res: Response) => {
   console.log("exam 1", req.body);
   try {
     console.log("exam 2", req.body.files);
 
-    await uploadFileMiddleware(req, res); // Handle file upload
+    await uploadFileMiddleware(req, res); 
 
-    const examDatas = { ...req.body }; // Assuming exam data is in req.body
+    const examDatas = { ...req.body }; 
 
     const examData = JSON.parse(examDatas.exam);
    
@@ -259,7 +259,7 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
           return {
             group__id: group.group__id,
           exam:exam.exam__id,
-          group__name: group.group__name,  // Include group information if needed
+          group__name: group.group__name,  
           students: students,
             date: res.startDate
           };
@@ -267,7 +267,7 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
           return {
             group__id: group.group__id,
           exam:exam.exam__id,
-          group__name: group.group__name,  // Include group information if needed
+          group__name: group.group__name,  
           students: students,
             date: ''
           };
@@ -275,7 +275,7 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
         // return {
         //   group__id: group.group__id,
         //   exam:exam.exam__id,
-        //   group__name: group.group__name,  // Include group information if needed
+        //   group__name: group.group__name,  
         //   students: students
         // };
       }));
@@ -295,9 +295,8 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
             }
           });
       
-          // Add student__name to the answer object
           return {
-            ...ans.get({ plain: true }), // Convert Sequelize model instance to plain object
+            ...ans.get({ plain: true }), 
             student__name: student ? `${student.first__name} ${student.last__name}` : null,
           };
         }));
@@ -318,7 +317,7 @@ export const getExamsGroupsStutents = async (req: Request, res: Response) => {
       return {
         exam__oblig:exam.obligatoire,
         exam__id:exam.exam__id,
-        exam__name: exam.exam__title,  // Include exam information if needed
+        exam__name: exam.exam__title,  
         groups: groups,
         answers:answers,
         date: check
@@ -360,9 +359,9 @@ export const addDescreptionExam = async (req: Request, res: Response) => {
     const { id } = req.params;
 
 
-    await uploadFileMiddleware(req, res); // Handle file upload
+    await uploadFileMiddleware(req, res); 
 
-    const examDatas = { ...req.body }; // Assuming exam data is in req.body
+    const examDatas = { ...req.body }; 
 
     const examData = JSON.parse(examDatas.exam);
 
@@ -412,7 +411,7 @@ console.log("nmbvxczx",examData)
 };
 
 
-// Update operation
+// Update 
 export const updateExam = async (req: Request, res: Response) => {
   try {
     console.log("Request Body:", req.body);
@@ -421,12 +420,12 @@ export const updateExam = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { operation } = req.body;
     const { group__id } = req.body;
-    // Validate the operation
+    
     if (typeof operation !== "number") {
       return res.status(400).send("Invalid operation value");
     }
 
-    // Find the exam by primary key
+   
     const exam = await Exam.findByPk(id);
     if (!exam) {
       return res.status(404).send("Exam not found");
@@ -441,7 +440,7 @@ export const updateExam = async (req: Request, res: Response) => {
    
 
     
-    // Update the nb__reserve field
+   
     const nb__reserve = exam.nb__reserve + operation;
     const [updated] = await Exam.update(
       { nb__reserve },
@@ -469,7 +468,7 @@ export const updateExamFile = async (req: Request, res: Response) => {
   try {
     console.log("exam 2", req.body.files);
 
-    await uploadFileMiddleware(req, res); // Handle file upload
+    await uploadFileMiddleware(req, res); 
     console.log("exam 3", req.body.file);
    
 
@@ -567,7 +566,7 @@ try{
     ],
   });
   
-  // Transform the response to add student__name to each answer
+  
   const transformedExams = await Promise.all(exams.map(async (exam) => {
     const transformedAnswers = await Promise.all(exam.answers.map(async (answer) => {
       const student = await Student.findOne({ where: { user__id: answer.Student__id } });

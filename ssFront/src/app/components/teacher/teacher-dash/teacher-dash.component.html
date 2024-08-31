@@ -43,9 +43,10 @@
             <input
               id="file"
               type="file"
+              accept="image/*"
               (change)="detectFilesSupport($event)"
             />
-            <img class="imgprofil" [src]="imgProfil" alt="" />
+            <img class="imgprofil" [src]="imgProfil" alt="{{teacher.first__name[0]}}" />
             <div class="btnsave" *ngIf="updateimg" (click)="savePdp()">
               <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>

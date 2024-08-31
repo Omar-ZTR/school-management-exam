@@ -9,7 +9,7 @@ import { MessageService } from 'primeng/api';
 import { UserService } from '../../../services/servicesUser/user.service';
 import { GlobalConstants } from '../../../shared/global-constants';
 import { Router } from '@angular/router';
-interface Student {
+export interface Student {
   first__name:string,
   last__name:string,
   group:string,
@@ -133,9 +133,7 @@ this.updateimg = true
   }
 
   formateData(): void {
-    // Add a property 'answers' to each exam in the group to hold the related answers
   
-
     for (const sub of this.group.subjects) {
       let count = 0;
       let i = 0;
@@ -171,8 +169,7 @@ this.updateimg = true
     }
     console.log('my formated with subjects',);
   
-    // Optional: Print out the formatted data for debugging
-    // console.log('Formatted group data', this.group);
+    
   }
 
 
@@ -185,12 +182,30 @@ const file = this.imgUp
     this.studentService.updatepdp(file,this.user__id).subscribe(
       (response: any) => {
    
-        // this.groupQuestionsByType();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: response.message,
+        });
         console.log('responseresponse :',response.message);
   
     this.updateimg=false
+    window.location.reload();
       },
       (error: any) => {
+        if (error.error?.message) {
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Failed',
+            detail: error.error?.message,
+          });
+        } else {
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Failed',
+            detail: GlobalConstants.genericError,
+          });
+        }
         console.error('Error fetching exam', error);
       }
     );

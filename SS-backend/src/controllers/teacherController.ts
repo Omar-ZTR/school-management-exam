@@ -61,7 +61,7 @@ export const updateTeacher = async (req: Request, res: Response) => {
 
       await teacherExist.$set("groups", groups);
     } else {
-      // If no groups are provided or the array is empty, delete all associations
+     
       await teacherExist.$set("groups", []);
     }
     if (
@@ -77,7 +77,7 @@ export const updateTeacher = async (req: Request, res: Response) => {
 
       await teacherExist.$set("subjects", subjects);
     } else {
-      // If no groups are provided or the array is empty, delete all associations
+      
       await teacherExist.$set("subjects", []);
     }
 
@@ -144,7 +144,7 @@ export const updateTeacher = async (req: Request, res: Response) => {
       } else {
         throw new Error("Teacher not updated");
       }
-    } // If no updates were made, return the current teacher data
+    } 
     return res.status(200).json(teacherExist);
   } catch (error) {
     console.error("Error updating teacher:", error);
@@ -212,7 +212,7 @@ export const updatePProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    await uploadFileMiddleware(req, res); // Handle file upload
+    await uploadFileMiddleware(req, res); 
 
     if (req.files && (req.files as Express.Multer.File[]).length > 0) {
       console.log("files:", req.files);
@@ -221,7 +221,7 @@ export const updatePProfile = async (req: Request, res: Response) => {
       const img__path = baseUrl + file.filename;
       console.log("file attribute:", file);
 
-      // Assuming Student model has a column named `img__path`
+     
       await Teacher.update({ img__path }, {
         where: { user__id: id },
       });

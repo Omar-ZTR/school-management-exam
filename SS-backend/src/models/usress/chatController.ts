@@ -1,6 +1,6 @@
 // controllers/chatController.ts
 import { Request, Response } from "express";
-import { Chat } from "../models/chatModel";
+import { Chat } from "../chatModel";
 
 export const createChatMessage = async (req: Request, res: Response) => {
   const { senderId, senderRole, recipientId, recipientRole, message } = req.body;

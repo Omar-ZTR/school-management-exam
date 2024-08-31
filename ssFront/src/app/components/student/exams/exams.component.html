@@ -1,41 +1,99 @@
-<div class="TitelForm"> Exams Certificate </div>
-<p-carousel
-  [value]="CertifExam"
-  [numVisible]="3"
-  [numScroll]="3"
+
+
+<div *ngIf="CourseExam.length == 0 && CertifExam.length == 0" class="noExam" >
+  No exams for now,
+</div>
+<div
+  style="
+    height: 300px;
+
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  "
+  *ngIf="CourseExam.length == 0 && CertifExam.length == 0"
+>
+  <div class="animate-charcter">Stay</div>
+  <div class="animate-charcter">tuned!</div>
+
+  <img
+    style="width: 300px"
+    src="../../../../assets/Filing system-amico.png"
+    alt=""
+  />
+</div>
+
+
+<div *ngIf="CertifExam.length !== 0 || CourseExam.length !== 0 " >
+
+
+
+<div class="TitelForm">Exams Certificate</div>
+
+<div *ngIf="CertifExam.length !== 0">
+  <p-carousel [value]="CertifExam" [numVisible]="3" [numScroll]="3">
+    <ng-template let-event pTemplate="item">
+      <div
+        class="ard"
+        *ngIf="subscribe[event.exam__id].acceptation !== false"
+        (click)="showDialog(event)"
+      >
+        <div class="paperclip">
+          <i class="fa-solid fa-paperclip fa-flip-vertical fa-2xl"></i>
+        </div>
+        <div class="note">
+          <div style="transform: rotate3d(1, 1, 1, -15deg); margin-top: 4px">
+            {{ event.startDate | date : "MMM " }}
+          </div>
+          <div style="transform: rotate3d(1, 1, 1, -15deg)">
+            {{ event.startDate | date : "dd " }}
+          </div>
+        </div>
+
+        <div class="title">{{ event.title }}</div>
+        <div class="description">
+          {{ event.desc }}
+        </div>
+        <div class="description">
+          {{ event.startDate | date : "shortTime" }} -
+          {{ event.endDate | date : "shortTime" }}
+        </div>
+        <div class="footer"></div>
+      </div>
+    </ng-template>
+  </p-carousel>
+
+</div>
+<div *ngIf="CertifExam.length == 0 && CourseExam.length !== 0">
+
+
+
+<div class="noExam" >
+  No exams for now,
+</div>
+<div
+  style="
+    height: 300px;
+
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  "
  
 >
-  <ng-template let-event pTemplate="item">
-  
+  <div class="animate-charcter">Stay</div>
+  <div class="animate-charcter">tuned!</div>
 
-    <div class="ard" *ngIf="subscribe[event.exam__id].acceptation !== false"  (click)="showDialog(event)">
-      <div class="paperclip">
-        <i class="fa-solid fa-paperclip fa-flip-vertical fa-2xl"></i>
-      </div>
-      <div class="note">
-        <div style="transform: rotate3d(1, 1, 1, -15deg); margin-top: 4px">
-          {{ event.startDate | date : "MMM " }}
-        </div>
-        <div style="transform: rotate3d(1, 1, 1, -15deg)">
-          {{ event.startDate | date : "dd " }}
-        </div>
-      </div>
+  <img
+    style="width: 300px"
+    src="../../../../assets/Filing system-amico.png"
+    alt=""
+  />
+</div>
+</div>
+<div class="TitelForm">Exams Course</div>
 
-      <div class="title">{{ event.title }}</div>
-      <div class="description">
-       {{event.desc}}
-      </div>
-      <div class="description">
-        {{ event.startDate | date : "shortTime" }} -
-        {{ event.endDate | date : "shortTime" }}
-      </div>
-      <div class="footer"></div>
-    </div>
-    
-  </ng-template>
-</p-carousel>
-<div class="TitelForm"> Exams Course </div>
-<div class="ag-format-container">
+<div *ngIf="CourseExam.length !== 0" class="ag-format-container">
   <div class="ag-courses_box">
     <div *ngFor="let event of CourseExam" class="ag-courses_item">
       <a (click)="showDialog(event)" class="ag-courses-item_link">
@@ -43,10 +101,8 @@
 
         <div class="ag-courses-item_title">
           {{ event.title }}
-        
         </div>
         <div class="ag-courses-item_date-box">
-        
           <span class="ag-courses-item_date">
             {{ event.startDate | date : "EEEE dd MMMM" }}
           </span>
@@ -57,10 +113,38 @@
         </div>
       </a>
     </div>
- 
   </div>
 </div>
 
+<div *ngIf="CertifExam.length !== 0 && CourseExam.length == 0">
+
+
+
+  <div class="noExam" >
+    No exams for now,
+  </div>
+  <div
+    style="
+      height: 300px;
+  
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    "
+   
+  >
+    <div class="animate-charcter">Stay</div>
+    <div class="animate-charcter">tuned!</div>
+  
+    <img
+      style="width: 300px"
+      src="../../../../assets/Filing system-amico.png"
+      alt=""
+    />
+  </div>
+  </div>
+
+</div>
 
 
 <p-dialog
@@ -142,28 +226,25 @@
         {{ plan.salle ? "Salle " + plan.salle : "Remotly" }}
       </div>
     </div>
-    <div  *ngIf="hasSupportFile(examShow)"  class="new-text">Documents:</div>
+    <div *ngIf="hasSupportFile(examShow)" class="new-text">Documents:</div>
     <div class="examFiles">
       <div *ngIf="examShow.fileExam" class="supportitems">
-            <div
-              *ngFor="let f of examShow.fileExam; let index = index"
-              key="index"
-              class="supportitem"
-            >
-              <div *ngIf="f.file__type === 'support'">
-                <div class="supportimg" (click)="openFile(f.file__path)">
-                  <i
-                    *ngIf="typeFile(f).type !== 'image'"
-                    class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
-                  ></i>
-                  <img
-                    *ngIf="typeFile(f).type === 'image'"
-                    [src]="f.file__path"
-                  />
-                </div>
-              </div>
+        <div
+          *ngFor="let f of examShow.fileExam; let index = index"
+          key="index"
+          class="supportitem"
+        >
+          <div *ngIf="f.file__type === 'support'">
+            <div class="supportimg" (click)="openFile(f.file__path)">
+              <i
+                *ngIf="typeFile(f).type !== 'image'"
+                class="fa-solid  fa-file-{{ typeFile(f).type }} fa"
+              ></i>
+              <img *ngIf="typeFile(f).type === 'image'" [src]="f.file__path" />
             </div>
           </div>
+        </div>
+      </div>
     </div>
   </div>
 </p-dialog>
@@ -236,7 +317,10 @@
 	Enter
   </button> -->
   </div>
-  <div class="boxExam" *ngIf="accept && hours === '00' && minutes === '00' && seconds === '00'">
+  <div
+    class="boxExam"
+    *ngIf="accept && hours === '00' && minutes === '00' && seconds === '00'"
+  >
     <!-- hours === '00' && minutes === '00' && seconds === '00' -->
     <app-examtaken
       [idExam]="examShow.exam__id"

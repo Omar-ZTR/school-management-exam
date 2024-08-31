@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Answer } from "../models/answerModel";
 
-// Create operation
+// Create 
 export const createAnswer = async (req: Request, res: Response) => {
     try {
         const answer = await Answer.create(req.body);
@@ -12,7 +12,7 @@ export const createAnswer = async (req: Request, res: Response) => {
     }
 };
 
-// Read operation - Get all answers
+
 export const getAllAnswers = async (req: Request, res: Response) => {
     try {
         const answers = await Answer.findAll();
@@ -23,7 +23,7 @@ export const getAllAnswers = async (req: Request, res: Response) => {
     }
 };
 
-// Read operation - Get answer by ID
+// Get answer by ID
 export const getAnswerById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -39,7 +39,7 @@ export const getAnswerById = async (req: Request, res: Response) => {
     }
 };
 
-// Update operation
+// Update 
 export const updateAnswer = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -56,7 +56,7 @@ export const updateAnswer = async (req: Request, res: Response) => {
     }
 };
 
-// Delete operation
+// Delete 
 export const deleteAnswer = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;

@@ -18,8 +18,8 @@ const baseUrl = "http://localhost:3000/files/";
 
 
 export const deleteFile = async (req: Request, res: Response) => {
-    const fileId = req.params.id; // Assuming file ID is passed as a URL parameter
-    const model = req.body.model; // Assuming model type is passed in the body
+    const fileId = req.params.id; 
+    const model = req.body.model; 
 
     try {
         let fileRecord;
@@ -41,7 +41,7 @@ console.log("filerecord",fileRecord)
             return res.status(404).json({ message: 'File not found' });
         }
 
-        // Delete the file record from the database
+       
         switch (model) {
             case 'question':
                await FileQuestion.destroy({ where: { file__id: fileId } });
@@ -58,7 +58,7 @@ console.log("filerecord",fileRecord)
                 break;
         }
 
-        // Delete the physical file from the server
+        
         const filePath = path.join(__dirname, '../utils/filesUpload', fileRecord.file__name);
         console.log("File path:", filePath);
 

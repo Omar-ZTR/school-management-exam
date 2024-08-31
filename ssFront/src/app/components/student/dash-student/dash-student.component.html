@@ -20,7 +20,7 @@
         <div class="borderDiv">
           {{ sub.subject }}
         </div>
-        <div class="subTitle">by {{ sub.teacher }}</div>
+        <div class="subTitle"> {{ sub.teacher ? 'by ' + sub.teacher : 'no teacher yet' }}</div>
         <div class="subtext">
           Exams :
 
@@ -43,8 +43,8 @@
           <span > <i class="fa-solid fa-camera"></i></span>
          
         </label>
-        <input id="file" type="file"   (change)="detectFilesSupport($event)"  />
-      <img class="imgprofil" [src]="imgProfil" alt=" student.first__name[0]" />
+        <input id="file" type="file"  accept="image/*"  (change)="detectFilesSupport($event)"  />
+      <img class="imgprofil" [src]="imgProfil" alt="{{student.first__name[0]}}" />
         <div class="btnsave" *ngIf="updateimg" (click)="savePdp()" >
           <i class="fa-solid fa-cloud-arrow-up"></i>
       </div>

@@ -307,7 +307,7 @@ label {
 }
 .calendar-popup {
  
-  display: block; /* or flex, inline-block, etc. based on your layout */
+  display: block;
 
 
   background: white;
@@ -345,19 +345,13 @@ label {
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
 }
 
-/* Styles for the input in a valid state */
 
-
-/* Styles for the input in an invalid state */
-
-
-/* Placeholder styles */
 .inputTimes input::placeholder {
   color: #888;
   font-style: italic;
 }
 
-/* Specific styles for the time input type */
+
 .inputTimes input[type="time"] {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -365,7 +359,8 @@ label {
   background: none;
 }
 
-/* Remove the native browser styles */
+
+
 .inputTimes input[type="time"]::-webkit-inner-spin-button,
 .inputTimes input[type="time"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -420,7 +415,8 @@ label {
   margin: 5px;
 }
 
-/* Style the select element */
+
+
 .styled-select {
   appearance: none;
   border: 1px solid #ddd;
@@ -433,7 +429,7 @@ label {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Add a custom arrow to the select element */
+
 .styled-select::after {
   content: '\25BC';
   position: absolute;
@@ -445,7 +441,8 @@ label {
   color: #666;
 }
 
-/* Add hover and focus effects */
+
+
 .styled-select:hover {
   border-color: #aaa;
 }
@@ -456,7 +453,8 @@ label {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* Style the options */
+
+
 .styled-option {
   padding: 10px;
   font-size: 16px;
@@ -464,12 +462,13 @@ label {
   color: #333;
 }
 
-/* Add hover effect to options */
+
+
 .styled-select option:hover {
   background-color: #f0f0f0;
 }
 
-/* Ensure the custom arrow is placed correctly */
+
 .select-container {
   position: relative;
   display: inline-block;

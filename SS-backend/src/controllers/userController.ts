@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import { User } from '../models/User__model'; // Import your User model
 
-// Create a new router
+
 const router = express.Router();
 
-// Create operation
+// Create 
 router.post('/users', async (req: Request, res: Response) => {
     try {
         const newUser = await User.create(req.body);
@@ -15,7 +15,7 @@ router.post('/users', async (req: Request, res: Response) => {
     }
 });
 
-// Read operation - Get all users
+// Get all users
 router.get('/users', async (req: Request, res: Response) => {
     try {
         const users = await User.findAll();
@@ -26,7 +26,7 @@ router.get('/users', async (req: Request, res: Response) => {
     }
 });
 
-// Read operation - Get user by ID
+// Get user by ID
 router.get('/users/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -42,7 +42,7 @@ router.get('/users/:id', async (req: Request, res: Response) => {
     }
 });
 
-// Update operation
+// Update 
 router.put('/users/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -58,7 +58,7 @@ router.put('/users/:id', async (req: Request, res: Response) => {
     }
 });
 
-// Delete operation
+// Delete 
 router.delete('/users/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -74,5 +74,5 @@ router.delete('/users/:id', async (req: Request, res: Response) => {
     }
 });
 
-// Export the router
+
 export default router;

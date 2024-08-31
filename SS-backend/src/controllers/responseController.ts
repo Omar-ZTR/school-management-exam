@@ -1,7 +1,7 @@
 import { Reponse } from "../models/reponseModel"; // Import your Response model
 import { Request, Response } from "express";
 
-// Create operation
+// Create 
 export const createReponse = async (req: Request, res: Response) => {
     try {
         const reponse = await Reponse.create(req.body);
@@ -39,7 +39,7 @@ export const getAllReponses = async (req: Request, res: Response) => {
     }
 };
 
-// Update operation
+// Update 
 export const updateReponse = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -56,7 +56,7 @@ export const updateReponse = async (req: Request, res: Response) => {
     }
 };
 
-// Delete operation
+// Delete 
 export const deleteReponse = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;

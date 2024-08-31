@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { HttpClientModule } from '@angular/common/http';
@@ -29,7 +29,7 @@ export interface Exam {
   subject: string;
   exam__type: string;
   reservation: any[];
-  // Add other properties if needed
+
 }
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { CalandarService } from '../../../services/serviceTeacher/calandar.service';
@@ -159,6 +159,7 @@ export class TeacherExamComponent {
   examdesc: string = '';
   oblig!: boolean;
   supEdit: boolean = false;
+  searchValue: string | undefined;
   user__id = this.tokenService.getUserIdFromToken();
   constructor(
     private examService: ExamService,
@@ -173,7 +174,7 @@ export class TeacherExamComponent {
     this.questionForms = this.fb.group({
       question__text: [
         '',
-        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+        [Validators.required],
       ],
       note: ['', [Validators.required, rangeNumber(0, 20)]],
 
@@ -208,6 +209,10 @@ export class TeacherExamComponent {
       this.deleteid = this.deleteform.id;
     }
   }
+  clear(table: Table) {
+    table.clear();
+    this.searchValue = ''
+}
   onSalleSelect(): void {
     const startDate = this.eventForm.get('startDate')?.value;
     const startHour = this.eventForm.get('startTime')?.value;
@@ -275,10 +280,10 @@ export class TeacherExamComponent {
 
     if (year > year1) {
       console.log('true year');
-      return true; // Return an error object if the selected date is not in the future
+      return true; 
     } else if (year == year1 && month > month1) {
       console.log('true month');
-      return true; // Return an error object if the selected date is not in the future
+      return true; 
     } else if (year == year1 && month == month1 && day > day1) {
       console.log('true day');
       return true;
@@ -331,8 +336,8 @@ export class TeacherExamComponent {
     const formattedStartTime = startDate
       .toTimeString()
       .split(' ')[0]
-      .slice(0, 5); // HH:MM format
-    const formattedEndTime = endDate.toTimeString().split(' ')[0].slice(0, 5); // HH:MM format
+      .slice(0, 5); 
+    const formattedEndTime = endDate.toTimeString().split(' ')[0].slice(0, 5); 
     this.eventForm = this.fb.group({
       title: [rowData.exam__title],
       startDate: [formattedStartDate],
@@ -590,7 +595,7 @@ export class TeacherExamComponent {
               reponse.reponse__text,
               [
                 Validators.required,
-                Validators.pattern(GlobalConstants.nameRegex),
+            ,
               ],
             ],
           })
@@ -601,7 +606,7 @@ export class TeacherExamComponent {
       note: [question.note, [Validators.required, rangeNumber(0, 20)]],
       question__text: [
         question.question__text,
-        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+        [Validators.required],
       ],
       question__type: [question.question__type, [Validators.required]],
       reponses: reponsesArray,
@@ -615,7 +620,7 @@ export class TeacherExamComponent {
         reponse__statut: [false],
         reponse__text: [
           '',
-          [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+          [Validators.required],
         ],
       }),
     ]);
@@ -625,7 +630,7 @@ export class TeacherExamComponent {
       note: ['', [Validators.required, rangeNumber(0, 20)]],
       question__text: [
         '',
-        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+        [Validators.required],
       ],
       question__subject: [this.Exam.subject],
       question__type: ['', [Validators.required]],
@@ -663,7 +668,7 @@ export class TeacherExamComponent {
         reponse__statut: [false],
         reponse__text: [
           '',
-          [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
+          [Validators.required],
         ],
       })
     );
@@ -818,7 +823,7 @@ export class TeacherExamComponent {
           this.fetchExam(this.Exam.exam__id);
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully update' });
 
-          console.log('succ112@@111111111111111113ess', response);
+         
         },
         (error: { error: { message: any } }) => {
           console.log('error', error);
@@ -830,10 +835,10 @@ export class TeacherExamComponent {
       control.markAsTouched();
     });
 
-    // Get the reponses FormArray
+   
     const reponsesArray = this.questionForms.get('reponses') as FormArray;
 
-    // Mark each control within the reponses FormArray as touched
+   
     reponsesArray.controls.forEach((control: AbstractControl) => {
       if (control instanceof FormGroup) {
         Object.values(control.controls).forEach((innerControl) => {
@@ -952,11 +957,7 @@ export class TeacherExamComponent {
       color: 'black',
     };
     let iconClass = 'fa-solid fa-window-minimize';
-    // console.log("gggggg",question)
-    // console.log("kkkkk",this.studentAnswer)
-
-    // console.log("ooooo",ans.Answer__text)
-    // console.log("quest", reponse )
+  
 
     if (reponse.reponse__statut === true) {
       styles = {

@@ -24,6 +24,7 @@
 <!-- table  -->
 <div class="card">
   <p-table
+  #dt1
     [value]="Exams"
     [paginator]="true"
     [rows]="5"
@@ -33,7 +34,18 @@
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     (onPage)="pageChange($event)"
     [rowsPerPageOptions]="[5, 10, 25, 50]"
-  >
+    [globalFilterFields]="['exam__title','subject']"
+    >
+    <ng-template pTemplate="caption">
+        <div class="flex">
+           
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt1.filterGlobal($any($event.target)?.value, 'contains')" placeholder="Search keyword" />
+            </span> <p-button label="Clear"    [raised]="true" severity="warning"
+            [style]="{ 'border-radius': '15px', 'padding': '12px 5px' }" icon="pi pi-filter-slash" (onClick)="clear(dt1)" />
+        </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
         <th style="min-width: 100px">Title</th>
@@ -479,7 +491,7 @@
         <span> <i class="fa-solid fa-paperclip fa-lg"></i>Attach File </span>
         <input
           type="file"
-          accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+          accept=".pdf,.jpg, .jpeg, .png"
           multiple
           (change)="detectFilesSupport($event)"
         />
@@ -591,7 +603,7 @@ class="error"
             <input
               style="width: 140px"
               type="file"
-              accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+              accept=".pdf,.jpg, .jpeg, .png"
               multiple
               (change)="detectFiles($event, 'exam')"
             />
@@ -887,7 +899,7 @@ class="error"
         <input
           style="width: 140px"
           type="file"
-          accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+          accept=".pdf,.jpg, .jpeg, .png"
           multiple
           (change)="detectFiles($event, 'quest')"
         />
@@ -1151,7 +1163,7 @@ class="error"
         <input
           style="width: 140px"
           type="file"
-          accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+          accept=".pdf,.jpg, .jpeg, .png"
           multiple
           (change)="detectFiles($event, 'new')"
         />

@@ -72,12 +72,12 @@ filter: drop-shadow(-11px -7px 22px #1d1d1d46);
     border-bottom: 1px solid black;
 }
 
-/* Define the touched border class */
+
 .border-touched {
     border-bottom: 1px solid black;
     background: rgb(0 0 0 / 2%);
     border-top: 1px solid black;
-    /* You can customize the border style and color */
+    
 }
 
 

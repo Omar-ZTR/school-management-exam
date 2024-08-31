@@ -11,7 +11,7 @@ export const getAllStudents = async (req: Request, res: Response) => {
 
     const student = await Student.findAll({
       order: [
-        ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+        ['createdAt', 'DESC'] 
       ]
     });
     console.log("studens is : ", student);
@@ -25,10 +25,10 @@ export const getAllStudents = async (req: Request, res: Response) => {
 
 export const getstudentbyid = async (req: Request, res: Response) => {
   try {
-
+    const { id } = req.params;
     const students = await Student.findOne({
       where: {
-        emailVerifed: true,
+        emailVerifed: true, user__id: id 
       },
     });
     console.log("studens is : ", students);
@@ -136,7 +136,7 @@ export const getDaysStudentCount = async (req: Request, res: Response) => {
 
     const startDate = new Date(firstDate);
     const endDateObj = new Date(endDate);
-    endDateObj.setDate(endDateObj.getDate() + 1); // Increment by one day to include the end date
+    endDateObj.setDate(endDateObj.getDate() + 1); 
 
     const monthNames: { [key: number]: string } = {
       0: "janvier",
@@ -185,7 +185,7 @@ export const updatePictureProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    await uploadFileMiddleware(req, res); // Handle file upload
+    await uploadFileMiddleware(req, res); 
 
     if (req.files && (req.files as Express.Multer.File[]).length > 0) {
       console.log("files:", req.files);
@@ -194,7 +194,7 @@ export const updatePictureProfile = async (req: Request, res: Response) => {
       const img__path = baseUrl + file.filename;
       console.log("file attribute:", file);
 
-      // Assuming Student model has a column named `img__path`
+      
       await Student.update({ img__path }, {
         where: { user__id: id },
       });

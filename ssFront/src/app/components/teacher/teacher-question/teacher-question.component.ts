@@ -141,10 +141,10 @@ this.intializeAccociation()
 
     const index = this.Allquestions.indexOf(this.questedit);
   if (index > -1) {
-    // Replace the question at the found index with the new response
+   
     this.Allquestions[index] = response;
   } else {
-    // If questedit is not found, push the response to the array
+   
     this.Allquestions.push(response);
     this.associationStatus[response.question__id] = {
       check: false,
@@ -233,7 +233,7 @@ const id = quest.question__id
           },
           (error: any) => {
             console.error('Error fetching association status for question ID', question.question__id, ':', error);
-            this.associationStatus[question.question__id].check = false; // Set to false in case of an error
+            this.associationStatus[question.question__id].check = false; 
           }
         );
       });

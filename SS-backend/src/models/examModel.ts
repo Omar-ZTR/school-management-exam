@@ -34,7 +34,7 @@ export class Exam extends Model<Exam> {
   nb__reserve!: number;
   @ForeignKey(() => Teacher)
   @Column({
-    onDelete: "CASCADE", // Enable cascading delete
+    onDelete: "CASCADE", 
   })
   user__id!: number;
 

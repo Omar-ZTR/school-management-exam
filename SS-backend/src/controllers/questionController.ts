@@ -7,63 +7,7 @@ import { Exam } from "../models/examModel";
 import uploadFileMiddleware from "../utils/upload";
 import { ExamQuestion } from "../models/examQuestionModel";
 const baseUrl = "http://localhost:3000/files/";
-// Create operation
-// export const createQuestion = async (req: Request, res: Response) => {
-//   try {
-//     console.log("exam 2", req.files);
 
-//     await uploadFile(req, res); // Handle file upload
-//     console.log("exam 3", req.file);
-//     const questDatas = { ...req.body };
-// console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>",questDatas)
-//     // Assuming exam data is in req.body
-//     console.log("exam 4", questDatas[0]);
-//     const questionData = JSON.parse(questDatas.question);
-//     console.log("Parsed question data:", questionData);
-//     const question = await Question.create(questionData);
-//     console.log("exam 6");
-//     if (req.files && req.files.length != 0) {
-//       console.log("file 7", req.file);
-
-//       for (const file of req.files as Express.Multer.File[]) {
-//         const support__files = {
-//           file__name: file.originalname,
-//           file__path: baseUrl + file.filename,
-//           file__type: "Question",
-//           question__id: question.question__id,
-//         };
-//         console.log("file attribute", support__files);
-//         const filesup = await FileQuestion.create({
-//           file__name: file.originalname,
-//           file__path: baseUrl + file.filename,
-//           file__type: "Question",
-//           question__id: question.question__id,
-//         });
-//       }
-//     }
-
-//     console.log("file 8");
-//     // Create the questions for the exam
-//     if (
-//       questDatas.reponses &&
-//       Array.isArray(questDatas.reponses) &&
-//       questDatas.reponses.length > 0
-//     ) {
-//       console.log("if ethanya fotnaha");
-//       const responsesData = questDatas.reponses;
-//       for (const responseData of responsesData) {
-//         responseData.question__id = question.question__id;
-
-//         await Reponse.create(responseData);
-//       }
-//     }
-
-//     res.status(201).json(question);
-//   } catch (error) {
-//     console.error("Error creation exam", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 
 export const createQuestion = async (req: Request, res: Response) => {
   try {
@@ -99,7 +43,7 @@ export const createQuestion = async (req: Request, res: Response) => {
 
     console.log("file 8", questDatas);
 
-    // Associate question with exam if exam__id is provided
+    
     if (questionData.exam__id) {
       const exam = await Exam.findByPk(questionData.exam__id);
       if (exam) {
@@ -113,7 +57,7 @@ export const createQuestion = async (req: Request, res: Response) => {
       ",,,,,,,,,,,,,,,,,,,,3332,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
       questionData.reponses
     );
-    // Create the responses for the question
+   
     if (
       questionData.reponses &&
       Array.isArray(questionData.reponses) &&
@@ -158,22 +102,22 @@ export const updateQuestion = async (req: Request, res: Response) => {
   try {
     const questionId = req.params.id;
     await uploadFileMiddleware(req, res);
-    // Handle the form data parsing
+    
     const questDatas = { ...req.body };
     console.log("Hddddddd>", questDatas);
 
     const questionData = JSON.parse(questDatas.question);
     console.log("ssssssss>", questionData);
-    // Find the existing question
+    
     const question = await Question.findByPk(questionId);
     if (!question) {
       return res.status(404).json({ error: "Question not found" });
     }
 
-    // Update question data
+   
     await question.update(questionData);
 
-    // Fetch existing responses and files
+    
     const existingResponses = await Reponse.findAll({
       where: { question__id: questionId },
     });
@@ -187,13 +131,13 @@ export const updateQuestion = async (req: Request, res: Response) => {
 
       for (const responseData of questionData.reponses) {
         if (responseData.reponse__id) {
-          // Update existing response
+          // Update 
           const response = await Reponse.findByPk(responseData.reponse__id);
           if (response) {
             await response.update(responseData);
           }
         } else {
-          // Create new response
+          
           responseData.question__id = question.question__id;
           await Reponse.create(responseData);
         }
@@ -251,7 +195,7 @@ export const updateQuestion = async (req: Request, res: Response) => {
   }
 };
 
-// getby Id
+// get by Id
 
 export const QuestionById = async (req: Request, res: Response) => {
   try {
@@ -293,7 +237,7 @@ export const getFakeQuestions = async (req: Request, res: Response) => {
           model: Exam,
           as: "exams",
           where: { exam__id: examId },
-          through: { attributes: [] }, // Exclude join table attributes
+          through: { attributes: [] }, 
         },
         {
           model: FileQuestion,
@@ -358,7 +302,7 @@ export const getQuestionById = async (req: Request, res: Response) => {
   }
 };
 
-// Read operation - Get all questions
+//Get all questions
 export const getAllQuestions = async (req: Request, res: Response) => {
   try {
     const questions = await Question.findAll();
@@ -369,7 +313,7 @@ export const getAllQuestions = async (req: Request, res: Response) => {
   }
 };
 
-// Update operation
+// Update 
 
 export const CheckAssociation = async (req: Request, res: Response) => {
   try {
@@ -410,7 +354,7 @@ console.log("exam names is here ",examNames)
 
 
 
-// Delete operation
+// Delete 
 export const deleteQuestion = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -442,12 +386,12 @@ export const deleteQuestion = async (req: Request, res: Response) => {
 
 async function unassociateQuestionFromExam(examId: number, questionId: any) {
   try {
-    // Find the exam and question instances
+    
     const exam = await Exam.findByPk(examId);
     const question = await Question.findByPk(questionId);
 console.log(`Unassociated question ${question?.question__id} from exam ${exam?.exam__id}`)
     if (exam && question) {
-      // Unassociate the question from the exam
+     
       await exam.$remove("questions", question);
       console.log(`Unassociated question ${question.question__id} from exam ${exam.exam__id}`)
       return `Unassociated question ${question.question__id} from exam ${exam.exam__id}`;
@@ -458,3 +402,63 @@ console.log(`Unassociated question ${question?.question__id} from exam ${exam?.e
     console.error("Error unassociating question from exam:", error);
   }
 }
+
+
+
+// Create operation
+// export const createQuestion = async (req: Request, res: Response) => {
+//   try {
+//     console.log("exam 2", req.files);
+
+//     await uploadFile(req, res); // Handle file upload
+//     console.log("exam 3", req.file);
+//     const questDatas = { ...req.body };
+// console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>",questDatas)
+//     // Assuming exam data is in req.body
+//     console.log("exam 4", questDatas[0]);
+//     const questionData = JSON.parse(questDatas.question);
+//     console.log("Parsed question data:", questionData);
+//     const question = await Question.create(questionData);
+//     console.log("exam 6");
+//     if (req.files && req.files.length != 0) {
+//       console.log("file 7", req.file);
+
+//       for (const file of req.files as Express.Multer.File[]) {
+//         const support__files = {
+//           file__name: file.originalname,
+//           file__path: baseUrl + file.filename,
+//           file__type: "Question",
+//           question__id: question.question__id,
+//         };
+//         console.log("file attribute", support__files);
+//         const filesup = await FileQuestion.create({
+//           file__name: file.originalname,
+//           file__path: baseUrl + file.filename,
+//           file__type: "Question",
+//           question__id: question.question__id,
+//         });
+//       }
+//     }
+
+//     console.log("file 8");
+//     // Create the questions for the exam
+//     if (
+//       questDatas.reponses &&
+//       Array.isArray(questDatas.reponses) &&
+//       questDatas.reponses.length > 0
+//     ) {
+//       console.log("if ethanya fotnaha");
+//       const responsesData = questDatas.reponses;
+//       for (const responseData of responsesData) {
+//         responseData.question__id = question.question__id;
+
+//         await Reponse.create(responseData);
+//       }
+//     }
+
+//     res.status(201).json(question);
+//   } catch (error) {
+//     console.error("Error creation exam", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };

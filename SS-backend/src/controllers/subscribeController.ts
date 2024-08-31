@@ -11,7 +11,7 @@ export const createSubscribe = async (req: Request, res: Response) => {
     const subscribe = await Subscribe.create(req.body);
     const newsubscribe = await Subscribe.findOne({
       where: { subscribe__id: subscribe.subscribe__id },
-      include: [{ model: Exam }, { model: Student }], // Include associated models
+      include: [{ model: Exam }, { model: Student }], 
     });
     res.status(201).json(newsubscribe);
   } catch (error) {
@@ -27,7 +27,7 @@ export const getAllSubscribes = async (req: Request, res: Response) => {
 
     const Allsubscribes = await Subscribe.findAll({});
 
-    const datenow = new Date(); // Capitalize Date
+    const datenow = new Date(); 
 
     for (const subscrib of Allsubscribes) {
       const exam = await Reservation.findOne({
@@ -60,17 +60,17 @@ export const updateSubscribe = async (req: Request, res: Response) => {
   };
   console.log("updatedata", updateData);
   try {
-    // Check if the Subscribe exists
+   
     const subscribe = await Subscribe.findOne({ where: { subscribe__id } });
 
     if (!subscribe) {
       return res.status(404).json({ error: "Subscribe not found" });
     }
 
-    // Update the Subscribe with new data
+   
     await Subscribe.update(updateData, { where: { subscribe__id } });
 
-    // Fetch the updated Subscribe with associated models
+    
     const updatedSubscribe = await Subscribe.findOne({
       where: { subscribe__id },
       include: [{ model: Exam }, { model: Student }],
@@ -117,7 +117,7 @@ export const getOneSubscribe = async (req: Request, res: Response) => {
     const { exam__id, user__id } = req.params;
     const subscribe = await Subscribe.findOne({
       where: { exam__id, user__id },
-      // include: [{ model: Exam }, { model: Student }], // Include associated models
+      // include: [{ model: Exam }, { model: Student }], 
     });
     if (subscribe) {
       res.status(200).json(subscribe);

@@ -123,10 +123,10 @@
                               *ngIf="
                                 resultAnsStudent[
                                   student.exam + '-' + student.student__id
-                                ].ans__result !== student.ans__result
+                                ].ans__result !== student.ans__result && this.resultUp[student.exam + '-' + student.student__id].updated == false
                               "
                               (click)="
-                                updateresult(student.exam, student.student__id)
+                                updateresult(student.exam, student.student__id )
                               "
                             >
                               {{
@@ -267,7 +267,7 @@
                           *ngIf="
                             resultAnsStudent[
                               answer.exam__id + '-' + answer.Student__id
-                            ].ans__result !== answer.ans__result
+                            ].ans__result !== answer.ans__result && this.resultUp[answer.exam__id + '-' + answer.Student__id].updated == false
                           "
                           (click)="
                             updateresult(answer.exam__id, answer.Student__id)

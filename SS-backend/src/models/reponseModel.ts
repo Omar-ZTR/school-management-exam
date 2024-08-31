@@ -6,7 +6,7 @@ import {
   ForeignKey,
   BelongsTo,
 } from "sequelize-typescript";
-import { Question } from "./questionModel"; // Import the Question model if it exists
+import { Question } from "./questionModel"; 
 
 @Table({
   timestamps: true,

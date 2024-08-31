@@ -126,7 +126,7 @@ export class ExamtakenComponent {
     });
   }
   timeExam!: number; 
-  examTitle!: string;// 2 hours in seconds
+  examTitle!: string;
   interval: any;
   ngOnInit(): void {
     const start = new Date(this.startDate).getTime();

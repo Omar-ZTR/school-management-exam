@@ -15,7 +15,7 @@ import { SubscribeService } from '../../../services/servicesUtils/subscribe.serv
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 
-interface Teacher {
+export interface Teacher {
   first__name: string;
   last__name: string;
 
@@ -165,22 +165,22 @@ export class TeacherDashComponent {
   sendCode() {
     console.log('emails is', this.selectedEmails);
 
-    // Initialize an empty array to store email addresses
+   
     let emails = [];
 
-    // Loop through selectedEmails to extract the email addresses
+    
     for (const email of this.selectedEmails) {
       emails.push(email.user__email);
     }
 
-    // Create a data object to send in the request
+   
     let data = {
       exam__title: this.schedule.exam__title,
       code: this.schedule.code,
       emails: emails,
     };
 
-    // Call the sendCodeExam method of calandarService and handle the response
+   
     this.calandarService.sendCodeExam(data).subscribe(
       (response: any) => {
         console.log('Fetch exams results:', response);
@@ -270,6 +270,7 @@ export class TeacherDashComponent {
         console.log('responseresponse :', response.message);
 
         this.updateimg = false;
+        window.location.reload();
       },
       (error: any) => {
         if (error.error?.message) {

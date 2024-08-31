@@ -296,7 +296,7 @@ export class AddExamComponent {
       if (callback) {
         callback();
       }
-    }, 1000); // Hide the alert after 3 seconds
+    }, 1000); 
   }
 
   closeAlert(): void {

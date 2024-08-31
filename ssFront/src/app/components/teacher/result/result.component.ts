@@ -98,7 +98,11 @@ export class ResultComponent implements OnInit {
       student__id: any;
     };
   } = {};
-
+  resultUp: {
+    [key: string]: {
+    updated:boolean
+    };
+  } = {};
   groupedExams: { [subject: string]: any[] } = {};
   subjectRenderTracker: { [subject: string]: boolean } = {};
   expandedRows: { [key: string]: boolean } = {};
@@ -118,6 +122,7 @@ export class ResultComponent implements OnInit {
   filteredExamCourse: any;
   examCertif: any;
   filteredexamCertif: any;
+  UpResult: boolean =true;
 
   PageChange(event: any) {
     this.firstC = event.first;
@@ -150,14 +155,14 @@ export class ResultComponent implements OnInit {
   // }
 
   onRowExpand(event: any, index: number) {
-    this.expandedRows = {}; // Reset expanded rows
-    this.expandedRows[index] = true; // Expand only the selected row
+    this.expandedRows = {}; 
+    this.expandedRows[index] = true; 
     console.log('Expanded row:', event.data);
     console.log('Expanded rows state:', this.expandedRows);
   }
 
   onRowCollapse(event: any, index: number) {
-    delete this.expandedRows[index]; // Collapse the selected row
+    delete this.expandedRows[index]; 
     console.log('Collapsed row:', event.data);
     console.log('Expanded rows state:', this.expandedRows);
   }
@@ -169,7 +174,7 @@ export class ResultComponent implements OnInit {
   toggleRow(sub: any) {
     this.expandedRows[sub.exam__id] = !this.expandedRows[sub.exam__id];
   }
-  // Function to check if the exam date is in the past
+
   isPastDate(examDate: Date): boolean {
     return new Date(examDate) < this.dateNow;
   }
@@ -188,7 +193,7 @@ export class ResultComponent implements OnInit {
             for (const stud of group.students) {
               const key = `${stud.exam}-${stud.student__id}`;
               // Ensure this.acceptation[key] is initialized as an object
-              if (!this.resultAnsStudent[key]) {
+              if (!this.resultAnsStudent[key] ) {
                 this.resultAnsStudent[key] = {
                   ans__result: null,
                   ans__id: null,
@@ -196,7 +201,13 @@ export class ResultComponent implements OnInit {
                   student__id: null,
                 };
               }
-
+              if (!this.resultUp[key] ) {
+                this.resultUp[key] = {
+                  updated: false,
+                 
+                };
+              }
+             
               // Set properties
               this.resultAnsStudent[key].ans__result = stud.ans__result;
               this.resultAnsStudent[key].ans__id = stud.ans__id;
@@ -229,6 +240,12 @@ export class ResultComponent implements OnInit {
                   exam__id: null,
                   student__id: null,
                 };
+                 if (!this.resultUp[key] ) {
+                this.resultUp[key] = {
+                  updated: false,
+                 
+                };
+              }
               }
 
               // Set properties
@@ -255,7 +272,7 @@ export class ResultComponent implements OnInit {
       }
     );
     
-    // Initially, the filtered data is the same as the original data
+   
    
   }
 
@@ -377,7 +394,7 @@ export class ResultComponent implements OnInit {
   
   
   
-  updateresult(exam: any, student: any) {
+  updateresult(exam: any, student: any ,) {
     const key = `${exam}-${student}`;
 if(this.resultAnsStudent[key].ans__result > 20 ||this.resultAnsStudent[key].ans__result < 0 ){
 
@@ -399,7 +416,12 @@ if(this.resultAnsStudent[key].ans__result > 20 ||this.resultAnsStudent[key].ans_
       (response: any) => {
       
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Update' });
-
+      
+          this.resultUp[key] = {
+            updated: true,
+           
+          };
+       
         console.log('seccess update', response);
       },
       (error: { error: { message: any } }) => {
@@ -472,22 +494,5 @@ if(this.resultAnsStudent[key].ans__result > 20 ||this.resultAnsStudent[key].ans_
       ? exam.groups.reduce((total, group) => total + this.rowStudents(group), 0)
       : 0;
   }
-  // getSeverity(status: string) {
-  //     switch (status) {
-  //         case 'unqualified':
-  //             return 'danger';
 
-  //         case 'qualified':
-  //             return 'success';
-
-  //         case 'new':
-  //             return 'info';
-
-  //         case 'negotiation':
-  //             return 'warning';
-
-  //         case 'renewal':
-  //             return null;
-  //     }
-  // }
 }

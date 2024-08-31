@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Contact } from "../models/contactModel";
 
-// Create operation
+// Create 
 export const createContact = async (req: Request, res: Response) => {
   try {
     const contact = await Contact.create(req.body);
@@ -15,7 +15,7 @@ export const createContact = async (req: Request, res: Response) => {
   }
 };
 
-// Read operation - Get all Contacts
+// Get all Contacts
 export const getAllContacts = async (req: Request, res: Response) => {
   try {
 const {email} = req.params
@@ -25,7 +25,7 @@ const {email} = req.params
             recipient__email :email
         },
         order: [
-          ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+          ['createdAt', 'DESC'] 
         ]
     });
     res.status(200).json(Contacts);

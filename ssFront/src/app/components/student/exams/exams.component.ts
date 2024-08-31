@@ -46,6 +46,12 @@ import { MessageService } from 'primeng/api';
       :host ::ng-deep .p-carousel-items-content{
         display: flex !important;
          justify-content:center !important;
+       
+      }
+      :host ::ng-deep .p-carousel-items-container{
+        display: flex !important;
+         justify-content:center !important;
+         padding: 0 30px;
       }
      
     `,
@@ -182,14 +188,13 @@ console.log("sgroupIdgroupIdss", this.groupId)
     this.plan = reservation;
     console.log(this.plan);
 
-    // Clear any existing interval to avoid multiple intervals running
+ 
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
     }
 
     // this.updateCountdown(reservation.startDate);
 
-    // Start a new interval to update the countdown every second
 
     this.countdownInterval = setInterval(() => {
       this.updateCountdown(reservation.startDate);
@@ -225,7 +230,7 @@ console.log("difference difference difference",difference)
       .toString()
       .padStart(2, '0');
 
-    // Check if the countdown is finished
+   
     if (difference <= 0) {
       clearInterval(this.countdownInterval);
       this.days = '00';
@@ -346,7 +351,7 @@ sendSubscribe(){
   this.subscribeService.createSubscribe(subscribeData).subscribe(
     (data: any) => {
       this.messageService.add({ severity: 'success', summary: 'Success', detail:  'Subscribe request sended successfully' });
-
+      this.subscribe[subscribeData.exam__id].check = true;
       console.log('seccess', data);
 
       

@@ -34,7 +34,7 @@ export class Teacher extends users<Teacher> {
     role!: string;
 
    @HasMany(() => Exam, {
-        onDelete: 'CASCADE', // This will enable cascading delete
+        onDelete: 'CASCADE',
     })
   exam!: Exam[];
 

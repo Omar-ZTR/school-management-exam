@@ -36,9 +36,10 @@ const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.getAllStudents = getAllStudents;
 const getstudentbyid = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { id } = req.params;
         const students = yield studentModel_1.Student.findOne({
             where: {
-                emailVerifed: true,
+                emailVerifed: true, user__id: id
             },
         });
         console.log("studens is : ", students);

@@ -1,5 +1,5 @@
 <!-- <div class="ADD" (click)="addQuestion()">ADD Question</div> -->
-<!-- Your question and answer form here -->
+
 <div class="containerForm" [formGroup]="questionsForm">
   <legend>Question</legend>
   <!-- Text -->
@@ -146,7 +146,7 @@
           </span>
           <input
             type="file"
-            accept=".doc, .docx, .pdf, .txt, .rtf, .md, .jpg, .jpeg, .png, .ppt, .pptx, .xls, .xlsx, .zip, .rar"
+            accept=".pdf,.jpg, .jpeg, .png"
             multiple
             (change)="QuestionFiles($event)"
           />

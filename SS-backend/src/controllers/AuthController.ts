@@ -28,7 +28,7 @@ export const signup = async (req: Request, res: Response) => {
 
     let userData;
     try {
-      userData = JSON.parse(req.body.user); // Assuming user data is in req.body.user as a JSON string
+      userData = JSON.parse(req.body.user); 
     } catch (parseError) {
       console.error("Error parsing user data:", parseError);
       return res.status(400).json({ message: "Invalid user data format" });
@@ -42,7 +42,7 @@ export const signup = async (req: Request, res: Response) => {
     let existingUser;
     let newUser;
     const hashedPassword = await bcrypt.hash(userData.Password, 10);
-    userData.password = hashedPassword; // Update userData.Password with hashed password
+    userData.password = hashedPassword; 
     if (req.files && (req.files as Express.Multer.File[]).length > 0) {
       console.log("files 7", req.files);
       for (const file of req.files as Express.Multer.File[]) {
@@ -175,7 +175,7 @@ export const login = async (req: Request, res: Response) => {
   try {
     // console.log("innnnnw",req.body.email)
     const { user__email, password } = req.body;
-
+console.log("email", user__email)
     let user: UserType | null = await Student.findOne({
       where: { user__email  },
     });
@@ -191,7 +191,7 @@ export const login = async (req: Request, res: Response) => {
       res.status(404).json({ message: "not exist !" });
     }else{
  if(user && user.emailVerifed !== true){
-
+  console.log("useremail", user.user__email)
       res.status(401).json({ message: "Comfirm your email !" });
     }else{
 if(user && user.emailVerifed == true && user.active !== true){
@@ -208,9 +208,12 @@ if(user && user.emailVerifed == true && user.active !== true){
           role: user.role,
           token: generateToken(user),
         };
+        console.log("ttuseremail", user.user__email)
 
         tokens = await Token.create(tokenData as any);
       }
+      console.log("useremailttt", user.user__email)
+
       // const tokenData = {
       //   user__id: user.user__id,
       //   token: generateToken(user),
@@ -236,7 +239,32 @@ if(user && user.emailVerifed == true && user.active !== true){
   console.log("hello", req.headers);
 };
 
-// Signup function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const ssignup = async (req: Request, res: Response) => {
   try {
@@ -268,7 +296,7 @@ export const ssignup = async (req: Request, res: Response) => {
   }
 };
 
-// Forgot password function
+
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { user__email } = req.body;

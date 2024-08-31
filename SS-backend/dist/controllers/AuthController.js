@@ -164,6 +164,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // console.log("innnnnw",req.body.email)
         const { user__email, password } = req.body;
+        console.log("email", user__email);
         let user = yield studentModel_1.Student.findOne({
             where: { user__email },
         });
@@ -178,6 +179,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         else {
             if (user && user.emailVerifed !== true) {
+                console.log("useremail", user.user__email);
                 res.status(401).json({ message: "Comfirm your email !" });
             }
             else {
@@ -195,8 +197,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                                 role: user.role,
                                 token: (0, token_1.default)(user),
                             };
+                            console.log("ttuseremail", user.user__email);
                             tokens = yield tokenModel_1.Token.create(tokenData);
                         }
+                        console.log("useremailttt", user.user__email);
                         // const tokenData = {
                         //   user__id: user.user__id,
                         //   token: generateToken(user),

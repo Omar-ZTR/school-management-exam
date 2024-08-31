@@ -3,7 +3,7 @@ import { Reservation } from "../models/reservationModel";
 import { Salle } from "../models/salleModel"; // Import your Salle model
 import { Request, Response } from "express";
 
-// Create operation
+// Create 
 export const createSalle = async (req: Request, res: Response) => {
   try {
     const salle = await Salle.create(req.body);
@@ -17,7 +17,7 @@ export const createSalle = async (req: Request, res: Response) => {
   }
 };
 
-// Read operation - Get all salles
+//Get all salles
 export const getAllSalles = async (req: Request, res: Response) => {
   try {
     const salles = await Salle.findAll();
@@ -45,10 +45,10 @@ export const getSallesSpecific = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Invalid date format" });
     }
 
-    // Calculate the difference in milliseconds
+   
     const durationMs = end.getTime() - start.getTime();
     
-    // Check for overlapping reservations
+    
     const reservations = await Reservation.findAll({
       where: {
         [Op.or]: [
@@ -220,7 +220,7 @@ export const getSalleById = async (req: Request, res: Response) => {
   }
 };
 
-// Update operation
+// Update 
 export const updateSalle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -240,7 +240,7 @@ export const updateSalle = async (req: Request, res: Response) => {
   }
 };
 
-// Delete operation
+// Delete 
 export const deleteSalle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

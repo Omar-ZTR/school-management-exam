@@ -41,7 +41,7 @@ export const sendResetEmail = async (req: Request, res: Response) => {
       const tokenData = {
         user__id: user.user__id,
         role: user.role,
-        token: generateToken(user), // Assuming generateToken takes user ID as input
+        token: generateToken(user), 
       };
 
       tokens = await Token.create(tokenData as any);
