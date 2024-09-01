@@ -34,7 +34,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         let userData;
         try {
-            userData = JSON.parse(req.body.user); // Assuming user data is in req.body.user as a JSON string
+            userData = JSON.parse(req.body.user);
         }
         catch (parseError) {
             console.error("Error parsing user data:", parseError);
@@ -46,7 +46,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         let existingUser;
         let newUser;
         const hashedPassword = yield bcryptjs_1.default.hash(userData.Password, 10);
-        userData.password = hashedPassword; // Update userData.Password with hashed password
+        userData.password = hashedPassword;
         if (req.files && req.files.length > 0) {
             console.log("files 7", req.files);
             for (const file of req.files) {
@@ -222,7 +222,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("hello", req.headers);
 });
 exports.login = login;
-// Signup function
 const ssignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let userData = req.body;
@@ -249,7 +248,6 @@ const ssignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.ssignup = ssignup;
-// Forgot password function
 const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { user__email } = req.body;

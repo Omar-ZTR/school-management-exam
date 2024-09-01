@@ -201,7 +201,7 @@
           <div class="inlineflex">
             <p-button
               *ngIf="teacherIds.includes(teacher.user__id)"
-              label="save"
+              label="Edit"
               (click)="UpdateTeacher(teacher.user__id)"
               [text]="true"
               [raised]="true"
@@ -209,9 +209,30 @@
               icon="pi pi-upload"
               severity="warning"
             />
+            <p-confirmPopup>
+              <ng-template pTemplate="content" let-message>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                  "
+                  class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border p-3 mb-3"
+                >
+                  <i [class]="message.icon" style="font-size: 20px"></i>
+                  <div style="font-size: 20px">{{ message.message }}</div>
+                  <div style="font-size: 15px">
+                    This will also delete all their data.
+                  </div>
+                </div>
+              </ng-template>
+            </p-confirmPopup>
+
             <p-button
               label="delete"
-              (click)="deleteTeacher(teacher.user__id)"
+              (click)=" confirm2($event,teacher.user__id)"
+          
               [text]="true"
               [raised]="true"
               [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"

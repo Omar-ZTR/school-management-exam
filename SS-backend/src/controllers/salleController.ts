@@ -240,6 +240,30 @@ export const updateSalle = async (req: Request, res: Response) => {
   }
 };
 
+
+export const CheckSalles = async (req: Request, res: Response) => {
+  try {
+    const { id }= req.params
+    const currentDate = new Date();
+  let SchudExam = 0
+        const scheduls = await Reservation.findOne( {where: { salle: id, endDate: { [Op.gt]: currentDate } },});
+        if(scheduls){
+          console.log("mn", scheduls)
+          SchudExam = SchudExam + 1
+        }
+     
+const Count  = SchudExam
+console.log("Count is Count",Count)
+console.log("SchudExam is SchudExam",SchudExam)
+       res.status(200).json(Count);
+    
+   
+  } catch (error) {
+    console.error("Error fetching subjects", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // Delete 
 export const deleteSalle = async (req: Request, res: Response) => {
   try {

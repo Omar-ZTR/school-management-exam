@@ -17,6 +17,7 @@ import { TagModule } from 'primeng/tag';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
+import { StudentService } from '../../../../services/serviceStudent/student.service';
 
 export interface Subject {
   subject__name: string;
@@ -78,13 +79,18 @@ export class GroupsComponent {
   groupIds: number[] = [];
   groupselesct!: Group;
   groupName: { [key: number]: { group__name?: any , Msg?: string} } = {};
-
+  StudentGr: { [key: number]: { name?: any , group?: string} } = {};
   listsubjects!: any;
   NameNew!: string;
   subjectAdd!: any;
   loading: boolean = true;
   visible: boolean = false;
-
+  DeleteGr: boolean = false;
+  groupIdDelete:any
+  students: any=[];
+  studentsGr: any=[];
+  studentselesct: any;
+  groupToSelect!: Group[];
   showDialog() {
     this.visible = true;
     this.listsubjects = this.subjects;
@@ -93,6 +99,82 @@ export class GroupsComponent {
     this.visible = false;
     this.resetInputs();
   }
+  doneEdit():boolean{
+    let ok = true
+    for (const stud of this.students){
+if ( this.StudentGr[stud.user__id].group == '' ){
+  ok = false
+}
+    }
+return ok
+  }
+  showDeleteDialog(group:any) {
+    this.DeleteGr = true;
+    this.groupIdDelete= group.group__id
+    this.fetchStudents()
+    this.students = []
+  }
+  closeDeleteDialog() {
+    this.DeleteGr = false;
+  
+  }
+  destrubieStudents() {
+    
+    this.students = this.studentsGr;
+    this.students.forEach((S: { user__id:  number; first__name: any; }) => {
+      if (!this.StudentGr[S.user__id]) {
+        this.StudentGr[S.user__id] = { name: S.first__name,group: '' };
+        
+        console.log('student', this.StudentGr[S.user__id]);
+      }})
+    console.log('student', this.students);
+
+  }
+  fetchStudents(): void {
+    console.log("hdshdshdhs", this.groupIdDelete)
+    this.studentService.getStudentGroup(this.groupIdDelete).subscribe(
+      
+      (data: any) => {
+        this.studentsGr = data;
+        // this.students.forEach((S: { user__id:  number; first__name: any; }) => {
+        //   if (!this.StudentGr[S.user__id]) {
+        //     this.StudentGr[S.user__id] = { name: S.first__name,group: '' };
+            
+        //     console.log('student', this.StudentGr[S.user__id]);
+        //   }})
+        // console.log('student', this.students);
+    
+    
+      },
+      (error: any) => {
+        console.error('Error fetching exam', error);
+      }
+    );
+  }
+  afectGroup(event: any, studentId: number){
+    const selectedGroup = event.value;
+
+    const studentData= {
+      group__id : selectedGroup.group__id
+    }
+    this.studentService.updategroupStudent(studentData, studentId).subscribe(
+      (response: any) => {
+           this.StudentGr[studentId].group= selectedGroup.group__name ;
+        console.log('seccess', response);
+
+      
+      },
+      (error: { error: { message: any } }) => {
+        console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
+      }
+    );
+
+    console.log("selectedGroupselectedGroupselectedGroupselectedGroupselectedGroup  ",selectedGroup.group__name)
+  }
   resetInputs() {
     this.listsubjects = [];
     this.NameNew = '';
@@ -100,6 +182,7 @@ export class GroupsComponent {
   }
 
   constructor(
+    private studentService: StudentService,
     private subjectService: SubjectService,
     private groupService: GroupService,
     private messageService : MessageService
@@ -434,6 +517,7 @@ if(this.controllerUpdate(Name,groupId)){
         this.groups = this.groups.filter(
           (group) => group.group__id !== groupId
         );
+        this.DeleteGr = false;
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);
@@ -444,6 +528,65 @@ if(this.controllerUpdate(Name,groupId)){
       }
     );
   }
+
+
+  deleteFullgroup(groupId: number) {
+    console.log('sss', groupId);
+    console.log('hay group name : ', this.groupName[groupId].group__name);
+    let model : { IDS: any[] }  = {
+      IDS :[]
+    }
+for ( const stud of this.studentsGr ){
+  model.IDS.push(stud.user__id)
+}
+console.log('mmmodeeel', model);
+
+    this.groupService.DeleteGroup(groupId).subscribe(
+      (response: any) => {
+
+
+        this.groupService.deleteStudentGroup(model).subscribe(
+          (response: any) => {
+            
+            this.messageService.add({ severity: 'success', summary: 'success', detail:  'Group deleted successfully' });
+    
+            console.log('seccess', response);
+            this.groups = this.groups.filter(
+              (group) => group.group__id !== groupId
+            );
+            this.DeleteGr = false;
+          },
+          (error: { error: { message: any } }) => {
+            console.log('errrr', error);
+            if(error.error?.message){
+             
+              this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+              }
+          }
+        );
+       
+      },
+      (error: { error: { message: any } }) => {
+        console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
+      }
+    );
+  }
+
+  selectgroup(op: OverlayPanel,student: any ) {
+   this.studentselesct = student
+this.groupToSelect = this.groups.filter(
+  (group) => group.group__id !== student.group__id
+);
+    // this.formGroups[student.user__id.toString()] =
+    //   this.createFormGroup(student);
+    op.toggle(event);
+  }
+
+
 
   selectsubject(op: OverlayPanel, group: Group) {
     this.groupselesct = group;

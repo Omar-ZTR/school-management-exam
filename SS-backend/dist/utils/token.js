@@ -14,7 +14,7 @@ const generateToken = (user) => {
         group: user.group__id,
     };
     const options = {
-        expiresIn: "8h", // Token expires in 1 hour (adjust as needed)
+        expiresIn: "8h",
     };
     return jsonwebtoken_1.default.sign(payload, secretKey, options);
 };

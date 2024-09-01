@@ -104,6 +104,9 @@ export class SallesComponent {
   NameErrMsg: string = '';
   loading: boolean = true;
   visible: boolean = false;
+  visibleDelete: boolean = false;
+  salleId: any;
+  CheckCount: any;
  constructor(private salleService: SalleService, private messageService : MessageService ) {}
   showDialog() {
     this.visible = true;
@@ -111,6 +114,18 @@ export class SallesComponent {
   closeDialog() {
     this.visible = false;
     this.resetInputs();
+  }
+
+
+  showDeleteDialog(salle:any) {
+    this.visibleDelete = true;
+    this.salleId = salle.salle__id
+  
+    this.checksalle(this.salleId)
+  }
+  closeDeleteDialog() {
+    this.visibleDelete = false;
+
   }
   resetInputs() {
     this.NameNew = '';
@@ -367,6 +382,27 @@ export class SallesComponent {
     }
   }
 
+
+
+  checksalle(salleId: number) {
+    console.log('sss', salleId);
+    console.log('hay salle name : ', this.salleName[salleId].salle__name);
+    this.salleService.SalleCheck(salleId).subscribe(
+      (data: any) => {
+            
+       this.CheckCount= data
+      },
+      (error: { error: { message: any } }) => {
+        console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
+      }
+    );
+  }
+
+
   deletesalle(salleId: number) {
     console.log('sss', salleId);
     console.log('hay salle name : ', this.salleName[salleId].salle__name);
@@ -380,6 +416,7 @@ export class SallesComponent {
         this.salles = this.salles.filter(
           (salle: { salle__id: number }) => salle.salle__id !== salleId
         );
+        this.visibleDelete = false
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);

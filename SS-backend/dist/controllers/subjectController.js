@@ -9,8 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSubject = exports.UpdateSubject = exports.getSubjects = exports.CreateSubject = void 0;
+exports.deleteSubject = exports.UpdateSubject = exports.CheckSubjects = exports.getSubjects = exports.CreateSubject = void 0;
 const subjectModel_1 = require("../models/subjectModel");
+const examModel_1 = require("../models/examModel");
+const sequelize_1 = require("sequelize");
+const reservationModel_1 = require("../models/reservationModel");
 const CreateSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newSubject = yield subjectModel_1.Subject.create(req.body);
@@ -36,6 +39,32 @@ const getSubjects = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getSubjects = getSubjects;
+const CheckSubjects = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { sub } = req.params;
+        const currentDate = new Date();
+        const exams = yield examModel_1.Exam.findAll({ where: { subject: sub }, });
+        if (exams) {
+            let SchudExam = 0;
+            for (const exam of exams) {
+                const scheduls = yield reservationModel_1.Reservation.findOne({ where: { exam__id: exam.exam__id, endDate: { [sequelize_1.Op.gt]: currentDate } }, });
+                if (scheduls) {
+                    console.log("mn", scheduls);
+                    SchudExam = SchudExam + 1;
+                }
+            }
+            const Count = SchudExam;
+            console.log("Count is Count", Count);
+            console.log("SchudExam is SchudExam", SchudExam);
+            res.status(200).json(Count);
+        }
+    }
+    catch (error) {
+        console.error("Error fetching subjects", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.CheckSubjects = CheckSubjects;
 const UpdateSubject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

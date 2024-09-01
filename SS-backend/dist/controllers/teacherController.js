@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePProfile = exports.TeacherByid = exports.deleteTeacher = exports.updateTeacher = exports.getAllTeacher = void 0;
+exports.updatePProfile = exports.TeacherByid = exports.deleteTeacher = exports.updateTeacher = exports.desactiveTeacher = exports.getAllTeacher = void 0;
 const teacherModel_1 = require("../models/teacherModel");
 const subjectModel_1 = require("../models/subjectModel");
 const groupModel_1 = require("../models/groupModel");
@@ -38,7 +38,11 @@ const getAllTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             ],
             where: {
                 emailVerifed: true,
+                desactive: false,
             },
+            order: [
+                ['createdAt', 'DESC']
+            ]
         });
         console.log("teachers is : ", Teachers);
         res.status(200).json(Teachers);
@@ -49,6 +53,23 @@ const getAllTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getAllTeacher = getAllTeacher;
+const desactiveTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const teacher = yield teacherModel_1.Teacher.findByPk(id);
+        if (!teacher) {
+            return res.status(404).json({ error: "Teacher not found" });
+        }
+        teacher.desactive = true;
+        yield teacher.save();
+        res.status(200).json({ message: "Teacher has been deactivated successfully" });
+    }
+    catch (error) {
+        console.error("Error updating teacher:", error);
+        res.status(500).send("Error updating teacher");
+    }
+});
+exports.desactiveTeacher = desactiveTeacher;
 const updateTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -69,7 +90,6 @@ const updateTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             yield teacherExist.$set("groups", groups);
         }
         else {
-            // If no groups are provided or the array is empty, delete all associations
             yield teacherExist.$set("groups", []);
         }
         if (teacherData.subjects &&
@@ -83,7 +103,6 @@ const updateTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             yield teacherExist.$set("subjects", subjects);
         }
         else {
-            // If no groups are provided or the array is empty, delete all associations
             yield teacherExist.$set("subjects", []);
         }
         if (teacherExist.active !== teacherData.active) {
@@ -140,7 +159,7 @@ const updateTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             else {
                 throw new Error("Teacher not updated");
             }
-        } // If no updates were made, return the current teacher data
+        }
         return res.status(200).json(teacherExist);
     }
     catch (error) {
@@ -208,13 +227,12 @@ const baseUrl = "http://localhost:3000/files/";
 const updatePProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield (0, upload_1.default)(req, res); // Handle file upload
+        yield (0, upload_1.default)(req, res);
         if (req.files && req.files.length > 0) {
             console.log("files:", req.files);
             const file = req.files[0];
             const img__path = baseUrl + file.filename;
             console.log("file attribute:", file);
-            // Assuming Student model has a column named `img__path`
             yield teacherModel_1.Teacher.update({ img__path }, {
                 where: { user__id: id },
             });

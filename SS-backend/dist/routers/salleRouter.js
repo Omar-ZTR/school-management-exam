@@ -9,6 +9,7 @@ const routerSalle = express_1.default.Router();
 routerSalle.get('/salle', salleController_1.getAllSalles);
 routerSalle.post('/salleSpecific', salleController_1.getSallesSpecific);
 routerSalle.get('/salle/:id', salleController_1.getSalleById);
+routerSalle.get('/salleCheckRe/:id', salleController_1.CheckSalles);
 routerSalle.post('/salle', salleController_1.createSalle);
 routerSalle.put('/salle/:id', salleController_1.updateSalle);
 routerSalle.delete('/salle/:id', salleController_1.deleteSalle);

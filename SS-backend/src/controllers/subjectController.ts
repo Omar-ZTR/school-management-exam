@@ -1,6 +1,10 @@
 import { Subject } from "../models/subjectModel";
 import { Request, Response } from "express";
 import { TeacherSubject } from "../models/teacherSubjectsModel";
+import { Exam } from "../models/examModel";
+import { Op, where } from "sequelize";
+import { Reservation } from "../models/reservationModel";
+import { count } from "console";
 
 export const CreateSubject = async (req: Request, res: Response) => {
   try {
@@ -24,6 +28,34 @@ export const getSubjects = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const CheckSubjects = async (req: Request, res: Response) => {
+  try {
+    const { sub }= req.params
+    const currentDate = new Date();
+    const exams = await Exam.findAll( {where: { subject: sub },});
+    if(exams){
+      let SchudExam = 0
+      for ( const exam of exams){
+        const scheduls = await Reservation.findOne( {where: { exam__id: exam.exam__id, endDate: { [Op.gt]: currentDate } },});
+        if(scheduls){
+          console.log("mn", scheduls)
+          SchudExam = SchudExam + 1
+        }
+      }
+const Count  = SchudExam
+console.log("Count is Count",Count)
+console.log("SchudExam is SchudExam",SchudExam)
+       res.status(200).json(Count);
+    }
+   
+  } catch (error) {
+    console.error("Error fetching subjects", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 
 export const UpdateSubject = async (req: Request, res: Response) => {

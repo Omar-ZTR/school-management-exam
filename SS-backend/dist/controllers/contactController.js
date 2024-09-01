@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllContacts = exports.createContact = void 0;
 const contactModel_1 = require("../models/contactModel");
-// Create operation
+// Create 
 const createContact = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const contact = yield contactModel_1.Contact.create(req.body);
@@ -26,7 +26,7 @@ const createContact = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createContact = createContact;
-// Read operation - Get all Contacts
+// Get all Contacts
 const getAllContacts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email } = req.params;
@@ -35,7 +35,7 @@ const getAllContacts = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 recipient__email: email
             },
             order: [
-                ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+                ['createdAt', 'DESC']
             ]
         });
         res.status(200).json(Contacts);

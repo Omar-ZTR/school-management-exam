@@ -27,6 +27,14 @@ export class TeacherService {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+
+  descTeacher(id: number) {
+    
+    return this.httpClient.put(`${this.url}/teacherdesc/${id}`,  {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
+
   DeleteTeacher(id: number) {
     
     return this.httpClient.delete(`${this.url}/teacher/${id}`, {

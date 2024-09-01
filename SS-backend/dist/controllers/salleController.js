@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSalle = exports.updateSalle = exports.getSalleById = exports.getSallesSpecific = exports.getAllSalles = exports.createSalle = void 0;
+exports.deleteSalle = exports.CheckSalles = exports.updateSalle = exports.getSalleById = exports.getSallesSpecific = exports.getAllSalles = exports.createSalle = void 0;
 const sequelize_1 = require("sequelize");
 const reservationModel_1 = require("../models/reservationModel");
 const salleModel_1 = require("../models/salleModel"); // Import your Salle model
-// Create operation
+// Create 
 const createSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const salle = yield salleModel_1.Salle.create(req.body);
@@ -28,7 +28,7 @@ const createSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.createSalle = createSalle;
-// Read operation - Get all salles
+//Get all salles
 const getAllSalles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const salles = yield salleModel_1.Salle.findAll();
@@ -52,9 +52,7 @@ const getSallesSpecific = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (isNaN(start.getTime()) || isNaN(end.getTime())) {
             return res.status(400).json({ error: "Invalid date format" });
         }
-        // Calculate the difference in milliseconds
         const durationMs = end.getTime() - start.getTime();
-        // Check for overlapping reservations
         const reservations = yield reservationModel_1.Reservation.findAll({
             where: {
                 [sequelize_1.Op.or]: [
@@ -209,7 +207,7 @@ const getSalleById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getSalleById = getSalleById;
-// Update operation
+// Update 
 const updateSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -230,7 +228,28 @@ const updateSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.updateSalle = updateSalle;
-// Delete operation
+const CheckSalles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const currentDate = new Date();
+        let SchudExam = 0;
+        const scheduls = yield reservationModel_1.Reservation.findOne({ where: { salle: id, endDate: { [sequelize_1.Op.gt]: currentDate } }, });
+        if (scheduls) {
+            console.log("mn", scheduls);
+            SchudExam = SchudExam + 1;
+        }
+        const Count = SchudExam;
+        console.log("Count is Count", Count);
+        console.log("SchudExam is SchudExam", SchudExam);
+        res.status(200).json(Count);
+    }
+    catch (error) {
+        console.error("Error fetching subjects", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.CheckSalles = CheckSalles;
+// Delete 
 const deleteSalle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

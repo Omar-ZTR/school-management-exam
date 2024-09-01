@@ -11,10 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileAnswer = exports.FileQuestion = exports.FileExam = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const examModel_1 = require("./examModel"); // Import the Exam model if it exists
+const examModel_1 = require("./examModel");
 const questionModel_1 = require("./questionModel");
 const answerModel_1 = require("./answerModel");
-// Define a base class for common file attributes
 let File = class File extends sequelize_typescript_1.Model {
 };
 __decorate([

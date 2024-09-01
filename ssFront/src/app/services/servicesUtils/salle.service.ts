@@ -22,7 +22,9 @@ export class SalleService {
   getSalleSpecific(data: any) {
     return this.httpClient.post(this.url + "/salleSpecific", data);
   }
-  
+  SalleCheck(id: any) {
+    return this.httpClient.get(`${this.url}/salleCheckRe/${id}`);
+  }
   createSalle(data: any) {
     return this.httpClient.post(this.url + '/salle', data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json'),

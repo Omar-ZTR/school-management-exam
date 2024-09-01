@@ -48,7 +48,7 @@ const sendResetEmail = (req, res) => __awaiter(void 0, void 0, void 0, function*
             const tokenData = {
                 user__id: user.user__id,
                 role: user.role,
-                token: (0, token_1.default)(user), // Assuming generateToken takes user ID as input
+                token: (0, token_1.default)(user),
             };
             tokens = yield tokenModel_1.Token.create(tokenData);
         }

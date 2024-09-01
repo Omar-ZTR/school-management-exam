@@ -41,7 +41,7 @@ __decorate([
 ], Teacher.prototype, "role", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => examModel_1.Exam, {
-        onDelete: 'CASCADE', // This will enable cascading delete
+        onDelete: 'CASCADE',
     }),
     __metadata("design:type", Array)
 ], Teacher.prototype, "exam", void 0);
@@ -49,8 +49,17 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => questionModel_1.Question),
     __metadata("design:type", Array)
 ], Teacher.prototype, "questions", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    }),
+    __metadata("design:type", Boolean)
+], Teacher.prototype, "desactive", void 0);
 exports.Teacher = Teacher = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: "Teacher",
+        timestamps: true
     })
 ], Teacher);

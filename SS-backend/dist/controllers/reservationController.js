@@ -21,12 +21,11 @@ const salleModel_1 = require("../models/salleModel");
 const studentModel_1 = require("../models/studentModel");
 const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
 const date_fns_1 = require("date-fns");
-// Create operation
+// Create 
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("bbbbbbbb", req.body);
         const code = generateCode();
-        // Create the reservation object with the generated code
         const reservationData = Object.assign(Object.assign({}, req.body), { code: code });
         const reservation = yield reservationModel_1.Reservation.create(reservationData);
         const updatedReservation = yield reservationModel_1.Reservation.findOne({
@@ -104,7 +103,7 @@ const getSpecificReservations = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.getSpecificReservations = getSpecificReservations;
-// Read operation - Get all reservations
+//Get all reservations
 const getAllReservations = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const reservations = yield reservationModel_1.Reservation.findAll();
@@ -116,7 +115,7 @@ const getAllReservations = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getAllReservations = getAllReservations;
-// Read operation - Get reservation by ID
+//Get reservation by ID
 const getReservationById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -137,7 +136,6 @@ exports.getReservationById = getReservationById;
 const getReservationTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        // Extract IDs from query parameters
         console.log("ids is", req.query.ids);
         const ids = (_a = req.query.ids) === null || _a === void 0 ? void 0 : _a.toString().split(",").map((id) => parseInt(id, 10));
         console.log("ids is", ids);
@@ -171,7 +169,7 @@ const getReservationTeacher = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getReservationTeacher = getReservationTeacher;
-// Update operation
+// Update 
 const updateReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -202,7 +200,7 @@ const updateReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.updateReservation = updateReservation;
-// Delete operation
+// Delete 
 const deleteReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

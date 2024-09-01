@@ -6,6 +6,7 @@ import {
   updateSalle,
   deleteSalle,
   getSallesSpecific,
+  CheckSalles,
 } from '../controllers/salleController';
 
 const routerSalle = express.Router();
@@ -15,6 +16,8 @@ routerSalle.get('/salle', getAllSalles);
 routerSalle.post('/salleSpecific', getSallesSpecific);
 
 routerSalle.get('/salle/:id', getSalleById);
+
+routerSalle.get('/salleCheckRe/:id', CheckSalles);
 
 routerSalle.post('/salle', createSalle);
 

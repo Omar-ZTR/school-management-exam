@@ -18,8 +18,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const baseUrl = "http://localhost:3000/files/";
 const deleteFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const fileId = req.params.id; // Assuming file ID is passed as a URL parameter
-    const model = req.body.model; // Assuming model type is passed in the body
+    const fileId = req.params.id;
+    const model = req.body.model;
     try {
         let fileRecord;
         switch (model) {
@@ -39,7 +39,6 @@ const deleteFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!fileRecord) {
             return res.status(404).json({ message: 'File not found' });
         }
-        // Delete the file record from the database
         switch (model) {
             case 'question':
                 yield fileModel_1.FileQuestion.destroy({ where: { file__id: fileId } });
@@ -51,7 +50,6 @@ const deleteFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 yield fileModel_1.FileAnswer.destroy({ where: { file__id: fileId } });
                 break;
         }
-        // Delete the physical file from the server
         const filePath = path_1.default.join(__dirname, '../utils/filesUpload', fileRecord.file__name);
         console.log("File path:", filePath);
         if (fs_1.default.existsSync(filePath)) {

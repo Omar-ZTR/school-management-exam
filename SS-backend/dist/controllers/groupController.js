@@ -18,7 +18,7 @@ const studentModel_1 = require("../models/studentModel");
 const teacherModel_1 = require("../models/teacherModel");
 const answerModel_1 = require("../models/answerModel");
 const reservationModel_1 = require("../models/reservationModel");
-// Create operation
+// Create 
 const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const groupData = req.body;
@@ -51,7 +51,7 @@ const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.createGroup = createGroup;
-// Read operation - Get all Groups
+// Get all Groups
 const getAllGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const groups = yield groupModel_1.Group.findAll({
@@ -298,10 +298,8 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
         if (group) {
             let formdata;
-            // Map through the exams and get reservations
             formdata = yield Promise.all(group.exams.map((exam) => __awaiter(void 0, void 0, void 0, function* () {
-                const reserv = yield checkExam(group.group__name, exam.exam__id); // Ensure this is awaited
-                // Add student__name to the exam object
+                const reserv = yield checkExam(group.group__name, exam.exam__id);
                 const answers = yield answerModel_1.Answer.findAll({
                     where: {
                         exam__id: exam.exam__id,
@@ -310,7 +308,6 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 return Object.assign(Object.assign({}, exam.get({ plain: true })), { reservation: reserv, answers: answers });
             })));
             let formdatasubject;
-            // Map through the exams and get reservations
             formdatasubject = yield Promise.all(group.subjects.map((subject) => __awaiter(void 0, void 0, void 0, function* () {
                 let teacher;
                 for (const teach of group.teachers) {
@@ -334,9 +331,7 @@ const getGroupById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 }
                 return Object.assign(Object.assign({}, subject.get({ plain: true })), { teacher: teacher });
             })));
-            // Combine the group object with the modified exams
-            const grouped = Object.assign(Object.assign({}, group.get({ plain: true })), { exams: formdata, subjects: formdatasubject // Fix the syntax here
-             });
+            const grouped = Object.assign(Object.assign({}, group.get({ plain: true })), { exams: formdata, subjects: formdatasubject });
             res.status(200).json(grouped);
         }
         else {
@@ -370,7 +365,7 @@ const getGroupByName = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getGroupByName = getGroupByName;
-// Update operation
+// Update 
 const updateGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -390,7 +385,6 @@ const updateGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             yield groupExist.$set("subjects", subjects);
         }
         else {
-            // If no groups are provided or the array is empty, delete all associations
             yield groupExist.$set("subjects", []);
         }
         if (groupExist.group__name !== groupData.group__name) {
@@ -410,7 +404,7 @@ const updateGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.updateGroup = updateGroup;
-// Delete operation
+// Delete 
 const deleteGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

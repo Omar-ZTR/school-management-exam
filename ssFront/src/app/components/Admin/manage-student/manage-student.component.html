@@ -4,7 +4,7 @@
     [value]="currentTableData"
     dataKey="id"
     [rows]="5"
-    [rowsPerPageOptions]="[5,10, 25, 50]"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
     [loading]="loading"
     [paginator]="true"
     [globalFilterFields]="[
@@ -85,15 +85,15 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 10%" >first Name</th>
-        <th style="width: 10%" >last Name</th>
-        <th style="width: 10%" >Email</th>
+        <th style="width: 10%">first Name</th>
+        <th style="width: 10%">last Name</th>
+        <th style="width: 10%">Email</th>
         <th style="width: 25%">Descreption</th>
         <!-- <th style="width:max-content">specialty</th> -->
         <th style="width: 25%">CV</th>
         <th style="width: 25%">Groups</th>
-        <th style="width: 10%" >Status</th>
-        <th style="width: 10%" >Action</th>
+        <th style="width: 10%">Status</th>
+        <th style="width: 10%">Action</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-student>
@@ -107,9 +107,8 @@
         <td>
           {{ student.user__email }}
         </td>
-        <td >
+        <td>
           <div class="textDesc">{{ student.description }}</div>
-          
         </td>
         <td>
           <div class="previewimg" *ngIf="student.CV__path">
@@ -169,7 +168,7 @@
           <div class="inlineflex">
             <p-button
               *ngIf="studentsIds.includes(student.user__id)"
-              label="save"
+              label="Edit"
               (click)="UpdateStudent(student.user__id)"
               [text]="true"
               [raised]="true"
@@ -177,9 +176,28 @@
               icon="pi pi-upload"
               severity="warning"
             />
+            <p-confirmPopup>
+              <ng-template pTemplate="content" let-message>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                  "
+                  class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border p-3 mb-3"
+                >
+                  <i [class]="message.icon" style="font-size: 20px"></i>
+                  <div style="font-size: 20px">{{ message.message }}</div>
+                  <div style="font-size: 15px">
+                    This will also delete all their data.
+                  </div>
+                </div>
+              </ng-template>
+            </p-confirmPopup>
             <p-button
               label="delete"
-              (click)="deleteStudent(student.user__id)"
+              (click)="confirm2($event, student.user__id)"
               [text]="true"
               [raised]="true"
               [style]="{ 'border-radius': '15px', 'text-wrap': 'nowrap' }"

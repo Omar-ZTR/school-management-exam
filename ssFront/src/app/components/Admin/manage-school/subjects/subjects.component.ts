@@ -102,7 +102,10 @@ export class SubjectsComponent {
   NameErrMsg: string = '';
   loading: boolean = true;
   visible: boolean = false;
-
+  visibleDelete: boolean = false;
+  subjctId: any;
+  sub: any;
+  CheckCount!:any;
   showDialog() {
     this.visible = true;
   }
@@ -110,6 +113,19 @@ export class SubjectsComponent {
     this.visible = false;
     this.resetInputs();
   }
+
+  showDeleteDialog(subject:any) {
+    this.visibleDelete = true;
+    this.subjctId = subject.subject__id
+    this.sub = subject.subject__name
+    this.checkExamSubject()
+  }
+  closeDeleteDialog() {
+    this.visibleDelete = false;
+
+  }
+
+
   resetInputs() {
     this.NameNew = '';
     this.CoeffNew = null;
@@ -275,7 +291,18 @@ console.log("coefficientcoefficient",Subject.coefficient)
       }
     );
   }
+  checkExamSubject() {
+    this.subjectService.checkExam(this.sub).subscribe(
+      (data) => {
+       console.log("count is ", data)
+this.CheckCount = data
 
+      },
+      (error) => {
+        console.error('Error fetching subjects', error);
+      }
+    );
+  }
   fetchSubjects() {
     this.subjectService.getSubjects().subscribe(
       (data) => {
@@ -378,6 +405,8 @@ console.log("coefficientcoefficient",Subject.coefficient)
         this.subjects = this.subjects.filter(
           (subject: { subject__id: number; }) => subject.subject__id !== subjectId
         );
+        this.visibleDelete = false
+
       },
       (error: { error: { message: any } }) => {
         console.log('errrr', error);

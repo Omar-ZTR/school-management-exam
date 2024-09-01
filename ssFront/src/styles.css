@@ -260,7 +260,9 @@ ul li {
 }
 
 /* dashbords */
-
+button{
+  border-radius: 15px !important;
+}
 #cssportal-grid {
   display: grid;
   grid-template-rows: 70px;

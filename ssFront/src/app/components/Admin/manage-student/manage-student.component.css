@@ -46,7 +46,9 @@
   
   
   }
-  
+  button {
+    border-radius:15px !important ;
+  }
 .textDesc{
 
   
@@ -88,7 +90,9 @@
   display: inline-flex;
   gap: 5px;
 }
-
+.btnd{
+  border-radius: 30px !important;
+}
 .groupd {
 
   background-color: transparent;

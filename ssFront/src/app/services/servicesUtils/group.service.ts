@@ -58,6 +58,13 @@ export class GroupService {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+  deleteStudentGroup( model:any) {
 
+ 
+    return this.httpClient.delete(`${this.url}/studentGr`, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      body: { model }
+    });
+  }
 
 }

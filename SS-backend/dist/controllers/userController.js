@@ -14,9 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const User__model_1 = require("../models/User__model"); // Import your User model
-// Create a new router
 const router = express_1.default.Router();
-// Create operation
+// Create 
 router.post('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newUser = yield User__model_1.User.create(req.body);
@@ -27,7 +26,7 @@ router.post('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
-// Read operation - Get all users
+// Get all users
 router.get('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield User__model_1.User.findAll();
@@ -38,7 +37,7 @@ router.get('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
-// Read operation - Get user by ID
+// Get user by ID
 router.get('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -55,7 +54,7 @@ router.get('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
-// Update operation
+// Update 
 router.put('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -72,7 +71,7 @@ router.put('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
-// Delete operation
+// Delete 
 router.delete('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -89,5 +88,4 @@ router.delete('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
-// Export the router
 exports.default = router;

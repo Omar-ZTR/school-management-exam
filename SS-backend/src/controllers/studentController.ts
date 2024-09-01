@@ -4,12 +4,16 @@ import { Sequelize } from "sequelize-typescript";
 import { Op } from "sequelize";
 import sendEmail from "../utils/sendEmail";
 import uploadFileMiddleware from "../utils/upload";
+import { Group } from "../models/groupModel";
 
 export const getAllStudents = async (req: Request, res: Response) => {
   try {
 
 
     const student = await Student.findAll({
+      where: {
+        emailVerifed: true, 
+      },
       order: [
         ['createdAt', 'DESC'] 
       ]
@@ -22,7 +26,21 @@ export const getAllStudents = async (req: Request, res: Response) => {
   }
 };
 
-
+export const getstudentbyidGroup = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const students = await Student.findAll({
+      where: {
+       group__id:  id 
+      },
+    });
+    console.log("studens is : ", students);
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetch student:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 export const getstudentbyid = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -278,6 +296,72 @@ export const updateStudent = async (req: Request, res: Response) => {
           <p>Thank you for choosing us.</p>
           <p>Best regards,</p>
         </div>`;
+        await sendEmail(updatedStudent.user__email, "Account Activation", text);
+      }
+
+      res.status(200).json(updatedStudent);
+    } else {
+      throw new Error("Student not found");
+    }
+  } catch (error) {
+    console.error("Error updating student:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+export const deleteStudentGr = async (req: Request, res: Response) => {
+  try {
+    const deleteData = req.body.model;
+console.log("syysysysysyysysyysys", deleteData)
+    if (!Array.isArray(deleteData.IDS) || deleteData.IDS.length === 0) {
+      return res.status(400).send("No students provided for deletion");
+    }
+
+    let deletionCount = 0;
+    for (const stud of deleteData.IDS) {
+      const deleted = await Student.destroy({ where: { user__id: stud } });
+      deletionCount += deleted; 
+    }
+
+    if (deletionCount > 0) {
+      res.status(204).send(); 
+    } else {
+      res.status(404).send("No students found to delete");
+    }
+  } catch (error) {
+    console.error("Error deleting Student", error);
+    res.status(500).send("Error deleting Student");
+  }
+};
+
+
+
+export const updateStudentgroup = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const [updated] = await Student.update(req.body, {
+      where: { user__id: id },
+    });
+
+    if (updated) {
+      const updatedStudent = await Student.findOne({ where: { user__id: id } });
+      const group = await Group.findOne({ where: { group__id: updatedStudent?.group__id } });
+      if (updatedStudent) {
+      
+
+        const url = `http://localhost:4200/dash`;
+        let text = `
+        <div>
+          <h1>Update Group</h1>
+          <h2>We are update your group</h2>
+          <p>Your new group is:</p>
+          <h2>  ${updatedStudent.group?.group__name}</h2>`;
+        
+  
+        
+      
         await sendEmail(updatedStudent.user__email, "Account Activation", text);
       }
 

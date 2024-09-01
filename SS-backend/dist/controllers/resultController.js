@@ -23,7 +23,7 @@ const createResult = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.createResult = createResult;
-// Read operation - Get all results
+//Get all results
 const getAllResults = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield resultModel_1.Result.findAll();
@@ -35,7 +35,7 @@ const getAllResults = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getAllResults = getAllResults;
-// Read operation - Get result by ID
+//Get result by ID
 const getResultById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -53,7 +53,7 @@ const getResultById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getResultById = getResultById;
-// Update operation
+// Update 
 const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -72,7 +72,7 @@ const updateResult = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.updateResult = updateResult;
-// Delete operation
+// Delete 
 const deleteResult = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

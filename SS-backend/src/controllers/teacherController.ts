@@ -25,7 +25,11 @@ export const getAllTeacher = async (req: Request, res: Response) => {
       ],
       where: {
         emailVerifed: true,
+        desactive : false,
       },
+      order: [
+        ['createdAt', 'DESC'] 
+      ]
     });
     console.log("teachers is : ", Teachers);
     res.status(200).json(Teachers);
@@ -35,6 +39,27 @@ export const getAllTeacher = async (req: Request, res: Response) => {
   }
 };
 
+
+export const desactiveTeacher = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const teacher = await Teacher.findByPk(id);
+
+    if (!teacher) {
+      return res.status(404).json({ error: "Teacher not found" });
+    }
+
+    
+    teacher.desactive = true;
+    await teacher.save();
+
+    res.status(200).json({ message: "Teacher has been deactivated successfully" });
+  } catch (error) {
+    console.error("Error updating teacher:", error);
+    res.status(500).send("Error updating teacher");
+  }
+};
 export const updateTeacher = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

@@ -55,7 +55,6 @@ const createAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             console.log("if  fotnaha");
             const ansDatas = answersData.answers;
             for (const ansData of ansDatas) {
-                console.log(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", ansData);
                 const question = yield questionModel_1.Question.findByPk(ansData.question__id);
                 if (!question) {
                     return res.status(404).json({ message: "question not found" });
@@ -127,7 +126,6 @@ const getStudentAnswers = (req, res) => __awaiter(void 0, void 0, void 0, functi
                     subject__name: exam === null || exam === void 0 ? void 0 : exam.subject
                 },
             });
-            // Add student__name to the answer object
             return Object.assign(Object.assign({}, ans.get({ plain: true })), { exam__title: (exam === null || exam === void 0 ? void 0 : exam.exam__title) || null, exam__oblig: (exam === null || exam === void 0 ? void 0 : exam.obligatoire) || false, subject: subject });
         })));
         res.status(200).json(answers);
@@ -244,7 +242,7 @@ function GetQuestionById(questionId) {
                 where: {
                     question__id: questionId,
                 },
-                attributes: ["question__id", "question__text"], // Adjust attributes as needed
+                attributes: ["question__id", "question__text"],
                 include: [
                     {
                         model: reponseModel_1.Reponse,

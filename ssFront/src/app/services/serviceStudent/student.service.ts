@@ -23,6 +23,14 @@ export class StudentService {
       headers: new HttpHeaders().set('Accept', 'application/json'),
     });
   }
+
+  updategroupStudent(data: any, id: number) {
+    
+    return this.httpClient.put(`${this.url}/studentGr/${id}`, data, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
+
   DeleteStudent(id: number) {
     
     return this.httpClient.delete(`${this.url}/student/${id}`, {
@@ -30,7 +38,12 @@ export class StudentService {
     });
   }
 
-
+  getStudentGroup(id: any) {
+    
+    return this.httpClient.get(`${this.url}/studentgroup/${id}`, {
+      headers: new HttpHeaders().set('Accept', 'application/json'),
+    });
+  }
   getStudent(id: any) {
     
     return this.httpClient.get(`${this.url}/student/${id}`, {

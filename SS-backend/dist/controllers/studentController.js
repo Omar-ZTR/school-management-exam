@@ -12,17 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStudent = exports.deleteStudent = exports.updatePictureProfile = exports.getDaysStudentCount = exports.getChartStudentCount = exports.getMonthlyStudentCount = exports.getstudentbyid = exports.getAllStudents = void 0;
+exports.updateStudentgroup = exports.deleteStudentGr = exports.updateStudent = exports.deleteStudent = exports.updatePictureProfile = exports.getDaysStudentCount = exports.getChartStudentCount = exports.getMonthlyStudentCount = exports.getstudentbyid = exports.getstudentbyidGroup = exports.getAllStudents = void 0;
 const studentModel_1 = require("../models/studentModel");
 const sequelize_typescript_1 = require("sequelize-typescript");
 const sequelize_1 = require("sequelize");
 const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
 const upload_1 = __importDefault(require("../utils/upload"));
+const groupModel_1 = require("../models/groupModel");
 const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const student = yield studentModel_1.Student.findAll({
+            where: {
+                emailVerifed: true,
+            },
             order: [
-                ['createdAt', 'DESC'] // Change 'createdAt' to the actual timestamp field in your model if different
+                ['createdAt', 'DESC']
             ]
         });
         console.log("studens is : ", student);
@@ -34,6 +38,23 @@ const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getAllStudents = getAllStudents;
+const getstudentbyidGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const students = yield studentModel_1.Student.findAll({
+            where: {
+                group__id: id
+            },
+        });
+        console.log("studens is : ", students);
+        res.status(200).json(students);
+    }
+    catch (error) {
+        console.error("Error fetch student:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getstudentbyidGroup = getstudentbyidGroup;
 const getstudentbyid = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -140,7 +161,7 @@ const getDaysStudentCount = (req, res) => __awaiter(void 0, void 0, void 0, func
         const { firstDate, endDate } = req.body;
         const startDate = new Date(firstDate);
         const endDateObj = new Date(endDate);
-        endDateObj.setDate(endDateObj.getDate() + 1); // Increment by one day to include the end date
+        endDateObj.setDate(endDateObj.getDate() + 1);
         const monthNames = {
             0: "janvier",
             1: "février",
@@ -184,13 +205,12 @@ const baseUrl = "http://localhost:3000/files/";
 const updatePictureProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield (0, upload_1.default)(req, res); // Handle file upload
+        yield (0, upload_1.default)(req, res);
         if (req.files && req.files.length > 0) {
             console.log("files:", req.files);
             const file = req.files[0];
             const img__path = baseUrl + file.filename;
             console.log("file attribute:", file);
-            // Assuming Student model has a column named `img__path`
             yield studentModel_1.Student.update({ img__path }, {
                 where: { user__id: id },
             });
@@ -284,3 +304,60 @@ const updateStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.updateStudent = updateStudent;
+const deleteStudentGr = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const deleteData = req.body.model;
+        console.log("syysysysysyysysyysys", deleteData);
+        if (!Array.isArray(deleteData.IDS) || deleteData.IDS.length === 0) {
+            return res.status(400).send("No students provided for deletion");
+        }
+        let deletionCount = 0;
+        for (const stud of deleteData.IDS) {
+            const deleted = yield studentModel_1.Student.destroy({ where: { user__id: stud } });
+            deletionCount += deleted;
+        }
+        if (deletionCount > 0) {
+            res.status(204).send();
+        }
+        else {
+            res.status(404).send("No students found to delete");
+        }
+    }
+    catch (error) {
+        console.error("Error deleting Student", error);
+        res.status(500).send("Error deleting Student");
+    }
+});
+exports.deleteStudentGr = deleteStudentGr;
+const updateStudentgroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const { id } = req.params;
+        const [updated] = yield studentModel_1.Student.update(req.body, {
+            where: { user__id: id },
+        });
+        if (updated) {
+            const updatedStudent = yield studentModel_1.Student.findOne({ where: { user__id: id } });
+            const group = yield groupModel_1.Group.findOne({ where: { group__id: updatedStudent === null || updatedStudent === void 0 ? void 0 : updatedStudent.group__id } });
+            if (updatedStudent) {
+                const url = `http://localhost:4200/dash`;
+                let text = `
+        <div>
+          <h1>Update Group</h1>
+          <h2>We are update your group</h2>
+          <p>Your new group is:</p>
+          <h2>  ${(_a = updatedStudent.group) === null || _a === void 0 ? void 0 : _a.group__name}</h2>`;
+                yield (0, sendEmail_1.default)(updatedStudent.user__email, "Account Activation", text);
+            }
+            res.status(200).json(updatedStudent);
+        }
+        else {
+            throw new Error("Student not found");
+        }
+    }
+    catch (error) {
+        console.error("Error updating student:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.updateStudentgroup = updateStudentgroup;

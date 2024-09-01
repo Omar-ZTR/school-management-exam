@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAnswer = exports.updateAnswer = exports.getAnswerById = exports.getAllAnswers = exports.createAnswer = void 0;
 const answerModel_1 = require("../models/answerModel");
-// Create operation
+// Create 
 const createAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const answer = yield answerModel_1.Answer.create(req.body);
@@ -23,7 +23,6 @@ const createAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.createAnswer = createAnswer;
-// Read operation - Get all answers
 const getAllAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const answers = yield answerModel_1.Answer.findAll();
@@ -35,7 +34,7 @@ const getAllAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getAllAnswers = getAllAnswers;
-// Read operation - Get answer by ID
+// Get answer by ID
 const getAnswerById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -53,7 +52,7 @@ const getAnswerById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getAnswerById = getAnswerById;
-// Update operation
+// Update 
 const updateAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -72,7 +71,7 @@ const updateAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.updateAnswer = updateAnswer;
-// Delete operation
+// Delete 
 const deleteAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

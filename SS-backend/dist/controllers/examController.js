@@ -24,13 +24,13 @@ const questionController_1 = require("./questionController");
 const upload_1 = __importDefault(require("../utils/upload"));
 const answerModel_1 = require("../models/answerModel");
 const baseUrl = "http://localhost:3000/files/";
-// Create operation
+// Create 
 const createExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("exam 1", req.body);
     try {
         console.log("exam 2", req.body.files);
-        yield (0, upload_1.default)(req, res); // Handle file upload
-        const examDatas = Object.assign({}, req.body); // Assuming exam data is in req.body
+        yield (0, upload_1.default)(req, res);
+        const examDatas = Object.assign({}, req.body);
         const examData = JSON.parse(examDatas.exam);
         const exam = yield examModel_1.Exam.create(examData);
         if (req.files && req.files.length > 0) {
@@ -241,7 +241,7 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
                     return {
                         group__id: group.group__id,
                         exam: exam.exam__id,
-                        group__name: group.group__name, // Include group information if needed
+                        group__name: group.group__name,
                         students: students,
                         date: res.startDate
                     };
@@ -250,7 +250,7 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
                     return {
                         group__id: group.group__id,
                         exam: exam.exam__id,
-                        group__name: group.group__name, // Include group information if needed
+                        group__name: group.group__name,
                         students: students,
                         date: ''
                     };
@@ -258,7 +258,7 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
                 // return {
                 //   group__id: group.group__id,
                 //   exam:exam.exam__id,
-                //   group__name: group.group__name,  // Include group information if needed
+                //   group__name: group.group__name,  
                 //   students: students
                 // };
             })));
@@ -276,7 +276,6 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
                             user__id: ans.Student__id,
                         }
                     });
-                    // Add student__name to the answer object
                     return Object.assign(Object.assign({}, ans.get({ plain: true })), { student__name: student ? `${student.first__name} ${student.last__name}` : null });
                 })));
                 check = yield reservationModel_1.Reservation.findAll({
@@ -288,7 +287,7 @@ const getExamsGroupsStutents = (req, res) => __awaiter(void 0, void 0, void 0, f
             return {
                 exam__oblig: exam.obligatoire,
                 exam__id: exam.exam__id,
-                exam__name: exam.exam__title, // Include exam information if needed
+                exam__name: exam.exam__title,
                 groups: groups,
                 answers: answers,
                 date: check
@@ -328,8 +327,8 @@ const checkExam = (group, exam) => __awaiter(void 0, void 0, void 0, function* (
 const addDescreptionExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield (0, upload_1.default)(req, res); // Handle file upload
-        const examDatas = Object.assign({}, req.body); // Assuming exam data is in req.body
+        yield (0, upload_1.default)(req, res);
+        const examDatas = Object.assign({}, req.body);
         const examData = JSON.parse(examDatas.exam);
         if (req.files && req.files.length > 0) {
             console.log("files 7", req.files);
@@ -374,7 +373,7 @@ const addDescreptionExam = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.addDescreptionExam = addDescreptionExam;
-// Update operation
+// Update 
 const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Request Body:", req.body);
@@ -382,11 +381,9 @@ const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { id } = req.params;
         const { operation } = req.body;
         const { group__id } = req.body;
-        // Validate the operation
         if (typeof operation !== "number") {
             return res.status(400).send("Invalid operation value");
         }
-        // Find the exam by primary key
         const exam = yield examModel_1.Exam.findByPk(id);
         if (!exam) {
             return res.status(404).send("Exam not found");
@@ -396,7 +393,6 @@ const updateExam = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (group) {
             yield exam.$add('groups', group);
         }
-        // Update the nb__reserve field
         const nb__reserve = exam.nb__reserve + operation;
         const [updated] = yield examModel_1.Exam.update({ nb__reserve }, { where: { exam__id: id } });
         if (updated) {
@@ -418,7 +414,7 @@ const updateExamFile = (req, res) => __awaiter(void 0, void 0, void 0, function*
     console.log("id is ", id);
     try {
         console.log("exam 2", req.body.files);
-        yield (0, upload_1.default)(req, res); // Handle file upload
+        yield (0, upload_1.default)(req, res);
         console.log("exam 3", req.body.file);
         if (req.files && req.files.length > 0) {
             console.log("files 7", req.files);
@@ -506,7 +502,6 @@ const getfullCertifExam = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 },
             ],
         });
-        // Transform the response to add student__name to each answer
         const transformedExams = yield Promise.all(exams.map((exam) => __awaiter(void 0, void 0, void 0, function* () {
             const transformedAnswers = yield Promise.all(exam.answers.map((answer) => __awaiter(void 0, void 0, void 0, function* () {
                 const student = yield studentModel_1.Student.findOne({ where: { user__id: answer.Student__id } });

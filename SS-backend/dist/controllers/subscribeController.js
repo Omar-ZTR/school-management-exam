@@ -23,7 +23,7 @@ const createSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
         const subscribe = yield subscribeModel_1.Subscribe.create(req.body);
         const newsubscribe = yield subscribeModel_1.Subscribe.findOne({
             where: { subscribe__id: subscribe.subscribe__id },
-            include: [{ model: examModel_1.Exam }, { model: studentModel_1.Student }], // Include associated models
+            include: [{ model: examModel_1.Exam }, { model: studentModel_1.Student }],
         });
         res.status(201).json(newsubscribe);
     }
@@ -37,7 +37,7 @@ const getAllSubscribes = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         console.log("tesetteset is tesetteset: ");
         const Allsubscribes = yield subscribeModel_1.Subscribe.findAll({});
-        const datenow = new Date(); // Capitalize Date
+        const datenow = new Date();
         for (const subscrib of Allsubscribes) {
             const exam = yield reservationModel_1.Reservation.findOne({
                 where: { exam__id: subscrib.exam__id },
@@ -68,14 +68,11 @@ const updateSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
     };
     console.log("updatedata", updateData);
     try {
-        // Check if the Subscribe exists
         const subscribe = yield subscribeModel_1.Subscribe.findOne({ where: { subscribe__id } });
         if (!subscribe) {
             return res.status(404).json({ error: "Subscribe not found" });
         }
-        // Update the Subscribe with new data
         yield subscribeModel_1.Subscribe.update(updateData, { where: { subscribe__id } });
-        // Fetch the updated Subscribe with associated models
         const updatedSubscribe = yield subscribeModel_1.Subscribe.findOne({
             where: { subscribe__id },
             include: [{ model: examModel_1.Exam }, { model: studentModel_1.Student }],
@@ -121,7 +118,7 @@ const getOneSubscribe = (req, res) => __awaiter(void 0, void 0, void 0, function
         const { exam__id, user__id } = req.params;
         const subscribe = yield subscribeModel_1.Subscribe.findOne({
             where: { exam__id, user__id },
-            // include: [{ model: Exam }, { model: Student }], // Include associated models
+            // include: [{ model: Exam }, { model: Student }], 
         });
         if (subscribe) {
             res.status(200).json(subscribe);

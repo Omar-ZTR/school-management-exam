@@ -10,6 +10,7 @@ import { Question } from "./questionModel";
 
 @Table({
     tableName: "Teacher",
+    timestamps: true
 })
 export class Teacher extends users<Teacher> {
     
@@ -40,4 +41,12 @@ export class Teacher extends users<Teacher> {
 
   @HasMany(() => Question)
   questions!: Question[];
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  desactive!: boolean;
+
 }

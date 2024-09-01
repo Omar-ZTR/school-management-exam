@@ -15,10 +15,11 @@ import { TagModule } from 'primeng/tag';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 
 import { GroupService } from '../../../services/servicesUtils/group.service';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 import { Teacher } from '../manage-teacher/manage-teacher.component';
 import { StudentService } from '../../../services/serviceStudent/student.service';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 export interface Student {
   user__id: number;
   first__name: string;
@@ -52,16 +53,21 @@ export interface Student {
     ButtonModule,
     ListboxModule,
     TriStateCheckboxModule,
+    ConfirmPopupModule,
   ],
   templateUrl: './manage-student.component.html',
   styleUrl: './manage-student.component.css',
+  providers: [ConfirmationService, MessageService],
   styles: [
     `
       :host ::ng-deep .p-listbox .p-listbox-list {
         margin-bottom: 0 !important;
         padding: 0 !important;
       }
-     
+      :host ::ng-deep .p-button .p-confirm-popup-accept {
+        border-radius: 30px !important;
+        background: black !important;
+      }
     `,
   ],
 })
@@ -88,13 +94,29 @@ export class ManageStudentComponent implements OnInit {
     window.open(filePath, '_blank');
   }
   constructor(
+    private confirmationService: ConfirmationService,
     private studentService: StudentService,
     private groupService: GroupService,
     private messageService : MessageService,
   ) {}
-
+  confirm2(event: Event, user__id:any) {
+    this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Do you want to delete this student? ', 
+        icon: 'pi pi-info-circle',
+        acceptButtonStyleClass: 'p-button-danger border-round p-button-sm ',
+       
+        accept: () => {
+            this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
+             this.deleteStudent(user__id)
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+}
   switchTable(tableName: string) {
-    this.loading = true; // Example: Set loading state
+    this.loading = true;
 
     switch (tableName) {
       case 'students':
@@ -118,7 +140,7 @@ export class ManageStudentComponent implements OnInit {
         this.filterButton = '';
     }
 
-    this.loading = false; // Example: Clear loading state
+    this.loading = false; 
   }
   ngOnInit() {
     this.fetchGroups();
@@ -133,7 +155,7 @@ export class ManageStudentComponent implements OnInit {
     }, 30000);
     console.log('hhdhshs ids', this.studentsIds);
   }
-
+  
   fetchGroups() {
     this.groupService.getGroups().subscribe(
       (data) => {

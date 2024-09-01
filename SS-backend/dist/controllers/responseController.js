@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteReponse = exports.updateReponse = exports.getAllReponses = exports.getReponseById = exports.createReponse = void 0;
 const reponseModel_1 = require("../models/reponseModel"); // Import your Response model
-// Create operation
+// Create 
 const createReponse = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const reponse = yield reponseModel_1.Reponse.create(req.body);
@@ -53,7 +53,7 @@ const getAllReponses = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getAllReponses = getAllReponses;
-// Update operation
+// Update 
 const updateReponse = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -72,7 +72,7 @@ const updateReponse = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.updateReponse = updateReponse;
-// Delete operation
+// Delete 
 const deleteReponse = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

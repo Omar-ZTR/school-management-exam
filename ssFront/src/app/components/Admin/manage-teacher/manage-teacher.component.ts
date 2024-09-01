@@ -21,7 +21,8 @@ import { ListboxModule } from 'primeng/listbox';
 import { SubjectService } from '../../../services/servicesUtils/subject.service';
 import { GroupService } from '../../../services/servicesUtils/group.service';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 export interface Teacher {
   user__id: number;
@@ -68,9 +69,11 @@ export interface Group {
     ButtonModule,
     ListboxModule,
     TriStateCheckboxModule,
+    ConfirmPopupModule,
   ],
   templateUrl: './manage-teacher.component.html',
   styleUrl: './manage-teacher.component.css',
+  providers: [ConfirmationService, MessageService],
   styles: [
     `
       :host ::ng-deep .p-listbox .p-listbox-list {
@@ -99,6 +102,7 @@ export class ManageTeacherComponent implements OnInit {
   filterButton!: string;
 
   constructor(
+    private confirmationService: ConfirmationService,
     private teacherService: TeacherService,
     private subjectService: SubjectService,
     private groupService: GroupService,
@@ -119,6 +123,25 @@ export class ManageTeacherComponent implements OnInit {
   openFile(filePath: string): void {
     window.open(filePath, '_blank');
   }
+
+
+  confirm2(event: Event, user__id:any) {
+    this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Do you want to delete this student? ', 
+        icon: 'pi pi-info-circle',
+        acceptButtonStyleClass: 'p-button-danger border-round p-button-sm ',
+       
+        accept: () => {
+            this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
+             this.deleteTeacher(user__id)
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+}
+
   switchTable(tableName: string) {
     this.loading = true; // Example: Set loading state
 
@@ -469,6 +492,38 @@ if((teacherData.subjects.length == 0 || teacherData.groups.length ==0 )  && teac
   }
   deleteTeacher(teacherId: number) {
     this.teacherService.DeleteTeacher(teacherId).subscribe(
+      (response: any) => {
+        this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully delete teacher' });
+        console.log('seccess', response);
+        this.teachers = this.teachers.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        // Remove the teacher from the filtered lists
+        this.teachersAccept = this.teachersAccept.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        this.teachersRefused = this.teachersRefused.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        this.teachersWait = this.teachersWait.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+        this.currentTableData = this.currentTableData.filter(
+          (teacher) => teacher.user__id !== teacherId
+        );
+      },
+      (error: { error: { message: any } }) => {
+        this.descTeacher(teacherId)
+        console.log('errrr', error);
+        if(error.error?.message){
+         
+          this.messageService.add({ severity: 'danger', summary: 'Failed', detail:  error.error?.message });
+          }
+      }
+    );
+  }
+  descTeacher(teacherId: number) {
+    this.teacherService.descTeacher(teacherId).subscribe(
       (response: any) => {
         this.messageService.add({ severity: 'success', summary: 'success', detail:  ' Successfully delete teacher' });
         console.log('seccess', response);
